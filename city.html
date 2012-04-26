@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>3D City</title>
+    <style>
+#container {
+  background: #66ccff;
+  width: 1000px;
+  height: 1000px;
+}
+    </style>
+</head>
+<body>
+  <div id="container">
+  </div>
+</body>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script> -->
+<script src="jquery-1.5.1.min.js"></script>
+<script src="Three.js"></script>
+<script src="webgl-utils.js"></script>
+<script type="text/javascript">
+
+var TWO_PI = 2 * Math.PI;
+var LOT_WIDTH = 1;
+var LOT_DEPTH = 1;
+var STREET_WIDTH = 1;
+var STREET_DEPTH = 1;
+var BLOCK_WIDTH = 2;
+var BLOCK_DEPTH = 2;
+var BLOCK_ROWS = 20;
+var BLOCK_COLUMNS = 20;
+var MIN_BUILDING_HEIGHT = 0.5;
+var MAX_BUILDING_HEIGHT = 10;
+var MAX_BUILDING_MATERIALS = 20;
+var TOTAL_SCENE_WIDTH = (BLOCK_WIDTH * BLOCK_ROWS) + (STREET_WIDTH * (BLOCK_ROWS - 1));
+var TOTAL_SCENE_DEPTH = (BLOCK_DEPTH * BLOCK_COLUMNS) + (STREET_DEPTH * (BLOCK_COLUMNS - 1));
+
+var renderer, scene, camera;
+
+function initScene() {
+  var WIDTH = 1000, HEIGHT = 1000;
+
+  // Build renderer
+  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(WIDTH, HEIGHT);
+
+  var $container = $('#container');
+  $container.append(renderer.domElement);
+
+  // Build camera
+  var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+  camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+
+  // Build light source
+  var pointLight = new THREE.PointLight(0xffffff);
+  pointLight.position.x = 0;
+  pointLight.position.y = 0;
+  pointLight.position.z = 100000;
+
+  // Build scene
+  scene = new THREE.Scene();
+  
+  var originMaterial = new THREE.MeshLambertMaterial({ color: 0xf32920 });
+  var origin = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 10), originMaterial);
+  scene.add(origin);
+
+  var groundMaterial = new THREE.MeshBasicMaterial({ color: 0x777777 });
+  var ground = new THREE.Mesh(new THREE.PlaneGeometry(TOTAL_SCENE_WIDTH * 5, TOTAL_SCENE_DEPTH * 5), groundMaterial);
+  ground.rotation.x = -(TWO_PI / 4);
+  scene.add(ground);
+
+  var buildingMaterials = [];
+  var buildingGeometries = [];
+  for (var i = 0; i < MAX_BUILDING_MATERIALS; i++) {
+    var r = Math.random();
+    var g = Math.random();
+    var b = Math.random();
+    var buildingColor = new THREE.Color(0xffffff);
+    buildingColor.setRGB(r, g, b);
+
+    buildingMaterials.push(new THREE.MeshLambertMaterial({ color: buildingColor.getHex() }));
+    buildingGeometries.push(new THREE.Geometry());
+  }
+
+  for (var i = -(TOTAL_SCENE_WIDTH / 2); i < TOTAL_SCENE_WIDTH / 2; i += BLOCK_WIDTH + STREET_WIDTH) {
+    for (var j = -(TOTAL_SCENE_DEPTH / 2); j < TOTAL_SCENE_DEPTH / 2; j += BLOCK_DEPTH + STREET_DEPTH) {
+
+      var maxHeightI = MAX_BUILDING_HEIGHT * (((TOTAL_SCENE_WIDTH / 2) - Math.abs(i)) / (TOTAL_SCENE_WIDTH / 2));
+      var maxHeightJ = MAX_BUILDING_HEIGHT * (((TOTAL_SCENE_DEPTH / 2) - Math.abs(j)) / (TOTAL_SCENE_DEPTH / 2));
+      var maxHeight = Math.min(maxHeightI, maxHeightJ);
+
+      var buildingHeight = Math.floor((Math.random() * maxHeight - MIN_BUILDING_HEIGHT)) + MIN_BUILDING_HEIGHT;
+      
+      var building = new THREE.Mesh(new THREE.CubeGeometry(LOT_WIDTH * BLOCK_WIDTH, 1, LOT_DEPTH * BLOCK_WIDTH));
+
+      building.position.x = i + BLOCK_WIDTH / 2;
+      building.scale.y =  (Math.random() * maxHeight) + MIN_BUILDING_HEIGHT ;
+      building.position.y = building.scale.y / 2;
+      building.position.z = j + BLOCK_DEPTH / 2;
+      
+      var index = Math.floor(Math.random() * MAX_BUILDING_MATERIALS);
+      THREE.GeometryUtils.merge(buildingGeometries[index], building); 
+    }
+  }
+
+  for (var i = 0; i < MAX_BUILDING_MATERIALS; i++) {
+    scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
+  }
+
+  camera.lookAt(scene.position);
+  camera.position.x = 0;
+  camera.position.y = 5;
+  camera.position.z = TOTAL_SCENE_DEPTH + 60;
+
+  scene.add(camera);
+  scene.add(pointLight);
+  renderer.render(scene, camera);
+
+  swoop_animation();
+}
+
+// essentially equals
+function ee(candidate, target, range) {
+  return (candidate >= (target + (range * -1))) && (candidate <= (target + range));
+}
+
+function buildRgbColor(r, g, b) {
+  return new THREE.Color(0xffffff).setRGB(r / 255, g / 255, b / 255);
+}
+
+var CAMERA_Z_DELTA = 0.2;
+var CAMERA_X_DELTA = 0.2;
+var SWOOP_DESCENT_DELTA = 0.011;
+var SWOOP_SPEED_DELTA = 0.00003;
+var rotating = false;
+var normal = false;
+
+var z_delta = CAMERA_Z_DELTA;
+var x_delta = 0;
+
+function swoop_animation() {
+  camera.position.y -= SWOOP_DESCENT_DELTA;
+  camera.position.z -= z_delta;
+  z_delta += SWOOP_SPEED_DELTA;
+  
+  renderer.render(scene, camera);
+  animFunc = (camera.position.z <= TOTAL_SCENE_DEPTH / 2) ? forward_animation : swoop_animation;
+  requestAnimFrame(animFunc);
+}
+
+function forward_animation() {
+  camera.position.z -= z_delta;
+  camera.position.x -= x_delta;
+
+  renderer.render(scene, camera);
+  animFunc = (ee(camera.position.z, 0, 0.1)) ? rotate_animation : forward_animation;
+  requestAnimFrame(animFunc);
+}
+
+function rotate_animation() {
+  camera.rotation.y += 0.06;
+
+  renderer.render(scene, camera);
+  animFunc = (ee(camera.rotation.y, Math.PI / 2, 0.05)) ? forward_animation : rotate_animation;
+
+  if (animFunc == forward_animation) {
+    camera.position.z = 0.10001;
+    if (z_delta > 0) {
+      x_delta = z_delta;
+      z_delta = 0;
+    }
+    else {
+      z_delta = x_delta;
+      x_delta = 0;
+    }
+  }
+
+  requestAnimFrame(animFunc);
+}
+
+initScene();
+</script>
+</html>
