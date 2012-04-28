@@ -120,15 +120,6 @@ function initScene() {
   swoop_animation();
 }
 
-// essentially equals
-function ee(candidate, target, range) {
-  return (candidate >= (target + (range * -1))) && (candidate <= (target + range));
-}
-
-function buildRgbColor(r, g, b) {
-  return new THREE.Color(0xffffff).setRGB(r / 255, g / 255, b / 255);
-}
-
 var CAMERA_Z_DELTA = 0.2;
 var CAMERA_X_DELTA = 0.2;
 var SWOOP_DESCENT_DELTA = 0.011;
