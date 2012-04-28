@@ -107,14 +107,21 @@ function initScene() {
   camera.position.y = 5;
   camera.position.z = HALF_SCENE_DEPTH + 90;
 
-  // Build light source
-  var pointLight = new THREE.PointLight(0xffffff);
-  pointLight.position.x = 0;
-  pointLight.position.y = 0;
-  pointLight.position.z = 100000;
+  // Build light sources
+  var pointLight1 = new THREE.PointLight(0xffffff);
+  pointLight1.position.x = 0;
+  pointLight1.position.y = 0;
+  pointLight1.position.z = 100000;
+
+  var pointLight2 = new THREE.PointLight(0xffffff);
+  pointLight2.position.x = 0;
+  pointLight2.position.y = 20;
+  pointLight2.position.z = 0;
+
 
   scene.add(camera);
-  scene.add(pointLight);
+  scene.add(pointLight1);
+  scene.add(pointLight2);
   renderer.render(scene, camera);
 
   swoop_animation();
