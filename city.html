@@ -133,49 +133,104 @@ var CAMERA_Z_DELTA = 0.2;
 var CAMERA_X_DELTA = 0.2;
 var SWOOP_DESCENT_DELTA = 0.011;
 var SWOOP_SPEED_DELTA = 0.00003;
-var rotating = false;
-var normal = false;
+var PATH = [[0, -1], [-2, -1], [-2, -2], [2, -2], [2, 1], [3, 1], [3, 3], [0, 3]];
 
-var z_delta = CAMERA_Z_DELTA;
-var x_delta = 0;
+var deltaX = 0.0;
+var deltaZ = CAMERA_Z_DELTA;
+var rotation_progress = 0.0;
+var rotation_target = 0;
+var pathIndex = 0;
+var targetX;
+var targetZ;
+var targetAngle = 0;
+var ROTATION_DELTA = 0.05;
+var deltaAngle = ROTATION_DELTA;
+var RIGHT_ANGLE = Math.PI / 2;
 
 function swoop_animation() {
   camera.position.y -= SWOOP_DESCENT_DELTA;
-  camera.position.z -= z_delta;
-  z_delta += SWOOP_SPEED_DELTA;
+  camera.position.z -= deltaZ;
+
+  deltaZ += SWOOP_SPEED_DELTA;
   
   renderer.render(scene, camera);
-  animFunc = (camera.position.z <= TOTAL_SCENE_DEPTH / 2) ? forward_animation : swoop_animation;
+  animFunc = (camera.position.z <= (TOTAL_SCENE_DEPTH / 2) + (STREET_WIDTH / 2)) ? forward_animation : swoop_animation;
+  if (animFunc == forward_animation) {
+    camera.position.z = (TOTAL_SCENE_DEPTH / 2) + (STREET_WIDTH / 2);
+    targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
+    targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
+    deltaX = (camera.position.x == targetX) ? 0 : 0.2;
+    deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
+    deltaX *= (camera.position.x > targetX) ? -1 : 1;
+    deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
+  }
+
   requestAnimFrame(animFunc);
 }
 
 function forward_animation() {
-  camera.position.z -= z_delta;
-  camera.position.x -= x_delta;
+  camera.position.x += deltaX;
+  camera.position.z += deltaZ;
+
+  if ((deltaX < 0 && camera.position.x < targetX) || (deltaX > 0 && camera.position.x > targetX) ||
+      (deltaZ < 0 && camera.position.z < targetZ) || (deltaZ > 0 && camera.position.z > targetZ)) {    
+    camera.position.x = targetX;
+    camera.position.z = targetZ;
+
+    pathIndex += 1;
+    if (pathIndex >= PATH.length) {
+      pathIndex = 0;
+    }
+
+    targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
+    targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
+    deltaX = (camera.position.x == targetX) ? 0 : 0.2;
+    deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
+    deltaX *= (camera.position.x > targetX) ? -1 : 1;
+    deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
+
+    var oldTargetAngle = targetAngle;
+    if (oldTargetAngle == 0) {
+      targetAngle = (deltaX < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
+    }
+    else if (oldTargetAngle == RIGHT_ANGLE || oldTargetAngle == ((-3 * Math.PI) / 2)) {
+      targetAngle = (deltaZ < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
+    }
+    else if (oldTargetAngle == Math.PI || oldTargetAngle == Math.PI * -1) {
+      targetAngle = (deltaX < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
+    }
+    else if (oldTargetAngle == Math.PI / -2 || oldTargetAngle == (Math.PI * 3) / 2) {
+      targetAngle = (deltaZ < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
+    }
+    deltaAngle = ROTATION_DELTA;
+    deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
+
+    animFunc = rotate_animation;
+  }
+  else {
+    animFunc = forward_animation;
+  }
 
   renderer.render(scene, camera);
-  animFunc = (ee(camera.position.z, 0, 0.1)) ? rotate_animation : forward_animation;
   requestAnimFrame(animFunc);
 }
 
 function rotate_animation() {
-  camera.rotation.y += 0.06;
-
-  renderer.render(scene, camera);
-  animFunc = (ee(camera.rotation.y, Math.PI / 2, 0.05)) ? forward_animation : rotate_animation;
-
-  if (animFunc == forward_animation) {
-    camera.position.z = 0.10001;
-    if (z_delta > 0) {
-      x_delta = z_delta;
-      z_delta = 0;
+  camera.rotation.y += deltaAngle;
+  
+  if ((deltaAngle < 0 && camera.rotation.y <= targetAngle) || (deltaAngle > 0 && camera.rotation.y >= targetAngle)) {
+    if (targetAngle >= Math.PI * 2 || targetAngle <= Math.PI * -2) {
+      targetAngle = 0;
     }
-    else {
-      z_delta = x_delta;
-      x_delta = 0;
-    }
+
+    camera.rotation.y = targetAngle;
+    animFunc = forward_animation;
+  }
+  else {
+    animFunc = rotate_animation;
   }
 
+  renderer.render(scene, camera);
   requestAnimFrame(animFunc);
 }
 
