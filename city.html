@@ -50,16 +50,6 @@ function initScene() {
   var $container = $('#container');
   $container.append(renderer.domElement);
 
-  // Build camera
-  var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
-  camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-
-  // Build light source
-  var pointLight = new THREE.PointLight(0xffffff);
-  pointLight.position.x = 0;
-  pointLight.position.y = 0;
-  pointLight.position.z = 100000;
-
   // Build scene
   scene = new THREE.Scene();
   
@@ -109,10 +99,19 @@ function initScene() {
     scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
   }
 
+  // Build camera
+  var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+  camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   camera.lookAt(scene.position);
   camera.position.x = 0;
   camera.position.y = 5;
   camera.position.z = HALF_SCENE_DEPTH + 90;
+
+  // Build light source
+  var pointLight = new THREE.PointLight(0xffffff);
+  pointLight.position.x = 0;
+  pointLight.position.y = 0;
+  pointLight.position.z = 100000;
 
   scene.add(camera);
   scene.add(pointLight);
