@@ -75,23 +75,49 @@ function initScene() {
     buildingGeometries.push(new THREE.Geometry());
   }
 
+  var BLOCK_LAYOUTS = [
+                        [ { width: 1.0, depth: 1.0, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.0 } ],
+                        [ { width: 0.5, depth: 1.0, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.0 },
+                          { width: 0.5, depth: 1.0, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.0 } ],
+                        [ { width: 1.0, depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: -0.5 },
+                          { width: 1.0, depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.5 } ],
+                        [ { width: 0.5, depth: 1.0, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.0 },
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5},
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.5} ],
+                        [ { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: -0.5 },
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.5},
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5},
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.5} ],
+                        [ { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: -(2 / 3), offsetFromBlockCenterZ: 0.5 },
+                          { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.5},
+                          { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: (2 / 3), offsetFromBlockCenterZ: 0.5},
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: -0.5},
+                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5} ],
+                      ];
+
+  // Loop through the lower left corner of each block
   for (var i = -(HALF_SCENE_WIDTH); i < HALF_SCENE_WIDTH; i += BLOCK_WIDTH + STREET_WIDTH) {
     for (var j = -(HALF_SCENE_DEPTH); j < HALF_SCENE_DEPTH; j += BLOCK_DEPTH + STREET_DEPTH) {
 
-      var maxHeightI = MAX_BUILDING_HEIGHT * ((HALF_SCENE_WIDTH - Math.abs(i)) / HALF_SCENE_WIDTH);
-      var maxHeightJ = MAX_BUILDING_HEIGHT * ((HALF_SCENE_DEPTH - Math.abs(j)) / HALF_SCENE_DEPTH);
-      var maxHeight = Math.min(maxHeightI, maxHeightJ);
+      var building;
+      var blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
+      for (var layoutIndex = 0; layoutIndex < blockLayout.length; layoutIndex++) {
+        var lotLayout = blockLayout[layoutIndex];
+        var maxHeightI = MAX_BUILDING_HEIGHT * ((HALF_SCENE_WIDTH - Math.abs(i)) / HALF_SCENE_WIDTH);
+        var maxHeightJ = MAX_BUILDING_HEIGHT * ((HALF_SCENE_DEPTH - Math.abs(j)) / HALF_SCENE_DEPTH);
+        var maxHeight = Math.min(maxHeightI, maxHeightJ);
+        var buildingHeight = Math.floor((Math.random() * maxHeight - MIN_BUILDING_HEIGHT)) + MIN_BUILDING_HEIGHT;
 
-      var buildingHeight = Math.floor((Math.random() * maxHeight - MIN_BUILDING_HEIGHT)) + MIN_BUILDING_HEIGHT;
-      var building = new THREE.Mesh(new THREE.CubeGeometry(LOT_WIDTH * BLOCK_WIDTH, 1, LOT_DEPTH * BLOCK_WIDTH));
-
-      building.position.x = i + BLOCK_WIDTH / 2;
-      building.scale.y =  (Math.random() * maxHeight) + MIN_BUILDING_HEIGHT;
-      building.position.y = building.scale.y / 2;
-      building.position.z = j + BLOCK_DEPTH / 2;
+        building = new THREE.Mesh(new THREE.CubeGeometry(lotLayout.width * BLOCK_WIDTH, 1, lotLayout.depth * BLOCK_WIDTH));
       
-      var index = Math.floor(Math.random() * MAX_BUILDING_MATERIALS);
-      THREE.GeometryUtils.merge(buildingGeometries[index], building); 
+        building.position.x = i + BLOCK_WIDTH / 2 + ((BLOCK_WIDTH / 2) * lotLayout.offsetFromBlockCenterX);
+        building.scale.y =  (Math.random() * maxHeight) + MIN_BUILDING_HEIGHT;
+        building.position.y = building.scale.y / 2;
+        building.position.z = j + BLOCK_DEPTH / 2 + ((BLOCK_DEPTH / 2) * lotLayout.offsetFromBlockCenterZ);
+
+        var index = Math.floor(Math.random() * MAX_BUILDING_MATERIALS);
+        THREE.GeometryUtils.merge(buildingGeometries[index], building); 
+      }
     }
   }
 
