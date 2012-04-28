@@ -34,7 +34,9 @@ var MIN_BUILDING_HEIGHT = 0.5;
 var MAX_BUILDING_HEIGHT = 10;
 var MAX_BUILDING_MATERIALS = 20;
 var TOTAL_SCENE_WIDTH = (BLOCK_WIDTH * BLOCK_ROWS) + (STREET_WIDTH * (BLOCK_ROWS - 1));
+var HALF_SCENE_WIDTH = TOTAL_SCENE_WIDTH / 2;
 var TOTAL_SCENE_DEPTH = (BLOCK_DEPTH * BLOCK_COLUMNS) + (STREET_DEPTH * (BLOCK_COLUMNS - 1));
+var HALF_SCENE_DEPTH = TOTAL_SCENE_DEPTH / 2;
 
 var renderer, scene, camera;
 
@@ -83,19 +85,18 @@ function initScene() {
     buildingGeometries.push(new THREE.Geometry());
   }
 
-  for (var i = -(TOTAL_SCENE_WIDTH / 2); i < TOTAL_SCENE_WIDTH / 2; i += BLOCK_WIDTH + STREET_WIDTH) {
-    for (var j = -(TOTAL_SCENE_DEPTH / 2); j < TOTAL_SCENE_DEPTH / 2; j += BLOCK_DEPTH + STREET_DEPTH) {
+  for (var i = -(HALF_SCENE_WIDTH); i < HALF_SCENE_WIDTH; i += BLOCK_WIDTH + STREET_WIDTH) {
+    for (var j = -(HALF_SCENE_DEPTH); j < HALF_SCENE_DEPTH; j += BLOCK_DEPTH + STREET_DEPTH) {
 
-      var maxHeightI = MAX_BUILDING_HEIGHT * (((TOTAL_SCENE_WIDTH / 2) - Math.abs(i)) / (TOTAL_SCENE_WIDTH / 2));
-      var maxHeightJ = MAX_BUILDING_HEIGHT * (((TOTAL_SCENE_DEPTH / 2) - Math.abs(j)) / (TOTAL_SCENE_DEPTH / 2));
+      var maxHeightI = MAX_BUILDING_HEIGHT * ((HALF_SCENE_WIDTH - Math.abs(i)) / HALF_SCENE_WIDTH);
+      var maxHeightJ = MAX_BUILDING_HEIGHT * ((HALF_SCENE_DEPTH - Math.abs(j)) / HALF_SCENE_DEPTH);
       var maxHeight = Math.min(maxHeightI, maxHeightJ);
 
       var buildingHeight = Math.floor((Math.random() * maxHeight - MIN_BUILDING_HEIGHT)) + MIN_BUILDING_HEIGHT;
-      
       var building = new THREE.Mesh(new THREE.CubeGeometry(LOT_WIDTH * BLOCK_WIDTH, 1, LOT_DEPTH * BLOCK_WIDTH));
 
       building.position.x = i + BLOCK_WIDTH / 2;
-      building.scale.y =  (Math.random() * maxHeight) + MIN_BUILDING_HEIGHT ;
+      building.scale.y =  (Math.random() * maxHeight) + MIN_BUILDING_HEIGHT;
       building.position.y = building.scale.y / 2;
       building.position.z = j + BLOCK_DEPTH / 2;
       
@@ -111,7 +112,7 @@ function initScene() {
   camera.lookAt(scene.position);
   camera.position.x = 0;
   camera.position.y = 5;
-  camera.position.z = (TOTAL_SCENE_DEPTH / 2) + 90;
+  camera.position.z = HALF_SCENE_DEPTH + 90;
 
   scene.add(camera);
   scene.add(pointLight);
@@ -154,9 +155,9 @@ function swoop_animation() {
   deltaZ += SWOOP_SPEED_DELTA;
   
   renderer.render(scene, camera);
-  animFunc = (camera.position.z <= (TOTAL_SCENE_DEPTH / 2) + (STREET_WIDTH / 2)) ? forward_animation : swoop_animation;
+  animFunc = (camera.position.z <= (HALF_SCENE_DEPTH + (STREET_WIDTH / 2))) ? forward_animation : swoop_animation;
   if (animFunc == forward_animation) {
-    camera.position.z = (TOTAL_SCENE_DEPTH / 2) + (STREET_WIDTH / 2);
+    camera.position.z = HALF_SCENE_DEPTH + (STREET_WIDTH / 2);
     targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
     targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
     deltaX = (camera.position.x == targetX) ? 0 : 0.2;
