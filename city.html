@@ -150,7 +150,7 @@ function initScene() {
   scene.add(pointLight2);
   renderer.render(scene, camera);
 
-  swoop_animation();
+  animate();
 }
 
 var CAMERA_Z_DELTA = 0.2;
@@ -171,41 +171,62 @@ var ROTATION_DELTA = 0.05;
 var deltaAngle = ROTATION_DELTA;
 var RIGHT_ANGLE = Math.PI / 2;
 
-function swoop_animation() {
+var animator = new swoopAnimation();
+function animate() {
+  animator.animate();
+
+  if (animator.finished == true) {
+    if (animator instanceof swoopAnimation || animator instanceof rotationAnimation) {
+      animator = new forwardAnimation();
+    }
+    else {
+      animator = new rotationAnimation();
+    }
+  }
+
+  renderer.render(scene, camera);
+  requestAnimFrame(animate);
+}
+
+function swoopAnimation() {
+  this.finished = false;
+}
+
+swoopAnimation.prototype.animate = function() {
   camera.position.y -= SWOOP_DESCENT_DELTA;
   camera.position.z -= deltaZ;
 
-  deltaZ += SWOOP_SPEED_DELTA;
-  
-  renderer.render(scene, camera);
-  animFunc = (camera.position.z <= (HALF_SCENE_DEPTH + (STREET_WIDTH / 2))) ? forward_animation : swoop_animation;
-  if (animFunc == forward_animation) {
+  if (camera.position.z <= (HALF_SCENE_DEPTH + (STREET_WIDTH / 2))) {
     camera.position.z = HALF_SCENE_DEPTH + (STREET_WIDTH / 2);
-    targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
-    targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
-    deltaX = (camera.position.x == targetX) ? 0 : 0.2;
-    deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
-    deltaX *= (camera.position.x > targetX) ? -1 : 1;
-    deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
+    this.finished = true;
   }
-
-  requestAnimFrame(animFunc);
 }
 
-function forward_animation() {
+function forwardAnimation() {
+  targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
+  targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
+  deltaX = (camera.position.x == targetX) ? 0 : 0.2;
+  deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
+  deltaX *= (camera.position.x > targetX) ? -1 : 1;
+  deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
+
+  this.finished = false;
+}
+
+forwardAnimation.prototype.animate = function() {
   camera.position.x += deltaX;
   camera.position.z += deltaZ;
 
   if ((deltaX < 0 && camera.position.x < targetX) || (deltaX > 0 && camera.position.x > targetX) ||
-      (deltaZ < 0 && camera.position.z < targetZ) || (deltaZ > 0 && camera.position.z > targetZ)) {    
-    camera.position.x = targetX;
-    camera.position.z = targetZ;
-
+      (deltaZ < 0 && camera.position.z < targetZ) || (deltaZ > 0 && camera.position.z > targetZ)) {
     pathIndex += 1;
     if (pathIndex >= PATH.length) {
       pathIndex = 0;
     }
 
+    camera.position.x = targetX;
+    camera.position.z = targetZ;
+
     targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
     targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
     deltaX = (camera.position.x == targetX) ? 0 : 0.2;
@@ -213,33 +234,31 @@ function forward_animation() {
     deltaX *= (camera.position.x > targetX) ? -1 : 1;
     deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
 
-    var oldTargetAngle = targetAngle;
-    if (oldTargetAngle == 0) {
-      targetAngle = (deltaX < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
-    }
-    else if (oldTargetAngle == RIGHT_ANGLE || oldTargetAngle == ((-3 * Math.PI) / 2)) {
-      targetAngle = (deltaZ < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
-    }
-    else if (oldTargetAngle == Math.PI || oldTargetAngle == Math.PI * -1) {
-      targetAngle = (deltaX < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
-    }
-    else if (oldTargetAngle == Math.PI / -2 || oldTargetAngle == (Math.PI * 3) / 2) {
-      targetAngle = (deltaZ < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
-    }
-    deltaAngle = ROTATION_DELTA;
-    deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
-
-    animFunc = rotate_animation;
+    this.finished = true;
   }
-  else {
-    animFunc = forward_animation;
-  }
-
-  renderer.render(scene, camera);
-  requestAnimFrame(animFunc);
 }
 
-function rotate_animation() {
+function rotationAnimation() {
+  var oldTargetAngle = targetAngle;
+  if (oldTargetAngle == 0) {
+    targetAngle = (deltaX < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
+  }
+  else if (oldTargetAngle == RIGHT_ANGLE || oldTargetAngle == ((-3 * Math.PI) / 2)) {
+    targetAngle = (deltaZ < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
+  }
+  else if (oldTargetAngle == Math.PI || oldTargetAngle == Math.PI * -1) {
+    targetAngle = (deltaX < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
+  }
+  else if (oldTargetAngle == Math.PI / -2 || oldTargetAngle == (Math.PI * 3) / 2) {
+    targetAngle = (deltaZ < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
+  }
+  deltaAngle = ROTATION_DELTA;
+  deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
+
+  this.finished = false;
+}
+
+rotationAnimation.prototype.animate = function() {
   camera.rotation.y += deltaAngle;
   
   if ((deltaAngle < 0 && camera.rotation.y <= targetAngle) || (deltaAngle > 0 && camera.rotation.y >= targetAngle)) {
@@ -248,14 +267,8 @@ function rotate_animation() {
     }
 
     camera.rotation.y = targetAngle;
-    animFunc = forward_animation;
+    this.finished = true;
   }
-  else {
-    animFunc = rotate_animation;
-  }
-
-  renderer.render(scene, camera);
-  requestAnimFrame(animFunc);
 }
 
 initScene();
