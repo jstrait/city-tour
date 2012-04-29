@@ -177,11 +177,22 @@ var deltaAngle = ROTATION_DELTA;
 var RIGHT_ANGLE = Math.PI / 2;
 
 var animator = new swoopAnimation();
+var hoverAnimator;
 function animate() {
   animator.animate();
+  if (hoverAnimator != undefined) {
+    hoverAnimator.animate();
+    if (hoverAnimator.finished) {
+      hoverAnimator = new hoverAnimation();
+    }
+  }
 
   if (animator.finished == true) {
-    if (animator instanceof swoopAnimation || animator instanceof forwardAnimation) {
+    if (animator instanceof swoopAnimation) {
+      animator = new rotationAnimation();
+      hoverAnimator = new hoverAnimation();
+    }
+    else if (animator instanceof forwardAnimation) {
       animator = new rotationAnimation();
     }
     else if (animator instanceof rotationAnimation) {
@@ -266,6 +277,33 @@ rotationAnimation.prototype.animate = function() {
     }
 
     camera.rotation.y = targetAngle;
+    this.finished = true;
+  }
+}
+
+function hoverAnimation() {
+  this.targetDistance = (Math.random() * 200) + 200;
+  this.ticks = 0;
+  this.deltaY = (camera.position.y > 1.0) ? -0.1 : 0.1;
+  this.minHeight = 0.5;
+  this.maxHeight = 8;
+  this.finished = false;
+}
+
+hoverAnimation.prototype.animate = function() {
+  if (camera.position.y >= this.minHeight && camera.position.y <= this.maxHeight) {
+    camera.position.y += this.deltaY;
+  }
+  if (camera.position.y < this.minHeight) {
+    camera.position.y = this.minHeight;
+  }  
+  if (camera.position.y > this.maxHeight) {
+    camera.position.y = this.maxHeight;
+  }
+
+  this.ticks += 1;
+
+  if (this.ticks > this.targetDistance) {
     this.finished = true;
   }
 }
