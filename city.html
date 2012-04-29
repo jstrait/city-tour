@@ -4,10 +4,15 @@
     <meta charset="utf-8" />
     <title>3D City</title>
     <style>
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+
 #container {
   background: #66ccff;
-  width: 1000px;
-  height: 1000px;
+  width: 100%;
+  height: 100%;
 }
     </style>
 </head>
@@ -41,7 +46,7 @@ var HALF_SCENE_DEPTH = TOTAL_SCENE_DEPTH / 2;
 var renderer, scene, camera;
 
 function initScene() {
-  var WIDTH = 1000, HEIGHT = 1000;
+  var WIDTH = window.innerWidth, HEIGHT = window.innerHeight;
 
   // Build renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
