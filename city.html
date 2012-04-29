@@ -176,11 +176,11 @@ function animate() {
   animator.animate();
 
   if (animator.finished == true) {
-    if (animator instanceof swoopAnimation || animator instanceof rotationAnimation) {
-      animator = new forwardAnimation();
-    }
-    else {
+    if (animator instanceof swoopAnimation || animator instanceof forwardAnimation) {
       animator = new rotationAnimation();
+    }
+    else if (animator instanceof rotationAnimation) {
+      animator = new forwardAnimation();
     }
   }
 
@@ -203,13 +203,6 @@ swoopAnimation.prototype.animate = function() {
 }
 
 function forwardAnimation() {
-  targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
-  targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
-  deltaX = (camera.position.x == targetX) ? 0 : 0.2;
-  deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
-  deltaX *= (camera.position.x > targetX) ? -1 : 1;
-  deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
-
   this.finished = false;
 }
 
@@ -227,31 +220,32 @@ forwardAnimation.prototype.animate = function() {
     camera.position.x = targetX;
     camera.position.z = targetZ;
 
-    targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
-    targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
-    deltaX = (camera.position.x == targetX) ? 0 : 0.2;
-    deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
-    deltaX *= (camera.position.x > targetX) ? -1 : 1;
-    deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
-
     this.finished = true;
   }
 }
 
 function rotationAnimation() {
+  targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
+  targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
+  deltaX = (camera.position.x == targetX) ? 0 : 0.2;
+  deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
+  deltaX *= (camera.position.x > targetX) ? -1 : 1;
+  deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
+
   var oldTargetAngle = targetAngle;
-  if (oldTargetAngle == 0) {
+  if (deltaX != 0 && oldTargetAngle == 0) {  // NORTH
     targetAngle = (deltaX < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
   }
-  else if (oldTargetAngle == RIGHT_ANGLE || oldTargetAngle == ((-3 * Math.PI) / 2)) {
+  else if (deltaZ != 0 && (oldTargetAngle == RIGHT_ANGLE || oldTargetAngle == ((-3 * Math.PI) / 2))) {  // EAST
     targetAngle = (deltaZ < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
   }
-  else if (oldTargetAngle == Math.PI || oldTargetAngle == Math.PI * -1) {
+  else if (deltaX != 0 && (oldTargetAngle == Math.PI || oldTargetAngle == Math.PI * -1)) {  // SOUTH
     targetAngle = (deltaX < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
   }
-  else if (oldTargetAngle == Math.PI / -2 || oldTargetAngle == (Math.PI * 3) / 2) {
+  else if (deltaZ != 0 && (oldTargetAngle == Math.PI / -2 || oldTargetAngle == (Math.PI * 3) / 2)) {  // WEST
     targetAngle = (deltaZ < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
   }
+
   deltaAngle = ROTATION_DELTA;
   deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
 
