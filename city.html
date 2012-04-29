@@ -172,7 +172,7 @@ var pathIndex = 0;
 var targetX;
 var targetZ;
 var targetAngle = 0;
-var ROTATION_DELTA = 0.05;
+var ROTATION_DELTA = 0.03;
 var deltaAngle = ROTATION_DELTA;
 var RIGHT_ANGLE = Math.PI / 2;
 
@@ -282,11 +282,11 @@ rotationAnimation.prototype.animate = function() {
 }
 
 function hoverAnimation() {
-  this.targetDistance = (Math.random() * 200) + 200;
+  this.targetDistance = (Math.random() * 300) + 300;
   this.ticks = 0;
   this.deltaY = (camera.position.y > 1.0) ? -0.1 : 0.1;
   this.minHeight = 0.5;
-  this.maxHeight = 8;
+  this.maxHeight = 15;
   this.finished = false;
 }
 
