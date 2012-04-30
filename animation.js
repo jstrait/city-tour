@@ -2,7 +2,7 @@ var CAMERA_Z_DELTA = 0.2;
 var CAMERA_X_DELTA = 0.2;
 var SWOOP_DESCENT_DELTA = 0.01;
 var SWOOP_SPEED_DELTA = 0.00003;
-var PATH = [[0, -1], [-10, -1], [-10, -8], [10, -8], [10, 8], [14, 8], [14, 11], [0, 11]];
+//var PATH = [[0, -1], [-10, -1], [-10, -8], [10, -8], [10, 8], [14, 8], [14, 11], [0, 11]];
 
 var deltaX = 0.0;
 var deltaZ = CAMERA_Z_DELTA;
@@ -10,7 +10,9 @@ var rotation_progress = 0.0;
 var rotation_target = 0;
 var pathIndex = 0;
 var targetX;
+var targetGridX;
 var targetZ;
+var targetGridZ;
 var targetAngle = 0;
 var ROTATION_DELTA = 0.03;
 var deltaAngle = ROTATION_DELTA;
@@ -54,6 +56,7 @@ swoopAnimation.prototype.animate = function() {
 
   if (camera.position.z <= (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) {
     camera.position.z = city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2);
+
     this.finished = true;
   }
 }
@@ -68,11 +71,6 @@ forwardAnimation.prototype.animate = function() {
 
   if ((deltaX < 0 && camera.position.x < targetX) || (deltaX > 0 && camera.position.x > targetX) ||
       (deltaZ < 0 && camera.position.z < targetZ) || (deltaZ > 0 && camera.position.z > targetZ)) {
-    pathIndex += 1;
-    if (pathIndex >= PATH.length) {
-      pathIndex = 0;
-    }
-
     camera.position.x = targetX;
     camera.position.z = targetZ;
 
@@ -81,8 +79,31 @@ forwardAnimation.prototype.animate = function() {
 }
 
 function rotationAnimation() {
-  targetX = (PATH[pathIndex][0] * city.BLOCK_WIDTH) + (PATH[pathIndex][0] * city.STREET_WIDTH);
-  targetZ = (PATH[pathIndex][1] * city.BLOCK_WIDTH) + (PATH[pathIndex][1] * city.STREET_WIDTH);
+  if (targetX == undefined || targetZ == undefined) {
+    targetGridX = 0;
+    targetGridZ = -1;
+
+    targetX = (targetGridX * city.BLOCK_WIDTH) + (targetGridX * city.STREET_WIDTH);
+    targetZ = (targetGridZ * city.BLOCK_WIDTH) + (targetGridZ * city.STREET_WIDTH);
+  }
+  else {
+    var oldTargetGridX = targetGridX;
+    var oldTargetGridZ = targetGridZ;
+
+    while (oldTargetGridX == targetGridX && oldTargetGridZ == targetGridZ) {
+      if (deltaX == 0) {
+        targetGridX = Math.floor(Math.random() * city.BLOCK_ROWS) - (city.BLOCK_ROWS / 2);
+      }
+      else if (deltaZ == 0) {
+        targetGridZ = Math.floor(Math.random() * city.BLOCK_COLUMNS) - (city.BLOCK_COLUMNS / 2);
+      }
+    }
+
+    targetX = (targetGridX * city.BLOCK_WIDTH) + (targetGridX * city.STREET_WIDTH);
+    targetZ = (targetGridZ * city.BLOCK_WIDTH) + (targetGridZ * city.STREET_WIDTH);
+
+  }
+  
   deltaX = (camera.position.x == targetX) ? 0 : 0.2;
   deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
   deltaX *= (camera.position.x > targetX) ? -1 : 1;
