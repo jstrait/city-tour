@@ -43,7 +43,7 @@ City.prototype.buildScene = function() {
   var origin = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 10), originMaterial);
   scene.add(origin);
 
-  var groundMaterial = new THREE.MeshBasicMaterial({ color: 0x777777 });
+  var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
   var ground = new THREE.Mesh(new THREE.PlaneGeometry(this.TOTAL_SCENE_WIDTH * 5, this.TOTAL_SCENE_DEPTH * 5), groundMaterial);
   ground.rotation.x = -(Math.PI / 2);
   scene.add(ground);
@@ -84,8 +84,8 @@ City.prototype.buildMaterials = function() {
 
   for (var i = 0; i < this.MAX_BUILDING_MATERIALS; i++) {
     var r = Math.random();
-    var g = Math.random();
-    var b = Math.random();
+    var g = r;
+    var b = r;
     var buildingColor = new THREE.Color(0xffffff).setRGB(r, g, b);
 
     buildingMaterials.push(new THREE.MeshLambertMaterial({ color: buildingColor.getHex() }));
