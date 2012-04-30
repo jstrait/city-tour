@@ -52,8 +52,8 @@ swoopAnimation.prototype.animate = function() {
   camera.position.y -= SWOOP_DESCENT_DELTA;
   camera.position.z -= deltaZ;
 
-  if (camera.position.z <= (HALF_SCENE_DEPTH + (STREET_WIDTH / 2))) {
-    camera.position.z = HALF_SCENE_DEPTH + (STREET_WIDTH / 2);
+  if (camera.position.z <= (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) {
+    camera.position.z = city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2);
     this.finished = true;
   }
 }
@@ -81,8 +81,8 @@ forwardAnimation.prototype.animate = function() {
 }
 
 function rotationAnimation() {
-  targetX = (PATH[pathIndex][0] * BLOCK_WIDTH) + (PATH[pathIndex][0] * STREET_WIDTH);
-  targetZ = (PATH[pathIndex][1] * BLOCK_WIDTH) + (PATH[pathIndex][1] * STREET_WIDTH);
+  targetX = (PATH[pathIndex][0] * city.BLOCK_WIDTH) + (PATH[pathIndex][0] * city.STREET_WIDTH);
+  targetZ = (PATH[pathIndex][1] * city.BLOCK_WIDTH) + (PATH[pathIndex][1] * city.STREET_WIDTH);
   deltaX = (camera.position.x == targetX) ? 0 : 0.2;
   deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
   deltaX *= (camera.position.x > targetX) ? -1 : 1;
