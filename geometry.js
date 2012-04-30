@@ -44,7 +44,7 @@ City.prototype.buildScene = function() {
   scene.add(origin);
 
   var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
-  var ground = new THREE.Mesh(new THREE.PlaneGeometry(this.TOTAL_SCENE_WIDTH * 5, this.TOTAL_SCENE_DEPTH * 5), groundMaterial);
+  var ground = new THREE.Mesh(new THREE.PlaneGeometry(this.TOTAL_SCENE_WIDTH * 25, this.TOTAL_SCENE_DEPTH * 25), groundMaterial);
   ground.rotation.x = -(Math.PI / 2);
   scene.add(ground);
 
