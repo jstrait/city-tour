@@ -52,20 +52,24 @@ function initScene() {
   camera.position.z = city.HALF_SCENE_DEPTH + 90;
 
   // Build light sources
-  var pointLight1 = new THREE.PointLight(0xffffff);
-  pointLight1.position.x = 0;
-  pointLight1.position.y = 0;
-  pointLight1.position.z = 100000;
-
-  var pointLight2 = new THREE.PointLight(0xffffff);
-  pointLight2.position.x = 0;
-  pointLight2.position.y = 20;
-  pointLight2.position.z = 0;
+  addPointLight(scene, 0, 0, 100000);
+  addPointLight(scene, 0, 0, -100000);
+  addPointLight(scene, -10000, 20, -10000);
+  addPointLight(scene, 10000, 20, -10000);
+  addPointLight(scene, 10000, 20, 10000);
+  addPointLight(scene, -10000, 20, 10000);
 
   scene.add(camera);
-  scene.add(pointLight1);
-  scene.add(pointLight2);
   renderer.render(scene, camera);
+}
+
+function addPointLight(scene, x, y, z) {
+  var pointLight = new THREE.PointLight(0xffffff);
+  pointLight.position.x = x;
+  pointLight.position.y = y;
+  pointLight.position.z = z;
+
+  scene.add(pointLight);
 }
 
 initScene();
