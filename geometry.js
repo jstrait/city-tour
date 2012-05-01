@@ -38,10 +38,6 @@ function City() {
 
 City.prototype.buildScene = function() {
   var scene = new THREE.Scene();
-  
-  var originMaterial = new THREE.MeshLambertMaterial({ color: 0xf32920 });
-  var origin = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 10), originMaterial);
-  scene.add(origin);
 
   var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
   var ground = new THREE.Mesh(new THREE.PlaneGeometry(this.TOTAL_SCENE_WIDTH * 25, this.TOTAL_SCENE_DEPTH * 25), groundMaterial);
