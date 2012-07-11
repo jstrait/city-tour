@@ -1,6 +1,4 @@
 function City() {
-  this.LOT_WIDTH = 1;
-  this.LOT_DEPTH = 1;
   this.STREET_WIDTH = 2;
   this.STREET_DEPTH = 2;
   this.BLOCK_WIDTH = 4;

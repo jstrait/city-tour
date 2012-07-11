@@ -1,7 +1,5 @@
 var CAMERA_Z_DELTA = 0.2;
-var CAMERA_X_DELTA = 0.2;
 var SWOOP_DESCENT_DELTA = 0.01;
-var SWOOP_SPEED_DELTA = 0.00003;
 //var PATH = [[0, -1], [-10, -1], [-10, -8], [10, -8], [10, 8], [14, 8], [14, 11], [0, 11]];
 
 var deltaX = 0.0;
