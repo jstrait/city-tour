@@ -2,7 +2,7 @@ var renderer, scene, camera;
 var city;
 
 function initScene($container) {
-  var WIDTH = window.innerWidth, HEIGHT = window.innerHeight;
+  var WIDTH = $container.width(), HEIGHT = $container.height();
 
   // Build renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
