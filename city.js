@@ -1,14 +1,13 @@
 var renderer, scene, camera;
 var city;
 
-function initScene() {
+function initScene($container) {
   var WIDTH = window.innerWidth, HEIGHT = window.innerHeight;
 
   // Build renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setSize(WIDTH, HEIGHT);
 
-  var $container = $('#container');
   $container.append(renderer.domElement);
   
   city = new City();
