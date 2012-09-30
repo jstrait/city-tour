@@ -30,7 +30,6 @@ function initScene() {
   addPointLight(scene, 10000, 20, 10000);
   addPointLight(scene, -10000, 20, 10000);
 
-  scene.add(camera);
   renderer.render(scene, camera);
 }
 
