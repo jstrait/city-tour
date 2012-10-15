@@ -30,7 +30,12 @@ body {
 
 var $container = $('#container');
 $container.css({'height': window.innerHeight});
-initScene($container);
-animate();
+if (detectWebGL()) {
+  initScene($container);
+  animate();
+}
+else {
+  alert("Your browser doesn't seem to support WebGL. Sorry!");
+}
 </script>
 </html>
