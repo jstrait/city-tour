@@ -11,13 +11,14 @@ var targetAngle = 0;
 var ROTATION_DELTA = 0.03;
 var deltaAngle = ROTATION_DELTA;
 
-var animators = [];
-var previousFrameTimestamp;
-
-function animate() {
+var AnimationManager = function() {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 
-  if (animators.length === 0) {
+  var animationManager = {};
+  var animators = [];
+  var previousFrameTimestamp;
+
+  var init = function() {
     targetX = 0;
     targetZ = 0;
     deltaX = 0;
@@ -25,49 +26,59 @@ function animate() {
 
     var ramp = new rampAnimation((camera.position.z - (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) / Math.abs(deltaZ), -SWOOP_DESCENT_DELTA, 0.5, 1000000);
     var forward = new forwardAnimation();
-
     animators = [ramp, forward];
-  }
+  };
 
-  var currentTimestamp = new Date().getTime();
-  if (previousFrameTimestamp == undefined) {
-    frameCount = 1;
-  }
-  else {
-    frameCount = Math.floor((currentTimestamp - previousFrameTimestamp) / TARGET_FRAME_WINDOW);
-    if (frameCount < 1) {
+  animationManager.animate = function() {
+    var currentTimestamp = new Date().getTime();
+    var frameCount;
+
+    if (animators.length === 0) {
+      init();
+    }
+
+    if (previousFrameTimestamp === undefined) {
       frameCount = 1;
     }
-  }
-  previousFrameTimestamp = currentTimestamp;
-
-  var newAnimators = [];
-  for (var i = 0; i < animators.length; i++) {
-    animators[i].animate(frameCount);
-
-    if (animators[i].finished === true) {
-      if (animators[i] instanceof rampAnimation) {
-        newAnimators.push(new hoverAnimation());
-      }
-      else if (animators[i] instanceof forwardAnimation) {
-        newAnimators.push(new rotationAnimation());
-      }
-      else if (animators[i] instanceof rotationAnimation) {
-        newAnimators.push(new forwardAnimation());
-      }
-      else if (animators[i] instanceof hoverAnimation) {
-        newAnimators.push(new hoverAnimation());
-      }
-    }
     else {
-      newAnimators.push(animators[i]);
+      frameCount = Math.floor((currentTimestamp - previousFrameTimestamp) / TARGET_FRAME_WINDOW);
+      if (frameCount < 1) {
+        frameCount = 1;
+      }
     }
-  }
-  animators = newAnimators;
+    previousFrameTimestamp = currentTimestamp;
 
-  renderer.render(scene, camera);
-  requestAnimFrame(animate);
-}
+    var newAnimators = [];
+    for (var i = 0; i < animators.length; i++) {
+      animators[i].animate(frameCount);
+
+      if (animators[i].finished === true) {
+        if (animators[i] instanceof rampAnimation) {
+          newAnimators.push(new hoverAnimation());
+        }
+        else if (animators[i] instanceof forwardAnimation) {
+          newAnimators.push(new rotationAnimation());
+        }
+        else if (animators[i] instanceof rotationAnimation) {
+          newAnimators.push(new forwardAnimation());
+        }
+        else if (animators[i] instanceof hoverAnimation) {
+          newAnimators.push(new hoverAnimation());
+        }
+      }
+      else {
+        newAnimators.push(animators[i]);
+      }
+    }
+    animators = newAnimators;
+
+    renderer.render(scene, camera);
+    requestAnimFrame(animationManager.animate);
+  };
+
+  return animationManager;
+};
+
 
 function forwardAnimation() {
   this.finished = false;

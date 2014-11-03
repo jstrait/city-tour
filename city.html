@@ -34,9 +34,12 @@ body {
 <script type="text/javascript">
 
 var $container = $('#container');
+
 if (detectWebGL()) {
   initScene($container);
-  animate();
+
+  var animationManager = new AnimationManager();
+  animationManager.animate();
 }
 else {
   alert("Your browser doesn't seem to support WebGL. Sorry!");
