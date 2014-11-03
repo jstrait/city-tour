@@ -16,8 +16,9 @@ var deltaAngle = ROTATION_DELTA;
 var RIGHT_ANGLE = Math.PI / 2;
 var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 
-var animator = new swoopAnimation();
-var hoverAnimator;
+//var animator = new swoopAnimation();
+//var hoverAnimator;
+var animators = [new swoopAnimation()];
 var previousFrameTimestamp;
 
 function animate() {
@@ -33,26 +34,30 @@ function animate() {
   }
   previousFrameTimestamp = currentTimestamp;
 
-  animator.animate(frameCount);
-  if (hoverAnimator != undefined) {
-    hoverAnimator.animate(frameCount);
-    if (hoverAnimator.finished) {
-      hoverAnimator = new hoverAnimation();
-    }
-  }
+  var newAnimators = [];
+  for (var i = 0; i < animators.length; i++) {
+    animators[i].animate(frameCount);
 
-  if (animator.finished == true) {
-    if (animator instanceof swoopAnimation) {
-      animator = new rotationAnimation();
-      hoverAnimator = new hoverAnimation();
+    if (animators[i].finished === true) {
+      if (animators[i] instanceof swoopAnimation) {
+        newAnimators.push(new rotationAnimation());
+        newAnimators.push(new hoverAnimation());
+      }
+      else if (animators[i] instanceof forwardAnimation) {
+        newAnimators.push(new rotationAnimation());
+      }
+      else if (animators[i] instanceof rotationAnimation) {
+        newAnimators.push(new forwardAnimation());
+      }
+      else if (animators[i] instanceof hoverAnimation) {
+        newAnimators.push(new hoverAnimation());
+      }
     }
-    else if (animator instanceof forwardAnimation) {
-      animator = new rotationAnimation();
-    }
-    else if (animator instanceof rotationAnimation) {
-      animator = new forwardAnimation();
+    else {
+      newAnimators.push(animators[i]);
     }
   }
+  animators = newAnimators;
 
   renderer.render(scene, camera);
   requestAnimFrame(animate);
