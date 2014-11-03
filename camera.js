@@ -16,12 +16,22 @@ var deltaAngle = ROTATION_DELTA;
 var RIGHT_ANGLE = Math.PI / 2;
 var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 
-//var animator = new swoopAnimation();
-//var hoverAnimator;
-var animators = [new swoopAnimation()];
+var animators = [];
 var previousFrameTimestamp;
 
 function animate() {
+  if (animators.length === 0) {
+    targetX = 0;
+    targetZ = 0;
+    deltaX = 0;
+    deltaZ = -0.2;
+
+    var ramp = new rampAnimation((camera.position.z - (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) / Math.abs(deltaZ), -SWOOP_DESCENT_DELTA, 0.5, 1000000);
+    var forward = new forwardAnimation();
+
+    animators = [ramp, forward];
+  }
+
   var currentTimestamp = new Date().getTime();
   if (previousFrameTimestamp == undefined) {
     frameCount = 1;
@@ -39,8 +49,7 @@ function animate() {
     animators[i].animate(frameCount);
 
     if (animators[i].finished === true) {
-      if (animators[i] instanceof swoopAnimation) {
-        newAnimators.push(new rotationAnimation());
+      if (animators[i] instanceof rampAnimation) {
         newAnimators.push(new hoverAnimation());
       }
       else if (animators[i] instanceof forwardAnimation) {
@@ -63,21 +72,6 @@ function animate() {
   requestAnimFrame(animate);
 }
 
-function swoopAnimation() {
-  this.finished = false;
-}
-
-swoopAnimation.prototype.animate = function(frameCount) {
-  camera.position.y -= SWOOP_DESCENT_DELTA * frameCount;
-  camera.position.z -= deltaZ * frameCount;
-
-  if (camera.position.z <= (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) {
-    camera.position.z = city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2);
-
-    this.finished = true;
-  }
-}
-
 function forwardAnimation() {
   this.finished = false;
 }
@@ -96,7 +90,7 @@ forwardAnimation.prototype.animate = function(frameCount) {
 }
 
 function rotationAnimation() {
-  if (targetX == undefined || targetZ == undefined) {
+  if (targetGridX == undefined || targetGridZ == undefined) {
     targetGridX = 0;
     targetGridZ = -1;
 
@@ -159,16 +153,16 @@ rotationAnimation.prototype.animate = function(frameCount) {
   }
 }
 
-function hoverAnimation() {
-  this.targetDistance = (Math.random() * 300) + 300;
+function rampAnimation(frameDistance, deltaY, minHeight, maxHeight) {
   this.ticks = 0;
-  this.deltaY = (camera.position.y > 0.5) ? -0.05 : 0.05;
-  this.minHeight = 0.5;
-  this.maxHeight = 15;
+  this.frameDistance = frameDistance;
+  this.deltaY = deltaY;
+  this.minHeight = minHeight;
+  this.maxHeight = maxHeight;
   this.finished = false;
 }
 
-hoverAnimation.prototype.animate = function(frameCount) {
+rampAnimation.prototype.animate = function(frameCount) {
   if (camera.position.y >= this.minHeight && camera.position.y <= this.maxHeight) {
     camera.position.y += this.deltaY * frameCount;
   }
@@ -180,8 +174,20 @@ hoverAnimation.prototype.animate = function(frameCount) {
   }
 
   this.ticks += frameCount;
-
-  if (this.ticks > this.targetDistance) {
+  if (this.ticks > this.frameDistance) {
     this.finished = true;
   }
+}
+
+function hoverAnimation() {
+  var frameDistance = (Math.random() * 300) + 300;
+  var deltaY = (camera.position.y > 0.5) ? -0.05 : 0.05;
+
+  this.rampAnimation = new rampAnimation(frameDistance, deltaY, 0.5, 15);
+  this.finished = false;
+}
+
+hoverAnimation.prototype.animate = function(frameCount) {
+  this.rampAnimation.animate(frameCount);
+  this.finished = this.rampAnimation.finished;
 }
