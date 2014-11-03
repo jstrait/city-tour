@@ -22,6 +22,7 @@ function initScene($container) {
   // Build renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setSize(WIDTH, HEIGHT);
+  renderer.setClearColor(0x66ccff, 1);
 
   $container.append(renderer.domElement);
   
