@@ -99,7 +99,7 @@ City.prototype.buildGeometries = function() {
 }
 
 City.prototype.generateBuilding = function(x, maxY, z, lotLayout) {
-  var building = new THREE.Mesh(new THREE.CubeGeometry(lotLayout.width * this.BLOCK_WIDTH, 1, lotLayout.depth * this.BLOCK_WIDTH));
+  var building = new THREE.Mesh(new THREE.BoxGeometry(lotLayout.width * this.BLOCK_WIDTH, 1, lotLayout.depth * this.BLOCK_WIDTH));
 
   building.position.x = x + this.BLOCK_WIDTH / 2 + ((this.BLOCK_WIDTH / 2) * lotLayout.offsetFromBlockCenterX);
   building.scale.y =  (Math.random() * maxY) + this.MIN_BUILDING_HEIGHT;
