@@ -3,9 +3,6 @@ var SWOOP_DESCENT_DELTA = 0.01;
 
 var deltaX = 0.0;
 var deltaZ = CAMERA_Z_DELTA;
-var rotation_progress = 0.0;
-var rotation_target = 0;
-var pathIndex = 0;
 var targetX;
 var targetGridX;
 var targetZ;
@@ -13,13 +10,13 @@ var targetGridZ;
 var targetAngle = 0;
 var ROTATION_DELTA = 0.03;
 var deltaAngle = ROTATION_DELTA;
-var RIGHT_ANGLE = Math.PI / 2;
-var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 
 var animators = [];
 var previousFrameTimestamp;
 
 function animate() {
+  var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
+
   if (animators.length === 0) {
     targetX = 0;
     targetZ = 0;
@@ -90,6 +87,8 @@ forwardAnimation.prototype.animate = function(frameCount) {
 }
 
 function rotationAnimation() {
+  var RIGHT_ANGLE = Math.PI / 2;
+
   if (targetGridX == undefined || targetGridZ == undefined) {
     targetGridX = 0;
     targetGridZ = -1;
