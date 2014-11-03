@@ -103,9 +103,6 @@ function rotationAnimation() {
   if (targetGridX == undefined || targetGridZ == undefined) {
     targetGridX = 0;
     targetGridZ = -1;
-
-    targetX = (targetGridX * city.BLOCK_WIDTH) + (targetGridX * city.STREET_WIDTH);
-    targetZ = (targetGridZ * city.BLOCK_WIDTH) + (targetGridZ * city.STREET_WIDTH);
   }
   else {
     var oldTargetGridX = targetGridX;
@@ -119,11 +116,10 @@ function rotationAnimation() {
         targetGridZ = Math.floor(Math.random() * city.BLOCK_COLUMNS) - (city.BLOCK_COLUMNS / 2);
       }
     }
-
-    targetX = (targetGridX * city.BLOCK_WIDTH) + (targetGridX * city.STREET_WIDTH);
-    targetZ = (targetGridZ * city.BLOCK_WIDTH) + (targetGridZ * city.STREET_WIDTH);
-
   }
+
+  targetX = (targetGridX * city.BLOCK_WIDTH) + (targetGridX * city.STREET_WIDTH);
+  targetZ = (targetGridZ * city.BLOCK_WIDTH) + (targetGridZ * city.STREET_WIDTH);
   
   deltaX = (camera.position.x == targetX) ? 0 : 0.2;
   deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
