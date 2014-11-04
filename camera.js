@@ -1,10 +1,3 @@
-var deltaX = 0.0;
-var deltaZ = 0.2;
-var targetX;
-var targetGridX;
-var targetZ;
-var targetGridZ;
-
 var AnimationManager = function() {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 
@@ -12,6 +5,12 @@ var AnimationManager = function() {
   var animators = [];
   var previousFrameTimestamp;
 
+  var deltaX = 0.0;
+  var deltaZ = 0.2;
+  var targetX;
+  var targetGridX;
+  var targetZ;
+  var targetGridZ;
   var targetAngle = 0;
   var deltaAngle;
 
@@ -20,11 +19,11 @@ var AnimationManager = function() {
 
     targetX = 0;
     targetZ = 0;
-    deltaX = 0;
+    deltaX = 0.0;
     deltaZ = -0.2;
 
     var ramp = new rampAnimation((camera.position.z - (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) / Math.abs(deltaZ), -SWOOP_DESCENT_DELTA, 0.5, 1000000);
-    var forward = new forwardAnimation();
+    var forward = new forwardAnimation(targetX, deltaX, targetZ, deltaZ);
     animators = [ramp, forward];
   };
 
@@ -111,7 +110,7 @@ var AnimationManager = function() {
           newAnimators.push(new rotationAnimation(targetAngle, deltaAngle));
         }
         else if (animators[i] instanceof rotationAnimation) {
-          newAnimators.push(new forwardAnimation());
+          newAnimators.push(new forwardAnimation(targetX, deltaX, targetZ, deltaZ));
         }
         else if (animators[i] instanceof hoverAnimation) {
           newAnimators.push(new hoverAnimation());
@@ -131,18 +130,22 @@ var AnimationManager = function() {
 };
 
 
-function forwardAnimation() {
+function forwardAnimation(targetX, deltaX, targetZ, deltaZ) {
+  this.targetX = targetX;
+  this.deltaX = deltaX;
+  this.targetZ = targetZ;
+  this.deltaZ = deltaZ;
   this.finished = false;
 }
 
 forwardAnimation.prototype.animate = function(frameCount) {
-  camera.position.x += deltaX * frameCount;
-  camera.position.z += deltaZ * frameCount;
+  camera.position.x += this.deltaX * frameCount;
+  camera.position.z += this.deltaZ * frameCount;
 
-  if ((deltaX < 0 && camera.position.x < targetX) || (deltaX > 0 && camera.position.x > targetX) ||
-      (deltaZ < 0 && camera.position.z < targetZ) || (deltaZ > 0 && camera.position.z > targetZ)) {
-    camera.position.x = targetX;
-    camera.position.z = targetZ;
+  if ((this.deltaX < 0 && camera.position.x < this.targetX) || (this.deltaX > 0 && camera.position.x > this.targetX) ||
+      (this.deltaZ < 0 && camera.position.z < this.targetZ) || (this.deltaZ > 0 && camera.position.z > this.targetZ)) {
+    camera.position.x = this.targetX;
+    camera.position.z = this.targetZ;
 
     this.finished = true;
   }
