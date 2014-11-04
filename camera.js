@@ -1,13 +1,9 @@
-var CAMERA_Z_DELTA = 0.2;
-var SWOOP_DESCENT_DELTA = 0.01;
-
 var deltaX = 0.0;
-var deltaZ = CAMERA_Z_DELTA;
+var deltaZ = 0.2;
 var targetX;
 var targetGridX;
 var targetZ;
 var targetGridZ;
-var ROTATION_DELTA = 0.03;
 
 var AnimationManager = function() {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
@@ -17,9 +13,11 @@ var AnimationManager = function() {
   var previousFrameTimestamp;
 
   var targetAngle = 0;
-  var deltaAngle = ROTATION_DELTA;
+  var deltaAngle;
 
   var init = function() {
+    var SWOOP_DESCENT_DELTA = 0.01;
+
     targetX = 0;
     targetZ = 0;
     deltaX = 0;
@@ -60,6 +58,7 @@ var AnimationManager = function() {
 
   var determineRotationAngle = function() {
     var RIGHT_ANGLE = Math.PI / 2;
+    var ROTATION_DELTA = 0.03;
 
     var oldTargetAngle = targetAngle;
     if (deltaX != 0 && oldTargetAngle == 0) {  // NORTH
