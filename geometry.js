@@ -54,12 +54,8 @@ var City = function() {
         var blockLayout = city.BLOCK_LAYOUTS[Math.floor(Math.random() * city.BLOCK_LAYOUTS.length)];
         for (var layoutIndex = 0; layoutIndex < blockLayout.length; layoutIndex++) {
           var lotLayout = blockLayout[layoutIndex];
-          var maxHeightI = city.MAX_BUILDING_HEIGHT * ((city.HALF_SCENE_WIDTH - Math.abs(i)) / city.HALF_SCENE_WIDTH);
-          var maxHeightJ = city.MAX_BUILDING_HEIGHT * ((city.HALF_SCENE_DEPTH - Math.abs(j)) / city.HALF_SCENE_DEPTH);
-          var maxHeight = Math.min(maxHeightI, maxHeightJ);
-          var buildingHeight = Math.floor((Math.random() * maxHeight - city.MIN_BUILDING_HEIGHT)) + city.MIN_BUILDING_HEIGHT;
-
-          var building = generateBuilding(i, maxHeight, j, lotLayout);
+          var buildingHeight = calculateBuildingHeight(i, j);
+          var building = generateBuilding(i, buildingHeight, j, lotLayout);
 
           var index = Math.floor(Math.random() * city.MAX_BUILDING_MATERIALS);
           THREE.GeometryUtils.merge(buildingGeometries[index], building);
@@ -97,6 +93,15 @@ var City = function() {
     }
 
     return buildingGeometries;
+  };
+
+  var calculateBuildingHeight = function(x, z) {
+    var maxHeightX = city.MAX_BUILDING_HEIGHT * ((city.HALF_SCENE_WIDTH - Math.abs(x)) / city.HALF_SCENE_WIDTH);
+    var maxHeightZ = city.MAX_BUILDING_HEIGHT * ((city.HALF_SCENE_DEPTH - Math.abs(z)) / city.HALF_SCENE_DEPTH);
+    var maxHeight = Math.min(maxHeightX, maxHeightZ);
+    //var buildingHeight = Math.floor((Math.random() * maxHeight - city.MIN_BUILDING_HEIGHT)) + city.MIN_BUILDING_HEIGHT;
+
+    return maxHeight;
   };
 
   var generateBuilding = function(x, maxY, z, lotLayout) {
