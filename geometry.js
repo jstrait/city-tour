@@ -16,24 +16,24 @@ var City = function() {
   city.HALF_SCENE_DEPTH = city.TOTAL_SCENE_DEPTH / 2;
 
   city.BLOCK_LAYOUTS = [
-                        [ { width: 1.0, depth: 1.0, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.0 } ],
-                        [ { width: 0.5, depth: 1.0, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.0 },
-                          { width: 0.5, depth: 1.0, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.0 } ],
-                        [ { width: 1.0, depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: -0.5 },
-                          { width: 1.0, depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.5 } ],
-                        [ { width: 0.5, depth: 1.0, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.0 },
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5},
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.5} ],
-                        [ { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: -0.5 },
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.5},
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5},
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.5} ],
-                        [ { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: -(2 / 3), offsetFromBlockCenterZ: 0.5 },
-                          { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.5},
-                          { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: (2 / 3), offsetFromBlockCenterZ: 0.5},
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: -0.5},
-                          { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5} ],
-                      ];
+    [ { width: 1.0, depth: 1.0, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.0 } ],
+    [ { width: 0.5, depth: 1.0, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.0 },
+      { width: 0.5, depth: 1.0, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.0 } ],
+    [ { width: 1.0, depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: -0.5 },
+      { width: 1.0, depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.5 } ],
+    [ { width: 0.5, depth: 1.0, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.0 },
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5},
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.5} ],
+    [ { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: -0.5 },
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: 0.5},
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5},
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: 0.5} ],
+    [ { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: -(2 / 3), offsetFromBlockCenterZ: 0.5 },
+      { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: 0.0, offsetFromBlockCenterZ: 0.5},
+      { width: (1 / 3), depth: 0.5, offsetFromBlockCenterX: (2 / 3), offsetFromBlockCenterZ: 0.5},
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: -0.5, offsetFromBlockCenterZ: -0.5},
+      { width: 0.5, depth: 0.5, offsetFromBlockCenterX: 0.5, offsetFromBlockCenterZ: -0.5} ],
+  ];
 
   city.buildScene = function() {
     var scene = new THREE.Scene();
