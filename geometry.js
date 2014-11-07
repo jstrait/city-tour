@@ -38,10 +38,7 @@ var City = function() {
   city.buildScene = function() {
     var scene = new THREE.Scene();
 
-    var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
-    var ground = new THREE.Mesh(new THREE.PlaneGeometry(city.TOTAL_SCENE_WIDTH * 25, city.TOTAL_SCENE_DEPTH * 25), groundMaterial);
-    ground.rotation.x = -(Math.PI / 2);
-    scene.add(ground);
+    scene.add(buildGroundGeometry());
 
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
@@ -68,6 +65,14 @@ var City = function() {
     }
 
     return scene;
+  };
+
+  var buildGroundGeometry = function() {
+    var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+    var groundGeometry = new THREE.Mesh(new THREE.PlaneGeometry(city.TOTAL_SCENE_WIDTH * 25, city.TOTAL_SCENE_DEPTH * 25), groundMaterial);
+    groundGeometry.rotation.x = -(Math.PI / 2);
+
+    return groundGeometry;
   };
 
   var buildMaterials = function() {
