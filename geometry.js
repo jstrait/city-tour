@@ -43,22 +43,11 @@ var City = function() {
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
-    var x, z;
-
     // Loop through the lower left corner of each block
+    var x, z;
     for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH; x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
       for (z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
-
-        var layoutIndex, lotLayout, buildingHeight, building;
-        var blockLayout = city.BLOCK_LAYOUTS[Math.floor(Math.random() * city.BLOCK_LAYOUTS.length)];
-        for (layoutIndex = 0; layoutIndex < blockLayout.length; layoutIndex++) {
-          lotLayout = blockLayout[layoutIndex];
-          buildingHeight = calculateBuildingHeight(x, z);
-          building = generateBuilding(x, buildingHeight, z, lotLayout);
-
-          var index = Math.floor(Math.random() * city.MAX_BUILDING_MATERIALS);
-          THREE.GeometryUtils.merge(buildingGeometries[index], building);
-        }
+        generateBlock(x, z, buildingGeometries);
       }
     }
 
@@ -100,6 +89,20 @@ var City = function() {
     }
 
     return buildingGeometries;
+  };
+
+  var generateBlock = function(x, z, buildingGeometries) {
+    var i, lotLayout, buildingHeight, building;
+    var blockLayout = city.BLOCK_LAYOUTS[Math.floor(Math.random() * city.BLOCK_LAYOUTS.length)];
+
+    for (i = 0; i < blockLayout.length; i++) {
+      lotLayout = blockLayout[i];
+      buildingHeight = calculateBuildingHeight(x, z);
+      building = generateBuilding(x, buildingHeight, z, lotLayout);
+
+      var materialIndex = Math.floor(Math.random() * city.MAX_BUILDING_MATERIALS);
+      THREE.GeometryUtils.merge(buildingGeometries[materialIndex], building);
+    }
   };
 
   var calculateBuildingHeight = function(x, z) {
