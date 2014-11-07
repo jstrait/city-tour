@@ -44,7 +44,7 @@ var City = function() {
     scene.add(ground);
 
     var buildingMaterials = buildMaterials();
-    var buildingGeometries = buildGeometries();
+    var buildingGeometries = buildEmptyGeometriesForBuildings();
 
     // Loop through the lower left corner of each block
     for (var i = -(city.HALF_SCENE_WIDTH); i < city.HALF_SCENE_WIDTH; i += city.BLOCK_WIDTH + city.STREET_WIDTH) {
@@ -89,7 +89,7 @@ var City = function() {
     return buildingMaterials;
   };
 
-  var buildGeometries = function() {
+  var buildEmptyGeometriesForBuildings = function() {
     var buildingGeometries = [];
 
     for (var i = 0; i < city.MAX_BUILDING_MATERIALS; i++) {
