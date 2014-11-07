@@ -47,15 +47,15 @@ var City = function() {
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
     // Loop through the lower left corner of each block
-    for (var i = -(city.HALF_SCENE_WIDTH); i < city.HALF_SCENE_WIDTH; i += city.BLOCK_WIDTH + city.STREET_WIDTH) {
-      for (var j = -(city.HALF_SCENE_DEPTH); j < city.HALF_SCENE_DEPTH; j += city.BLOCK_DEPTH + city.STREET_DEPTH) {
+    for (var x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH; x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
+      for (var z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
 
         var building;
         var blockLayout = city.BLOCK_LAYOUTS[Math.floor(Math.random() * city.BLOCK_LAYOUTS.length)];
         for (var layoutIndex = 0; layoutIndex < blockLayout.length; layoutIndex++) {
           var lotLayout = blockLayout[layoutIndex];
-          var buildingHeight = calculateBuildingHeight(i, j);
-          var building = generateBuilding(i, buildingHeight, j, lotLayout);
+          var buildingHeight = calculateBuildingHeight(x, z);
+          var building = generateBuilding(x, buildingHeight, z, lotLayout);
 
           var index = Math.floor(Math.random() * city.MAX_BUILDING_MATERIALS);
           THREE.GeometryUtils.merge(buildingGeometries[index], building);
