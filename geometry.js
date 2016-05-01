@@ -3,14 +3,14 @@ var City = function() {
 
   var city = {};
 
-  city.STREET_WIDTH = 2;
-  city.STREET_DEPTH = 2;
-  city.BLOCK_WIDTH = 4;
-  city.BLOCK_DEPTH = 4;
+  city.STREET_WIDTH = 3;
+  city.STREET_DEPTH = 3;
+  city.BLOCK_WIDTH = 8;
+  city.BLOCK_DEPTH = 8;
   city.BLOCK_ROWS = 60;
   city.BLOCK_COLUMNS = 60;
-  city.MIN_BUILDING_HEIGHT = 1.15;
-  city.MAX_BUILDING_HEIGHT = 20;
+  city.MIN_BUILDING_HEIGHT = 1.2;
+  city.MAX_BUILDING_HEIGHT = 40;
   city.MAX_BUILDING_MATERIALS = 50;
   city.TOTAL_SCENE_WIDTH = (city.BLOCK_WIDTH * city.BLOCK_ROWS) + (city.STREET_WIDTH * (city.BLOCK_ROWS - 1));
   city.HALF_SCENE_WIDTH = city.TOTAL_SCENE_WIDTH / 2;
