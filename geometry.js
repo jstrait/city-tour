@@ -1,4 +1,6 @@
 var City = function() {
+  var COLOR_GROUND = 0xaaaaaa;
+
   var city = {};
 
   city.STREET_WIDTH = 2;
@@ -64,7 +66,7 @@ var City = function() {
   };
 
   var buildGroundGeometry = function() {
-    var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+    var groundMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
     var groundGeometry = new THREE.Mesh(new THREE.PlaneGeometry(city.TOTAL_SCENE_WIDTH * 25, city.TOTAL_SCENE_DEPTH * 25), groundMaterial);
     groundGeometry.rotation.x = -(Math.PI / 2);
 
