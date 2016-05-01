@@ -35,8 +35,8 @@ function initScene($container) {
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   camera.lookAt(scene.position);
   camera.position.x = 0;
-  camera.position.y = 5;
-  camera.position.z = city.HALF_SCENE_DEPTH + 90;
+  camera.position.y = 8;
+  camera.position.z = city.HALF_SCENE_DEPTH + 22;
 
   // Build light sources
   addPointLight(scene, 0, 0, 100000);
