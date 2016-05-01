@@ -77,12 +77,12 @@ var City = function() {
     var buildingMaterials = [];
 
     for (var i = 0; i < city.MAX_BUILDING_MATERIALS; i++) {
-      var r = Math.random();
-      var g = r;
-      var b = r;
-      var buildingColor = new THREE.Color(0xffffff).setRGB(r, g, b);
+      var random = Math.random() * 0.6;
+      var r = random;
+      var g = random;
+      var b = random;
 
-      buildingMaterials.push(new THREE.MeshLambertMaterial({ color: buildingColor.getHex() }));
+      buildingMaterials.push(new THREE.MeshLambertMaterial({ color: new THREE.Color(r, g, b), }));
     }
 
     return buildingMaterials;
