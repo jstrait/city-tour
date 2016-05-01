@@ -113,12 +113,13 @@ var City = function() {
   };
 
   var calculateBuildingHeight = function(x, z) {
-    var maxHeightX = city.MAX_BUILDING_HEIGHT * ((city.HALF_SCENE_WIDTH - Math.abs(x)) / city.HALF_SCENE_WIDTH);
-    var maxHeightZ = city.MAX_BUILDING_HEIGHT * ((city.HALF_SCENE_DEPTH - Math.abs(z)) / city.HALF_SCENE_DEPTH);
-    var maxHeight = Math.min(maxHeightX, maxHeightZ);
-    //var buildingHeight = Math.floor((Math.random() * maxHeight - city.MIN_BUILDING_HEIGHT)) + city.MIN_BUILDING_HEIGHT;
+    var squareRootOfMaxBuildingHeight = Math.sqrt(city.MAX_BUILDING_HEIGHT);
 
-    return maxHeight;
+    var multiplierX = squareRootOfMaxBuildingHeight * ((city.HALF_SCENE_WIDTH - Math.abs(x)) / city.HALF_SCENE_WIDTH);
+    var multiplierZ = squareRootOfMaxBuildingHeight * ((city.HALF_SCENE_DEPTH - Math.abs(z)) / city.HALF_SCENE_DEPTH);
+    var multiplier = Math.min(multiplierX, multiplierZ);
+
+    return multiplier * multiplier;
   };
 
   var generateBuilding = function(x, maxY, z, lotLayout) {
