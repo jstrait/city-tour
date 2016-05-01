@@ -106,7 +106,7 @@ var City = function() {
       building = generateBuilding(x, buildingHeight, z, lotLayout);
 
       var materialIndex = Math.floor(Math.random() * city.MAX_BUILDING_MATERIALS);
-      THREE.GeometryUtils.merge(buildingGeometries[materialIndex], building);
+      buildingGeometries[materialIndex].merge(building.geometry, building.matrix);
     }
   };
 
@@ -126,6 +126,7 @@ var City = function() {
     building.scale.y =  (Math.random() * maxY) + city.MIN_BUILDING_HEIGHT;
     building.position.y = building.scale.y / 2;
     building.position.z = z + city.BLOCK_DEPTH / 2 + ((city.BLOCK_DEPTH / 2) * lotLayout.offsetFromBlockCenterZ);
+    building.updateMatrix();
 
     return building;
   };
