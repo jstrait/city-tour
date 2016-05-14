@@ -47,25 +47,27 @@ var City = function() {
 
     scene.add(buildGroundGeometry());
 
+    var terrainCoordinates = buildTerrainCoordinates();
+
+    var terrainMeshes = buildTerrainGeometry(terrainCoordinates);
+    terrainMeshes.forEach(function(terrainMesh) {
+      scene.add(terrainMesh);
+    });
+
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
     // Loop through the lower left corner of each block
     var x, z;
-    for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH; x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
+    for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH - (city.BLOCK_WIDTH + city.STREET_WIDTH); x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
       for (z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
-        generateBlock(x, z, buildingGeometries);
+        generateBlock(x, z, terrainCoordinates, buildingGeometries);
       }
     }
 
     for (var i = 0; i < city.MAX_BUILDING_MATERIALS; i++) {
       scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
     }
-
-    var terrainMeshes = buildTerrainGeometry();
-    terrainMeshes.forEach(function(terrainMesh) {
-      scene.add(terrainMesh);
-    });
 
     return scene;
   };
@@ -78,7 +80,7 @@ var City = function() {
     return groundGeometry;
   };
 
-  var buildTerrainGeometry = function() {
+  var buildTerrainCoordinates = function() {
     var terrainCoordinates = [];
     for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH; x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
       for (z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
@@ -90,6 +92,10 @@ var City = function() {
       }
     }
 
+    return terrainCoordinates;
+  }
+
+  var buildTerrainGeometry = function(terrainCoordinates) {
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
@@ -159,14 +165,23 @@ var City = function() {
     return buildingGeometries;
   };
 
-  var generateBlock = function(x, z, buildingGeometries) {
+  var generateBlock = function(x, z, terrainCoordinates, buildingGeometries) {
     var i, lotLayout, buildingHeight, building;
     var blockLayout = city.BLOCK_LAYOUTS[Math.floor(Math.random() * city.BLOCK_LAYOUTS.length)];
+
+    var terrainCoordinates = [
+                              terrainCoordinates[x][z],
+                              terrainCoordinates[x + city.BLOCK_WIDTH + city.STREET_WIDTH][z],
+                              terrainCoordinates[x][z + city.BLOCK_DEPTH + city.STREET_DEPTH],
+                              terrainCoordinates[x + city.BLOCK_WIDTH + city.STREET_WIDTH][z + city.BLOCK_DEPTH + city.STREET_DEPTH],
+                             ];
+    var minimumTerrainHeight = Math.min(...terrainCoordinates);
+    var maximumTerrainHeight = Math.max(...terrainCoordinates);
 
     for (i = 0; i < blockLayout.length; i++) {
       lotLayout = blockLayout[i];
       buildingHeight = calculateBuildingHeight(x, z);
-      building = generateBuilding(x, buildingHeight, z, lotLayout);
+      building = generateBuilding(x, minimumTerrainHeight, maximumTerrainHeight, buildingHeight, z, lotLayout);
 
       var materialIndex = Math.floor(Math.random() * city.MAX_BUILDING_MATERIALS);
       buildingGeometries[materialIndex].merge(building.geometry, building.matrix);
@@ -183,12 +198,12 @@ var City = function() {
     return multiplier * multiplier;
   };
 
-  var generateBuilding = function(x, maxY, z, lotLayout) {
+  var generateBuilding = function(x, minY, maxY, maxAboveGroundHeight, z, lotLayout) {
     var building = new THREE.Mesh(new THREE.BoxGeometry(lotLayout.width * city.BLOCK_WIDTH, 1, lotLayout.depth * city.BLOCK_WIDTH));
 
     building.position.x = x + city.BLOCK_WIDTH / 2 + ((city.BLOCK_WIDTH / 2) * lotLayout.offsetFromBlockCenterX);
-    building.scale.y =  (Math.random() * maxY) + city.MIN_BUILDING_HEIGHT;
-    building.position.y = building.scale.y / 2;
+    building.scale.y =  (Math.random() * maxAboveGroundHeight) + city.MIN_BUILDING_HEIGHT + (maxY - minY);
+    building.position.y = (building.scale.y / 2) + minY;
     building.position.z = z + city.BLOCK_DEPTH / 2 + ((city.BLOCK_DEPTH / 2) * lotLayout.offsetFromBlockCenterZ);
     building.updateMatrix();
 
