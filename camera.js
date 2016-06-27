@@ -1,3 +1,5 @@
+"use strict";
+
 var AnimationManager = function() {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 

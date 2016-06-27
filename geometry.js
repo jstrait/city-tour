@@ -1,3 +1,5 @@
+"use strict";
+
 var City = function() {
   var COLOR_GROUND = 0xaaaaaa;
 
@@ -81,6 +83,8 @@ var City = function() {
   };
 
   var buildTerrainCoordinates = function() {
+    var x, z;
+
     var terrainCoordinates = [];
     for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH; x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
       for (z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
@@ -96,6 +100,7 @@ var City = function() {
   }
 
   var buildTerrainGeometry = function(terrainCoordinates) {
+    var x, z;
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });

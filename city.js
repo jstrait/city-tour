@@ -1,3 +1,5 @@
+"use strict";
+
 var renderer, scene, camera;
 var city;
 
