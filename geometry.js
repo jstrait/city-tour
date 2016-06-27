@@ -9,8 +9,8 @@ var City = function() {
   city.STREET_DEPTH = 3;
   city.BLOCK_WIDTH = 8;
   city.BLOCK_DEPTH = 8;
-  city.BLOCK_ROWS = 60;
-  city.BLOCK_COLUMNS = 60;
+  city.BLOCK_ROWS = 4;
+  city.BLOCK_COLUMNS = 4;
   city.MIN_BUILDING_HEIGHT = 1.2;
   city.MAX_BUILDING_HEIGHT = 40;
   city.MAX_BUILDING_MATERIALS = 50;
@@ -83,21 +83,41 @@ var City = function() {
   };
 
   var buildTerrainCoordinates = function() {
-    var MAX_HEIGHT = 10;
-    var x, z;
+    var MAX_HEIGHT = 4;
+    var i, j, x, z;
 
+
+    // Generate unit coordinates
     var terrainCoordinates = [];
-    for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH; x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
-      for (z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
-        if (!terrainCoordinates[x]) {
-          terrainCoordinates[x] = [];
-        }
+    for (x = 0; x <= city.BLOCK_ROWS; x++) {
+      terrainCoordinates[x] = [];
 
+      for (z = 0; z <= city.BLOCK_COLUMNS; z++) {
         terrainCoordinates[x][z] = Math.floor(Math.random() * MAX_HEIGHT);
       }
     }
+    console.log(terrainCoordinates);
 
-    return terrainCoordinates;
+
+    // Convert the unit coordinates to scene coordinates
+    var sceneTerrainCoordinates = [];
+    x = -city.HALF_SCENE_WIDTH;
+    for (i = 0; i <= city.BLOCK_ROWS; i++) {
+      sceneTerrainCoordinates[x] = [];
+      z = -city.HALF_SCENE_DEPTH;
+
+      for (j = 0; j <= city.BLOCK_COLUMNS; j++) {
+        sceneTerrainCoordinates[x][z] = terrainCoordinates[i][j];
+      
+        z += city.BLOCK_DEPTH + city.STREET_DEPTH;
+      }
+
+      x += city.BLOCK_WIDTH + city.STREET_WIDTH;
+    }
+
+    console.log(sceneTerrainCoordinates);
+
+    return sceneTerrainCoordinates;
   }
 
   var buildTerrainGeometry = function(terrainCoordinates) {
