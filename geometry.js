@@ -83,6 +83,7 @@ var City = function() {
   };
 
   var buildTerrainCoordinates = function() {
+    var MAX_HEIGHT = 10;
     var x, z;
 
     var terrainCoordinates = [];
@@ -92,7 +93,7 @@ var City = function() {
           terrainCoordinates[x] = [];
         }
 
-        terrainCoordinates[x][z] = Math.floor(Math.random() * 10);
+        terrainCoordinates[x][z] = Math.floor(Math.random() * MAX_HEIGHT);
       }
     }
 
