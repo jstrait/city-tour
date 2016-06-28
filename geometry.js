@@ -9,8 +9,8 @@ var City = function() {
   city.STREET_DEPTH = 3;
   city.BLOCK_WIDTH = 8;
   city.BLOCK_DEPTH = 8;
-  city.BLOCK_ROWS = 60;
-  city.BLOCK_COLUMNS = 60;
+  city.BLOCK_ROWS = 64;
+  city.BLOCK_COLUMNS = 64;
   city.MIN_BUILDING_HEIGHT = 1.2;
   city.MAX_BUILDING_HEIGHT = 40;
   city.MAX_BUILDING_MATERIALS = 50;
@@ -79,7 +79,7 @@ var City = function() {
   };
 
   var buildTerrainCoordinates = function() {
-    var MAX_HEIGHT = 4;
+    var MAX_HEIGHT = 6;
     var i, j;
 
     var terrainCoordinates = [];
@@ -87,12 +87,59 @@ var City = function() {
       terrainCoordinates[i] = [];
 
       for (j = 0; j <= city.BLOCK_COLUMNS; j++) {
-        terrainCoordinates[i][j] = Math.floor(Math.random() * MAX_HEIGHT);
+        terrainCoordinates[i][j] = 0.0;
       }
     }
+
+    // Initial randomization of corners
+    terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_HEIGHT);
+    terrainCoordinates[0][city.BLOCK_COLUMNS] = Math.floor(Math.random() * MAX_HEIGHT);
+    terrainCoordinates[city.BLOCK_ROWS][0] = Math.floor(Math.random() * MAX_HEIGHT);
+    terrainCoordinates[city.BLOCK_ROWS][city.BLOCK_COLUMNS] = Math.floor(Math.random() * MAX_HEIGHT);
+
+    // City must be (2^n + 1) blocks on both x and z dimensions for this to work
+    midpointDisplace(terrainCoordinates, 100, 0.5, 0, city.BLOCK_ROWS, city.BLOCK_COLUMNS, 0);
+
     console.log(terrainCoordinates);
 
     return terrainCoordinates;
+  };
+
+  // Adapted from http://stevelosh.com/blog/2016/02/midpoint-displacement/
+  var midpointDisplace = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
+    var topLeft = terrainCoordinates[top][left];
+    var topRight = terrainCoordinates[top][right];
+    var bottomLeft = terrainCoordinates[bottom][left];
+    var bottomRight = terrainCoordinates[bottom][right];
+
+    var midY = top + ((bottom - top) / 2);
+    var midX = left + ((right - left) / 2);
+
+    var jitter;
+
+    // Left column
+    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    terrainCoordinates[midY][left] = ((topLeft + bottomLeft) / 2) + jitter;
+    // Right column
+    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    terrainCoordinates[midY][right] = ((topRight + bottomRight) / 2) + jitter;
+    // Top row
+    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    terrainCoordinates[top][midX] = ((topLeft + bottomLeft) / 2) + jitter;
+    // Bottom row
+    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    terrainCoordinates[bottom][midX] = ((topLeft + bottomLeft) / 2) + jitter;
+
+    // Middle
+    var middleAverage = (terrainCoordinates[midY][left] + terrainCoordinates[midY][right] + terrainCoordinates[top][midX] + terrainCoordinates[bottom][midX]) / 4
+    terrainCoordinates[midY][midX] = middleAverage;
+
+    if ((midY - top) >= 2) {
+      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, top, midX, midY, left);
+      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, top, right, midY, midX);
+      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, midY, midX, bottom, left);
+      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, midY, right, bottom, midX);
+    }
   };
 
   var buildTerrainGeometry = function(terrainCoordinates) {
