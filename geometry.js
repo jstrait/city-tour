@@ -168,7 +168,7 @@ var City = function() {
     terrainCoordinates[city.BLOCK_ROWS][city.BLOCK_COLUMNS] = Math.floor(Math.random() * MAX_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
-    midpointDisplace(terrainCoordinates, 100, 0.5, 0, city.BLOCK_ROWS, city.BLOCK_COLUMNS, 0);
+    midpointDisplace(terrainCoordinates, 20, 0.65, 0, city.BLOCK_ROWS, city.BLOCK_COLUMNS, 0);
 
     // Clamp negative heights to 0
     for (i = 0; i <= city.BLOCK_ROWS; i++) {
@@ -386,7 +386,7 @@ var City = function() {
   };
 
   var calculateBuildingHeight = function(i, j) {
-    var squareRootOfMaxBuildingHeight = Math.pow(city.MAX_BUILDING_HEIGHT, (1/5));
+    var squareRootOfMaxBuildingHeight = Math.pow(city.MAX_BUILDING_HEIGHT, (1/12));
 
     var halfRows = city.BLOCK_ROWS / 2;
     var halfColumns = city.BLOCK_COLUMNS / 2;
@@ -395,7 +395,7 @@ var City = function() {
     var multiplierZ = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - j)) / halfColumns);
     var multiplier = Math.min(multiplierX, multiplierZ);
 
-    return Math.pow(multiplier, 5);
+    return Math.pow(multiplier, 12);
   };
 
   return city;
