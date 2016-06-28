@@ -151,9 +151,9 @@ var City = function() {
 
     var triangle, v1, v2, v3;
 
-    x = -city.HALF_SCENE_WIDTH;
+    x = -city.HALF_SCENE_WIDTH - (city.STREET_WIDTH / 2);
     for (i = 0; i < city.BLOCK_ROWS; i++) {
-      z = -city.HALF_SCENE_DEPTH;
+      z = -city.HALF_SCENE_DEPTH - (city.STREET_DEPTH / 2);
 
       for (j = 0; j < city.BLOCK_COLUMNS; j++) {
         triangle = new THREE.Geometry();
