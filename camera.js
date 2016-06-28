@@ -24,7 +24,7 @@ var AnimationManager = function() {
     deltaX = 0.0;
     deltaZ = -0.2;
 
-    var ramp = new rampAnimation((camera.position.z - (city.HALF_SCENE_DEPTH + (city.STREET_WIDTH / 2))) / Math.abs(deltaZ), -SWOOP_DESCENT_DELTA, 0.5, 1000000);
+    var ramp = new rampAnimation((camera.position.z - (CityConfig.HALF_SCENE_DEPTH + (CityConfig.STREET_WIDTH / 2))) / Math.abs(deltaZ), -SWOOP_DESCENT_DELTA, 0.5, 1000000);
     var forward = new forwardAnimation(targetX, deltaX, targetZ, deltaZ);
     animators = [ramp, forward];
   };
@@ -40,16 +40,16 @@ var AnimationManager = function() {
 
       while (oldTargetGridX == targetGridX && oldTargetGridZ == targetGridZ) {
         if (deltaX == 0) {
-          targetGridX = Math.floor(Math.random() * city.BLOCK_ROWS) - (city.BLOCK_ROWS / 2);
+          targetGridX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - (CityConfig.BLOCK_ROWS / 2);
         }
         else if (deltaZ == 0) {
-          targetGridZ = Math.floor(Math.random() * city.BLOCK_COLUMNS) - (city.BLOCK_COLUMNS / 2);
+          targetGridZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - (CityConfig.BLOCK_COLUMNS / 2);
         }
       }
     }
 
-    targetX = (targetGridX * city.BLOCK_WIDTH) + (targetGridX * city.STREET_WIDTH);
-    targetZ = (targetGridZ * city.BLOCK_WIDTH) + (targetGridZ * city.STREET_WIDTH);
+    targetX = (targetGridX * CityConfig.BLOCK_WIDTH) + (targetGridX * CityConfig.STREET_WIDTH);
+    targetZ = (targetGridZ * CityConfig.BLOCK_WIDTH) + (targetGridZ * CityConfig.STREET_WIDTH);
 
     deltaX = (camera.position.x == targetX) ? 0 : 0.2;
     deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
