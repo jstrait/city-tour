@@ -291,14 +291,14 @@ var City = function() {
           terrainCoordinates[i][j + 1],
           terrainCoordinates[i + 1][j + 1],
         ];
-        var minimumTerrainHeight = Math.min(...blockTerrainCoordinates);
-        var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
+        var minimumTerrainHeight = Math.max(0, Math.min(...blockTerrainCoordinates));
+        var maximumTerrainHeight = Math.max(0, Math.max(...blockTerrainCoordinates));
 
         block = [];
         for (l = 0; l < blockLayout.length; l++) {
           lotLayout = blockLayout[l];
-          buildingHeight = calculateBuildingHeight(i, j);
-          buildingBottom = 0;
+          buildingHeight = calculateBuildingHeight(i, j) + (maximumTerrainHeight - minimumTerrainHeight);
+          buildingBottom = minimumTerrainHeight;
 
           block.push({
             left: lotLayout.left,
