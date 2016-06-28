@@ -309,7 +309,7 @@ var City = function() {
   };
 
   var calculateBuildingHeight = function(i, j) {
-    var squareRootOfMaxBuildingHeight = Math.sqrt(city.MAX_BUILDING_HEIGHT);
+    var squareRootOfMaxBuildingHeight = Math.pow(city.MAX_BUILDING_HEIGHT, (1/5));
 
     var halfRows = city.BLOCK_ROWS / 2;
     var halfColumns = city.BLOCK_COLUMNS / 2;
@@ -318,7 +318,7 @@ var City = function() {
     var multiplierZ = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - j)) / halfColumns);
     var multiplier = Math.min(multiplierX, multiplierZ);
 
-    return multiplier * multiplier;
+    return Math.pow(multiplier, 5);
   };
 
   return city;
