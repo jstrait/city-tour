@@ -84,20 +84,37 @@ var City = function() {
 
     var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
     var roadGeometry = new THREE.Geometry();
-    var roadIntersection;
+    var roadSegment;
 
     x = -city.HALF_SCENE_WIDTH - (city.STREET_WIDTH / 2);
     for (i = 0; i <= city.BLOCK_ROWS; i++) {
       z = -city.HALF_SCENE_DEPTH - (city.STREET_DEPTH / 2);
 
       for (j = 0; j <= city.BLOCK_COLUMNS; j++) {
-        roadIntersection = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, city.STREET_DEPTH), roadMaterial);
-        roadIntersection.position.x = x;
-        roadIntersection.rotation.x = -(Math.PI / 2);
-        roadIntersection.position.y = Math.max(0, terrainCoordinates[i][j]);
-        roadIntersection.position.z = z;
-        roadIntersection.updateMatrix();
-        roadGeometry.merge(roadIntersection.geometry, roadIntersection.matrix);
+        // Road intersection
+        roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, city.STREET_DEPTH), roadMaterial);
+        roadSegment.position.x = x;
+        roadSegment.rotation.x = -(Math.PI / 2);
+        roadSegment.position.y = Math.max(0, terrainCoordinates[i][j]);
+        roadSegment.position.z = z;
+        roadSegment.updateMatrix();
+        roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
+
+
+        // North/South road segment
+        var north = Math.max(0, terrainCoordinates[i][j]);
+        var south = Math.max(0, terrainCoordinates[i][j + 1]);
+        var midpoint = (north + south) / 2;
+        var angle = Math.atan2(city.BLOCK_DEPTH, (north - south));
+
+        roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, city.BLOCK_DEPTH), roadMaterial);
+        roadSegment.position.x = x;
+        roadSegment.rotation.x = -Math.atan2(city.BLOCK_DEPTH, (north - south));
+        roadSegment.position.y = Math.max(0, midpoint);
+        roadSegment.position.z = z + (city.STREET_DEPTH / 2) + (city.BLOCK_DEPTH / 2);
+        roadSegment.updateMatrix();
+        roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
+
 
         z += city.BLOCK_DEPTH + city.STREET_DEPTH;
       }
