@@ -47,14 +47,15 @@ var City = function() {
   city.buildScene = function() {
     var scene = new THREE.Scene();
 
-    scene.add(buildGroundGeometry());
-
     var terrainCoordinates = buildTerrainCoordinates();
 
     var terrainMeshes = buildTerrainGeometry(terrainCoordinates);
     terrainMeshes.forEach(function(terrainMesh) {
       scene.add(terrainMesh);
     });
+
+    //scene.add(buildGroundGeometry());
+    scene.add(buildRoadGeometry(terrainCoordinates));
 
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
@@ -76,6 +77,36 @@ var City = function() {
     groundGeometry.rotation.x = -(Math.PI / 2);
 
     return groundGeometry;
+  };
+
+  var buildRoadGeometry = function(terrainCoordinates) {
+    var i, j, x, z;
+
+    var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
+    var roadGeometry = new THREE.Geometry();
+    var roadIntersection;
+
+    x = -city.HALF_SCENE_WIDTH - (city.STREET_WIDTH / 2);
+    for (i = 0; i <= city.BLOCK_ROWS; i++) {
+      z = -city.HALF_SCENE_DEPTH - (city.STREET_DEPTH / 2);
+
+      for (j = 0; j <= city.BLOCK_COLUMNS; j++) {
+        roadIntersection = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, city.STREET_DEPTH), roadMaterial);
+        roadIntersection.position.x = x;
+        roadIntersection.rotation.x = -(Math.PI / 2);
+        roadIntersection.position.y = Math.max(0, terrainCoordinates[i][j]);
+        roadIntersection.position.z = z;
+        roadIntersection.updateMatrix();
+        roadGeometry.merge(roadIntersection.geometry, roadIntersection.matrix);
+
+        z += city.BLOCK_DEPTH + city.STREET_DEPTH;
+      }
+
+      x += city.BLOCK_WIDTH + city.STREET_WIDTH;
+    }
+
+
+    return new THREE.Mesh(roadGeometry, roadMaterial);
   };
 
   var buildTerrainCoordinates = function() {
