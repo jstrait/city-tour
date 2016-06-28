@@ -36,7 +36,8 @@ body {
 var $container = $('#container');
 
 if (detectWebGL()) {
-  initScene($container);
+  var terrain = new Terrain();
+  initScene($container, terrain);
 
   var animationManager = new AnimationManager();
   animationManager.animate();

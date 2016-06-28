@@ -18,7 +18,7 @@ function detectWebGL() {
   return true;
 }
 
-function initScene($container) {
+function initScene($container, terrain) {
   var WIDTH = $container.width(), HEIGHT = $container.height();
 
   // Build renderer
@@ -28,9 +28,9 @@ function initScene($container) {
   renderer.setClearColor(0x66ccff, 1);
 
   $container.append(renderer.domElement);
-  
+
   city = new City();
-  scene = city.buildScene();
+  scene = city.buildScene(terrain);
 
   // Build camera
   var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
