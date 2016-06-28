@@ -107,7 +107,9 @@ var City = function() {
         var midpoint = (north + south) / 2;
         var angle = Math.atan2(city.BLOCK_DEPTH, (north - south));
 
-        roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, city.BLOCK_DEPTH), roadMaterial);
+        var segmentLength = Math.sqrt(Math.pow((south - north), 2) + Math.pow(city.BLOCK_DEPTH, 2));
+
+        roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, segmentLength), roadMaterial);
         roadSegment.position.x = x;
         roadSegment.rotation.x = -Math.atan2(city.BLOCK_DEPTH, (north - south));
         roadSegment.position.y = Math.max(0, midpoint);
