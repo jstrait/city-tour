@@ -292,7 +292,7 @@ var City = function() {
           building = new THREE.Mesh(new THREE.BoxGeometry(unitWidth * city.BLOCK_WIDTH, 1, unitDepth * city.BLOCK_WIDTH));
 
           building.position.x = x + (city.BLOCK_WIDTH * xUnitMid);
-          building.scale.y =  (Math.random() * maxAboveGroundHeight) + city.MIN_BUILDING_HEIGHT + (unitBuilding.yMax - unitBuilding.yMin);
+          building.scale.y = (Math.random() * unitBuilding.yMax) + city.MIN_BUILDING_HEIGHT;
           building.position.y = (building.scale.y / 2) + unitBuilding.yMin;
           building.position.z = z + (city.BLOCK_DEPTH * zUnitMid);
           building.updateMatrix();
