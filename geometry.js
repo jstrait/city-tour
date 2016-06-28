@@ -49,8 +49,7 @@ var City = function() {
 
     scene.add(buildGroundGeometry());
 
-    var terrainUnitCoordinates = buildTerrainUnitCoordinates();
-    var terrainCoordinates = buildTerrainCoordinates(terrainUnitCoordinates);
+    var terrainCoordinates = buildTerrainCoordinates();
 
     var terrainMeshes = buildTerrainGeometry(terrainCoordinates);
     terrainMeshes.forEach(function(terrainMesh) {
@@ -60,7 +59,7 @@ var City = function() {
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
-    var unitBlocks = generateUnitBlocks(terrainUnitCoordinates);
+    var unitBlocks = generateUnitBlocks(terrainCoordinates);
 
     generateSceneBlocks(unitBlocks, buildingGeometries);
 
@@ -79,7 +78,7 @@ var City = function() {
     return groundGeometry;
   };
 
-  var buildTerrainUnitCoordinates = function() {
+  var buildTerrainCoordinates = function() {
     var MAX_HEIGHT = 4;
     var i, j;
 
@@ -96,43 +95,25 @@ var City = function() {
     return terrainCoordinates;
   };
 
-  var buildTerrainCoordinates = function(terrainUnitCoordinates) {
-    var i, j, x, z;
-
-    var sceneTerrainCoordinates = [];
-    x = -city.HALF_SCENE_WIDTH;
-    for (i = 0; i <= city.BLOCK_ROWS; i++) {
-      sceneTerrainCoordinates[x] = [];
-      z = -city.HALF_SCENE_DEPTH;
-
-      for (j = 0; j <= city.BLOCK_COLUMNS; j++) {
-        sceneTerrainCoordinates[x][z] = terrainUnitCoordinates[i][j];
-      
-        z += city.BLOCK_DEPTH + city.STREET_DEPTH;
-      }
-
-      x += city.BLOCK_WIDTH + city.STREET_WIDTH;
-    }
-
-    console.log(sceneTerrainCoordinates);
-
-    return sceneTerrainCoordinates;
-  }
-
   var buildTerrainGeometry = function(terrainCoordinates) {
-    var x, z;
+    var i, j, x, z;
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
     var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: new THREE.Color(255, 25, 0) });
 
     var triangle, v1, v2, v3;
-    for (x = -(city.HALF_SCENE_WIDTH); x < city.HALF_SCENE_WIDTH - (city.BLOCK_WIDTH + city.STREET_WIDTH); x += city.BLOCK_WIDTH + city.STREET_WIDTH) {
-      for (z = -(city.HALF_SCENE_DEPTH); z < city.HALF_SCENE_DEPTH; z += city.BLOCK_DEPTH + city.STREET_DEPTH) {
+
+    x = -city.HALF_SCENE_WIDTH;
+    for (i = 0; i < city.BLOCK_ROWS; i++) {
+      z = -city.HALF_SCENE_DEPTH;
+
+      for (j = 0; j < city.BLOCK_COLUMNS; j++) {
         triangle = new THREE.Geometry();
-        v1 = new THREE.Vector3(x, terrainCoordinates[x][z], z);
-        v2 = new THREE.Vector3(x, terrainCoordinates[x][z + city.BLOCK_DEPTH + city.STREET_DEPTH], z + city.BLOCK_DEPTH + city.STREET_DEPTH);
-        v3 = new THREE.Vector3(x + city.BLOCK_WIDTH + city.STREET_WIDTH, terrainCoordinates[x + city.BLOCK_WIDTH + city.STREET_WIDTH][z], z);
+
+        v1 = new THREE.Vector3(x, terrainCoordinates[i][j], z);
+        v2 = new THREE.Vector3(x, terrainCoordinates[i][j + 1], z + city.BLOCK_DEPTH + city.STREET_DEPTH);
+        v3 = new THREE.Vector3(x + city.BLOCK_WIDTH + city.STREET_WIDTH, terrainCoordinates[i + 1][j], z);
 
         triangle.vertices.push(v1);
         triangle.vertices.push(v2);
@@ -144,9 +125,9 @@ var City = function() {
         terrainGeometry1.merge(triangle);
 
         triangle = new THREE.Geometry();
-        v1 = new THREE.Vector3(x, terrainCoordinates[x][z + city.BLOCK_DEPTH + city.STREET_DEPTH], z + city.BLOCK_DEPTH + city.STREET_DEPTH);
-        v2 = new THREE.Vector3(x + city.BLOCK_WIDTH + city.STREET_WIDTH, terrainCoordinates[x + city.BLOCK_WIDTH + city.STREET_WIDTH][z + city.BLOCK_DEPTH + city.STREET_DEPTH], z + city.BLOCK_DEPTH + city.STREET_DEPTH);
-        v3 = new THREE.Vector3(x + city.BLOCK_WIDTH + city.STREET_WIDTH, terrainCoordinates[x + city.BLOCK_WIDTH + city.STREET_WIDTH][z], z);
+        v1 = new THREE.Vector3(x, terrainCoordinates[i][j + 1], z + city.BLOCK_DEPTH + city.STREET_DEPTH);
+        v2 = new THREE.Vector3(x + city.BLOCK_WIDTH + city.STREET_WIDTH, terrainCoordinates[i + 1][j + 1], z + city.BLOCK_DEPTH + city.STREET_DEPTH);
+        v3 = new THREE.Vector3(x + city.BLOCK_WIDTH + city.STREET_WIDTH, terrainCoordinates[i + 1][j], z);
 
         triangle.vertices.push(v1);
         triangle.vertices.push(v2);
@@ -156,7 +137,11 @@ var City = function() {
         triangle.computeFaceNormals();
 
         terrainGeometry2.merge(triangle);
+
+        z += city.BLOCK_DEPTH + city.STREET_DEPTH;
       }
+
+      x += city.BLOCK_WIDTH + city.STREET_WIDTH;
     }
 
     var mesh1 = new THREE.Mesh(terrainGeometry1, terrainMaterial1);
