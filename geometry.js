@@ -118,6 +118,26 @@ var City = function() {
         roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
 
 
+        // East/West road segment
+        if (i < city.BLOCK_ROWS) {
+          var west = Math.max(0, terrainCoordinates[i][j]);
+          var east = Math.max(0, terrainCoordinates[i + 1][j]);
+          var midpoint = (west + east) / 2;
+          var angle = Math.atan2((west - east), city.BLOCK_WIDTH);
+
+          var segmentLength = Math.sqrt(Math.pow((east - west), 2) + Math.pow(city.BLOCK_WIDTH, 2));
+
+          roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(segmentLength, city.STREET_WIDTH), roadMaterial);
+          roadSegment.position.x = x + (city.STREET_WIDTH / 2) + (city.BLOCK_WIDTH / 2);
+          roadSegment.rotation.x = -(Math.PI / 2);
+          roadSegment.position.y = Math.max(0, midpoint);
+          roadSegment.rotation.y = angle;
+          roadSegment.position.z = z;
+          roadSegment.updateMatrix();
+          roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
+        }
+
+
         z += city.BLOCK_DEPTH + city.STREET_DEPTH;
       }
 
