@@ -95,15 +95,15 @@ var City = function() {
         roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, city.STREET_DEPTH), roadMaterial);
         roadSegment.position.x = x;
         roadSegment.rotation.x = -(Math.PI / 2);
-        roadSegment.position.y = Math.max(0, terrainCoordinates[i][j]);
+        roadSegment.position.y = terrainCoordinates[i][j];
         roadSegment.position.z = z;
         roadSegment.updateMatrix();
         roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
 
 
         // North/South road segment
-        var north = Math.max(0, terrainCoordinates[i][j]);
-        var south = Math.max(0, terrainCoordinates[i][j + 1]);
+        var north = terrainCoordinates[i][j];
+        var south = terrainCoordinates[i][j + 1];
         var midpoint = (north + south) / 2;
         var angle = -Math.atan2(city.BLOCK_DEPTH, (north - south));
 
@@ -112,7 +112,7 @@ var City = function() {
         roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(city.STREET_WIDTH, segmentLength), roadMaterial);
         roadSegment.position.x = x;
         roadSegment.rotation.x = angle;
-        roadSegment.position.y = Math.max(0, midpoint);
+        roadSegment.position.y = midpoint;
         roadSegment.position.z = z + (city.STREET_DEPTH / 2) + (city.BLOCK_DEPTH / 2);
         roadSegment.updateMatrix();
         roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
@@ -120,8 +120,8 @@ var City = function() {
 
         // East/West road segment
         if (i < city.BLOCK_ROWS) {
-          var west = Math.max(0, terrainCoordinates[i][j]);
-          var east = Math.max(0, terrainCoordinates[i + 1][j]);
+          var west = terrainCoordinates[i][j];
+          var east = terrainCoordinates[i + 1][j];
           var midpoint = (west + east) / 2;
           var angle = Math.atan2((west - east), city.BLOCK_WIDTH);
 
@@ -130,7 +130,7 @@ var City = function() {
           roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(segmentLength, city.STREET_WIDTH), roadMaterial);
           roadSegment.position.x = x + (city.STREET_WIDTH / 2) + (city.BLOCK_WIDTH / 2);
           roadSegment.rotation.x = -(Math.PI / 2);
-          roadSegment.position.y = Math.max(0, midpoint);
+          roadSegment.position.y = midpoint;
           roadSegment.rotation.y = angle;
           roadSegment.position.z = z;
           roadSegment.updateMatrix();
@@ -169,6 +169,13 @@ var City = function() {
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     midpointDisplace(terrainCoordinates, 100, 0.5, 0, city.BLOCK_ROWS, city.BLOCK_COLUMNS, 0);
+
+    // Clamp negative heights to 0
+    for (i = 0; i <= city.BLOCK_ROWS; i++) {
+      for (j = 0; j <= city.BLOCK_COLUMNS; j++) {
+        terrainCoordinates[i][j] = Math.max(0.0, terrainCoordinates[i][j]);
+      }
+    }
 
     console.log(terrainCoordinates);
 
@@ -311,8 +318,8 @@ var City = function() {
           terrainCoordinates[i][j + 1],
           terrainCoordinates[i + 1][j + 1],
         ];
-        var minimumTerrainHeight = Math.max(0, Math.min(...blockTerrainCoordinates));
-        var maximumTerrainHeight = Math.max(0, Math.max(...blockTerrainCoordinates));
+        var minimumTerrainHeight = Math.min(...blockTerrainCoordinates);
+        var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
 
         block = [];
         for (l = 0; l < blockLayout.length; l++) {
