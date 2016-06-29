@@ -1,5 +1,53 @@
 "use strict";
 
+var AnimationTimer = function() {
+  var FRAMES_PER_SECONDS = 60;
+  var MILLISECONDS_PER_TICK = 1000.0 / FRAMES_PER_SECONDS;
+
+  var masterStartTime;
+  var previousTickStartTime;
+  var totalTicks = 0;
+
+  var tick = function(timestamp) {
+    var tickStartTime = performance.now();
+
+    if (!masterStartTime) {
+      masterStartTime = tickStartTime;
+    }
+
+    var ticksToProcess = 1;
+    var expectedFramesSoFar = Math.floor((tickStartTime - masterStartTime) / MILLISECONDS_PER_TICK);
+    if (expectedFramesSoFar > totalTicks) {
+      ticksToProcess += (expectedFramesSoFar - totalTicks);
+    }
+
+    for (var i = 0; i < ticksToProcess; i++) {
+      processTick();
+      totalTicks += 1;
+    }
+
+    renderer.render(scene, camera);
+
+    previousTickStartTime = tickStartTime;
+
+    requestAnimFrame(tick);
+  };
+
+  var processTick = function() {
+    console.log("Tick!");
+  };
+
+  var animator = {};
+
+  animator.start = function() {
+    requestAnimFrame(tick);
+  };
+
+  return animator;
+};
+
+
+
 var AnimationManager = function() {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
 
