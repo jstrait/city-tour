@@ -260,8 +260,10 @@ var City = function() {
   var generateSceneBlocks = function(unitBlocks, buildingGeometries) {
     var i, j, b, x, z;
     var block;
-    var unitBuilding, building, materialIndex;
+    var unitBuilding, materialIndex;
     var maxAboveGroundHeight = 5;
+
+    var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
     x = -CityConfig.HALF_SCENE_WIDTH;
     for (i = 0; i < unitBlocks.length; i++) {
@@ -278,16 +280,19 @@ var City = function() {
           var xUnitMid = unitBuilding.left + (unitWidth / 2);
           var zUnitMid = unitBuilding.top + (unitDepth / 2);
 
-          building = new THREE.Mesh(new THREE.BoxGeometry(unitWidth * CityConfig.BLOCK_WIDTH, 1, unitDepth * CityConfig.BLOCK_WIDTH));
+          reusableBuildingMesh.scale.x = unitWidth * CityConfig.BLOCK_WIDTH;
+          reusableBuildingMesh.position.x = x + (CityConfig.BLOCK_WIDTH * xUnitMid);
 
-          building.position.x = x + (CityConfig.BLOCK_WIDTH * xUnitMid);
-          building.scale.y = (Math.random() * unitBuilding.yMax) + CityConfig.MIN_BUILDING_HEIGHT;
-          building.position.y = (building.scale.y / 2) + unitBuilding.yMin;
-          building.position.z = z + (CityConfig.BLOCK_DEPTH * zUnitMid);
-          building.updateMatrix();
+          reusableBuildingMesh.scale.y = (Math.random() * unitBuilding.yMax) + CityConfig.MIN_BUILDING_HEIGHT;
+          reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + unitBuilding.yMin;
+
+          reusableBuildingMesh.scale.z = unitDepth * CityConfig.BLOCK_WIDTH;
+          reusableBuildingMesh.position.z = z + (CityConfig.BLOCK_DEPTH * zUnitMid);
+
+          reusableBuildingMesh.updateMatrix();
 
           materialIndex = Math.floor(Math.random() * CityConfig.MAX_BUILDING_MATERIALS);
-          buildingGeometries[materialIndex].merge(building.geometry, building.matrix);
+          buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
         }
 
         z += CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
