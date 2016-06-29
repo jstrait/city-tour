@@ -216,7 +216,7 @@ var City = function() {
   var generateUnitBlocks = function(terrainCoordinates) {
     var blocks = [];
     var block;
-    var i, j, l;
+    var i, j;
     var lotLayout, buildingHeight, buildingBottom;
 
     for (i = 0; i < CityConfig.BLOCK_ROWS; i++) {
@@ -235,20 +235,19 @@ var City = function() {
         var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
 
         block = [];
-        for (l = 0; l < blockLayout.length; l++) {
-          lotLayout = blockLayout[l];
+        blockLayout.forEach(function(lot) {
           buildingHeight = calculateBuildingHeight(i, j) + (maximumTerrainHeight - minimumTerrainHeight);
           buildingBottom = minimumTerrainHeight;
 
           block.push({
-            left: lotLayout.left,
-            right: lotLayout.right,
-            top: lotLayout.top,
-            bottom: lotLayout.bottom,
+            left: lot.left,
+            right: lot.right,
+            top: lot.top,
+            bottom: lot.bottom,
             yMin: buildingBottom,
             yMax: buildingHeight,
           });
-        }
+        });
 
         blocks[i][j] = block;
       }
