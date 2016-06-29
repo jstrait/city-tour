@@ -283,9 +283,9 @@ var City = function() {
   };
 
   var generateSceneBlocks = function(unitBlocks, buildingGeometries) {
-    var i, j, b, x, z;
+    var i, j, x, z;
     var block;
-    var unitBuilding, materialIndex;
+    var materialIndex;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
@@ -296,19 +296,17 @@ var City = function() {
       for (j = 0; j < unitBlocks[i].length; j++) {
         block = unitBlocks[i][j];
 
-        for (b = 0; b < block.length; b++) {
-          unitBuilding = block[b];
-
-          var unitWidth = unitBuilding.right - unitBuilding.left;
-          var unitDepth = unitBuilding.bottom - unitBuilding.top;
-          var xUnitMid = unitBuilding.left + (unitWidth / 2);
-          var zUnitMid = unitBuilding.top + (unitDepth / 2);
+        block.forEach(function(lot) {
+          var unitWidth = lot.right - lot.left;
+          var unitDepth = lot.bottom - lot.top;
+          var xUnitMid = lot.left + (unitWidth / 2);
+          var zUnitMid = lot.top + (unitDepth / 2);
 
           reusableBuildingMesh.scale.x = unitWidth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.x = x + (CityConfig.BLOCK_WIDTH * xUnitMid);
 
-          reusableBuildingMesh.scale.y = (Math.random() * unitBuilding.yMax) + CityConfig.MIN_BUILDING_HEIGHT;
-          reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + unitBuilding.yMin;
+          reusableBuildingMesh.scale.y = (Math.random() * lot.yMax) + CityConfig.MIN_BUILDING_HEIGHT;
+          reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + lot.yMin;
 
           reusableBuildingMesh.scale.z = unitDepth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.z = z + (CityConfig.BLOCK_DEPTH * zUnitMid);
@@ -317,7 +315,7 @@ var City = function() {
 
           materialIndex = Math.floor(Math.random() * CityConfig.MAX_BUILDING_MATERIALS);
           buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
-        }
+        });
 
         z += CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
       }
