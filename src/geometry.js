@@ -8,26 +8,49 @@ var City = function() {
   CityConfig.BLOCK_LAYOUTS = [
     [ { left:     0.0,  right: 1.0,  top: 0.0,  bottom: 1.0, } ],
 
+
     [ { left:     0.0,  right: 0.5,  top: 0.0,  bottom:  1.0 },
       { left:     0.5,  right: 1.0,  top: 0.0,  bottom:  1.0 } ],
+
 
     [ { left:     0.0,  right: 1.0,  top: 0.0,  bottom: 0.5 },
       { left:     0.0,  right: 1.0,  top: 0.5,  bottom: 1.0 } ],
 
+
     [ { left:     0.0,  right: 0.5,  top: 0.0,  bottom: 1.0 },
       { left:     0.5,  right: 1.0,  top: 0.0,  bottom: 0.5 },
       { left:     0.5,  right: 1.0,  top: 0.5,  bottom: 1.0 } ],
+
 
     [ { left:     0.0,  right: 0.5,  top: 0.0,  bottom: 0.5, },
       { left:     0.5,  right: 1.0,  top: 0.0,  bottom: 0.5, },
       { left:     0.0,  right: 0.5,  top: 0.5,  bottom: 1.0, },
       { left:     0.5,  right: 1.0,  top: 0.5,  bottom: 1.0, } ],
 
+
     [ { left:     0.0,  right: (1 / 3),  top: 0.0,  bottom:  0.5 },
       { left: (1 / 3),  right: (2 / 3),  top: 0.0,  bottom:  0.5 },
       { left: (2 / 3),  right:     1.0,  top: 0.0,  bottom:  0.5 },
       { left:     0.0,  right:     0.5,  top: 0.5,  bottom: 1.0 },
       { left:     0.5,  right:     1.0,  top: 0.5,  bottom: 1.0 } ],
+
+
+    [ { left:     0.0,  right: 0.25,  top: 0.0,    bottom:  (1/3), },
+      { left:     0.75, right: 1.0,   top: 0.0,    bottom:  (1/3), },
+      { left:     0.0,  right: 0.25,  top: (2/3),  bottom:  1.0, },
+      { left:     0.75, right: 1.0,   top: (2/3),  bottom:  1.0, },
+
+      { left:     0.0, right: 0.25,   top: (1/3),  bottom:  0.5, },
+      { left:     0.0, right: 0.25,   top:   0.5,  bottom:  (2/3), },
+      { left:     0.75, right: 1.0,   top: (1/3),  bottom:  0.5, },
+      { left:     0.75, right: 1.0,   top:   0.5,  bottom:  (2/3), },
+
+      { left:     0.25,   right: 0.4167,  top: 0.0,  bottom:  0.5, },
+      { left:     0.4167, right: 0.5834,  top: 0.0,  bottom:  0.5, },
+      { left:     0.5834, right: 0.75,    top: 0.0,  bottom:  0.5, },
+      { left:     0.25,   right: 0.4167,  top: 0.5,  bottom:  1.0, },
+      { left:     0.4167, right: 0.5834,  top: 0.5,  bottom:  1.0, },
+      { left:     0.5834, right: 0.75,    top: 0.5,  bottom:  1.0, }, ],
   ];
 
   city.buildScene = function(terrain) {
