@@ -70,15 +70,17 @@ var City = function() {
     var roadGeometry = new THREE.Geometry();
     var roadSegment;
 
+    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, CityConfig.STREET_DEPTH), roadMaterial);
+    reusableIntersectionMesh.rotation.x = -(Math.PI / 2);
+
     x = -CityConfig.HALF_SCENE_WIDTH - (CityConfig.STREET_WIDTH / 2);
     for (i = 0; i <= CityConfig.BLOCK_ROWS; i++) {
       z = -CityConfig.HALF_SCENE_DEPTH - (CityConfig.STREET_DEPTH / 2);
 
       for (j = 0; j <= CityConfig.BLOCK_COLUMNS; j++) {
         // Road intersection
-        roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, CityConfig.STREET_DEPTH), roadMaterial);
+        roadSegment = reusableIntersectionMesh;
         roadSegment.position.x = x;
-        roadSegment.rotation.x = -(Math.PI / 2);
         roadSegment.position.y = terrainCoordinates[i][j];
         roadSegment.position.z = z;
         roadSegment.updateMatrix();
