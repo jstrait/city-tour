@@ -286,7 +286,6 @@ var City = function() {
     var i, j, b, x, z;
     var block;
     var unitBuilding, materialIndex;
-    var maxAboveGroundHeight = 5;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
