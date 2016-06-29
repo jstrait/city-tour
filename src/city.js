@@ -3,7 +3,7 @@
 var renderer, scene, camera;
 var city;
 
-var CityConfigBuilder = function() {
+var CityConfig = (function() {
   var config = {};
 
   config.STREET_WIDTH = 3;
@@ -21,8 +21,7 @@ var CityConfigBuilder = function() {
   config.HALF_SCENE_DEPTH = config.TOTAL_SCENE_DEPTH / 2;
 
   return config;
-};
-var CityConfig = CityConfigBuilder();
+})();
 
 function detectWebGL() {
   if (!window.WebGLRenderingContext) {
