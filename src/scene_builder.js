@@ -187,15 +187,22 @@ var SceneBuilder = function() {
   var sceneBuilder = {};
 
   sceneBuilder.build = function(terrain, buildings) {
+    var masterStartTime = new Date();
+
     var scene = new THREE.Scene();
 
+    var terrainStartTime = new Date();
     var terrainMeshes = buildTerrainGeometry(terrain);
     terrainMeshes.forEach(function(terrainMesh) {
       scene.add(terrainMesh);
     });
+    var terrainEndTime = new Date();
 
+    var roadStartTime = new Date();
     scene.add(buildRoadGeometry(terrain));
+    var roadEndTime = new Date();
 
+    var buildingsStartTime = new Date();
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
@@ -204,6 +211,13 @@ var SceneBuilder = function() {
     for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
       scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
     }
+    var buildingsEndTime = new Date();
+
+    var masterEndTime = new Date();
+    console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
+    console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
+    console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
+    console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
 
     return scene;
   };
