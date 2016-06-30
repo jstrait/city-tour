@@ -58,7 +58,7 @@ function initScene($container, terrain) {
   camera.lookAt(scene.position);
   camera.position.x = 0;
   camera.position.y = 8;
-  camera.position.z = CityConfig.HALF_SCENE_DEPTH + 22;
+  camera.position.z = CityConfig.HALF_SCENE_DEPTH;
 
   // Build light sources
   addPointLight(scene, 0, 0, 100000);

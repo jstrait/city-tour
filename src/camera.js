@@ -8,6 +8,8 @@ var AnimationTimer = function() {
   var previousTickStartTime;
   var totalTicks = 0;
 
+  var animator = new Animator();
+
   var tick = function(timestamp) {
     var tickStartTime = performance.now();
 
@@ -22,7 +24,7 @@ var AnimationTimer = function() {
     }
 
     for (var i = 0; i < ticksToProcess; i++) {
-      processTick();
+      animator.tick();
       totalTicks += 1;
     }
 
@@ -33,18 +35,78 @@ var AnimationTimer = function() {
     requestAnimFrame(tick);
   };
 
-  var processTick = function() {
-    console.log("Tick!");
+  var animationTimer = {};
+
+  animationTimer.start = function() {
+    requestAnimFrame(tick);
   };
 
+  return animationTimer;
+};
+
+
+var Animator = function() {
   var animator = {};
 
-  animator.start = function() {
-    requestAnimFrame(tick);
+  var xPositionGenerator = new MotionGenerator();
+  var zPositionGenerator = new LinearMotionGenerator(2, CityConfig.HALF_SCENE_WIDTH);
+
+  animator.tick = function() {
+    camera.position.x += xPositionGenerator.nextValue();
+    camera.position.z += -zPositionGenerator.nextValue();
   };
 
   return animator;
 };
+
+
+var MotionGenerator = function() {
+  var motionGenerator = {};
+
+  motionGenerator.nextValue = function() {
+    return 0.0;
+  };
+
+  motionGenerator.isComplete = function() {
+    return false;
+  };
+
+  motionGenerator.onComplete = function() { };
+
+  return motionGenerator;
+};
+
+var LinearMotionGenerator = function(delta, target) {
+  var accumulator = 0.0;
+  var isComplete = false;
+
+  var linearMotionGenerator = new MotionGenerator();
+
+  linearMotionGenerator.nextValue = function() {
+    if (isComplete) {
+      return 0.0;
+    }
+
+    accumulator += delta;
+
+    if (accumulator <= target) {
+      return delta;
+    }
+    else {
+      isComplete = true;
+      return (delta - (accumulator - target));
+    }
+  };
+
+  linearMotionGenerator.isComplete = function() {
+    return isComplete;
+  };
+
+  linearMotionGenerator.onComplete = function() { };
+
+  return linearMotionGenerator;
+};
+
 
 
 
