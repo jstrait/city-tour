@@ -67,7 +67,7 @@ function detectWebGL() {
   return true;
 }
 
-function initScene($container, terrain) {
+function initScene($container, terrain, buildings) {
   var WIDTH = $container.width(), HEIGHT = $container.height();
 
   // Build renderer
@@ -79,7 +79,7 @@ function initScene($container, terrain) {
   $container.append(renderer.domElement);
 
   city = new City();
-  scene = city.buildScene(terrain);
+  scene = city.buildScene(terrain, buildings);
 
   // Build camera
   var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;

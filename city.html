@@ -28,6 +28,7 @@ body {
 <script src="lib/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="lib/three-v76.min.js" type="text/javascript"></script>
 <script src="lib/webgl-utils.js" type="text/javascript"></script>
+<script src="src/buildings.js" type="text/javascript"></script>
 <script src="src/city.js" type="text/javascript"></script>
 <script src="src/camera.js" type="text/javascript"></script>
 <script src="src/geometry.js" type="text/javascript"></script>
@@ -38,7 +39,8 @@ var $container = $('#container');
 
 if (detectWebGL()) {
   var terrain = new Terrain();
-  initScene($container, terrain);
+  var buildings = new Buildings(terrain);
+  initScene($container, terrain, buildings);
 
   var animationManager = new AnimationManager();
   //animationManager.animate();
