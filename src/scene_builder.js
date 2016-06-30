@@ -142,34 +142,34 @@ var SceneBuilder = function() {
     return buildingGeometries;
   };
 
-  var generateSceneBlocks = function(unitBlocks, buildingGeometries) {
+  var generateBuildingGeometries = function(blockDefinitions, buildingGeometries) {
     var mapX, mapZ, sceneX, sceneZ;
     var block;
     var materialIndex;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
-    for (mapX = 0; mapX < unitBlocks.length; mapX++) {
-      for (mapZ = 0; mapZ < unitBlocks[mapX].length; mapZ++) {
+    for (mapX = 0; mapX < blockDefinitions.length; mapX++) {
+      for (mapZ = 0; mapZ < blockDefinitions[mapX].length; mapZ++) {
         sceneX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
         sceneZ = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
 
-        block = unitBlocks[mapX][mapZ];
+        block = blockDefinitions[mapX][mapZ];
 
         block.forEach(function(lot) {
-          var unitWidth = lot.right - lot.left;
-          var unitDepth = lot.bottom - lot.top;
-          var xUnitMid = lot.left + (unitWidth / 2);
-          var zUnitMid = lot.top + (unitDepth / 2);
+          var mapLotWidth = lot.right - lot.left;
+          var mapLotDepth = lot.bottom - lot.top;
+          var mapLotXMidpoint = lot.left + (mapLotWidth / 2);
+          var mapLotZMidpoint = lot.top + (mapLotDepth / 2);
 
-          reusableBuildingMesh.scale.x = unitWidth * CityConfig.BLOCK_WIDTH;
-          reusableBuildingMesh.position.x = sceneX + (CityConfig.BLOCK_WIDTH * xUnitMid);
+          reusableBuildingMesh.scale.x = mapLotWidth * CityConfig.BLOCK_WIDTH;
+          reusableBuildingMesh.position.x = sceneX + (CityConfig.BLOCK_WIDTH * mapLotXMidpoint);
 
           reusableBuildingMesh.scale.y = Math.max(lot.yMinimumHeight, (Math.random() * lot.yTargetHeight) + CityConfig.MIN_BUILDING_HEIGHT);
           reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + lot.yFloor;
 
-          reusableBuildingMesh.scale.z = unitDepth * CityConfig.BLOCK_WIDTH;
-          reusableBuildingMesh.position.z = sceneZ + (CityConfig.BLOCK_DEPTH * zUnitMid);
+          reusableBuildingMesh.scale.z = mapLotDepth * CityConfig.BLOCK_WIDTH;
+          reusableBuildingMesh.position.z = sceneZ + (CityConfig.BLOCK_DEPTH * mapLotZMidpoint);
 
           reusableBuildingMesh.updateMatrix();
 
@@ -196,7 +196,7 @@ var SceneBuilder = function() {
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
-    generateSceneBlocks(buildings.blocks(), buildingGeometries);
+    generateBuildingGeometries(buildings.blocks(), buildingGeometries);
 
     for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
       scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
