@@ -242,7 +242,7 @@ var City = function() {
     var blocks = [];
     var block;
     var i, j;
-    var lotLayout, buildingHeight, buildingBottom;
+    var lotLayout, buildingHeight, buildingBottom, buildingMinimumHeight;
 
     for (i = 0; i < CityConfig.BLOCK_ROWS; i++) {
       blocks[i] = [];
@@ -261,7 +261,8 @@ var City = function() {
 
         block = [];
         blockLayout.forEach(function(lot) {
-          buildingHeight = calculateBuildingHeight(i, j) + (maximumTerrainHeight - minimumTerrainHeight);
+          buildingHeight = calculateBuildingHeight(i, j) + maximumTerrainHeight;
+          buildingMinimumHeight = maximumTerrainHeight + CityConfig.MIN_BUILDING_HEIGHT;
           buildingBottom = minimumTerrainHeight;
 
           block.push({
@@ -269,8 +270,9 @@ var City = function() {
             right: lot.right,
             top: lot.top,
             bottom: lot.bottom,
-            yMin: buildingBottom,
-            yMax: buildingHeight,
+            yFloor: buildingBottom,
+            yMinimumHeight: buildingMinimumHeight,
+            yTargetHeight: buildingHeight,
           });
         });
 
@@ -305,8 +307,8 @@ var City = function() {
           reusableBuildingMesh.scale.x = unitWidth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.x = x + (CityConfig.BLOCK_WIDTH * xUnitMid);
 
-          reusableBuildingMesh.scale.y = (Math.random() * lot.yMax) + CityConfig.MIN_BUILDING_HEIGHT;
-          reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + lot.yMin;
+          reusableBuildingMesh.scale.y = Math.max(lot.yMinimumHeight, (Math.random() * lot.yTargetHeight) + CityConfig.MIN_BUILDING_HEIGHT);
+          reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + lot.yFloor;
 
           reusableBuildingMesh.scale.z = unitDepth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.z = z + (CityConfig.BLOCK_DEPTH * zUnitMid);
