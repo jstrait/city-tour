@@ -3,14 +3,14 @@
 var Terrain = function() {
   var buildTerrainCoordinates = function() {
     var MAX_HEIGHT = 6;
-    var i, j;
+    var x, z;
 
     var terrainCoordinates = [];
-    for (i = 0; i <= CityConfig.BLOCK_ROWS; i++) {
-      terrainCoordinates[i] = [];
+    for (x = 0; x <= CityConfig.BLOCK_ROWS; x++) {
+      terrainCoordinates[x] = [];
 
-      for (j = 0; j <= CityConfig.BLOCK_COLUMNS; j++) {
-        terrainCoordinates[i][j] = 0.0;
+      for (z = 0; z <= CityConfig.BLOCK_COLUMNS; z++) {
+        terrainCoordinates[x][z] = 0.0;
       }
     }
 
@@ -24,9 +24,9 @@ var Terrain = function() {
     midpointDisplace(terrainCoordinates, 20, 0.65, 0, CityConfig.BLOCK_ROWS, CityConfig.BLOCK_COLUMNS, 0);
 
     // Clamp negative heights to 0
-    for (i = 0; i <= CityConfig.BLOCK_ROWS; i++) {
-      for (j = 0; j <= CityConfig.BLOCK_COLUMNS; j++) {
-        terrainCoordinates[i][j] = Math.max(0.0, terrainCoordinates[i][j]);
+    for (x = 0; x <= CityConfig.BLOCK_ROWS; x++) {
+      for (z = 0; z <= CityConfig.BLOCK_COLUMNS; z++) {
+        terrainCoordinates[x][z] = Math.max(0.0, terrainCoordinates[x][z]);
       }
     }
 
