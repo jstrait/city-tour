@@ -43,10 +43,10 @@ if (detectWebGL()) {
   initScene($container, terrain, buildings);
 
   var animationManager = new AnimationManager();
-  //animationManager.animate();
+  animationManager.animate();
 
-  var animationTimer = new AnimationTimer(terrain);
-  animationTimer.start();
+  //var animationTimer = new AnimationTimer(terrain);
+  //animationTimer.start();
 }
 else {
   alert("Your browser doesn't seem to support WebGL. Sorry!");

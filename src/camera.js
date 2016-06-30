@@ -240,6 +240,12 @@ var AnimationManager = function() {
     }
     animators = newAnimators;
 
+    var mapX = Coordinates.sceneXToMapX(camera.position.x);
+    var mapZ = Coordinates.sceneZToMapZ(camera.position.z);
+
+    var y = terrain.heightAtCoordinates(mapX, mapZ);
+    camera.position.y = Math.max(camera.position.y, y + 0.5);
+
     renderer.render(scene, camera);
     requestAnimFrame(animationManager.animate);
   };
