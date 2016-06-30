@@ -88,7 +88,7 @@ var SceneBuilder = function() {
         roadSegment.position.x = sceneX;
         roadSegment.rotation.x = angle;
         roadSegment.position.y = midpoint;
-        roadSegment.position.z = sceneZ + (CityConfig.STREET_DEPTH / 2) + (CityConfig.BLOCK_DEPTH / 2);
+        roadSegment.position.z = sceneZ + (CityConfig.BLOCK_AND_STREET_DEPTH / 2);
         roadSegment.updateMatrix();
         roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
 
@@ -103,7 +103,7 @@ var SceneBuilder = function() {
           var segmentLength = Math.sqrt(Math.pow((east - west), 2) + Math.pow(CityConfig.BLOCK_WIDTH, 2));
 
           roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(segmentLength, CityConfig.STREET_WIDTH), roadMaterial);
-          roadSegment.position.x = sceneX + (CityConfig.STREET_WIDTH / 2) + (CityConfig.BLOCK_WIDTH / 2);
+          roadSegment.position.x = sceneX + (CityConfig.BLOCK_AND_STREET_WIDTH / 2);
           roadSegment.rotation.x = -(Math.PI / 2);
           roadSegment.position.y = midpoint;
           roadSegment.rotation.y = angle;
