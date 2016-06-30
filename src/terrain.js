@@ -71,7 +71,7 @@ var Terrain = function() {
     terrainCoordinates[bottom][midX] = ((topLeft + bottomLeft) / 2) + jitter;
 
     // Middle
-    var middleAverage = (terrainCoordinates[midY][left] + terrainCoordinates[midY][right] + terrainCoordinates[top][midX] + terrainCoordinates[bottom][midX]) / 4
+    var middleAverage = (terrainCoordinates[midY][left] + terrainCoordinates[midY][right] + terrainCoordinates[top][midX] + terrainCoordinates[bottom][midX]) / 4;
     terrainCoordinates[midY][midX] = middleAverage;
 
     if ((midY - top) >= 2) {
