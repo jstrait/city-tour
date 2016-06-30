@@ -55,18 +55,19 @@ var Terrain = function() {
     var midX = left + ((right - left) / 2);
 
     var jitter;
+    var halfJitterAmount = jitterAmount / 2;
 
     // Left column
-    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    jitter = (Math.random() * jitterAmount) - halfJitterAmount;
     terrainCoordinates[midY][left] = ((topLeft + bottomLeft) / 2) + jitter;
     // Right column
-    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    jitter = (Math.random() * jitterAmount) - halfJitterAmount;
     terrainCoordinates[midY][right] = ((topRight + bottomRight) / 2) + jitter;
     // Top row
-    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    jitter = (Math.random() * jitterAmount) - halfJitterAmount;
     terrainCoordinates[top][midX] = ((topLeft + bottomLeft) / 2) + jitter;
     // Bottom row
-    jitter = (Math.random() * jitterAmount) - (jitterAmount / 2);
+    jitter = (Math.random() * jitterAmount) - halfJitterAmount;
     terrainCoordinates[bottom][midX] = ((topLeft + bottomLeft) / 2) + jitter;
 
     // Middle
