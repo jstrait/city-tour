@@ -3,6 +3,55 @@
 var SceneBuilder = function() {
   var COLOR_GROUND = 0xaaaaaa;
 
+  var buildTriangleGeometry = function(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+    var triangle = new THREE.Geometry();
+
+    triangle.vertices.push(new THREE.Vector3(x1, y1, z1));
+    triangle.vertices.push(new THREE.Vector3(x2, y2, z2));
+    triangle.vertices.push(new THREE.Vector3(x3, y3, z3));
+
+    triangle.faces.push(new THREE.Face3(0, 1, 2));
+    triangle.computeFaceNormals();
+
+    return triangle;
+  };
+
+  var buildTerrainGeometry = function(terrain) {
+    var mapX, mapZ;
+    var sceneX_Left, sceneX_Right, sceneZ_Top, sceneZ_Bottom;
+
+    var terrainGeometry1 = new THREE.Geometry();
+    var terrainGeometry2 = new THREE.Geometry();
+    var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
+    var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: new THREE.Color(255, 25, 0) });
+
+    var triangle, v1, v2, v3;
+
+    for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
+      for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
+        sceneX_Left = Coordinates.mapXToSceneX(mapX);
+        sceneX_Right = sceneX_Left + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
+        sceneZ_Top = Coordinates.mapZToSceneZ(mapZ);
+        sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
+
+        triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ),     sceneZ_Top,
+                                         sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom,
+                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
+        terrainGeometry1.merge(triangle);
+
+        triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1),     sceneZ_Bottom,
+                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ_Bottom,
+                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ),     sceneZ_Top);
+        terrainGeometry2.merge(triangle);
+      }
+    }
+
+    var mesh1 = new THREE.Mesh(terrainGeometry1, terrainMaterial1);
+    var mesh2 = new THREE.Mesh(terrainGeometry2, terrainMaterial2);
+
+    return [mesh1, mesh2];
+  };
+
   var buildRoadGeometry = function(terrain) {
     var mapX, mapZ, sceneX, sceneZ;
 
@@ -66,55 +115,6 @@ var SceneBuilder = function() {
     }
 
     return new THREE.Mesh(roadGeometry, roadMaterial);
-  };
-
-  var buildTriangleGeometry = function(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
-    var triangle = new THREE.Geometry();
-
-    triangle.vertices.push(new THREE.Vector3(x1, y1, z1));
-    triangle.vertices.push(new THREE.Vector3(x2, y2, z2));
-    triangle.vertices.push(new THREE.Vector3(x3, y3, z3));
-
-    triangle.faces.push(new THREE.Face3(0, 1, 2));
-    triangle.computeFaceNormals();
-
-    return triangle;
-  };
-
-  var buildTerrainGeometry = function(terrain) {
-    var mapX, mapZ;
-    var sceneX_Left, sceneX_Right, sceneZ_Top, sceneZ_Bottom;
-
-    var terrainGeometry1 = new THREE.Geometry();
-    var terrainGeometry2 = new THREE.Geometry();
-    var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
-    var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: new THREE.Color(255, 25, 0) });
-
-    var triangle, v1, v2, v3;
-
-    for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
-      for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneX_Left = Coordinates.mapXToSceneX(mapX);
-        sceneX_Right = sceneX_Left + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
-        sceneZ_Top = Coordinates.mapZToSceneZ(mapZ);
-        sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
-
-        triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ),     sceneZ_Top,
-                                         sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom,
-                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
-        terrainGeometry1.merge(triangle);
-
-        triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1),     sceneZ_Bottom,
-                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ_Bottom,
-                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ),     sceneZ_Top);
-        terrainGeometry2.merge(triangle);
-      }
-    }
-
-    var mesh1 = new THREE.Mesh(terrainGeometry1, terrainMaterial1);
-    var mesh2 = new THREE.Mesh(terrainGeometry2, terrainMaterial2);
-
-    return [mesh1, mesh2];
   };
 
   var buildMaterials = function() {
