@@ -242,7 +242,7 @@ var City = function() {
     var blocks = [];
     var block;
     var i, j;
-    var lotLayout, buildingHeight, buildingBottom, buildingMinimumHeight;
+    var buildingHeight, buildingBottom, buildingMinimumHeight;
 
     for (i = 0; i < CityConfig.BLOCK_ROWS; i++) {
       blocks[i] = [];
