@@ -78,6 +78,18 @@ var City = function() {
     return scene;
   };
 
+  var mapXToSceneX = function(mapX) {
+    var cartesianMapX = mapX - (CityConfig.BLOCK_COLUMNS / 2);
+
+    return (cartesianMapX * CityConfig.BLOCK_WIDTH) + (cartesianMapX * CityConfig.STREET_WIDTH);
+  };
+
+  var mapZToSceneZ = function(mapZ) {
+    var cartesianMapZ = mapZ - (CityConfig.BLOCK_ROWS / 2);
+
+    return (cartesianMapZ * CityConfig.BLOCK_DEPTH) + (cartesianMapZ * CityConfig.STREET_DEPTH);
+  };
+
   var buildGroundGeometry = function() {
     var groundMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
     var groundGeometry = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.TOTAL_SCENE_WIDTH * 25, CityConfig.TOTAL_SCENE_DEPTH * 25), groundMaterial);
@@ -96,11 +108,11 @@ var City = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, CityConfig.STREET_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -(Math.PI / 2);
 
-    x = -CityConfig.HALF_SCENE_WIDTH - (CityConfig.STREET_WIDTH / 2);
     for (i = 0; i <= CityConfig.BLOCK_ROWS; i++) {
-      z = -CityConfig.HALF_SCENE_DEPTH - (CityConfig.STREET_DEPTH / 2);
-
       for (j = 0; j <= CityConfig.BLOCK_COLUMNS; j++) {
+        x = mapXToSceneX(i);
+        z = mapZToSceneZ(j);
+
         // Road intersection
         roadSegment = reusableIntersectionMesh;
         roadSegment.position.x = x;
@@ -145,14 +157,8 @@ var City = function() {
           roadSegment.updateMatrix();
           roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
         }
-
-
-        z += CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
       }
-
-      x += CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
     }
-
 
     return new THREE.Mesh(roadGeometry, roadMaterial);
   };
@@ -166,11 +172,11 @@ var City = function() {
 
     var triangle, v1, v2, v3;
 
-    x = -CityConfig.HALF_SCENE_WIDTH - (CityConfig.STREET_WIDTH / 2);
     for (i = 0; i < CityConfig.BLOCK_ROWS; i++) {
-      z = -CityConfig.HALF_SCENE_DEPTH - (CityConfig.STREET_DEPTH / 2);
-
       for (j = 0; j < CityConfig.BLOCK_COLUMNS; j++) {
+        x = mapXToSceneX(i);
+        z = mapZToSceneZ(j);
+
         triangle = new THREE.Geometry();
 
         v1 = new THREE.Vector3(x, terrainCoordinates[i][j], z);
@@ -199,11 +205,7 @@ var City = function() {
         triangle.computeFaceNormals();
 
         terrainGeometry2.merge(triangle);
-
-        z += CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
       }
-
-      x += CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
     }
 
     var mesh1 = new THREE.Mesh(terrainGeometry1, terrainMaterial1);
@@ -291,11 +293,11 @@ var City = function() {
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
-    x = -CityConfig.HALF_SCENE_WIDTH;
     for (i = 0; i < unitBlocks.length; i++) {
-      z = -CityConfig.HALF_SCENE_DEPTH;
-
       for (j = 0; j < unitBlocks[i].length; j++) {
+        x = mapXToSceneX(i) + (CityConfig.STREET_WIDTH / 2);
+        z = mapZToSceneZ(j) + (CityConfig.STREET_DEPTH / 2);
+
         block = unitBlocks[i][j];
 
         block.forEach(function(lot) {
@@ -318,11 +320,7 @@ var City = function() {
           materialIndex = Math.floor(Math.random() * CityConfig.MAX_BUILDING_MATERIALS);
           buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
         });
-
-        z += CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
       }
-
-      x += CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
     }
   };
 
