@@ -13,7 +13,6 @@ var City = function() {
       scene.add(terrainMesh);
     });
 
-    //scene.add(buildGroundGeometry());
     scene.add(buildRoadGeometry(terrain));
 
     var buildingMaterials = buildMaterials();
@@ -26,14 +25,6 @@ var City = function() {
     }
 
     return scene;
-  };
-
-  var buildGroundGeometry = function() {
-    var groundMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
-    var groundGeometry = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.TOTAL_SCENE_WIDTH * 25, CityConfig.TOTAL_SCENE_DEPTH * 25), groundMaterial);
-    groundGeometry.rotation.x = -(Math.PI / 2);
-
-    return groundGeometry;
   };
 
   var buildRoadGeometry = function(terrain) {
