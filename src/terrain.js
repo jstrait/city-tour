@@ -65,10 +65,10 @@ var Terrain = function() {
     terrainCoordinates[midY][right] = ((topRight + bottomRight) / 2) + jitter;
     // Top row
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[top][midX] = ((topLeft + bottomLeft) / 2) + jitter;
+    terrainCoordinates[top][midX] = ((topLeft + topRight) / 2) + jitter;
     // Bottom row
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[bottom][midX] = ((topLeft + bottomLeft) / 2) + jitter;
+    terrainCoordinates[bottom][midX] = ((bottomLeft + bottomRight) / 2) + jitter;
 
     // Middle
     var middleAverage = (terrainCoordinates[midY][left] + terrainCoordinates[midY][right] + terrainCoordinates[top][midX] + terrainCoordinates[bottom][midX]) / 4;
