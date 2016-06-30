@@ -9,19 +9,19 @@ var Terrain = function() {
     var x, z;
 
     var terrainCoordinates = [];
-    for (x = 0; x <= CityConfig.BLOCK_ROWS; x++) {
+    for (x = 0; x <= CityConfig.BLOCK_COLUMNS; x++) {
       terrainCoordinates[x] = [];
 
-      for (z = 0; z <= CityConfig.BLOCK_COLUMNS; z++) {
+      for (z = 0; z <= CityConfig.BLOCK_ROWS; z++) {
         terrainCoordinates[x][z] = 0.0;
       }
     }
 
     // Initial randomization of corners
     terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[0][CityConfig.BLOCK_COLUMNS] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[CityConfig.BLOCK_ROWS][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[CityConfig.BLOCK_ROWS][CityConfig.BLOCK_COLUMNS] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[0][CityConfig.BLOCK_ROWS] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[CityConfig.BLOCK_COLUMNS][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[CityConfig.BLOCK_COLUMNS][CityConfig.BLOCK_ROWS] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     midpointDisplace(terrainCoordinates,
@@ -33,8 +33,8 @@ var Terrain = function() {
                      0);
 
     // Clamp negative heights to 0
-    for (x = 0; x <= CityConfig.BLOCK_ROWS; x++) {
-      for (z = 0; z <= CityConfig.BLOCK_COLUMNS; z++) {
+    for (x = 0; x <= CityConfig.BLOCK_COLUMNS; x++) {
+      for (z = 0; z <= CityConfig.BLOCK_ROWS; z++) {
         terrainCoordinates[x][z] = Math.max(0.0, terrainCoordinates[x][z]);
       }
     }

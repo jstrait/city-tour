@@ -49,7 +49,7 @@ var Animator = function() {
   var animator = {};
 
   var xPositionGenerator = new MotionGenerator();
-  var zPositionGenerator = new LinearMotionGenerator(2, CityConfig.HALF_SCENE_WIDTH);
+  var zPositionGenerator = new LinearMotionGenerator(2, CityConfig.HALF_SCENE_DEPTH);
 
   animator.tick = function() {
     camera.position.x += xPositionGenerator.nextValue();

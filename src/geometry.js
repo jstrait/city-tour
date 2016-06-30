@@ -108,8 +108,8 @@ var City = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, CityConfig.STREET_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -(Math.PI / 2);
 
-    for (mapX = 0; mapX <= CityConfig.BLOCK_ROWS; mapX++) {
-      for (mapZ = 0; mapZ <= CityConfig.BLOCK_COLUMNS; mapZ++) {
+    for (mapX = 0; mapX <= CityConfig.BLOCK_COLUMNS; mapX++) {
+      for (mapZ = 0; mapZ <= CityConfig.BLOCK_ROWS; mapZ++) {
         sceneX = mapXToSceneX(mapX);
         sceneZ = mapZToSceneZ(mapZ);
 
@@ -140,7 +140,7 @@ var City = function() {
 
 
         // East/West road segment
-        if (mapX < CityConfig.BLOCK_ROWS) {
+        if (mapX < CityConfig.BLOCK_COLUMNS) {
           var west = terrain.heightAtCoordinates(mapX, mapZ);
           var east = terrain.heightAtCoordinates(mapX + 1, mapZ);
           var midpoint = (west + east) / 2;
@@ -187,8 +187,8 @@ var City = function() {
 
     var triangle, v1, v2, v3;
 
-    for (mapX = 0; mapX < CityConfig.BLOCK_ROWS; mapX++) {
-      for (mapZ = 0; mapZ < CityConfig.BLOCK_COLUMNS; mapZ++) {
+    for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
+      for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
         sceneX_Left = mapXToSceneX(mapX);
         sceneX_Right = sceneX_Left + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
         sceneZ_Top = mapZToSceneZ(mapZ);
@@ -244,10 +244,10 @@ var City = function() {
     var mapX, mapZ;
     var buildingHeight, buildingBottom, buildingMinimumHeight;
 
-    for (mapX = 0; mapX < CityConfig.BLOCK_ROWS; mapX++) {
+    for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
       blocks[mapX] = [];
 
-      for (mapZ = 0; mapZ < CityConfig.BLOCK_COLUMNS; mapZ++) {
+      for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
         var blockLayout = CityConfig.BLOCK_LAYOUTS[Math.floor(Math.random() * CityConfig.BLOCK_LAYOUTS.length)];
 
         var blockTerrainCoordinates = [
@@ -325,11 +325,11 @@ var City = function() {
   var calculateBuildingHeight = function(x, z) {
     var squareRootOfMaxBuildingHeight = Math.pow(CityConfig.MAX_BUILDING_HEIGHT, (1/12));
 
-    var halfRows = CityConfig.BLOCK_ROWS / 2;
     var halfColumns = CityConfig.BLOCK_COLUMNS / 2;
+    var halfRows = CityConfig.BLOCK_ROWS / 2;
 
-    var multiplierX = squareRootOfMaxBuildingHeight * ((halfRows - Math.abs(halfRows - x)) / halfRows);
-    var multiplierZ = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - z)) / halfColumns);
+    var multiplierX = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - x)) / halfColumns);
+    var multiplierZ = squareRootOfMaxBuildingHeight * ((halfRows - Math.abs(halfRows - z)) / halfRows);
     var multiplier = Math.min(multiplierX, multiplierZ);
 
     return Math.pow(multiplier, 12);
