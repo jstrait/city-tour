@@ -163,6 +163,19 @@ var City = function() {
     return new THREE.Mesh(roadGeometry, roadMaterial);
   };
 
+  var buildTriangleGeometry = function(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+    var triangle = new THREE.Geometry();
+
+    triangle.vertices.push(new THREE.Vector3(x1, y1, z1));
+    triangle.vertices.push(new THREE.Vector3(x2, y2, z2));
+    triangle.vertices.push(new THREE.Vector3(x3, y3, z3));
+
+    triangle.faces.push(new THREE.Face3(0, 1, 2));
+    triangle.computeFaceNormals();
+
+    return triangle;
+  };
+
   var buildTerrainGeometry = function(terrain) {
     var mapX, mapZ;
     var sceneX_Left, sceneX_Right, sceneZ_Top, sceneZ_Bottom;
@@ -181,33 +194,14 @@ var City = function() {
         sceneZ_Top = mapZToSceneZ(mapZ);
         sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
 
-        triangle = new THREE.Geometry();
-
-        v1 = new THREE.Vector3(sceneX_Left, terrain.heightAtCoordinates(mapX, mapZ), sceneZ_Top);
-        v2 = new THREE.Vector3(sceneX_Left, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom);
-        v3 = new THREE.Vector3(sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
-
-        triangle.vertices.push(v1);
-        triangle.vertices.push(v2);
-        triangle.vertices.push(v3);
-
-        triangle.faces.push(new THREE.Face3(0, 1, 2));
-        triangle.computeFaceNormals();
-
+        triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ),     sceneZ_Top,
+                                         sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom,
+                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
         terrainGeometry1.merge(triangle);
 
-        triangle = new THREE.Geometry();
-        v1 = new THREE.Vector3(sceneX_Left, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom);
-        v2 = new THREE.Vector3(sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ_Bottom);
-        v3 = new THREE.Vector3(sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
-
-        triangle.vertices.push(v1);
-        triangle.vertices.push(v2);
-        triangle.vertices.push(v3);
-
-        triangle.faces.push(new THREE.Face3(0, 1, 2));
-        triangle.computeFaceNormals();
-
+        triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1),     sceneZ_Bottom,
+                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ_Bottom,
+                                         sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ),     sceneZ_Top);
         terrainGeometry2.merge(triangle);
       }
     }
