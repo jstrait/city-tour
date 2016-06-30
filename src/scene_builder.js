@@ -142,19 +142,19 @@ var SceneBuilder = function() {
     return buildingGeometries;
   };
 
-  var generateBuildingGeometries = function(blockDefinitions, buildingGeometries) {
+  var generateBuildingGeometries = function(buildings, buildingGeometries) {
     var mapX, mapZ, sceneX, sceneZ;
     var block;
     var materialIndex;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
-    for (mapX = 0; mapX < blockDefinitions.length; mapX++) {
-      for (mapZ = 0; mapZ < blockDefinitions[mapX].length; mapZ++) {
+    for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
+      for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
         sceneX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
         sceneZ = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
 
-        block = blockDefinitions[mapX][mapZ];
+        block = buildings.blockAtCoordinates(mapX, mapZ);
 
         block.forEach(function(lot) {
           var mapLotWidth = lot.right - lot.left;
@@ -196,7 +196,7 @@ var SceneBuilder = function() {
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
 
-    generateBuildingGeometries(buildings.blocks(), buildingGeometries);
+    generateBuildingGeometries(buildings, buildingGeometries);
 
     for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
       scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));

@@ -112,7 +112,9 @@ var Buildings = function(terrain) {
 
   var buildings = {};
 
-  buildings.blocks = function() { return blocks; };
+  buildings.blockAtCoordinates = function(mapX, mapZ) {
+    return blocks[mapX][mapZ];
+  };
 
   return buildings;
 };
