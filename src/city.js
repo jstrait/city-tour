@@ -30,12 +30,12 @@ var Coordinates = (function() {
 
   coordinates.mapXToSceneX = function(mapX) {
     var cartesianMapX = mapX - HALF_COLUMNS;
-    return (cartesianMapX * CityConfig.BLOCK_WIDTH) + (cartesianMapX * CityConfig.STREET_WIDTH);
+    return cartesianMapX * (CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH);
   };
 
   coordinates.mapZToSceneZ = function(mapZ) {
     var cartesianMapZ = mapZ - HALF_ROWS;
-    return (cartesianMapZ * CityConfig.BLOCK_DEPTH) + (cartesianMapZ * CityConfig.STREET_DEPTH);
+    return cartesianMapZ * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
   };
 
   coordinates.sceneXToMapX = function(sceneX) {
