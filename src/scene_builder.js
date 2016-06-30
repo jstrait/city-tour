@@ -147,6 +147,7 @@ var SceneBuilder = function() {
   var generateBuildingGeometries = function(buildings, buildingGeometries) {
     var mapX, mapZ, sceneX, sceneZ;
     var block;
+    var storyHeight, buildingHeight;
     var materialIndex;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
@@ -165,11 +166,14 @@ var SceneBuilder = function() {
           var mapLotXMidpoint = lot.left + (mapLotWidth / 2);
           var mapLotZMidpoint = lot.top + (mapLotDepth / 2);
 
+          var storyHeight = ((CityConfig.MAX_STORY_HEIGHT - CityConfig.MIN_STORY_HEIGHT) * Math.random()) + CityConfig.MIN_STORY_HEIGHT;
+          var buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor); 
+
           reusableBuildingMesh.scale.x = mapLotWidth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.x = sceneX + (CityConfig.BLOCK_WIDTH * mapLotXMidpoint);
 
-          reusableBuildingMesh.scale.y = Math.max(lot.yMinimumHeight, (Math.random() * lot.yTargetHeight) + CityConfig.MIN_BUILDING_HEIGHT);
-          reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + lot.yFloor;
+          reusableBuildingMesh.scale.y = buildingHeight;
+          reusableBuildingMesh.position.y = (buildingHeight / 2) + lot.yFloor;
 
           reusableBuildingMesh.scale.z = mapLotDepth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.z = sceneZ + (CityConfig.BLOCK_DEPTH * mapLotZMidpoint);

@@ -1,6 +1,8 @@
 "use strict";
 
 var Buildings = function(terrain) {
+  var MAX_BUILDING_STORIES = 40;
+
   var BLOCK_LAYOUTS = [
     [ { left:     0.0,  right: 1.0,  top: 0.0,  bottom: 1.0, } ],
 
@@ -53,7 +55,7 @@ var Buildings = function(terrain) {
     var blocks = [];
     var block;
     var mapX, mapZ;
-    var buildingHeight, buildingBottom, buildingMinimumHeight;
+    var maxStories, actualStories;
 
     for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
       blocks[mapX] = [];
@@ -72,18 +74,17 @@ var Buildings = function(terrain) {
 
         block = [];
         blockLayout.forEach(function(lot) {
-          buildingHeight = calculateBuildingHeight(mapX, mapZ) + maximumTerrainHeight;
-          buildingMinimumHeight = maximumTerrainHeight + CityConfig.MIN_BUILDING_HEIGHT;
-          buildingBottom = minimumTerrainHeight;
+          maxStories = calculateMaxBuildingStories(mapX, mapZ);
+          actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
           block.push({
             left: lot.left,
             right: lot.right,
             top: lot.top,
             bottom: lot.bottom,
-            yFloor: buildingBottom,
-            yMinimumHeight: buildingMinimumHeight,
-            yTargetHeight: buildingHeight,
+            yFloor: minimumTerrainHeight,
+            ySurface: maximumTerrainHeight,
+            stories: actualStories,
           });
         });
 
@@ -95,17 +96,17 @@ var Buildings = function(terrain) {
     return blocks;
   };
 
-  var calculateBuildingHeight = function(x, z) {
-    var squareRootOfMaxBuildingHeight = Math.pow(CityConfig.MAX_BUILDING_HEIGHT, (1/12));
+  var calculateMaxBuildingStories = function(mapX, mapZ) {
+    var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/12));
 
     var halfColumns = CityConfig.BLOCK_COLUMNS / 2;
     var halfRows = CityConfig.BLOCK_ROWS / 2;
 
-    var multiplierX = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - x)) / halfColumns);
-    var multiplierZ = squareRootOfMaxBuildingHeight * ((halfRows - Math.abs(halfRows - z)) / halfRows);
+    var multiplierX = squareRootOfMaxBuildingStories * ((halfColumns - Math.abs(halfColumns - mapX)) / halfColumns);
+    var multiplierZ = squareRootOfMaxBuildingStories * ((halfRows - Math.abs(halfRows - mapZ)) / halfRows);
     var multiplier = Math.min(multiplierX, multiplierZ);
 
-    return Math.pow(multiplier, 12);
+    return Math.max(1, Math.round(Math.pow(multiplier, 12)));
   };
 
   var blocks = generateUnitBlocks(terrain);
