@@ -28,9 +28,10 @@ var SceneBuilder = function() {
     var triangle, v1, v2, v3;
 
     for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
+      sceneX_Left = Coordinates.mapXToSceneX(mapX);
+      sceneX_Right = sceneX_Left + CityConfig.BLOCK_AND_STREET_WIDTH;
+
       for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneX_Left = Coordinates.mapXToSceneX(mapX);
-        sceneX_Right = sceneX_Left + CityConfig.BLOCK_AND_STREET_WIDTH;
         sceneZ_Top = Coordinates.mapZToSceneZ(mapZ);
         sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_AND_STREET_DEPTH;
 
@@ -63,8 +64,9 @@ var SceneBuilder = function() {
     reusableIntersectionMesh.rotation.x = -(Math.PI / 2);
 
     for (mapX = 0; mapX <= CityConfig.BLOCK_COLUMNS; mapX++) {
-      for (mapZ = 0; mapZ <= CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneX = Coordinates.mapXToSceneX(mapX);
+      sceneX = Coordinates.mapXToSceneX(mapX);
+
+      for (mapZ = 0; mapZ <= CityConfig.BLOCK_ROWS; mapZ++) { 
         sceneZ = Coordinates.mapZToSceneZ(mapZ);
 
         // Road intersection
@@ -150,8 +152,9 @@ var SceneBuilder = function() {
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
     for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
+      sceneX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
+
       for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
         sceneZ = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
 
         block = buildings.blockAtCoordinates(mapX, mapZ);
