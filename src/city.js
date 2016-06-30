@@ -9,6 +9,8 @@ var CityConfig = (function() {
   config.STREET_DEPTH = 3;
   config.BLOCK_WIDTH = 8;
   config.BLOCK_DEPTH = 8;
+  config.BLOCK_AND_STREET_WIDTH = config.BLOCK_WIDTH + config.STREET_WIDTH;
+  config.BLOCK_AND_STREET_DEPTH = config.BLOCK_DEPTH + config.STREET_DEPTH;
   config.BLOCK_ROWS = 64;
   config.BLOCK_COLUMNS = 64;
   config.MIN_BUILDING_HEIGHT = 1.2;
@@ -30,21 +32,21 @@ var Coordinates = (function() {
 
   coordinates.mapXToSceneX = function(mapX) {
     var cartesianMapX = mapX - HALF_COLUMNS;
-    return cartesianMapX * (CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH);
+    return cartesianMapX * CityConfig.BLOCK_AND_STREET_WIDTH;
   };
 
   coordinates.mapZToSceneZ = function(mapZ) {
     var cartesianMapZ = mapZ - HALF_ROWS;
-    return cartesianMapZ * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+    return cartesianMapZ * CityConfig.BLOCK_AND_STREET_DEPTH;
   };
 
   coordinates.sceneXToMapX = function(sceneX) {
-    var cartesianMapX = sceneX / (CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH);
+    var cartesianMapX = sceneX / CityConfig.BLOCK_AND_STREET_WIDTH;
     return cartesianMapX + HALF_COLUMNS;
   };
 
   coordinates.sceneZToMapZ = function(sceneZ) {
-    var cartesianMapZ = sceneZ / (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+    var cartesianMapZ = sceneZ / CityConfig.BLOCK_AND_STREET_DEPTH;
     return cartesianMapZ + HALF_ROWS;
   };
 
