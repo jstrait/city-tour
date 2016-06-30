@@ -99,7 +99,7 @@ var City = function() {
   };
 
   var buildRoadGeometry = function(terrain) {
-    var i, j, x, z;
+    var mapX, mapZ, sceneX, sceneZ;
 
     var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
     var roadGeometry = new THREE.Geometry();
@@ -108,52 +108,52 @@ var City = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, CityConfig.STREET_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -(Math.PI / 2);
 
-    for (i = 0; i <= CityConfig.BLOCK_ROWS; i++) {
-      for (j = 0; j <= CityConfig.BLOCK_COLUMNS; j++) {
-        x = mapXToSceneX(i);
-        z = mapZToSceneZ(j);
+    for (mapX = 0; mapX <= CityConfig.BLOCK_ROWS; mapX++) {
+      for (mapZ = 0; mapZ <= CityConfig.BLOCK_COLUMNS; mapZ++) {
+        sceneX = mapXToSceneX(mapX);
+        sceneZ = mapZToSceneZ(mapZ);
 
         // Road intersection
         roadSegment = reusableIntersectionMesh;
-        roadSegment.position.x = x;
-        roadSegment.position.y = terrain.heightAtCoordinates(i, j);
-        roadSegment.position.z = z;
+        roadSegment.position.x = sceneX;
+        roadSegment.position.y = terrain.heightAtCoordinates(mapX, mapZ);
+        roadSegment.position.z = sceneZ;
         roadSegment.updateMatrix();
         roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
 
 
         // North/South road segment
-        var north = terrain.heightAtCoordinates(i, j);
-        var south = terrain.heightAtCoordinates(i, j + 1);
+        var north = terrain.heightAtCoordinates(mapX, mapZ);
+        var south = terrain.heightAtCoordinates(mapX, mapZ + 1);
         var midpoint = (north + south) / 2;
         var angle = -Math.atan2(CityConfig.BLOCK_DEPTH, (north - south));
 
         var segmentLength = Math.sqrt(Math.pow((south - north), 2) + Math.pow(CityConfig.BLOCK_DEPTH, 2));
 
         roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, segmentLength), roadMaterial);
-        roadSegment.position.x = x;
+        roadSegment.position.x = sceneX;
         roadSegment.rotation.x = angle;
         roadSegment.position.y = midpoint;
-        roadSegment.position.z = z + (CityConfig.STREET_DEPTH / 2) + (CityConfig.BLOCK_DEPTH / 2);
+        roadSegment.position.z = sceneZ + (CityConfig.STREET_DEPTH / 2) + (CityConfig.BLOCK_DEPTH / 2);
         roadSegment.updateMatrix();
         roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
 
 
         // East/West road segment
-        if (i < CityConfig.BLOCK_ROWS) {
-          var west = terrain.heightAtCoordinates(i, j);
-          var east = terrain.heightAtCoordinates(i + 1, j);
+        if (mapX < CityConfig.BLOCK_ROWS) {
+          var west = terrain.heightAtCoordinates(mapX, mapZ);
+          var east = terrain.heightAtCoordinates(mapX + 1, mapZ);
           var midpoint = (west + east) / 2;
           var angle = Math.atan2((west - east), CityConfig.BLOCK_WIDTH);
 
           var segmentLength = Math.sqrt(Math.pow((east - west), 2) + Math.pow(CityConfig.BLOCK_WIDTH, 2));
 
           roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(segmentLength, CityConfig.STREET_WIDTH), roadMaterial);
-          roadSegment.position.x = x + (CityConfig.STREET_WIDTH / 2) + (CityConfig.BLOCK_WIDTH / 2);
+          roadSegment.position.x = sceneX + (CityConfig.STREET_WIDTH / 2) + (CityConfig.BLOCK_WIDTH / 2);
           roadSegment.rotation.x = -(Math.PI / 2);
           roadSegment.position.y = midpoint;
           roadSegment.rotation.y = angle;
-          roadSegment.position.z = z;
+          roadSegment.position.z = sceneZ;
           roadSegment.updateMatrix();
           roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
         }
@@ -164,7 +164,7 @@ var City = function() {
   };
 
   var buildTerrainGeometry = function(terrain) {
-    var i, j, x, z;
+    var mapX, mapZ, sceneX, sceneZ;
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
@@ -172,16 +172,16 @@ var City = function() {
 
     var triangle, v1, v2, v3;
 
-    for (i = 0; i < CityConfig.BLOCK_ROWS; i++) {
-      for (j = 0; j < CityConfig.BLOCK_COLUMNS; j++) {
-        x = mapXToSceneX(i);
-        z = mapZToSceneZ(j);
+    for (mapX = 0; mapX < CityConfig.BLOCK_ROWS; mapX++) {
+      for (mapZ = 0; mapZ < CityConfig.BLOCK_COLUMNS; mapZ++) {
+        sceneX = mapXToSceneX(mapX);
+        sceneZ = mapZToSceneZ(mapZ);
 
         triangle = new THREE.Geometry();
 
-        v1 = new THREE.Vector3(x, terrain.heightAtCoordinates(i, j), z);
-        v2 = new THREE.Vector3(x, terrain.heightAtCoordinates(i, j + 1), z + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-        v3 = new THREE.Vector3(x + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(i + 1, j), z);
+        v1 = new THREE.Vector3(sceneX, terrain.heightAtCoordinates(mapX, mapZ), sceneZ);
+        v2 = new THREE.Vector3(sceneX, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+        v3 = new THREE.Vector3(sceneX + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ);
 
         triangle.vertices.push(v1);
         triangle.vertices.push(v2);
@@ -193,9 +193,9 @@ var City = function() {
         terrainGeometry1.merge(triangle);
 
         triangle = new THREE.Geometry();
-        v1 = new THREE.Vector3(x, terrain.heightAtCoordinates(i, j + 1), z + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-        v2 = new THREE.Vector3(x + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(i + 1, j + 1), z + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-        v3 = new THREE.Vector3(x + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(i + 1, j), z);
+        v1 = new THREE.Vector3(sceneX, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+        v2 = new THREE.Vector3(sceneX + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+        v3 = new THREE.Vector3(sceneX + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ);
 
         triangle.vertices.push(v1);
         triangle.vertices.push(v2);
@@ -243,27 +243,27 @@ var City = function() {
   var generateUnitBlocks = function(terrain) {
     var blocks = [];
     var block;
-    var i, j;
+    var mapX, mapZ;
     var buildingHeight, buildingBottom, buildingMinimumHeight;
 
-    for (i = 0; i < CityConfig.BLOCK_ROWS; i++) {
-      blocks[i] = [];
+    for (mapX = 0; mapX < CityConfig.BLOCK_ROWS; mapX++) {
+      blocks[mapX] = [];
 
-      for (j = 0; j < CityConfig.BLOCK_COLUMNS; j++) {
+      for (mapZ = 0; mapZ < CityConfig.BLOCK_COLUMNS; mapZ++) {
         var blockLayout = CityConfig.BLOCK_LAYOUTS[Math.floor(Math.random() * CityConfig.BLOCK_LAYOUTS.length)];
 
         var blockTerrainCoordinates = [
-          terrain.heightAtCoordinates(i, j),
-          terrain.heightAtCoordinates(i + 1, j),
-          terrain.heightAtCoordinates(i, j + 1),
-          terrain.heightAtCoordinates(i + 1, j + 1),
+          terrain.heightAtCoordinates(mapX, mapZ),
+          terrain.heightAtCoordinates(mapX + 1, mapZ),
+          terrain.heightAtCoordinates(mapX, mapZ + 1),
+          terrain.heightAtCoordinates(mapX + 1, mapZ + 1),
         ];
         var minimumTerrainHeight = Math.min(...blockTerrainCoordinates);
         var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
 
         block = [];
         blockLayout.forEach(function(lot) {
-          buildingHeight = calculateBuildingHeight(i, j) + maximumTerrainHeight;
+          buildingHeight = calculateBuildingHeight(mapX, mapZ) + maximumTerrainHeight;
           buildingMinimumHeight = maximumTerrainHeight + CityConfig.MIN_BUILDING_HEIGHT;
           buildingBottom = minimumTerrainHeight;
 
@@ -278,7 +278,7 @@ var City = function() {
           });
         });
 
-        blocks[i][j] = block;
+        blocks[mapX][mapZ] = block;
       }
     }
 
@@ -287,18 +287,18 @@ var City = function() {
   };
 
   var generateSceneBlocks = function(unitBlocks, buildingGeometries) {
-    var i, j, x, z;
+    var mapX, mapZ, sceneX, sceneZ;
     var block;
     var materialIndex;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
-    for (i = 0; i < unitBlocks.length; i++) {
-      for (j = 0; j < unitBlocks[i].length; j++) {
-        x = mapXToSceneX(i) + (CityConfig.STREET_WIDTH / 2);
-        z = mapZToSceneZ(j) + (CityConfig.STREET_DEPTH / 2);
+    for (mapX = 0; mapX < unitBlocks.length; mapX++) {
+      for (mapZ = 0; mapZ < unitBlocks[mapX].length; mapZ++) {
+        sceneX = mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
+        sceneZ = mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
 
-        block = unitBlocks[i][j];
+        block = unitBlocks[mapX][mapZ];
 
         block.forEach(function(lot) {
           var unitWidth = lot.right - lot.left;
@@ -307,13 +307,13 @@ var City = function() {
           var zUnitMid = lot.top + (unitDepth / 2);
 
           reusableBuildingMesh.scale.x = unitWidth * CityConfig.BLOCK_WIDTH;
-          reusableBuildingMesh.position.x = x + (CityConfig.BLOCK_WIDTH * xUnitMid);
+          reusableBuildingMesh.position.x = sceneX + (CityConfig.BLOCK_WIDTH * xUnitMid);
 
           reusableBuildingMesh.scale.y = Math.max(lot.yMinimumHeight, (Math.random() * lot.yTargetHeight) + CityConfig.MIN_BUILDING_HEIGHT);
           reusableBuildingMesh.position.y = (reusableBuildingMesh.scale.y / 2) + lot.yFloor;
 
           reusableBuildingMesh.scale.z = unitDepth * CityConfig.BLOCK_WIDTH;
-          reusableBuildingMesh.position.z = z + (CityConfig.BLOCK_DEPTH * zUnitMid);
+          reusableBuildingMesh.position.z = sceneZ + (CityConfig.BLOCK_DEPTH * zUnitMid);
 
           reusableBuildingMesh.updateMatrix();
 
@@ -324,14 +324,14 @@ var City = function() {
     }
   };
 
-  var calculateBuildingHeight = function(i, j) {
+  var calculateBuildingHeight = function(x, z) {
     var squareRootOfMaxBuildingHeight = Math.pow(CityConfig.MAX_BUILDING_HEIGHT, (1/12));
 
     var halfRows = CityConfig.BLOCK_ROWS / 2;
     var halfColumns = CityConfig.BLOCK_COLUMNS / 2;
 
-    var multiplierX = squareRootOfMaxBuildingHeight * ((halfRows - Math.abs(halfRows - i)) / halfRows);
-    var multiplierZ = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - j)) / halfColumns);
+    var multiplierX = squareRootOfMaxBuildingHeight * ((halfRows - Math.abs(halfRows - x)) / halfRows);
+    var multiplierZ = squareRootOfMaxBuildingHeight * ((halfColumns - Math.abs(halfColumns - z)) / halfColumns);
     var multiplier = Math.min(multiplierX, multiplierZ);
 
     return Math.pow(multiplier, 12);
