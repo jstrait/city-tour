@@ -43,7 +43,7 @@ if (detectWebGL()) {
   var animationManager = new AnimationManager();
   //animationManager.animate();
 
-  var animationTimer = new AnimationTimer();
+  var animationTimer = new AnimationTimer(terrain);
   animationTimer.start();
 }
 else {

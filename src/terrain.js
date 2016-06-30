@@ -86,7 +86,31 @@ var Terrain = function() {
   var terrain = {};
 
   terrain.heightAtCoordinates = function(x, z) {
-    return coordinates[x][z];
+    var xIsWhole = (Math.floor(x) === x);
+    var zIsWhole = (Math.floor(z) === z);
+
+    if (xIsWhole && zIsWhole) {
+      return coordinates[x][z];
+    }
+
+    if (!xIsWhole && zIsWhole) {
+      var leftHeight = coordinates[Math.floor(x)][z];
+      var rightHeight = coordinates[Math.ceil(x)][z];
+      var heightDifferential = rightHeight - leftHeight;
+      var percentage = x - Math.floor(x);
+      var interpolatedHeight = leftHeight + (heightDifferential * percentage);
+
+      return interpolatedHeight;
+    }
+    else if (xIsWhole && !zIsWhole) {
+      var topHeight = coordinates[x][Math.floor(z)];
+      var bottomHeight = coordinates[x][Math.ceil(z)];
+      var heightDifferential = bottomHeight - topHeight;
+      var percentage = z - Math.floor(z);
+      var interpolatedHeight = topHeight + (heightDifferential * percentage);
+
+      return interpolatedHeight;
+    }
   };
 
   return terrain;

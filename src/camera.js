@@ -1,6 +1,6 @@
 "use strict";
 
-var AnimationTimer = function() {
+var AnimationTimer = function(terrain) {
   var FRAMES_PER_SECONDS = 60;
   var MILLISECONDS_PER_TICK = 1000.0 / FRAMES_PER_SECONDS;
 
@@ -8,7 +8,7 @@ var AnimationTimer = function() {
   var previousTickStartTime;
   var totalTicks = 0;
 
-  var animator = new Animator();
+  var animator = new Animator(terrain);
 
   var tick = function(timestamp) {
     var tickStartTime = performance.now();
@@ -45,8 +45,18 @@ var AnimationTimer = function() {
 };
 
 
-var Animator = function() {
+var Animator = function(terrain) {
   var animator = {};
+
+  var sceneXToMapX = function(sceneX) {
+    var cartesianMapX = sceneX / (CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH);
+    return cartesianMapX + (CityConfig.BLOCK_COLUMNS / 2);
+  };
+
+  var sceneZToMapZ = function(sceneZ) {
+    var cartesianMapZ = sceneZ / (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+    return cartesianMapZ + (CityConfig.BLOCK_ROWS / 2);
+  };
 
   var xPositionGenerator = new MotionGenerator();
   var zPositionGenerator = new LinearMotionGenerator(2, CityConfig.HALF_SCENE_DEPTH);
@@ -54,6 +64,12 @@ var Animator = function() {
   animator.tick = function() {
     camera.position.x += xPositionGenerator.nextValue();
     camera.position.z += -zPositionGenerator.nextValue();
+
+    var mapX = sceneXToMapX(camera.position.x);
+    var mapZ = sceneZToMapZ(camera.position.z);
+
+    var y = terrain.heightAtCoordinates(mapX, mapZ);
+    camera.position.y = y + 0.5;
   };
 
   return animator;
