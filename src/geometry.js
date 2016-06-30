@@ -164,7 +164,9 @@ var City = function() {
   };
 
   var buildTerrainGeometry = function(terrain) {
-    var mapX, mapZ, sceneX, sceneZ;
+    var mapX, mapZ;
+    var sceneX_Left, sceneX_Right, sceneZ_Top, sceneZ_Bottom;
+
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
@@ -174,14 +176,16 @@ var City = function() {
 
     for (mapX = 0; mapX < CityConfig.BLOCK_ROWS; mapX++) {
       for (mapZ = 0; mapZ < CityConfig.BLOCK_COLUMNS; mapZ++) {
-        sceneX = mapXToSceneX(mapX);
-        sceneZ = mapZToSceneZ(mapZ);
+        sceneX_Left = mapXToSceneX(mapX);
+        sceneX_Right = sceneX_Left + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
+        sceneZ_Top = mapZToSceneZ(mapZ);
+        sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
 
         triangle = new THREE.Geometry();
 
-        v1 = new THREE.Vector3(sceneX, terrain.heightAtCoordinates(mapX, mapZ), sceneZ);
-        v2 = new THREE.Vector3(sceneX, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-        v3 = new THREE.Vector3(sceneX + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ);
+        v1 = new THREE.Vector3(sceneX_Left, terrain.heightAtCoordinates(mapX, mapZ), sceneZ_Top);
+        v2 = new THREE.Vector3(sceneX_Left, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom);
+        v3 = new THREE.Vector3(sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
 
         triangle.vertices.push(v1);
         triangle.vertices.push(v2);
@@ -193,9 +197,9 @@ var City = function() {
         terrainGeometry1.merge(triangle);
 
         triangle = new THREE.Geometry();
-        v1 = new THREE.Vector3(sceneX, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-        v2 = new THREE.Vector3(sceneX + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-        v3 = new THREE.Vector3(sceneX + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ);
+        v1 = new THREE.Vector3(sceneX_Left, terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom);
+        v2 = new THREE.Vector3(sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), sceneZ_Bottom);
+        v3 = new THREE.Vector3(sceneX_Right, terrain.heightAtCoordinates(mapX + 1, mapZ), sceneZ_Top);
 
         triangle.vertices.push(v1);
         triangle.vertices.push(v2);
