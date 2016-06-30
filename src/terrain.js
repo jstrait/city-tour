@@ -81,11 +81,13 @@ var Terrain = function() {
     }
   };
 
-  var terrainCoordinates = buildTerrainCoordinates();
+  var coordinates = buildTerrainCoordinates();
 
   var terrain = {};
 
-  terrain.coordinates = function() { return terrainCoordinates; };
+  terrain.heightAtCoordinates = function(x, z) {
+    return coordinates[x][z];
+  };
 
   return terrain;
 };
