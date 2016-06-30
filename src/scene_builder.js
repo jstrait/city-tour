@@ -1,31 +1,7 @@
 "use strict";
 
-var City = function() {
+var SceneBuilder = function() {
   var COLOR_GROUND = 0xaaaaaa;
-
-  var city = {};
-
-  city.buildScene = function(terrain, buildings) {
-    var scene = new THREE.Scene();
-
-    var terrainMeshes = buildTerrainGeometry(terrain);
-    terrainMeshes.forEach(function(terrainMesh) {
-      scene.add(terrainMesh);
-    });
-
-    scene.add(buildRoadGeometry(terrain));
-
-    var buildingMaterials = buildMaterials();
-    var buildingGeometries = buildEmptyGeometriesForBuildings();
-
-    generateSceneBlocks(buildings.blocks(), buildingGeometries);
-
-    for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
-      scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
-    }
-
-    return scene;
-  };
 
   var buildRoadGeometry = function(terrain) {
     var mapX, mapZ, sceneX, sceneZ;
@@ -204,5 +180,30 @@ var City = function() {
     }
   };
 
-  return city;
+
+  var sceneBuilder = {};
+
+  sceneBuilder.build = function(terrain, buildings) {
+    var scene = new THREE.Scene();
+
+    var terrainMeshes = buildTerrainGeometry(terrain);
+    terrainMeshes.forEach(function(terrainMesh) {
+      scene.add(terrainMesh);
+    });
+
+    scene.add(buildRoadGeometry(terrain));
+
+    var buildingMaterials = buildMaterials();
+    var buildingGeometries = buildEmptyGeometriesForBuildings();
+
+    generateSceneBlocks(buildings.blocks(), buildingGeometries);
+
+    for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
+      scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
+    }
+
+    return scene;
+  };
+
+  return sceneBuilder;
 };

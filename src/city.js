@@ -1,7 +1,6 @@
 "use strict";
 
 var renderer, scene, camera;
-var city;
 
 var CityConfig = (function() {
   var config = {};
@@ -78,8 +77,8 @@ function initScene($container, terrain, buildings) {
 
   $container.append(renderer.domElement);
 
-  city = new City();
-  scene = city.buildScene(terrain, buildings);
+  var sceneBuilder = new SceneBuilder();
+  scene = sceneBuilder.build(terrain, buildings);
 
   // Build camera
   var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
