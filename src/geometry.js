@@ -78,18 +78,6 @@ var City = function() {
     return scene;
   };
 
-  var mapXToSceneX = function(mapX) {
-    var cartesianMapX = mapX - (CityConfig.BLOCK_COLUMNS / 2);
-
-    return (cartesianMapX * CityConfig.BLOCK_WIDTH) + (cartesianMapX * CityConfig.STREET_WIDTH);
-  };
-
-  var mapZToSceneZ = function(mapZ) {
-    var cartesianMapZ = mapZ - (CityConfig.BLOCK_ROWS / 2);
-
-    return (cartesianMapZ * CityConfig.BLOCK_DEPTH) + (cartesianMapZ * CityConfig.STREET_DEPTH);
-  };
-
   var buildGroundGeometry = function() {
     var groundMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
     var groundGeometry = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.TOTAL_SCENE_WIDTH * 25, CityConfig.TOTAL_SCENE_DEPTH * 25), groundMaterial);
@@ -110,8 +98,8 @@ var City = function() {
 
     for (mapX = 0; mapX <= CityConfig.BLOCK_COLUMNS; mapX++) {
       for (mapZ = 0; mapZ <= CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneX = mapXToSceneX(mapX);
-        sceneZ = mapZToSceneZ(mapZ);
+        sceneX = Coordinates.mapXToSceneX(mapX);
+        sceneZ = Coordinates.mapZToSceneZ(mapZ);
 
         // Road intersection
         roadSegment = reusableIntersectionMesh;
@@ -189,9 +177,9 @@ var City = function() {
 
     for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
       for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneX_Left = mapXToSceneX(mapX);
+        sceneX_Left = Coordinates.mapXToSceneX(mapX);
         sceneX_Right = sceneX_Left + CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH;
-        sceneZ_Top = mapZToSceneZ(mapZ);
+        sceneZ_Top = Coordinates.mapZToSceneZ(mapZ);
         sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH;
 
         triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ),     sceneZ_Top,
@@ -293,8 +281,8 @@ var City = function() {
 
     for (mapX = 0; mapX < unitBlocks.length; mapX++) {
       for (mapZ = 0; mapZ < unitBlocks[mapX].length; mapZ++) {
-        sceneX = mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
-        sceneZ = mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
+        sceneX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
+        sceneZ = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
 
         block = unitBlocks[mapX][mapZ];
 

@@ -23,6 +23,35 @@ var CityConfig = (function() {
   return config;
 })();
 
+var Coordinates = (function() {
+  var HALF_COLUMNS = CityConfig.BLOCK_COLUMNS / 2;
+  var HALF_ROWS = CityConfig.BLOCK_ROWS / 2;
+
+  var coordinates = {};
+
+  coordinates.mapXToSceneX = function(mapX) {
+    var cartesianMapX = mapX - HALF_COLUMNS;
+    return (cartesianMapX * CityConfig.BLOCK_WIDTH) + (cartesianMapX * CityConfig.STREET_WIDTH);
+  };
+
+  coordinates.mapZToSceneZ = function(mapZ) {
+    var cartesianMapZ = mapZ - HALF_ROWS;
+    return (cartesianMapZ * CityConfig.BLOCK_DEPTH) + (cartesianMapZ * CityConfig.STREET_DEPTH);
+  };
+
+  coordinates.sceneXToMapX = function(sceneX) {
+    var cartesianMapX = sceneX / (CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH);
+    return cartesianMapX + HALF_COLUMNS;
+  };
+
+  coordinates.sceneZToMapZ = function(sceneZ) {
+    var cartesianMapZ = sceneZ / (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
+    return cartesianMapZ + HALF_ROWS;
+  };
+
+  return coordinates;
+})();
+
 function detectWebGL() {
   if (!window.WebGLRenderingContext) {
     return false;

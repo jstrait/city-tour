@@ -48,16 +48,6 @@ var AnimationTimer = function(terrain) {
 var Animator = function(terrain) {
   var animator = {};
 
-  var sceneXToMapX = function(sceneX) {
-    var cartesianMapX = sceneX / (CityConfig.BLOCK_WIDTH + CityConfig.STREET_WIDTH);
-    return cartesianMapX + (CityConfig.BLOCK_COLUMNS / 2);
-  };
-
-  var sceneZToMapZ = function(sceneZ) {
-    var cartesianMapZ = sceneZ / (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH);
-    return cartesianMapZ + (CityConfig.BLOCK_ROWS / 2);
-  };
-
   var xPositionGenerator = new MotionGenerator();
   var zPositionGenerator = new LinearMotionGenerator(2, CityConfig.HALF_SCENE_DEPTH);
 
@@ -65,8 +55,8 @@ var Animator = function(terrain) {
     camera.position.x += xPositionGenerator.nextValue();
     camera.position.z += -zPositionGenerator.nextValue();
 
-    var mapX = sceneXToMapX(camera.position.x);
-    var mapZ = sceneZToMapZ(camera.position.z);
+    var mapX = Coordinates.sceneXToMapX(camera.position.x);
+    var mapZ = Coordinates.sceneZToMapZ(camera.position.z);
 
     var y = terrain.heightAtCoordinates(mapX, mapZ);
     camera.position.y = y + 0.5;
