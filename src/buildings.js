@@ -2,6 +2,7 @@
 
 var Buildings = function(terrain) {
   var MAX_BUILDING_STORIES = 40;
+  var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
 
   var BLOCK_LAYOUTS = [
     [ { left:     0.0,  right: 1.0,  top: 0.0,  bottom: 1.0, } ],
@@ -74,18 +75,20 @@ var Buildings = function(terrain) {
           var minimumTerrainHeight = Math.min(...blockTerrainCoordinates);
           var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
 
-          maxStories = calculateMaxBuildingStories(mapX, mapZ);
-          actualStories = Math.max(1, Math.round(Math.random() * maxStories));
+          if ((maximumTerrainHeight - minimumTerrainHeight) < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
+            maxStories = calculateMaxBuildingStories(mapX, mapZ);
+            actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
-          block.push({
-            left: lot.left,
-            right: lot.right,
-            top: lot.top,
-            bottom: lot.bottom,
-            yFloor: minimumTerrainHeight,
-            ySurface: maximumTerrainHeight,
-            stories: actualStories,
-          });
+            block.push({
+              left: lot.left,
+              right: lot.right,
+              top: lot.top,
+              bottom: lot.bottom,
+              yFloor: minimumTerrainHeight,
+              ySurface: maximumTerrainHeight,
+              stories: actualStories,
+            });
+          }
         });
 
         blocks[mapX][mapZ] = block;
