@@ -184,9 +184,9 @@ var SceneBuilder = function() {
           buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
         
           if (lot.stories > 25 && (Math.random() < 0.3)) {
-            var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 15, 4));
+            var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
             cylinder.position.x = sceneX + (CityConfig.BLOCK_WIDTH * mapLotXMidpoint);
-            cylinder.position.y = lot.yFloor + buildingHeight + 7.5;
+            cylinder.position.y = lot.yFloor + buildingHeight + 5;
             cylinder.position.z = sceneZ + (CityConfig.BLOCK_DEPTH * mapLotZMidpoint);
             cylinder.updateMatrix();
             buildingGeometries[materialIndex].merge(cylinder.geometry, cylinder.matrix);
