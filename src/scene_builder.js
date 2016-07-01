@@ -28,12 +28,12 @@ var SceneBuilder = function() {
     var triangle, v1, v2, v3;
 
     for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
-      sceneX_Left = Coordinates.mapXToSceneX(mapX);
-      sceneX_Right = sceneX_Left + CityConfig.BLOCK_AND_STREET_WIDTH;
+      sceneX_Left = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
+      sceneX_Right = sceneX_Left + CityConfig.BLOCK_WIDTH;
 
       for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
-        sceneZ_Top = Coordinates.mapZToSceneZ(mapZ);
-        sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_AND_STREET_DEPTH;
+        sceneZ_Top = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
+        sceneZ_Bottom = sceneZ_Top + CityConfig.BLOCK_DEPTH;
 
         triangle = buildTriangleGeometry(sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ),     sceneZ_Top,
                                          sceneX_Left,  terrain.heightAtCoordinates(mapX, mapZ + 1), sceneZ_Bottom,
