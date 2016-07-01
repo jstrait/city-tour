@@ -13,6 +13,8 @@ var CityConfig = (function() {
   config.BLOCK_AND_STREET_DEPTH = config.BLOCK_DEPTH + config.STREET_DEPTH;
   config.BLOCK_ROWS = 64;
   config.BLOCK_COLUMNS = 64;
+  config.HALF_BLOCK_ROWS = config.BLOCK_ROWS / 2;
+  config.HALF_BLOCK_COLUMNS = config.BLOCK_COLUMNS / 2;
   config.MIN_STORY_HEIGHT = 1.2;
   config.MAX_STORY_HEIGHT = 1.5;
   config.MAX_BUILDING_MATERIALS = 50;
@@ -31,23 +33,19 @@ var Coordinates = (function() {
   var coordinates = {};
 
   coordinates.mapXToSceneX = function(mapX) {
-    var cartesianMapX = mapX - HALF_COLUMNS;
-    return cartesianMapX * CityConfig.BLOCK_AND_STREET_WIDTH;
+    return mapX * CityConfig.BLOCK_AND_STREET_WIDTH;
   };
 
   coordinates.mapZToSceneZ = function(mapZ) {
-    var cartesianMapZ = mapZ - HALF_ROWS;
-    return cartesianMapZ * CityConfig.BLOCK_AND_STREET_DEPTH;
+    return mapZ * CityConfig.BLOCK_AND_STREET_DEPTH;
   };
 
   coordinates.sceneXToMapX = function(sceneX) {
-    var cartesianMapX = sceneX / CityConfig.BLOCK_AND_STREET_WIDTH;
-    return cartesianMapX + HALF_COLUMNS;
+    return sceneX / CityConfig.BLOCK_AND_STREET_WIDTH;
   };
 
   coordinates.sceneZToMapZ = function(sceneZ) {
-    var cartesianMapZ = sceneZ / CityConfig.BLOCK_AND_STREET_DEPTH;
-    return cartesianMapZ + HALF_ROWS;
+    return sceneZ / CityConfig.BLOCK_AND_STREET_DEPTH;
   };
 
   return coordinates;

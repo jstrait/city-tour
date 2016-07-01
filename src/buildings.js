@@ -58,10 +58,10 @@ var Buildings = function(terrain) {
     var mapX, mapZ;
     var maxStories, actualStories;
 
-    for (mapX = 0; mapX < CityConfig.BLOCK_COLUMNS; mapX++) {
+    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
       blocks[mapX] = [];
 
-      for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
+      for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ < CityConfig.HALF_BLOCK_ROWS; mapZ++) {
         var blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
 
         block = [];
@@ -102,11 +102,8 @@ var Buildings = function(terrain) {
   var calculateMaxBuildingStories = function(mapX, mapZ) {
     var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/12));
 
-    var halfColumns = CityConfig.BLOCK_COLUMNS / 2;
-    var halfRows = CityConfig.BLOCK_ROWS / 2;
-
-    var multiplierX = squareRootOfMaxBuildingStories * ((halfColumns - Math.abs(halfColumns - mapX)) / halfColumns);
-    var multiplierZ = squareRootOfMaxBuildingStories * ((halfRows - Math.abs(halfRows - mapZ)) / halfRows);
+    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS));
+    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS));
     var multiplier = Math.min(multiplierX, multiplierZ);
 
     return Math.max(1, Math.round(Math.pow(multiplier, 12)));

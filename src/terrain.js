@@ -39,9 +39,18 @@ var Terrain = function() {
       }
     }
 
-    console.log(terrainCoordinates);
+    // Convert to final coordinates
+    var finalTerrainCoordinates = [];
+    for (x = 0; x <= CityConfig.BLOCK_COLUMNS; x++) {
+      finalTerrainCoordinates[x - CityConfig.HALF_BLOCK_COLUMNS] = [];
+      for (z = 0; z <= CityConfig.BLOCK_ROWS; z++) {
+        finalTerrainCoordinates[x - CityConfig.HALF_BLOCK_COLUMNS][z - CityConfig.HALF_BLOCK_ROWS] = terrainCoordinates[x][z];
+      }
+    }
 
-    return terrainCoordinates;
+    console.log(finalTerrainCoordinates);
+
+    return finalTerrainCoordinates;
   };
 
   // Adapted from http://stevelosh.com/blog/2016/02/midpoint-displacement/
