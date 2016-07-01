@@ -15,6 +15,10 @@ var CityConfig = (function() {
   config.BLOCK_COLUMNS = 64;
   config.HALF_BLOCK_ROWS = config.BLOCK_ROWS / 2;
   config.HALF_BLOCK_COLUMNS = config.BLOCK_COLUMNS / 2;
+  config.TERRAIN_ROWS = 128;
+  config.TERRAIN_COLUMNS = 128;
+  config.HALF_TERRAIN_ROWS = config.TERRAIN_ROWS / 2;
+  config.HALF_TERRAIN_COLUMNS = config.TERRAIN_COLUMNS / 2;
   config.MIN_STORY_HEIGHT = 1.2;
   config.MAX_STORY_HEIGHT = 1.5;
   config.MAX_BUILDING_MATERIALS = 50;
@@ -86,7 +90,7 @@ function initScene($container, terrain, buildings) {
   camera.lookAt(scene.position);
   camera.position.x = 0;
   camera.position.y = 8;
-  camera.position.z = CityConfig.HALF_SCENE_DEPTH;
+  camera.position.z = CityConfig.TERRAIN_ROWS * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH) / 2;
 
   // Build light sources
   addPointLight(scene, 0, 0, 100000);
