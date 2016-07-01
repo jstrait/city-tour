@@ -112,6 +112,19 @@ var Terrain = function() {
 
       return interpolateHeight(z, topHeight, bottomHeight);
     }
+    else {
+      var leftHeight = coordinates[Math.floor(x)][Math.floor(z)];
+      var rightHeight = coordinates[Math.ceil(x)][Math.floor(z)];
+
+      var foo = interpolateHeight(x, leftHeight, rightHeight);
+
+      leftHeight = coordinates[Math.floor(x)][Math.ceil(z)];
+      rightHeight = coordinates[Math.ceil(x)][Math.ceil(z)];
+
+      var bar = interpolateHeight(x, leftHeight, rightHeight);
+
+      return interpolateHeight(z, foo, bar);
+    }
   };
 
   return terrain;

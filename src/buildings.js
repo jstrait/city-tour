@@ -63,17 +63,17 @@ var Buildings = function(terrain) {
       for (mapZ = 0; mapZ < CityConfig.BLOCK_ROWS; mapZ++) {
         var blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
 
-        var blockTerrainCoordinates = [
-          terrain.heightAtCoordinates(mapX, mapZ),
-          terrain.heightAtCoordinates(mapX + 1, mapZ),
-          terrain.heightAtCoordinates(mapX, mapZ + 1),
-          terrain.heightAtCoordinates(mapX + 1, mapZ + 1),
-        ];
-        var minimumTerrainHeight = Math.min(...blockTerrainCoordinates);
-        var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
-
         block = [];
         blockLayout.forEach(function(lot) {
+          var blockTerrainCoordinates = [
+            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
+            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
+            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom),
+            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom),
+          ];
+          var minimumTerrainHeight = Math.min(...blockTerrainCoordinates);
+          var maximumTerrainHeight = Math.max(...blockTerrainCoordinates);
+
           maxStories = calculateMaxBuildingStories(mapX, mapZ);
           actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
