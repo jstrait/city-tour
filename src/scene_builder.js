@@ -75,10 +75,10 @@ var SceneBuilder = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, CityConfig.STREET_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -(Math.PI / 2);
 
-    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
+    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX <= CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
       sceneX = Coordinates.mapXToSceneX(mapX);
 
-      for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ < CityConfig.HALF_BLOCK_ROWS; mapZ++) { 
+      for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ <= CityConfig.HALF_BLOCK_ROWS; mapZ++) { 
         sceneZ = Coordinates.mapZToSceneZ(mapZ);
 
         // Road intersection
@@ -91,24 +91,26 @@ var SceneBuilder = function() {
 
 
         // North/South road segment
-        var north = terrain.heightAtCoordinates(mapX, mapZ);
-        var south = terrain.heightAtCoordinates(mapX, mapZ + 1);
-        var midpoint = (north + south) / 2;
-        var angle = -Math.atan2(CityConfig.BLOCK_DEPTH, (north - south));
+        if (mapZ < CityConfig.HALF_BLOCK_ROWS) {
+          var north = terrain.heightAtCoordinates(mapX, mapZ);
+          var south = terrain.heightAtCoordinates(mapX, mapZ + 1);
+          var midpoint = (north + south) / 2;
+          var angle = -Math.atan2(CityConfig.BLOCK_DEPTH, (north - south));
 
-        var segmentLength = Math.sqrt(Math.pow((south - north), 2) + Math.pow(CityConfig.BLOCK_DEPTH, 2));
+          var segmentLength = Math.sqrt(Math.pow((south - north), 2) + Math.pow(CityConfig.BLOCK_DEPTH, 2));
 
-        roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, segmentLength), roadMaterial);
-        roadSegment.position.x = sceneX;
-        roadSegment.rotation.x = angle;
-        roadSegment.position.y = midpoint;
-        roadSegment.position.z = sceneZ + (CityConfig.BLOCK_AND_STREET_DEPTH / 2);
-        roadSegment.updateMatrix();
-        roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
+          roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, segmentLength), roadMaterial);
+          roadSegment.position.x = sceneX;
+          roadSegment.rotation.x = angle;
+          roadSegment.position.y = midpoint;
+          roadSegment.position.z = sceneZ + (CityConfig.BLOCK_AND_STREET_DEPTH / 2);
+          roadSegment.updateMatrix();
+          roadGeometry.merge(roadSegment.geometry, roadSegment.matrix);
+        }
 
 
         // East/West road segment
-        if (mapX < CityConfig.BLOCK_COLUMNS) {
+        if (mapX < CityConfig.HALF_BLOCK_COLUMNS) {
           var west = terrain.heightAtCoordinates(mapX, mapZ);
           var east = terrain.heightAtCoordinates(mapX + 1, mapZ);
           var midpoint = (west + east) / 2;
