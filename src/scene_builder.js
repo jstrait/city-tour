@@ -137,7 +137,7 @@ var SceneBuilder = function() {
     var buildingMaterials = [];
 
     for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
-      var random = Math.random() * 0.6;
+      var random = Math.random() * 0.7;
       var r = random;
       var g = random;
       var b = random;

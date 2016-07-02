@@ -92,22 +92,13 @@ function initScene($container, terrain, buildings) {
   camera.position.y = 8;
   camera.position.z = CityConfig.TERRAIN_ROWS * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH) / 2;
 
-  // Build light sources
-  addPointLight(scene, 0, 0, 100000);
-  addPointLight(scene, 0, 0, -100000);
-  addPointLight(scene, -10000, 20, -10000);
-  addPointLight(scene, 10000, 20, -10000);
-  addPointLight(scene, 10000, 20, 10000);
-  addPointLight(scene, -10000, 20, 10000);
+  var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+  light.position.set( 0, 500, 0 );
+  scene.add(light);
+
+  var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  directionalLight.position.set(-1, 0.9, 0.9);
+  scene.add(directionalLight);
 
   renderer.render(scene, camera);
-}
-
-function addPointLight(scene, x, y, z) {
-  var pointLight = new THREE.PointLight(0xffffff);
-  pointLight.position.x = x;
-  pointLight.position.y = y;
-  pointLight.position.z = z;
-
-  scene.add(pointLight);
 }
