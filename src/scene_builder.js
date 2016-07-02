@@ -22,8 +22,8 @@ var SceneBuilder = function() {
 
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
-    var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0, 200, 0) });
-    var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: new THREE.Color(255, 25, 0) });
+    var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0.0, 0.5, 0.0) });
+    var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0.0, 0.4, 0.0) });
 
     var triangle, v1, v2, v3;
 
