@@ -135,6 +135,14 @@ var AnimationManager = function() {
   var init = function() {
     var SWOOP_DESCENT_DELTA = 0.01;
 
+    var START_X = 0;
+    var START_Y = 8;
+    var START_Z = CityConfig.TERRAIN_ROWS * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH) / 2;
+
+    camera.position.x = START_X;
+    camera.position.y = START_Y;
+    camera.position.z = START_Z;
+
     targetX = 0;
     targetZ = 0;
     deltaX = 0.0;

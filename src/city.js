@@ -88,9 +88,6 @@ function initScene($container, terrain, buildings) {
   var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   camera.lookAt(scene.position);
-  camera.position.x = 0;
-  camera.position.y = 8;
-  camera.position.z = CityConfig.TERRAIN_ROWS * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH) / 2;
 
   var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
   light.position.set( 0, 500, 0 );
