@@ -224,29 +224,29 @@ var AnimationManager = function() {
     previousFrameTimestamp = currentTimestamp;
 
     var newAnimators = [];
-    for (var i = 0; i < animators.length; i++) {
-      animators[i].animate(frameCount);
+    animators.forEach(function (animator) {
+      animator.animate(frameCount);
 
-      if (animators[i].finished === true) {
-        if (animators[i] instanceof rampAnimation) {
+      if (animator.finished === true) {
+        if (animator instanceof rampAnimation) {
           newAnimators.push(new hoverAnimation());
         }
-        else if (animators[i] instanceof forwardAnimation) {
+        else if (animator instanceof forwardAnimation) {
           determineNextTargetPoint();
           determineRotationAngle();
           newAnimators.push(new rotationAnimation(targetAngle, deltaAngle));
         }
-        else if (animators[i] instanceof rotationAnimation) {
+        else if (animator instanceof rotationAnimation) {
           newAnimators.push(new forwardAnimation(targetX, deltaX, targetZ, deltaZ));
         }
-        else if (animators[i] instanceof hoverAnimation) {
+        else if (animator instanceof hoverAnimation) {
           newAnimators.push(new hoverAnimation());
         }
       }
       else {
-        newAnimators.push(animators[i]);
+        newAnimators.push(animator);
       }
-    }
+    });
     animators = newAnimators;
 
     var mapX = Coordinates.sceneXToMapX(camera.position.x);
