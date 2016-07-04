@@ -121,6 +121,7 @@ var Buildings = function(terrain) {
     var blocks = [];
     var block;
     var mapX, mapZ;
+    var shouldBuildBuilding, xPercentageFromCenter, zPercentageFromCenter;
     var maxStoriesForBlock, maxStoriesForLot, maxStories, actualStories;
 
     for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
@@ -147,32 +148,44 @@ var Buildings = function(terrain) {
         }
 
         blockLayout.lots.forEach(function(lot) {
-          var lotTerrainCoordinates = [
-            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
-            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
-            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom),
-            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom),
-          ];
-          var minimumLotTerrainHeight = Math.min(...lotTerrainCoordinates);
-          var maximumLotTerrainHeight = Math.max(...lotTerrainCoordinates);
-          var lotSteepness = maximumLotTerrainHeight - minimumLotTerrainHeight;
+          shouldBuildBuilding = true;
 
-          if (lotSteepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-            maxStoriesForBlock = calculateMaxStoriesForBlock(mapX, mapZ);
-            maxStoriesForLot = calculateMaxStoriesForLot(lot.right - lot.left, lot.bottom - lot.top);
-            maxStories = Math.min(maxStoriesForBlock, maxStoriesForLot);
+          xPercentageFromCenter = 1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS);
+          zPercentageFromCenter = 1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS);
 
-            actualStories = Math.max(1, Math.round(Math.random() * maxStories));
+          var percentage = Math.min(xPercentageFromCenter, zPercentageFromCenter);
 
-            block.push({
-              left: lot.left,
-              right: lot.right,
-              top: lot.top,
-              bottom: lot.bottom,
-              yFloor: minimumLotTerrainHeight,
-              ySurface: maximumLotTerrainHeight,
-              stories: actualStories,
-            });
+          var threshold = 1.0 - Math.pow(0.5, percentage);
+          shouldBuildBuilding = Math.random() < percentage;
+
+          if (shouldBuildBuilding) {
+            var lotTerrainCoordinates = [
+              terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
+              terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
+              terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom),
+              terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom),
+            ];
+            var minimumLotTerrainHeight = Math.min(...lotTerrainCoordinates);
+            var maximumLotTerrainHeight = Math.max(...lotTerrainCoordinates);
+            var lotSteepness = maximumLotTerrainHeight - minimumLotTerrainHeight;
+
+            if (lotSteepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
+              maxStoriesForBlock = calculateMaxStoriesForBlock(mapX, mapZ);
+              maxStoriesForLot = calculateMaxStoriesForLot(lot.right - lot.left, lot.bottom - lot.top);
+              maxStories = Math.min(maxStoriesForBlock, maxStoriesForLot);
+
+              actualStories = Math.max(1, Math.round(Math.random() * maxStories));
+
+              block.push({
+                left: lot.left,
+                right: lot.right,
+                top: lot.top,
+                bottom: lot.bottom,
+                yFloor: minimumLotTerrainHeight,
+                ySurface: maximumLotTerrainHeight,
+                stories: actualStories,
+              });
+            }
           }
         });
 
