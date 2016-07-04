@@ -96,7 +96,7 @@ var Buildings = function(terrain) {
     var blocks = [];
     var block;
     var mapX, mapZ;
-    var maxStories, actualStories;
+    var maxStoriesForBlock, maxStoriesForLot, maxStories, actualStories;
 
     for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
       blocks[mapX] = [];
@@ -133,7 +133,10 @@ var Buildings = function(terrain) {
           var lotSteepness = maximumLotTerrainHeight - minimumLotTerrainHeight;
 
           if (lotSteepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-            maxStories = calculateMaxBuildingStories(mapX, mapZ);
+            maxStoriesForBlock = calculateMaxStoriesForBlock(mapX, mapZ);
+            maxStoriesForLot = calculateMaxStoriesForLot(lot.right - lot.left, lot.bottom - lot.top);
+            maxStories = Math.min(maxStoriesForBlock, maxStoriesForLot);
+
             actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
             block.push({
@@ -156,14 +159,26 @@ var Buildings = function(terrain) {
     return blocks;
   };
 
-  var calculateMaxBuildingStories = function(mapX, mapZ) {
-    var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/12));
+  var calculateMaxStoriesForBlock = function(mapX, mapZ) {
+    var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/9));
 
     var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS));
     var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS));
     var multiplier = Math.min(multiplierX, multiplierZ);
 
-    return Math.max(1, Math.round(Math.pow(multiplier, 12)));
+    return Math.max(1, Math.round(Math.pow(multiplier, 9)));
+  };
+
+  var calculateMaxStoriesForLot = function(width, height) {
+    if (width < 0.25 || height < 0.25) {
+      return 4; 
+    }
+    else if (width < 0.5 || height < 0.5) {
+      return 10;
+    }
+    else {
+      return 10000;
+    }
   };
 
   var blocks = generateUnitBlocks(terrain);
