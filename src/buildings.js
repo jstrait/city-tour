@@ -87,7 +87,32 @@ var Buildings = function(terrain) {
               { left:     (1/3),  right: (2/3),  top: (2/3),    bottom:  1.0, },
               { left:     (2/3),  right: 0.8333, top: (2/3),    bottom:  1.0, },
               { left:    0.8333,  right: 1.0,    top: (2/3),    bottom:  1.0, },
-              
+            ],
+    },
+
+    {
+      maxBlockSteepness: 1000000,
+      lots: [ { left:     0.0,  right: 0.25,  top: 0.0,     bottom:  0.1667, },
+              { left:     0.0,  right: 0.25,  top: 0.1667,  bottom:  (1/3), },
+              { left:     0.0,  right: 0.25,  top: (1/3),   bottom:  0.5, },
+              { left:     0.0,  right: 0.25,  top: 0.5,     bottom:  (2/3), },
+              { left:     0.0,  right: 0.25,  top: (2/3),   bottom:  0.8333, },
+              { left:     0.0,  right: 0.25,  top: 0.8333,  bottom:  1.0, },
+
+              { left:     0.75,  right: 1.0,  top: 0.0,     bottom:  0.1667, },
+              { left:     0.75,  right: 1.0,  top: 0.1667,  bottom:  (1/3), },
+              { left:     0.75,  right: 1.0,  top: (1/3),   bottom:  0.5, },
+              { left:     0.75,  right: 1.0,  top: 0.5,     bottom:  (2/3), },
+              { left:     0.75,  right: 1.0,  top: (2/3),   bottom:  0.8333, },
+              { left:     0.75,  right: 1.0,  top: 0.8333,  bottom:  1.0, },
+            
+              { left:     0.25,    right: 0.4167,  top: 0.0,     bottom:  0.5, },
+              { left:     0.4167,  right: 0.5833,  top: 0.0,     bottom:  0.5, },
+              { left:     0.5833,  right: 0.75,    top: 0.0,     bottom:  0.5, },
+
+              { left:     0.25,    right: 0.4167,  top: 0.5,     bottom:  1.0, },
+              { left:     0.4167,  right: 0.5833,  top: 0.5,     bottom:  1.0, },
+              { left:     0.5833,  right: 0.75,    top: 0.5,     bottom:  1.0, },
             ],
     },
   ];
