@@ -118,6 +118,7 @@ var LinearMotionGenerator = function(delta, target) {
 
 var AnimationManager = function() {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
+  var FOWARD_MOTION_DELTA = 0.2;
 
   var animationManager = {};
   var animators = [];
@@ -144,7 +145,7 @@ var AnimationManager = function() {
     targetX = 0;
     targetZ = 0;
     deltaX = 0.0;
-    deltaZ = -0.2;
+    deltaZ = -FOWARD_MOTION_DELTA;
 
     var framesUntilCityEdge = Math.abs(((CityConfig.HALF_TERRAIN_ROWS - CityConfig.HALF_BLOCK_ROWS) * CityConfig.BLOCK_AND_STREET_DEPTH) / deltaZ);
     var swoopDescentDelta = (START_Y - 0.5) / framesUntilCityEdge;
@@ -176,8 +177,8 @@ var AnimationManager = function() {
     targetX = (targetGridX * CityConfig.BLOCK_WIDTH) + (targetGridX * CityConfig.STREET_WIDTH);
     targetZ = (targetGridZ * CityConfig.BLOCK_WIDTH) + (targetGridZ * CityConfig.STREET_WIDTH);
 
-    deltaX = (camera.position.x == targetX) ? 0 : 0.2;
-    deltaZ = (camera.position.z == targetZ) ? 0 : 0.2;
+    deltaX = (camera.position.x == targetX) ? 0 : FOWARD_MOTION_DELTA;
+    deltaZ = (camera.position.z == targetZ) ? 0 : FOWARD_MOTION_DELTA;
     deltaX *= (camera.position.x > targetX) ? -1 : 1;
     deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
   };
