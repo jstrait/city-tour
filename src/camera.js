@@ -123,8 +123,8 @@ var AnimationManager = function() {
   var animators = [];
   var previousFrameTimestamp;
 
-  var deltaX = 0.0;
-  var deltaZ = 0.2;
+  var deltaX;
+  var deltaZ;
   var targetX;
   var targetGridX;
   var targetZ;
