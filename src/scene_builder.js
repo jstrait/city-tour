@@ -166,7 +166,7 @@ var SceneBuilder = function() {
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
-    for (mapX = -CityConfig.HALF_BLOCK_ROWS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
+    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
       sceneX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
 
       for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ < CityConfig.HALF_BLOCK_ROWS; mapZ++) {
