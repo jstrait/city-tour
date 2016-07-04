@@ -22,9 +22,9 @@ var CityConfig = (function() {
   config.MIN_STORY_HEIGHT = 1.2;
   config.MAX_STORY_HEIGHT = 1.5;
   config.MAX_BUILDING_MATERIALS = 50;
-  config.TOTAL_SCENE_WIDTH = (config.BLOCK_WIDTH * config.BLOCK_COLUMNS) + (config.STREET_WIDTH * (config.BLOCK_COLUMNS - 1));
+  config.TOTAL_SCENE_WIDTH = config.TERRAIN_COLUMNS * config.BLOCK_AND_STREET_WIDTH;
   config.HALF_SCENE_WIDTH = config.TOTAL_SCENE_WIDTH / 2;
-  config.TOTAL_SCENE_DEPTH = (config.BLOCK_DEPTH * config.BLOCK_ROWS) + (config.STREET_DEPTH * (config.BLOCK_ROWS - 1));
+  config.TOTAL_SCENE_DEPTH = config.TERRAIN_ROWS * config.BLOCK_AND_STREET_DEPTH;
   config.HALF_SCENE_DEPTH = config.TOTAL_SCENE_DEPTH / 2;
 
   return config;

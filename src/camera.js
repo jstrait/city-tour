@@ -133,11 +133,9 @@ var AnimationManager = function() {
   var deltaAngle;
 
   var init = function() {
-    var SWOOP_DESCENT_DELTA = 0.01;
-
     var START_X = 0;
-    var START_Y = 8;
-    var START_Z = CityConfig.TERRAIN_ROWS * (CityConfig.BLOCK_DEPTH + CityConfig.STREET_DEPTH) / 2;
+    var START_Y = 40;
+    var START_Z = CityConfig.HALF_SCENE_DEPTH;
 
     camera.position.x = START_X;
     camera.position.y = START_Y;
@@ -148,7 +146,10 @@ var AnimationManager = function() {
     deltaX = 0.0;
     deltaZ = -0.2;
 
-    var ramp = new rampAnimation((camera.position.z - (CityConfig.HALF_SCENE_DEPTH + (CityConfig.STREET_WIDTH / 2))) / Math.abs(deltaZ), -SWOOP_DESCENT_DELTA, 0.5, 1000000);
+    var framesUntilCityEdge = Math.abs(((CityConfig.HALF_TERRAIN_ROWS - CityConfig.HALF_BLOCK_ROWS) * CityConfig.BLOCK_AND_STREET_DEPTH) / deltaZ);
+    var swoopDescentDelta = (START_Y - 0.5) / framesUntilCityEdge;
+
+    var ramp = new rampAnimation(framesUntilCityEdge, -swoopDescentDelta, 0.5, 1000000);
     var forward = new forwardAnimation(targetX, deltaX, targetZ, deltaZ);
     animators = [ramp, forward];
   };
