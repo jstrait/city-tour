@@ -155,6 +155,13 @@ var Buildings = function(terrain) {
 
           var percentage = Math.min(xPercentageFromCenter, zPercentageFromCenter);
 
+          if (percentage < 0.4) {
+            percentage = percentage / 0.4;
+          }
+          else {
+            percentage = 1.0;
+          }
+
           var threshold = 1.0 - Math.pow(0.5, percentage);
           shouldBuildBuilding = Math.random() < percentage;
 
