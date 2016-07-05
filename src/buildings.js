@@ -150,20 +150,23 @@ var Buildings = function(terrain) {
         blockLayout.lots.forEach(function(lot) {
           shouldBuildBuilding = true;
 
-          xPercentageFromCenter = 1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS);
-          zPercentageFromCenter = 1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS);
+          xPercentageFromCenter = Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS;
+          zPercentageFromCenter = Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS;
 
-          var percentage = Math.min(xPercentageFromCenter, zPercentageFromCenter);
+          var percentageFromCenter = Math.max(xPercentageFromCenter, zPercentageFromCenter);
 
-          if (percentage < 0.4) {
-            percentage = percentage / 0.4;
+          var percentageDistanceThatDecayBegins = 0.4;
+          var normalizedPercentageFromCenter;
+          if (percentageFromCenter >= percentageDistanceThatDecayBegins) {
+            normalizedPercentageFromCenter = (percentageFromCenter - percentageDistanceThatDecayBegins) / (1 - percentageDistanceThatDecayBegins);
           }
           else {
-            percentage = 1.0;
+            normalizedPercentageFromCenter = 0.0;
           }
 
-          var threshold = 1.0 - Math.pow(0.5, percentage);
-          shouldBuildBuilding = Math.random() < percentage;
+          var probabilityOfBuilding = (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
+
+          shouldBuildBuilding = Math.random() < probabilityOfBuilding;
 
           if (shouldBuildBuilding) {
             var lotTerrainCoordinates = [
