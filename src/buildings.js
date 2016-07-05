@@ -121,7 +121,7 @@ var Buildings = function(terrain) {
     var blocks = [];
     var block;
     var mapX, mapZ;
-    var shouldBuildBuilding, xPercentageFromCenter, zPercentageFromCenter;
+    var probabilityOfBuilding;
     var maxStoriesForBlock, maxStoriesForLot, maxStories, actualStories;
 
     for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
@@ -147,28 +147,10 @@ var Buildings = function(terrain) {
           maxBlockSteepness = blockLayout.maxBlockSteepness;
         }
 
+        probabilityOfBuilding = calculateBlockProbabilityOfBuilding(mapX, mapZ);
+
         blockLayout.lots.forEach(function(lot) {
-          shouldBuildBuilding = true;
-
-          xPercentageFromCenter = Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS;
-          zPercentageFromCenter = Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS;
-
-          var percentageFromCenter = Math.max(xPercentageFromCenter, zPercentageFromCenter);
-
-          var percentageDistanceThatDecayBegins = 0.4;
-          var normalizedPercentageFromCenter;
-          if (percentageFromCenter >= percentageDistanceThatDecayBegins) {
-            normalizedPercentageFromCenter = (percentageFromCenter - percentageDistanceThatDecayBegins) / (1 - percentageDistanceThatDecayBegins);
-          }
-          else {
-            normalizedPercentageFromCenter = 0.0;
-          }
-
-          var probabilityOfBuilding = (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
-
-          shouldBuildBuilding = Math.random() < probabilityOfBuilding;
-
-          if (shouldBuildBuilding) {
+          if (Math.random() < probabilityOfBuilding) {
             var lotTerrainCoordinates = [
               terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
               terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
@@ -205,6 +187,24 @@ var Buildings = function(terrain) {
 
     console.log(blocks);
     return blocks;
+  };
+
+  var calculateBlockProbabilityOfBuilding = function(mapX, mapZ) {
+    var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
+    
+    var xPercentageFromCenter = Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS;
+    var zPercentageFromCenter = Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS;
+    var percentageFromCenter = Math.max(xPercentageFromCenter, zPercentageFromCenter);
+    
+    var normalizedPercentageFromCenter;
+    if (percentageFromCenter >= PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) {
+      normalizedPercentageFromCenter = (percentageFromCenter - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) / (1 - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS);
+    }
+    else {
+      normalizedPercentageFromCenter = 0.0;
+    }
+
+    return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
   };
 
   var calculateMaxStoriesForBlock = function(mapX, mapZ) {
