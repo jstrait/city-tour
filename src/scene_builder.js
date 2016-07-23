@@ -20,15 +20,12 @@ var TerrainGeometryBuilder = function() {
   var terrainGeometryBuilder = {};
 
   terrainGeometryBuilder.build = function(terrain) {
-    var mapX, mapZ;
-    var sceneX_Left, sceneX_Right, sceneZ_Top, sceneZ_Bottom;
+    var mapX, mapZ, triangle;
 
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: TERRAIN_COLOR_1 });
     var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: TERRAIN_COLOR_2 });
-
-    var triangle, v1, v2, v3;
 
     for (mapX = -CityConfig.HALF_TERRAIN_COLUMNS; mapX < CityConfig.HALF_TERRAIN_COLUMNS; mapX++) {
       for (mapZ = -CityConfig.HALF_TERRAIN_ROWS; mapZ < CityConfig.HALF_TERRAIN_ROWS; mapZ++) {
