@@ -5,45 +5,48 @@ var TerrainBuilder = function() {
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
 
-  var buildTerrainCoordinates = function() {
+  var buildTerrainCoordinates = function(columns, rows) {
+    var halfColumns = columns / 2;
+    var halfRows = rows / 2;
+
     var x, z;
     var terrainCoordinates = [];
-    for (x = 0; x <= CityConfig.TERRAIN_COLUMNS; x++) {
+    for (x = 0; x <= columns; x++) {
       terrainCoordinates[x] = [];
 
-      for (z = 0; z <= CityConfig.TERRAIN_ROWS; z++) {
+      for (z = 0; z <= rows; z++) {
         terrainCoordinates[x][z] = 0.0;
       }
     }
 
     // Initial randomization of corners
     terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[0][CityConfig.TERRAIN_ROWS] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[CityConfig.TERRAIN_COLUMNS][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[CityConfig.TERRAIN_COLUMNS][CityConfig.TERRAIN_ROWS] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rows] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[columns][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[columns][rows] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     midpointDisplace(terrainCoordinates,
                      HEIGHT_JITTER_PER_ITERATION,
                      HEIGHT_JITTER_DECAY_PER_ITERATION,
                      0,
-                     CityConfig.TERRAIN_ROWS,
-                     CityConfig.TERRAIN_COLUMNS,
+                     rows,
+                     columns,
                      0);
 
     // Clamp negative heights to 0
-    for (x = 0; x <= CityConfig.TERRAIN_COLUMNS; x++) {
-      for (z = 0; z <= CityConfig.TERRAIN_ROWS; z++) {
+    for (x = 0; x <= columns; x++) {
+      for (z = 0; z <= rows; z++) {
         //terrainCoordinates[x][z] = Math.max(0.0, terrainCoordinates[x][z]);
       }
     }
 
     // Convert to final coordinates
     var finalTerrainCoordinates = [];
-    for (x = 0; x <= CityConfig.TERRAIN_COLUMNS; x++) {
-      finalTerrainCoordinates[x - CityConfig.HALF_TERRAIN_COLUMNS] = [];
-      for (z = 0; z <= CityConfig.TERRAIN_ROWS; z++) {
-        finalTerrainCoordinates[x - CityConfig.HALF_TERRAIN_COLUMNS][z - CityConfig.HALF_TERRAIN_ROWS] = terrainCoordinates[x][z];
+    for (x = 0; x <= columns; x++) {
+      finalTerrainCoordinates[x - halfColumns] = [];
+      for (z = 0; z <= rows; z++) {
+        finalTerrainCoordinates[x - halfColumns][z - halfRows] = terrainCoordinates[x][z];
       }
     }
 
@@ -92,8 +95,9 @@ var TerrainBuilder = function() {
 
   var terrainBuilder = {};
 
-  terrainBuilder.build = function() {
-    return new Terrain(buildTerrainCoordinates());
+  terrainBuilder.build = function(columns, rows) {
+    var terrainCoordinates = buildTerrainCoordinates(columns, rows);
+    return new Terrain(terrainCoordinates);
   };
 
   return terrainBuilder;
