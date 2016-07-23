@@ -5,12 +5,10 @@ var TerrainBuilder = function() {
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
 
-  var buildTerrainCoordinates = function(columns, rows) {
-    var halfColumns = columns / 2;
-    var halfRows = rows / 2;
-
+  var emptyTerrain = function(columns, rows) {
     var x, z;
     var terrainCoordinates = [];
+
     for (x = 0; x <= columns; x++) {
       terrainCoordinates[x] = [];
 
@@ -18,6 +16,32 @@ var TerrainBuilder = function() {
         terrainCoordinates[x][z] = 0.0;
       }
     }
+
+    return terrainCoordinates;
+  };
+
+  var normalizeCoordinates = function(terrainCoordinates, columns, rows) {
+    var halfColumns = columns / 2;
+    var halfRows = rows / 2;
+    var x, z;
+
+    var normalizedTerrainCoordinates = [];
+
+    for (x = 0; x <= columns; x++) {
+      normalizedTerrainCoordinates[x - halfColumns] = [];
+      for (z = 0; z <= rows; z++) {
+        normalizedTerrainCoordinates[x - halfColumns][z - halfRows] = terrainCoordinates[x][z];
+      }
+    }
+
+    return normalizedTerrainCoordinates;
+  };
+
+
+  var buildTerrainCoordinates = function(columns, rows) {
+    var x, z;
+
+    var terrainCoordinates = emptyTerrain(columns, rows);
 
     // Initial randomization of corners
     terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
@@ -42,14 +66,7 @@ var TerrainBuilder = function() {
     }
 
     // Convert to final coordinates
-    var finalTerrainCoordinates = [];
-    for (x = 0; x <= columns; x++) {
-      finalTerrainCoordinates[x - halfColumns] = [];
-      for (z = 0; z <= rows; z++) {
-        finalTerrainCoordinates[x - halfColumns][z - halfRows] = terrainCoordinates[x][z];
-      }
-    }
-
+    var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, rows);
     console.log(finalTerrainCoordinates);
 
     return finalTerrainCoordinates;
