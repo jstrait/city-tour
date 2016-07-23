@@ -67,7 +67,6 @@ var TerrainBuilder = function() {
 
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, rows);
-    console.log(finalTerrainCoordinates);
 
     return finalTerrainCoordinates;
   };
