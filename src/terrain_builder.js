@@ -74,10 +74,10 @@ var TerrainBuilder = function() {
 
   // Adapted from http://stevelosh.com/blog/2016/02/midpoint-displacement/
   var midpointDisplace = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
-    var topLeft = terrainCoordinates[top][left];
-    var topRight = terrainCoordinates[top][right];
-    var bottomLeft = terrainCoordinates[bottom][left];
-    var bottomRight = terrainCoordinates[bottom][right];
+    var topLeftHeight     = terrainCoordinates[top][left];
+    var topRightHeight    = terrainCoordinates[top][right];
+    var bottomLeftHeight  = terrainCoordinates[bottom][left];
+    var bottomRightHeight = terrainCoordinates[bottom][right];
 
     var midY = top + ((bottom - top) / 2);
     var midX = left + ((right - left) / 2);
@@ -87,16 +87,16 @@ var TerrainBuilder = function() {
 
     // Left column
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[midY][left] = ((topLeft + bottomLeft) / 2) + jitter;
+    terrainCoordinates[midY][left] = ((topLeftHeight + bottomLeftHeight) / 2) + jitter;
     // Right column
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[midY][right] = ((topRight + bottomRight) / 2) + jitter;
+    terrainCoordinates[midY][right] = ((topRightHeight + bottomRightHeight) / 2) + jitter;
     // Top row
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[top][midX] = ((topLeft + topRight) / 2) + jitter;
+    terrainCoordinates[top][midX] = ((topLeftHeight + topRightHeight) / 2) + jitter;
     // Bottom row
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[bottom][midX] = ((bottomLeft + bottomRight) / 2) + jitter;
+    terrainCoordinates[bottom][midX] = ((bottomLeftHeight + bottomRightHeight) / 2) + jitter;
 
     // Middle
     var middleAverage = (terrainCoordinates[midY][left] + terrainCoordinates[midY][right] + terrainCoordinates[top][midX] + terrainCoordinates[bottom][midX]) / 4;
