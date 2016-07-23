@@ -178,6 +178,7 @@ var Buildings = function(terrain) {
     var blocks = [];
     var block;
     var mapX, mapZ;
+    var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight;
     var maxStoriesForLot, maxStories, actualStories;
 
     zonedBlocks.forEach(function(zonedBlock) {
@@ -186,14 +187,13 @@ var Buildings = function(terrain) {
 
       block = [];
 
-      var blockTerrainCoordinates = [
-        terrain.heightAtCoordinates(mapX, mapZ),
-        terrain.heightAtCoordinates(mapX + 1, mapZ),
-        terrain.heightAtCoordinates(mapX, mapZ + 1),
-        terrain.heightAtCoordinates(mapX + 1, mapZ + 1),
-      ];
-      var minimumBlockTerrainHeight = Math.min(...blockTerrainCoordinates);
-      var maximumBlockTerrainHeight = Math.max(...blockTerrainCoordinates);
+      topLeftHeight = terrain.heightAtCoordinates(mapX, mapZ);
+      topRightHeight = terrain.heightAtCoordinates(mapX + 1, mapZ);
+      bottomLeftHeight = terrain.heightAtCoordinates(mapX, mapZ + 1);
+      bottomRightHeight = terrain.heightAtCoordinates(mapX + 1, mapZ + 1);
+
+      var minimumBlockTerrainHeight = Math.min(topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight);
+      var maximumBlockTerrainHeight = Math.max(topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight);
       var blockSteepness = maximumBlockTerrainHeight - minimumBlockTerrainHeight;
 
       var blockLayout;
@@ -205,14 +205,13 @@ var Buildings = function(terrain) {
 
       blockLayout.lots.forEach(function(lot) {
         if (Math.random() < zonedBlock.probabilityOfBuilding) {
-          var lotTerrainCoordinates = [
-            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
-            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
-            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom),
-            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom),
-          ];
-          var minimumLotTerrainHeight = Math.min(...lotTerrainCoordinates);
-          var maximumLotTerrainHeight = Math.max(...lotTerrainCoordinates);
+          var lotTopLeftHeight = terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top);
+          var lotTopRightHeight = terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top);
+          var lotBottomLeftHeight = terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom);
+          var lotBottomRightHeight = terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom);
+
+          var minimumLotTerrainHeight = Math.min(lotTopLeftHeight, lotTopRightHeight, lotBottomLeftHeight, lotBottomRightHeight);
+          var maximumLotTerrainHeight = Math.max(lotTopLeftHeight, lotTopRightHeight, lotBottomLeftHeight, lotBottomRightHeight);
           var lotSteepness = maximumLotTerrainHeight - minimumLotTerrainHeight;
 
           if (lotSteepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
