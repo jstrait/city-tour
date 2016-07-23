@@ -156,14 +156,14 @@ var TerrainGeometryBuilder = function() {
 
 
 var RoadGeometryBuilder = function() {
-  var COLOR_GROUND = 0xaaaaaa;
+  var COLOR_ROAD = 0xaaaaaa;
 
   var roadGeometryBuilder = {};
 
   roadGeometryBuilder.build = function(terrain) {
     var mapX, mapZ, sceneX, sceneZ;
 
-    var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
+    var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_ROAD, });
     var roadGeometry = new THREE.Geometry();
     var roadSegment;
 
