@@ -1,8 +1,6 @@
 "use strict";
 
-var SceneBuilder = function() {
-  var COLOR_GROUND = 0xaaaaaa;
-
+var TerrainGeometryBuilder = function() {
   var buildTriangleGeometry = function(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
     var triangle = new THREE.Geometry();
 
@@ -16,7 +14,9 @@ var SceneBuilder = function() {
     return triangle;
   };
 
-  var buildTerrainGeometry = function(terrain) {
+  var terrainGeometryBuilder = {};
+
+  terrainGeometryBuilder.build = function(terrain) {
     var mapX, mapZ;
     var sceneX_Left, sceneX_Right, sceneZ_Top, sceneZ_Bottom;
 
@@ -151,7 +151,16 @@ var SceneBuilder = function() {
     return [mesh1, mesh2];
   };
 
-  var buildRoadGeometry = function(terrain) {
+  return terrainGeometryBuilder;
+};
+
+
+var RoadGeometryBuilder = function() {
+  var COLOR_GROUND = 0xaaaaaa;
+
+  var roadGeometryBuilder = {};
+
+  roadGeometryBuilder.build = function(terrain) {
     var mapX, mapZ, sceneX, sceneZ;
 
     var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GROUND, });
@@ -219,6 +228,11 @@ var SceneBuilder = function() {
     return new THREE.Mesh(roadGeometry, roadMaterial);
   };
 
+  return roadGeometryBuilder;
+};
+
+
+var BuildingGeometryBuilder = function() {
   var buildMaterials = function() {
     var buildingMaterials = [];
 
@@ -297,6 +311,27 @@ var SceneBuilder = function() {
   };
 
 
+  var buildingGeometryBuilder = {};
+
+  buildingGeometryBuilder.build = function(buildings) {
+    var buildingMaterials = buildMaterials();
+    var buildingGeometries = buildEmptyGeometriesForBuildings();
+
+    generateBuildingGeometries(buildings, buildingGeometries);
+
+    var buildingMeshes = [];
+    for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
+      buildingMeshes.push(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
+    }
+
+    return buildingMeshes;
+  };
+
+  return buildingGeometryBuilder;
+};
+
+
+var SceneBuilder = function() {
   var sceneBuilder = {};
 
   sceneBuilder.build = function(terrain, buildings) {
@@ -305,25 +340,21 @@ var SceneBuilder = function() {
     var scene = new THREE.Scene();
 
     var terrainStartTime = new Date();
-    var terrainMeshes = buildTerrainGeometry(terrain);
+    var terrainMeshes = new TerrainGeometryBuilder().build(terrain);
     terrainMeshes.forEach(function(terrainMesh) {
       scene.add(terrainMesh);
     });
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();
-    scene.add(buildRoadGeometry(terrain));
+    scene.add(new RoadGeometryBuilder().build(terrain));
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
-    var buildingMaterials = buildMaterials();
-    var buildingGeometries = buildEmptyGeometriesForBuildings();
-
-    generateBuildingGeometries(buildings, buildingGeometries);
-
-    for (var i = 0; i < CityConfig.MAX_BUILDING_MATERIALS; i++) {
-      scene.add(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
-    }
+    var buildingMeshes = new BuildingGeometryBuilder().build(buildings);
+    buildingMeshes.forEach(function(buildingMesh) {
+      scene.add(buildingMesh);
+    });
     var buildingsEndTime = new Date();
 
     var masterEndTime = new Date();
