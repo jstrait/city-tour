@@ -1,7 +1,64 @@
 "use strict";
 
-var Buildings = function(terrain) {
+var ZonedBlockGenerator = function() {
   var MAX_BUILDING_STORIES = 40;
+
+  var calculateBlockProbabilityOfBuilding = function(mapX, mapZ) {
+    var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
+    
+    var xPercentageFromCenter = Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS;
+    var zPercentageFromCenter = Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS;
+    var percentageFromCenter = Math.max(xPercentageFromCenter, zPercentageFromCenter);
+    
+    var normalizedPercentageFromCenter;
+    if (percentageFromCenter >= PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) {
+      normalizedPercentageFromCenter = (percentageFromCenter - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) / (1 - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS);
+    }
+    else {
+      normalizedPercentageFromCenter = 0.0;
+    }
+
+    return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
+  };
+
+  var calculateMaxStoriesForBlock = function(mapX, mapZ) {
+    var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/9));
+
+    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS));
+    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS));
+    var multiplier = Math.min(multiplierX, multiplierZ);
+
+    return Math.max(1, Math.round(Math.pow(multiplier, 9)));
+  };
+
+  var zonedBlockGenerator = {};
+
+  zonedBlockGenerator.build = function() {
+    var mapX, mapZ;
+    var block, blocks = [];
+
+    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
+      for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ < CityConfig.HALF_BLOCK_ROWS; mapZ++) {
+        block = {};
+
+        block.mapX = mapX;
+        block.mapZ = mapZ;
+        block.probabilityOfBuilding = calculateBlockProbabilityOfBuilding(mapX, mapZ);
+        block.maxStories = calculateMaxStoriesForBlock(mapX, mapZ);
+
+        blocks.push(block);
+      }
+    }
+
+    return blocks;
+  };
+
+  return zonedBlockGenerator;
+};
+
+
+
+var Buildings = function(terrain) { 
   var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
 
   var BLOCK_LAYOUTS = [
@@ -117,104 +174,74 @@ var Buildings = function(terrain) {
     },
   ];
 
-  var generateUnitBlocks = function(terrain) {
+  var generateUnitBlocks = function(terrain, zonedBlocks) {
     var blocks = [];
     var block;
     var mapX, mapZ;
-    var probabilityOfBuilding;
-    var maxStoriesForBlock, maxStoriesForLot, maxStories, actualStories;
+    var maxStoriesForLot, maxStories, actualStories;
 
-    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
-      blocks[mapX] = [];
+    zonedBlocks.forEach(function(zonedBlock) {
+      mapX = zonedBlock.mapX;
+      mapZ = zonedBlock.mapZ;
 
-      for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ < CityConfig.HALF_BLOCK_ROWS; mapZ++) {
-        block = [];
+      block = [];
 
-        var blockTerrainCoordinates = [
-          terrain.heightAtCoordinates(mapX, mapZ),
-          terrain.heightAtCoordinates(mapX + 1, mapZ),
-          terrain.heightAtCoordinates(mapX, mapZ + 1),
-          terrain.heightAtCoordinates(mapX + 1, mapZ + 1),
-        ];
-        var minimumBlockTerrainHeight = Math.min(...blockTerrainCoordinates);
-        var maximumBlockTerrainHeight = Math.max(...blockTerrainCoordinates);
-        var blockSteepness = maximumBlockTerrainHeight - minimumBlockTerrainHeight;
+      var blockTerrainCoordinates = [
+        terrain.heightAtCoordinates(mapX, mapZ),
+        terrain.heightAtCoordinates(mapX + 1, mapZ),
+        terrain.heightAtCoordinates(mapX, mapZ + 1),
+        terrain.heightAtCoordinates(mapX + 1, mapZ + 1),
+      ];
+      var minimumBlockTerrainHeight = Math.min(...blockTerrainCoordinates);
+      var maximumBlockTerrainHeight = Math.max(...blockTerrainCoordinates);
+      var blockSteepness = maximumBlockTerrainHeight - minimumBlockTerrainHeight;
 
-        var blockLayout;
-        var maxBlockSteepness = -100000;
-        while (blockSteepness > maxBlockSteepness) {
-          blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
-          maxBlockSteepness = blockLayout.maxBlockSteepness;
-        }
-
-        probabilityOfBuilding = calculateBlockProbabilityOfBuilding(mapX, mapZ);
-
-        blockLayout.lots.forEach(function(lot) {
-          if (Math.random() < probabilityOfBuilding) {
-            var lotTerrainCoordinates = [
-              terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
-              terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
-              terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom),
-              terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom),
-            ];
-            var minimumLotTerrainHeight = Math.min(...lotTerrainCoordinates);
-            var maximumLotTerrainHeight = Math.max(...lotTerrainCoordinates);
-            var lotSteepness = maximumLotTerrainHeight - minimumLotTerrainHeight;
-
-            if (lotSteepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-              maxStoriesForBlock = calculateMaxStoriesForBlock(mapX, mapZ);
-              maxStoriesForLot = calculateMaxStoriesForLot(lot.right - lot.left, lot.bottom - lot.top);
-              maxStories = Math.min(maxStoriesForBlock, maxStoriesForLot);
-
-              actualStories = Math.max(1, Math.round(Math.random() * maxStories));
-
-              block.push({
-                left: lot.left,
-                right: lot.right,
-                top: lot.top,
-                bottom: lot.bottom,
-                yFloor: minimumLotTerrainHeight,
-                ySurface: maximumLotTerrainHeight,
-                stories: actualStories,
-              });
-            }
-          }
-        });
-
-        blocks[mapX][mapZ] = block;
+      var blockLayout;
+      var maxBlockSteepness = -100000;
+      while (blockSteepness > maxBlockSteepness) {
+        blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
+        maxBlockSteepness = blockLayout.maxBlockSteepness;
       }
-    }
+
+      blockLayout.lots.forEach(function(lot) {
+        if (Math.random() < zonedBlock.probabilityOfBuilding) {
+          var lotTerrainCoordinates = [
+            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.top),
+            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.top),
+            terrain.heightAtCoordinates(mapX + lot.left, mapZ + lot.bottom),
+            terrain.heightAtCoordinates(mapX + lot.right, mapZ + lot.bottom),
+          ];
+          var minimumLotTerrainHeight = Math.min(...lotTerrainCoordinates);
+          var maximumLotTerrainHeight = Math.max(...lotTerrainCoordinates);
+          var lotSteepness = maximumLotTerrainHeight - minimumLotTerrainHeight;
+
+          if (lotSteepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
+            maxStoriesForLot = calculateMaxStoriesForLot(lot.right - lot.left, lot.bottom - lot.top);
+            maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLot);
+
+            actualStories = Math.max(1, Math.round(Math.random() * maxStories));
+
+            block.push({
+              left: lot.left,
+              right: lot.right,
+              top: lot.top,
+              bottom: lot.bottom,
+              yFloor: minimumLotTerrainHeight,
+              ySurface: maximumLotTerrainHeight,
+              stories: actualStories,
+            });
+          }
+        }
+      });
+
+      if (!blocks[mapX]) {
+        blocks[mapX] = [];
+      }
+      blocks[mapX][mapZ] = block;
+    });
 
     console.log(blocks);
     return blocks;
-  };
-
-  var calculateBlockProbabilityOfBuilding = function(mapX, mapZ) {
-    var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
-    
-    var xPercentageFromCenter = Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS;
-    var zPercentageFromCenter = Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS;
-    var percentageFromCenter = Math.max(xPercentageFromCenter, zPercentageFromCenter);
-    
-    var normalizedPercentageFromCenter;
-    if (percentageFromCenter >= PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) {
-      normalizedPercentageFromCenter = (percentageFromCenter - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) / (1 - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS);
-    }
-    else {
-      normalizedPercentageFromCenter = 0.0;
-    }
-
-    return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
-  };
-
-  var calculateMaxStoriesForBlock = function(mapX, mapZ) {
-    var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/9));
-
-    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS));
-    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS));
-    var multiplier = Math.min(multiplierX, multiplierZ);
-
-    return Math.max(1, Math.round(Math.pow(multiplier, 9)));
   };
 
   var calculateMaxStoriesForLot = function(width, height) {
@@ -229,7 +256,7 @@ var Buildings = function(terrain) {
     }
   };
 
-  var blocks = generateUnitBlocks(terrain);
+  var blocks = generateUnitBlocks(terrain, new ZonedBlockGenerator().build());
 
   var buildings = {};
 
