@@ -1,6 +1,9 @@
 "use strict";
 
 var TerrainGeometryBuilder = function() {
+  var TERRAIN_COLOR_1 = new THREE.Color(0.0, 0.48, 0.0);
+  var TERRAIN_COLOR_2 = new THREE.Color(0.0, 0.49, 0.0);
+
   var buildTriangleGeometry = function(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
     var triangle = new THREE.Geometry();
 
@@ -22,8 +25,8 @@ var TerrainGeometryBuilder = function() {
 
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
-    var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0.0, 0.48, 0.0) });
-    var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: new THREE.Color(0.0, 0.49, 0.0) });
+    var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: TERRAIN_COLOR_1 });
+    var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: TERRAIN_COLOR_2 });
 
     var triangle, v1, v2, v3;
 
