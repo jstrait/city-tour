@@ -31,9 +31,6 @@ var CityConfig = (function() {
 })();
 
 var Coordinates = (function() {
-  var HALF_COLUMNS = CityConfig.BLOCK_COLUMNS / 2;
-  var HALF_ROWS = CityConfig.BLOCK_ROWS / 2;
-
   var coordinates = {};
 
   coordinates.mapXToSceneX = function(mapX) {
