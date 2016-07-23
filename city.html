@@ -38,7 +38,7 @@ body {
 var $container = $('#container');
 
 if (detectWebGL()) {
-  var terrain = new Terrain();
+  var terrain = new TerrainBuilder().build();
   var buildings = new Buildings(terrain);
   initScene($container, terrain, buildings);
 

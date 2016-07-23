@@ -1,6 +1,6 @@
 "use strict";
 
-var Terrain = function() {
+var TerrainBuilder = function() {
   var MAX_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
@@ -90,15 +90,24 @@ var Terrain = function() {
     }
   };
 
-  var coordinates = buildTerrainCoordinates();
+  var terrainBuilder = {};
 
-  var terrain = {};
+  terrainBuilder.build = function() {
+    return new Terrain(buildTerrainCoordinates());
+  };
 
+  return terrainBuilder;
+};
+
+
+var Terrain = function(coordinates) {
   var interpolateHeight = function(point, floor, ceiling) {
     var heightDifferential = ceiling - floor;
     var percentage = point - Math.floor(point);
     return floor + (heightDifferential * percentage);
   };
+
+  var terrain = {};
 
   terrain.heightAtCoordinates = function(x, z) {
     var xIsWhole = (Math.floor(x) === x);
