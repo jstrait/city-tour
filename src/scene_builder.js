@@ -280,8 +280,8 @@ var BuildingGeometryBuilder = function() {
           var mapLotXMidpoint = lot.left + (mapLotWidth / 2);
           var mapLotZMidpoint = lot.top + (mapLotDepth / 2);
 
-          var storyHeight = ((CityConfig.MAX_STORY_HEIGHT - CityConfig.MIN_STORY_HEIGHT) * Math.random()) + CityConfig.MIN_STORY_HEIGHT;
-          var buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor); 
+          storyHeight = ((CityConfig.MAX_STORY_HEIGHT - CityConfig.MIN_STORY_HEIGHT) * Math.random()) + CityConfig.MIN_STORY_HEIGHT;
+          buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor); 
 
           reusableBuildingMesh.scale.x = mapLotWidth * CityConfig.BLOCK_WIDTH;
           reusableBuildingMesh.position.x = sceneX + (CityConfig.BLOCK_WIDTH * mapLotXMidpoint);
