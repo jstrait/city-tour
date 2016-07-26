@@ -241,7 +241,6 @@ var Buildings = function(terrain) {
       blocks[mapX][mapZ] = block;
     });
 
-    console.log(blocks);
     return blocks;
   };
 
