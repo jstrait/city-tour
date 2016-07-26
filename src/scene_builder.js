@@ -21,6 +21,11 @@ var TerrainGeometryBuilder = function() {
 
   terrainGeometryBuilder.build = function(terrain) {
     var mapX, mapZ, triangle;
+    var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
+    var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
+
+    var halfStreetWidth = CityConfig.STREET_WIDTH / 2;
+    var halfStreetDepth = CityConfig.STREET_DEPTH / 2;
 
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
@@ -29,52 +34,42 @@ var TerrainGeometryBuilder = function() {
 
     for (mapX = -CityConfig.HALF_TERRAIN_COLUMNS; mapX < CityConfig.HALF_TERRAIN_COLUMNS; mapX++) {
       for (mapZ = -CityConfig.HALF_TERRAIN_ROWS; mapZ < CityConfig.HALF_TERRAIN_ROWS; mapZ++) {
-        var topLeftRoad = (mapX >= -CityConfig.HALF_BLOCK_COLUMNS && mapX <= CityConfig.HALF_BLOCK_COLUMNS &&
-                           mapZ >= -CityConfig.HALF_BLOCK_ROWS && mapZ <= CityConfig.HALF_BLOCK_ROWS);
-        var topRightRoad = (mapX >= (-CityConfig.HALF_BLOCK_COLUMNS - 1) && mapX <= (CityConfig.HALF_BLOCK_COLUMNS - 1) &&
-                            mapZ >= -CityConfig.HALF_BLOCK_ROWS && mapZ <= CityConfig.HALF_BLOCK_ROWS);
-        var bottomLeftRoad = (mapX >= -CityConfig.HALF_BLOCK_COLUMNS && mapX <= CityConfig.HALF_BLOCK_COLUMNS &&
-                              mapZ >= (-CityConfig.HALF_BLOCK_ROWS - 1) && mapZ <= (CityConfig.HALF_BLOCK_ROWS - 1));
-        var bottomRightRoad = (mapX >= -(CityConfig.HALF_BLOCK_COLUMNS + 1) && mapX <= (CityConfig.HALF_BLOCK_COLUMNS - 1) &&
-                              mapZ >= -(CityConfig.HALF_BLOCK_ROWS + 1) && mapZ <= (CityConfig.HALF_BLOCK_ROWS - 1));
-        
-        var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
+        topLeftRoad = (mapX >= -CityConfig.HALF_BLOCK_COLUMNS && mapX <= CityConfig.HALF_BLOCK_COLUMNS &&
+                       mapZ >= -CityConfig.HALF_BLOCK_ROWS && mapZ <= CityConfig.HALF_BLOCK_ROWS);
+        topRightRoad = (mapX >= (-CityConfig.HALF_BLOCK_COLUMNS - 1) && mapX <= (CityConfig.HALF_BLOCK_COLUMNS - 1) &&
+                        mapZ >= -CityConfig.HALF_BLOCK_ROWS && mapZ <= CityConfig.HALF_BLOCK_ROWS);
+        bottomLeftRoad = (mapX >= -CityConfig.HALF_BLOCK_COLUMNS && mapX <= CityConfig.HALF_BLOCK_COLUMNS &&
+                          mapZ >= (-CityConfig.HALF_BLOCK_ROWS - 1) && mapZ <= (CityConfig.HALF_BLOCK_ROWS - 1));
+        bottomRightRoad = (mapX >= -(CityConfig.HALF_BLOCK_COLUMNS + 1) && mapX <= (CityConfig.HALF_BLOCK_COLUMNS - 1) &&
+                           mapZ >= -(CityConfig.HALF_BLOCK_ROWS + 1) && mapZ <= (CityConfig.HALF_BLOCK_ROWS - 1));
+
+        topLeftX = Coordinates.mapXToSceneX(mapX);
+        topLeftZ = Coordinates.mapZToSceneZ(mapZ);
         if (topLeftRoad) {
-          topLeftX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
-          topLeftZ = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
-        }
-        else {
-          topLeftX = Coordinates.mapXToSceneX(mapX);
-          topLeftZ = Coordinates.mapZToSceneZ(mapZ);
+          topLeftX += halfStreetWidth;
+          topLeftZ += halfStreetDepth;
         }
 
+        topRightX = Coordinates.mapXToSceneX(mapX + 1);
+        topRightZ = Coordinates.mapZToSceneZ(mapZ);
         if (topRightRoad) {
-          topRightX = Coordinates.mapXToSceneX(mapX + 1) - (CityConfig.STREET_DEPTH / 2);
-          topRightZ = Coordinates.mapZToSceneZ(mapZ) + (CityConfig.STREET_DEPTH / 2);
-        }
-        else {
-          topRightX = Coordinates.mapXToSceneX(mapX + 1);
-          topRightZ = Coordinates.mapZToSceneZ(mapZ);
+          topRightX -= halfStreetWidth;
+          topRightZ += halfStreetDepth;
         }
 
+        bottomLeftX = Coordinates.mapXToSceneX(mapX);
+        bottomLeftZ = Coordinates.mapZToSceneZ(mapZ + 1);
         if (bottomLeftRoad) {
-          bottomLeftX = Coordinates.mapXToSceneX(mapX) + (CityConfig.STREET_WIDTH / 2);
-          bottomLeftZ = Coordinates.mapZToSceneZ(mapZ + 1) - (CityConfig.STREET_DEPTH / 2);
-        }
-        else {
-          bottomLeftX = Coordinates.mapXToSceneX(mapX);
-          bottomLeftZ = Coordinates.mapZToSceneZ(mapZ + 1);
+          bottomLeftX += halfStreetWidth;
+          bottomLeftZ -= halfStreetDepth;
         }
 
+        bottomRightX = Coordinates.mapXToSceneX(mapX + 1);
+        bottomRightZ = Coordinates.mapZToSceneZ(mapZ + 1);
         if (bottomRightRoad) {
-          bottomRightX = Coordinates.mapXToSceneX(mapX + 1) - (CityConfig.STREET_WIDTH / 2);
-          bottomRightZ = Coordinates.mapZToSceneZ(mapZ + 1) - (CityConfig.STREET_DEPTH / 2);
+          bottomRightX -= halfStreetWidth;
+          bottomRightZ -= halfStreetDepth;
         }
-        else {
-          bottomRightX = Coordinates.mapXToSceneX(mapX + 1);
-          bottomRightZ = Coordinates.mapZToSceneZ(mapZ + 1);
-        }
-        
 
         triangle = buildTriangleGeometry(topLeftX,     terrain.heightAtCoordinates(mapX, mapZ),     topLeftZ,
                                          bottomLeftX,  terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ,
