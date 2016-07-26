@@ -194,7 +194,7 @@ var Buildings = function(terrain) {
     var blocks = [];
     var block;
     var mapX, mapZ;
-    var blockSteepness;
+    var blockSteepness, blockLayout, maxBlockSteepness;
     var lotTerrainAttributes;
     var maxStoriesForLot, maxStories, actualStories;
 
@@ -205,8 +205,7 @@ var Buildings = function(terrain) {
       block = [];
       blockSteepness = blockTerrainAttributes(terrain, mapX, mapZ, mapX + 1, mapZ + 1).steepness;
 
-      var blockLayout;
-      var maxBlockSteepness = -100000;
+      maxBlockSteepness = -100000;
       while (blockSteepness > maxBlockSteepness) {
         blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
         maxBlockSteepness = blockLayout.maxBlockSteepness;
