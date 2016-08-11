@@ -95,4 +95,6 @@ function initScene($container, terrain, buildings) {
   scene.add(directionalLight);
 
   renderer.render(scene, camera);
+
+  $('#loading-message').remove();
 }
