@@ -147,10 +147,12 @@ var AnimationManager = function() {
     deltaX = 0.0;
     deltaZ = -FOWARD_MOTION_DELTA;
 
-    var framesUntilCityEdge = Math.abs(((CityConfig.HALF_TERRAIN_ROWS - CityConfig.HALF_BLOCK_ROWS) * CityConfig.BLOCK_AND_STREET_DEPTH) / deltaZ);
-    var swoopDescentDelta = (START_Y - 0.5) / framesUntilCityEdge;
+    var distanceToCityEdge = Math.abs(START_Z - ((CityConfig.BLOCK_ROWS * CityConfig.BLOCK_AND_STREET_DEPTH) / 2));
+    var framesUntilCityEdge = Math.abs(distanceToCityEdge / deltaZ);
+    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, CityConfig.HALF_BLOCK_ROWS) + 0.5;
+    var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var ramp = new rampAnimation(framesUntilCityEdge, -swoopDescentDelta, 0.5, 1000000);
+    var ramp = new rampAnimation(framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
     var forward = new forwardAnimation(targetX, deltaX, targetZ, deltaZ);
     animators = [ramp, forward];
   };
