@@ -176,8 +176,8 @@ var AnimationManager = function() {
       }
     }
 
-    targetX = (targetGridX * CityConfig.BLOCK_WIDTH) + (targetGridX * CityConfig.STREET_WIDTH);
-    targetZ = (targetGridZ * CityConfig.BLOCK_WIDTH) + (targetGridZ * CityConfig.STREET_WIDTH);
+    targetX = Coordinates.mapXToSceneX(targetGridX);
+    targetZ = Coordinates.mapZToSceneZ(targetGridZ);
 
     deltaX = (camera.position.x == targetX) ? 0 : FOWARD_MOTION_DELTA;
     deltaZ = (camera.position.z == targetZ) ? 0 : FOWARD_MOTION_DELTA;
