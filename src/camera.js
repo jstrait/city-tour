@@ -127,9 +127,9 @@ var AnimationManager = function() {
   var deltaX;
   var deltaZ;
   var targetX;
-  var targetGridX;
+  var targetMapX;
   var targetZ;
-  var targetGridZ;
+  var targetMapZ;
   var targetAngle = 0;
   var deltaAngle;
 
@@ -158,26 +158,26 @@ var AnimationManager = function() {
   };
 
   var determineNextTargetPoint = function() {
-    if (targetGridX == undefined || targetGridZ == undefined) {
-      targetGridX = 0;
-      targetGridZ = -1;
+    if (targetMapX == undefined || targetMapZ == undefined) {
+      targetMapX = 0;
+      targetMapZ = -1;
     }
     else {
-      var oldTargetGridX = targetGridX;
-      var oldTargetGridZ = targetGridZ;
+      var oldTargetMapX = targetMapX;
+      var oldTargetMapZ = targetMapZ;
 
-      while (oldTargetGridX == targetGridX && oldTargetGridZ == targetGridZ) {
+      while (oldTargetMapX == targetMapX && oldTargetMapZ == targetMapZ) {
         if (deltaX == 0) {
-          targetGridX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
+          targetMapX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
         }
         else if (deltaZ == 0) {
-          targetGridZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
+          targetMapZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
         }
       }
     }
 
-    targetX = Coordinates.mapXToSceneX(targetGridX);
-    targetZ = Coordinates.mapZToSceneZ(targetGridZ);
+    targetX = Coordinates.mapXToSceneX(targetMapX);
+    targetZ = Coordinates.mapZToSceneZ(targetMapZ);
 
     deltaX = (camera.position.x == targetX) ? 0 : FOWARD_MOTION_DELTA;
     deltaZ = (camera.position.z == targetZ) ? 0 : FOWARD_MOTION_DELTA;
