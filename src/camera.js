@@ -168,10 +168,10 @@ var AnimationManager = function() {
 
       while (oldTargetGridX == targetGridX && oldTargetGridZ == targetGridZ) {
         if (deltaX == 0) {
-          targetGridX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - (CityConfig.BLOCK_ROWS / 2);
+          targetGridX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
         }
         else if (deltaZ == 0) {
-          targetGridZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - (CityConfig.BLOCK_COLUMNS / 2);
+          targetGridZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
         }
       }
     }
