@@ -187,13 +187,13 @@ var RoadGeometryBuilder = function() {
           north = terrain.heightAtCoordinates(mapX, mapZ);
           south = terrain.heightAtCoordinates(mapX, mapZ + 1);
           midpoint = (north + south) / 2;
-          angle = -Math.atan2(CityConfig.BLOCK_DEPTH, (north - south));
+          angle = Math.atan2((north - south), CityConfig.BLOCK_DEPTH);
 
           segmentLength = Math.sqrt(Math.pow((south - north), 2) + Math.pow(CityConfig.BLOCK_DEPTH, 2));
 
           roadSegment = new THREE.Mesh(new THREE.PlaneGeometry(CityConfig.STREET_WIDTH, segmentLength), roadMaterial);
           roadSegment.position.x = sceneX;
-          roadSegment.rotation.x = angle;
+          roadSegment.rotation.x = angle - (Math.PI / 2);
           roadSegment.position.y = midpoint;
           roadSegment.position.z = sceneZ + (CityConfig.BLOCK_AND_STREET_DEPTH / 2);
           roadSegment.updateMatrix();
