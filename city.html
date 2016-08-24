@@ -52,9 +52,8 @@ p#loading-message {
 var $container = $('#container');
 
 if (detectWebGL()) {
-  var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
-  var buildings = new Buildings(terrain);
-  initScene($container, terrain, buildings);
+  var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS); 
+  initScene($container, terrain);
 
   var animationManager = new AnimationManager();
   animationManager.animate();

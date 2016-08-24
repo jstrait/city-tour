@@ -67,8 +67,10 @@ function detectWebGL() {
   return true;
 }
 
-function initScene($container, terrain, buildings) {
+function initScene($container, terrain) {
   var WIDTH = $container.width(), HEIGHT = $container.height();
+
+  var buildings = new Buildings(terrain);
 
   // Build renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
