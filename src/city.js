@@ -1,7 +1,5 @@
 "use strict";
 
-var renderer, scene, camera;
-
 var CityConfig = (function() {
   var config = {};
 
@@ -67,9 +65,12 @@ function detectWebGL() {
   return true;
 }
 
-function initScene($container, terrain) {
+function initScene($container) {
   var WIDTH = $container.width(), HEIGHT = $container.height();
 
+  var renderer, scene, camera;
+
+  var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
   var buildings = new Buildings(terrain);
 
   // Build renderer
@@ -99,4 +100,7 @@ function initScene($container, terrain) {
   renderer.render(scene, camera);
 
   $('#loading-message').remove();
+
+  var animationManager = new AnimationManager(terrain, renderer, scene, camera);
+  animationManager.animate();
 }

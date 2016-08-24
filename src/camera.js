@@ -1,6 +1,6 @@
 "use strict";
 
-var AnimationManager = function() {
+var AnimationManager = function(terrain, renderer, scene, camera) {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
   var FOWARD_MOTION_DELTA = 0.2;
 
@@ -36,8 +36,8 @@ var AnimationManager = function() {
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, CityConfig.HALF_BLOCK_ROWS) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var ramp = new rampAnimation(framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
-    var forward = new forwardAnimation(targetX, deltaX, targetZ, deltaZ);
+    var ramp = new rampAnimation(camera, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
+    var forward = new forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ);
     animators = [ramp, forward];
   };
 
@@ -116,18 +116,18 @@ var AnimationManager = function() {
 
       if (animator.finished === true) {
         if (animator instanceof rampAnimation) {
-          newAnimators.push(new hoverAnimation());
+          newAnimators.push(new hoverAnimation(camera));
         }
         else if (animator instanceof forwardAnimation) {
           determineNextTargetPoint();
           determineRotationAngle();
-          newAnimators.push(new rotationAnimation(targetAngle, deltaAngle));
+          newAnimators.push(new rotationAnimation(camera, targetAngle, deltaAngle));
         }
         else if (animator instanceof rotationAnimation) {
-          newAnimators.push(new forwardAnimation(targetX, deltaX, targetZ, deltaZ));
+          newAnimators.push(new forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ));
         }
         else if (animator instanceof hoverAnimation) {
-          newAnimators.push(new hoverAnimation());
+          newAnimators.push(new hoverAnimation(camera));
         }
       }
       else {
@@ -150,7 +150,8 @@ var AnimationManager = function() {
 };
 
 
-function forwardAnimation(targetX, deltaX, targetZ, deltaZ) {
+function forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ) {
+  this.camera = camera;
   this.targetX = targetX;
   this.deltaX = deltaX;
   this.targetZ = targetZ;
@@ -159,38 +160,40 @@ function forwardAnimation(targetX, deltaX, targetZ, deltaZ) {
 }
 
 forwardAnimation.prototype.animate = function(frameCount) {
-  camera.position.x += this.deltaX * frameCount;
-  camera.position.z += this.deltaZ * frameCount;
+  this.camera.position.x += this.deltaX * frameCount;
+  this.camera.position.z += this.deltaZ * frameCount;
 
-  if ((this.deltaX < 0 && camera.position.x < this.targetX) || (this.deltaX > 0 && camera.position.x > this.targetX) ||
-      (this.deltaZ < 0 && camera.position.z < this.targetZ) || (this.deltaZ > 0 && camera.position.z > this.targetZ)) {
-    camera.position.x = this.targetX;
-    camera.position.z = this.targetZ;
+  if ((this.deltaX < 0 && this.camera.position.x < this.targetX) || (this.deltaX > 0 && this.camera.position.x > this.targetX) ||
+      (this.deltaZ < 0 && this.camera.position.z < this.targetZ) || (this.deltaZ > 0 && this.camera.position.z > this.targetZ)) {
+    this.camera.position.x = this.targetX;
+    this.camera.position.z = this.targetZ;
 
     this.finished = true;
   }
 }
 
-function rotationAnimation(targetAngle, deltaAngle) {
+function rotationAnimation(camera, targetAngle, deltaAngle) {
+  this.camera = camera;
   this.targetAngle = targetAngle;
   this.deltaAngle = deltaAngle;
   this.finished = false;
 }
 
 rotationAnimation.prototype.animate = function(frameCount) {
-  camera.rotation.y += this.deltaAngle * frameCount;
+  this.camera.rotation.y += this.deltaAngle * frameCount;
   
-  if ((this.deltaAngle < 0 && camera.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && camera.rotation.y >= this.targetAngle)) {
+  if ((this.deltaAngle < 0 && this.camera.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && this.camera.rotation.y >= this.targetAngle)) {
     if (this.targetAngle >= Math.PI * 2 || this.targetAngle <= Math.PI * -2) {
       this.targetAngle = 0;
     }
 
-    camera.rotation.y = this.targetAngle;
+    this.camera.rotation.y = this.targetAngle;
     this.finished = true;
   }
 }
 
-function rampAnimation(frameDistance, deltaY, minHeight, maxHeight) {
+function rampAnimation(camera, frameDistance, deltaY, minHeight, maxHeight) {
+  this.camera = camera;
   this.ticks = 0;
   this.frameDistance = frameDistance;
   this.deltaY = deltaY;
@@ -200,14 +203,14 @@ function rampAnimation(frameDistance, deltaY, minHeight, maxHeight) {
 }
 
 rampAnimation.prototype.animate = function(frameCount) {
-  if (camera.position.y >= this.minHeight && camera.position.y <= this.maxHeight) {
-    camera.position.y += this.deltaY * frameCount;
+  if (this.camera.position.y >= this.minHeight && this.camera.position.y <= this.maxHeight) {
+    this.camera.position.y += this.deltaY * frameCount;
   }
-  if (camera.position.y < this.minHeight) {
-    camera.position.y = this.minHeight;
+  if (this.camera.position.y < this.minHeight) {
+    this.camera.position.y = this.minHeight;
   }  
-  if (camera.position.y > this.maxHeight) {
-    camera.position.y = this.maxHeight;
+  if (this.camera.position.y > this.maxHeight) {
+    this.camera.position.y = this.maxHeight;
   }
 
   this.ticks += frameCount;
@@ -216,11 +219,11 @@ rampAnimation.prototype.animate = function(frameCount) {
   }
 }
 
-function hoverAnimation() {
+function hoverAnimation(camera) {
   var frameDistance = (Math.random() * 300) + 300;
   var deltaY = (camera.position.y > 0.5) ? -0.05 : 0.05;
 
-  this.rampAnimation = new rampAnimation(frameDistance, deltaY, 0.5, 15);
+  this.rampAnimation = new rampAnimation(camera, frameDistance, deltaY, 0.5, 15);
   this.finished = false;
 }
 
