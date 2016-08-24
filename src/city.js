@@ -66,6 +66,7 @@ function detectWebGL() {
 }
 
 function initScene($container) {
+  var SKY_COLOR = 0x66ccff;
   var WIDTH = $container.width(), HEIGHT = $container.height();
 
   var renderer, scene, camera;
@@ -77,7 +78,7 @@ function initScene($container) {
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setSize(WIDTH, HEIGHT);
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
-  renderer.setClearColor(0x66ccff, 1);
+  renderer.setClearColor(SKY_COLOR, 1);
 
   $container.append(renderer.domElement);
 
