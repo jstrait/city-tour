@@ -70,21 +70,33 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
   };
 
   var determineRotationAngle = function() {
-    var RIGHT_ANGLE = Math.PI / 2;
+    var HALF_PI = Math.PI / 2;
+    var THREE_PI_OVER_TWO = (3 * Math.PI) / 2;
     var ROTATION_DELTA = 0.03;
 
     var oldTargetAngle = targetAngle;
-    if (deltaX != 0 && oldTargetAngle == 0) {  // NORTH
-      targetAngle = (deltaX < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
+
+    if (deltaX < 0) {
+      targetAngle = HALF_PI;
     }
-    else if (deltaZ != 0 && (oldTargetAngle == RIGHT_ANGLE || oldTargetAngle == ((-3 * Math.PI) / 2))) {  // EAST
-      targetAngle = (deltaZ < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
+    else if (deltaX > 0) {
+      targetAngle = THREE_PI_OVER_TWO;
     }
-    else if (deltaX != 0 && (oldTargetAngle == Math.PI || oldTargetAngle == Math.PI * -1)) {  // SOUTH
-      targetAngle = (deltaX < 0) ? targetAngle - RIGHT_ANGLE : targetAngle + RIGHT_ANGLE;
+    else if (deltaZ > 0) {
+      targetAngle = Math.PI;
     }
-    else if (deltaZ != 0 && (oldTargetAngle == Math.PI / -2 || oldTargetAngle == (Math.PI * 3) / 2)) {  // WEST
-      targetAngle = (deltaZ < 0) ? targetAngle + RIGHT_ANGLE : targetAngle - RIGHT_ANGLE;
+    else if (deltaZ < 0) {
+      targetAngle = 0;
+    }
+
+    // Prevent an extra long turn (i.e. 270deg instead of 90deg)
+    if (oldTargetAngle === 0.0 && targetAngle === THREE_PI_OVER_TWO) {
+      oldTargetAngle = Math.PI * 2;
+      camera.rotation.y = Math.PI * 2;
+    }
+    else if (oldTargetAngle === THREE_PI_OVER_TWO && targetAngle === 0.0) {
+      oldTargetAngle = -HALF_PI;
+      camera.rotation.y = -HALF_PI;
     }
 
     deltaAngle = ROTATION_DELTA;
