@@ -354,6 +354,14 @@ var SceneBuilder = function() {
     });
     var buildingsEndTime = new Date();
 
+    var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+    light.position.set( 0, 500, 0 );
+    scene.add(light);
+
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    directionalLight.position.set(-1, 0.9, 0.9);
+    scene.add(directionalLight);
+
     var masterEndTime = new Date();
     console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
     console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
