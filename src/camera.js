@@ -2,6 +2,9 @@
 
 var PathFinder = function(camera) {
   var FORWARD_MOTION_DELTA = 0.2;
+  var ROTATION_DELTA = 0.03;
+  var HALF_PI = Math.PI / 2.0;
+  var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
 
   var targetX = 0.0;
   var targetMapX = 0.0;
@@ -41,10 +44,6 @@ var PathFinder = function(camera) {
   };
 
   var determineRotationAngle = function() {
-    var HALF_PI = Math.PI / 2;
-    var THREE_PI_OVER_TWO = (3 * Math.PI) / 2;
-    var ROTATION_DELTA = 0.03;
-
     var oldTargetAngle = targetAngle;
 
     if (deltaX < 0) {
