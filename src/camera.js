@@ -16,21 +16,15 @@ var PathFinder = function(camera) {
   var deltaAngle;
 
   var determineNextTargetPoint = function() {
-    if (targetMapX == undefined || targetMapZ == undefined) {
-      targetMapX = 0;
-      targetMapZ = -1;
-    }
-    else {
-      var oldTargetMapX = targetMapX;
-      var oldTargetMapZ = targetMapZ;
+    var oldTargetMapX = targetMapX;
+    var oldTargetMapZ = targetMapZ;
 
-      while (oldTargetMapX == targetMapX && oldTargetMapZ == targetMapZ) {
-        if (deltaX == 0) {
-          targetMapX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
-        }
-        else if (deltaZ == 0) {
-          targetMapZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
-        }
+    while (oldTargetMapX == targetMapX && oldTargetMapZ == targetMapZ) {
+      if (deltaX == 0) {
+        targetMapX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
+      }
+      else if (deltaZ == 0) {
+        targetMapZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
       }
     }
 
