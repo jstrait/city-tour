@@ -70,14 +70,12 @@ var City = function($container) {
 
   var init = function() {
     var SKY_COLOR = 0x66ccff;
-    var WIDTH = $container.width(), HEIGHT = $container.height();
 
     var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
     var buildings = new Buildings(terrain);
 
     // Build renderer
     renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(WIDTH, HEIGHT);
     renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
     renderer.setClearColor(SKY_COLOR, 1);
 
@@ -87,8 +85,8 @@ var City = function($container) {
     scene = sceneBuilder.build(terrain, buildings);
 
     // Build camera
-    var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
-    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+    var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
+    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
     camera.lookAt(scene.position);
 
     var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
@@ -98,6 +96,8 @@ var City = function($container) {
     var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
     directionalLight.position.set(-1, 0.9, 0.9);
     scene.add(directionalLight);
+
+    resize();
 
     renderer.render(scene, camera);
 
