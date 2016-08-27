@@ -48,13 +48,7 @@ p#loading-message {
 <script type="text/javascript">
 var container = document.getElementById("container");
 var city = new City(container);
-
-if (detectWebGL()) { 
-  city.init();
-}
-else {
-  alert("Your browser doesn't seem to support WebGL. Sorry!");
-}
+city.init();
 
 window.addEventListener('resize', city.resize, false);
 </script>

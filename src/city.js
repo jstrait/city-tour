@@ -50,26 +50,31 @@ var Coordinates = (function() {
   return coordinates;
 })();
 
-function detectWebGL() {
-  if (!window.WebGLRenderingContext) {
-    return false;
-  }
-
-  // Adapted from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/webgl-extensions.js
-  var canvas = document.createElement('canvas');
-  var webgl_context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  if (webgl_context === null) {
-    return false;
-  }
-
-  return true;
-}
-
 var City = function(container) {
   var renderer, scene, camera;
 
+  var detectWebGL = function() {
+    if (!window.WebGLRenderingContext) {
+      return false;
+    }
+
+    // Adapted from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/webgl-extensions.js
+    var canvas = document.createElement('canvas');
+    var webgl_context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (webgl_context === null) {
+      return false;
+    }
+
+    return true;
+  }
+
   var init = function() {
     var SKY_COLOR = 0x66ccff;
+
+    if (!detectWebGL()) {
+      document.getElementById("loading-message").innerText = "This page is not compatible with your browser, because it requires WebGL.";
+      return;
+    }
 
     var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
     var buildings = new Buildings(terrain);
