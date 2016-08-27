@@ -74,13 +74,6 @@ var City = function($container) {
     var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
     var buildings = new Buildings(terrain);
 
-    // Build renderer
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
-    renderer.setClearColor(SKY_COLOR, 1);
-
-    $container.append(renderer.domElement);
-
     var sceneBuilder = new SceneBuilder();
     scene = sceneBuilder.build(terrain, buildings);
 
@@ -97,10 +90,14 @@ var City = function($container) {
     directionalLight.position.set(-1, 0.9, 0.9);
     scene.add(directionalLight);
 
+    // Build renderer
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
+    renderer.setClearColor(SKY_COLOR, 1);
     resize();
 
     renderer.render(scene, camera);
-
+    $container.append(renderer.domElement);
     $('#loading-message').remove();
 
     var animationManager = new AnimationManager(terrain, renderer, scene, camera);
