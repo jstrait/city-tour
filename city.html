@@ -50,12 +50,15 @@ p#loading-message {
 <script type="text/javascript">
 
 var $container = $('#container');
+var city = new City();
 
 if (detectWebGL()) { 
-  initScene($container);
+  city.init($container);
 }
 else {
   alert("Your browser doesn't seem to support WebGL. Sorry!");
 }
+
+window.addEventListener('resize', city.resize, false);
 </script>
 </html>

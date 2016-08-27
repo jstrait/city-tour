@@ -65,43 +65,61 @@ function detectWebGL() {
   return true;
 }
 
-function initScene($container) {
-  var SKY_COLOR = 0x66ccff;
-  var WIDTH = $container.width(), HEIGHT = $container.height();
-
+var City = function() {
   var renderer, scene, camera;
 
-  var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
-  var buildings = new Buildings(terrain);
+  var init = function($container) {
+    var SKY_COLOR = 0x66ccff;
+    var WIDTH = $container.width(), HEIGHT = $container.height();
 
-  // Build renderer
-  renderer = new THREE.WebGLRenderer({antialias: true});
-  renderer.setSize(WIDTH, HEIGHT);
-  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
-  renderer.setClearColor(SKY_COLOR, 1);
+    var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
+    var buildings = new Buildings(terrain);
 
-  $container.append(renderer.domElement);
+    // Build renderer
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(WIDTH, HEIGHT);
+    renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
+    renderer.setClearColor(SKY_COLOR, 1);
 
-  var sceneBuilder = new SceneBuilder();
-  scene = sceneBuilder.build(terrain, buildings);
+    $container.append(renderer.domElement);
 
-  // Build camera
-  var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
-  camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-  camera.lookAt(scene.position);
+    var sceneBuilder = new SceneBuilder();
+    scene = sceneBuilder.build(terrain, buildings);
 
-  var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
-  light.position.set( 0, 500, 0 );
-  scene.add(light);
+    // Build camera
+    var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+    camera.lookAt(scene.position);
 
-  var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
-  directionalLight.position.set(-1, 0.9, 0.9);
-  scene.add(directionalLight);
+    var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+    light.position.set( 0, 500, 0 );
+    scene.add(light);
 
-  renderer.render(scene, camera);
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    directionalLight.position.set(-1, 0.9, 0.9);
+    scene.add(directionalLight);
 
-  $('#loading-message').remove();
+    renderer.render(scene, camera);
 
-  var animationManager = new AnimationManager(terrain, renderer, scene, camera);
-  animationManager.animate();
-}
+    $('#loading-message').remove();
+
+    var animationManager = new AnimationManager(terrain, renderer, scene, camera);
+    animationManager.animate();
+  }
+
+  var resize = function() {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  var city = {};
+
+  city.init = init;
+  city.resize = resize;
+
+  return city;
+};
