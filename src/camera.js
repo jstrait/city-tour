@@ -1,45 +1,16 @@
 "use strict";
 
-var AnimationManager = function(terrain, renderer, scene, camera) {
-  var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
-  var FOWARD_MOTION_DELTA = 0.2;
+var PathFinder = function(camera) {
+  var FORWARD_MOTION_DELTA = 0.2;
 
-  var animationManager = {};
-  var animators = [];
-  var previousFrameTimestamp;
-
-  var deltaX;
-  var deltaZ;
-  var targetX;
-  var targetMapX;
-  var targetZ;
-  var targetMapZ;
-  var targetAngle = 0;
+  var targetX = 0.0;
+  var targetMapX = 0.0;
+  var targetZ = 0.0;
+  var targetMapZ = 0.0;
+  var deltaX = 0.0;
+  var deltaZ = -FORWARD_MOTION_DELTA;
+  var targetAngle = 0.0;
   var deltaAngle;
-
-  var init = function() {
-    var START_X = 0;
-    var START_Y = 40;
-    var START_Z = CityConfig.HALF_SCENE_DEPTH;
-
-    camera.position.x = START_X;
-    camera.position.y = START_Y;
-    camera.position.z = START_Z;
-
-    targetX = 0;
-    targetZ = 0;
-    deltaX = 0.0;
-    deltaZ = -FOWARD_MOTION_DELTA;
-
-    var distanceToCityEdge = Math.abs(START_Z - ((CityConfig.BLOCK_ROWS * CityConfig.BLOCK_AND_STREET_DEPTH) / 2));
-    var framesUntilCityEdge = Math.abs(distanceToCityEdge / deltaZ);
-    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, CityConfig.HALF_BLOCK_ROWS) + 0.5;
-    var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
-
-    var ramp = new rampAnimation(camera, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
-    var forward = new forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ);
-    animators = [ramp, forward];
-  };
 
   var determineNextTargetPoint = function() {
     if (targetMapX == undefined || targetMapZ == undefined) {
@@ -63,8 +34,8 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
     targetX = Coordinates.mapXToSceneX(targetMapX);
     targetZ = Coordinates.mapZToSceneZ(targetMapZ);
 
-    deltaX = (camera.position.x == targetX) ? 0 : FOWARD_MOTION_DELTA;
-    deltaZ = (camera.position.z == targetZ) ? 0 : FOWARD_MOTION_DELTA;
+    deltaX = (camera.position.x == targetX) ? 0 : FORWARD_MOTION_DELTA;
+    deltaZ = (camera.position.z == targetZ) ? 0 : FORWARD_MOTION_DELTA;
     deltaX *= (camera.position.x > targetX) ? -1 : 1;
     deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
   };
@@ -103,6 +74,54 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
     deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
   };
 
+  var pathFinder = {};
+
+  pathFinder.targetX = function() { return targetX; };
+  pathFinder.targetMapX = function() { return targetMapX; };
+  pathFinder.targetZ = function() { return targetZ; };
+  pathFinder.targetMapZ = function() { return targetMapZ; };
+  pathFinder.deltaX  = function() { return deltaX; };
+  pathFinder.deltaZ  = function() { return deltaZ; };
+  pathFinder.targetAngle = function() { return targetAngle; };
+  pathFinder.deltaAngle = function() { return deltaAngle; };
+
+  pathFinder.nextTarget = function() {
+    determineNextTargetPoint();
+    determineRotationAngle();
+  };
+
+  return pathFinder;
+};
+
+var AnimationManager = function(terrain, renderer, scene, camera) {
+  var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
+  var FOWARD_MOTION_DELTA = 0.2;
+
+  var animationManager = {};
+  var animators = [];
+  var previousFrameTimestamp;
+
+  var pathFinder = new PathFinder(camera);
+
+  var init = function() {
+    var START_X = 0;
+    var START_Y = 40;
+    var START_Z = CityConfig.HALF_SCENE_DEPTH;
+
+    camera.position.x = START_X;
+    camera.position.y = START_Y;
+    camera.position.z = START_Z;
+
+    var distanceToCityEdge = Math.abs(START_Z - ((CityConfig.BLOCK_ROWS * CityConfig.BLOCK_AND_STREET_DEPTH) / 2));
+    var framesUntilCityEdge = Math.abs(distanceToCityEdge / pathFinder.deltaZ());
+    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, CityConfig.HALF_BLOCK_ROWS) + 0.5;
+    var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
+
+    var ramp = new rampAnimation(camera, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
+    var forward = new forwardAnimation(camera, pathFinder.targetX(), pathFinder.deltaX(), pathFinder.targetZ(), pathFinder.deltaZ());
+    animators = [ramp, forward];
+  };
+
   animationManager.animate = function() {
     var currentTimestamp = new Date().getTime();
     var frameCount;
@@ -131,12 +150,11 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
           newAnimators.push(new hoverAnimation(camera));
         }
         else if (animator instanceof forwardAnimation) {
-          determineNextTargetPoint();
-          determineRotationAngle();
-          newAnimators.push(new rotationAnimation(camera, targetAngle, deltaAngle));
+          pathFinder.nextTarget();
+          newAnimators.push(new rotationAnimation(camera, pathFinder.targetAngle(), pathFinder.deltaAngle()));
         }
         else if (animator instanceof rotationAnimation) {
-          newAnimators.push(new forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ));
+          newAnimators.push(new forwardAnimation(camera, pathFinder.targetX(), pathFinder.deltaX(), pathFinder.targetZ(), pathFinder.deltaZ()));
         }
         else if (animator instanceof hoverAnimation) {
           newAnimators.push(new hoverAnimation(camera));
