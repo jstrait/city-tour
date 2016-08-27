@@ -19,11 +19,11 @@ var PathFinder = function(camera) {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
 
-    while (oldTargetMapX == targetMapX && oldTargetMapZ == targetMapZ) {
-      if (deltaX == 0) {
+    while (oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) {
+      if (deltaX === 0.0) {
         targetMapX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
       }
-      else if (deltaZ == 0) {
+      else if (deltaZ === 0.0) {
         targetMapZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
       }
     }
@@ -31,8 +31,8 @@ var PathFinder = function(camera) {
     targetX = Coordinates.mapXToSceneX(targetMapX);
     targetZ = Coordinates.mapZToSceneZ(targetMapZ);
 
-    deltaX = (deltaX === 0.0) ? FORWARD_MOTION_DELTA : 0;
-    deltaZ = (deltaZ === 0.0) ? FORWARD_MOTION_DELTA : 0;
+    deltaX = (deltaX === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
+    deltaZ = (deltaZ === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
     deltaX *= (oldTargetMapX > targetMapX) ? -1 : 1;
     deltaZ *= (oldTargetMapZ > targetMapZ) ? -1 : 1;
   };
