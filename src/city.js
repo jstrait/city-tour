@@ -65,7 +65,7 @@ function detectWebGL() {
   return true;
 }
 
-var City = function($container) {
+var City = function(container) {
   var renderer, scene, camera;
 
   var init = function() {
@@ -89,16 +89,16 @@ var City = function($container) {
     resize();
 
     renderer.render(scene, camera);
-    $container.append(renderer.domElement);
-    $('#loading-message').remove();
+    container.appendChild(renderer.domElement);
+    container.removeChild(document.getElementById("loading-message"));
 
     var animationManager = new AnimationManager(terrain, renderer, scene, camera);
     animationManager.animate();
   }
 
   var resize = function() {
-    var width = $container.width();
-    var height = $container.height();
+    var width = container.clientWidth;
+    var height = container.clientHeight;
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();

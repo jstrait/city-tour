@@ -37,8 +37,6 @@ p#loading-message {
     <p id="loading-message">Loading...</p>
   </div>
 </body>
-<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
-<script src="lib/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="lib/three-v78.min.js" type="text/javascript"></script>
 <script src="lib/webgl-utils.js" type="text/javascript"></script>
 <script src="src/buildings.js" type="text/javascript"></script>
@@ -48,12 +46,11 @@ p#loading-message {
 <script src="src/terrain.js" type="text/javascript"></script>
 <script src="src/terrain_builder.js" type="text/javascript"></script>
 <script type="text/javascript">
-
-var $container = $('#container');
-var city = new City($container);
+var container = document.getElementById("container");
+var city = new City(container);
 
 if (detectWebGL()) { 
-  city.init($container);
+  city.init();
 }
 else {
   alert("Your browser doesn't seem to support WebGL. Sorry!");
