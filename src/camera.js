@@ -31,10 +31,10 @@ var PathFinder = function(camera) {
     targetX = Coordinates.mapXToSceneX(targetMapX);
     targetZ = Coordinates.mapZToSceneZ(targetMapZ);
 
-    deltaX = (camera.position.x == targetX) ? 0 : FORWARD_MOTION_DELTA;
-    deltaZ = (camera.position.z == targetZ) ? 0 : FORWARD_MOTION_DELTA;
-    deltaX *= (camera.position.x > targetX) ? -1 : 1;
-    deltaZ *= (camera.position.z > targetZ) ? -1 : 1;
+    deltaX = (deltaX === 0.0) ? FORWARD_MOTION_DELTA : 0;
+    deltaZ = (deltaZ === 0.0) ? FORWARD_MOTION_DELTA : 0;
+    deltaX *= (oldTargetMapX > targetMapX) ? -1 : 1;
+    deltaZ *= (oldTargetMapZ > targetMapZ) ? -1 : 1;
   };
 
   var determineRotationAngle = function() {
