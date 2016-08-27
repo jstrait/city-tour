@@ -6,10 +6,10 @@ var PathFinder = function(camera) {
   var HALF_PI = Math.PI / 2.0;
   var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
 
-  var targetX = 0.0;
   var targetMapX = 0.0;
-  var targetZ = 0.0;
+  var targetSceneX = 0.0;
   var targetMapZ = 0.0;
+  var targetSceneZ = 0.0;
   var deltaX = 0.0;
   var deltaZ = -FORWARD_MOTION_DELTA;
   var targetAngle = 0.0;
@@ -28,8 +28,8 @@ var PathFinder = function(camera) {
       }
     }
 
-    targetX = Coordinates.mapXToSceneX(targetMapX);
-    targetZ = Coordinates.mapZToSceneZ(targetMapZ);
+    targetSceneX = Coordinates.mapXToSceneX(targetMapX);
+    targetSceneZ = Coordinates.mapZToSceneZ(targetMapZ);
 
     deltaX = (deltaX === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
     deltaZ = (deltaZ === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
@@ -69,9 +69,9 @@ var PathFinder = function(camera) {
 
   var pathFinder = {};
 
-  pathFinder.targetX = function() { return targetX; };
+  pathFinder.targetSceneX = function() { return targetSceneX; };
   pathFinder.targetMapX = function() { return targetMapX; };
-  pathFinder.targetZ = function() { return targetZ; };
+  pathFinder.targetSceneZ = function() { return targetSceneZ; };
   pathFinder.targetMapZ = function() { return targetMapZ; };
   pathFinder.deltaX  = function() { return deltaX; };
   pathFinder.deltaZ  = function() { return deltaZ; };
@@ -111,7 +111,7 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     var ramp = new rampAnimation(camera, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
-    var forward = new forwardAnimation(camera, pathFinder.targetX(), pathFinder.deltaX(), pathFinder.targetZ(), pathFinder.deltaZ());
+    var forward = new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
     animators = [ramp, forward];
   };
 
@@ -147,7 +147,7 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
           newAnimators.push(new rotationAnimation(camera, pathFinder.targetAngle(), pathFinder.deltaAngle()));
         }
         else if (animator instanceof rotationAnimation) {
-          newAnimators.push(new forwardAnimation(camera, pathFinder.targetX(), pathFinder.deltaX(), pathFinder.targetZ(), pathFinder.deltaZ()));
+          newAnimators.push(new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
         }
         else if (animator instanceof hoverAnimation) {
           newAnimators.push(new hoverAnimation(camera));
