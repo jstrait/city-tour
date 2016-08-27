@@ -50,7 +50,7 @@ p#loading-message {
 <script type="text/javascript">
 
 var $container = $('#container');
-var city = new City();
+var city = new City($container);
 
 if (detectWebGL()) { 
   city.init($container);

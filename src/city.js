@@ -65,10 +65,10 @@ function detectWebGL() {
   return true;
 }
 
-var City = function() {
+var City = function($container) {
   var renderer, scene, camera;
 
-  var init = function($container) {
+  var init = function() {
     var SKY_COLOR = 0x66ccff;
     var WIDTH = $container.width(), HEIGHT = $container.height();
 
@@ -108,8 +108,8 @@ var City = function() {
   }
 
   var resize = function() {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
+    var width = $container.width();
+    var height = $container.height();
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
