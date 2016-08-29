@@ -133,30 +133,33 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
     }
     previousFrameTimestamp = currentTimestamp;
 
-    var newAnimators = [];
-    animators.forEach(function (animator) {
-      animator.animate(frameCount);
+    for (var i = 0; i < frameCount; i++) {
+      var newAnimators = [];
 
-      if (animator.finished === true) {
-        if (animator instanceof rampAnimation) {
-          newAnimators.push(new hoverAnimation(camera));
+      animators.forEach(function (animator) {
+        animator.animate();
+
+        if (animator.finished === true) {
+          if (animator instanceof rampAnimation) {
+            newAnimators.push(new hoverAnimation(camera));
+          }
+          else if (animator instanceof forwardAnimation) {
+            pathFinder.nextTarget();
+            newAnimators.push(new rotationAnimation(camera, pathFinder.targetAngle(), pathFinder.deltaAngle()));
+          }
+          else if (animator instanceof rotationAnimation) {
+            newAnimators.push(new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
+          }
+          else if (animator instanceof hoverAnimation) {
+            newAnimators.push(new hoverAnimation(camera));
+          }
         }
-        else if (animator instanceof forwardAnimation) {
-          pathFinder.nextTarget();
-          newAnimators.push(new rotationAnimation(camera, pathFinder.targetAngle(), pathFinder.deltaAngle()));
+        else {
+          newAnimators.push(animator);
         }
-        else if (animator instanceof rotationAnimation) {
-          newAnimators.push(new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
-        }
-        else if (animator instanceof hoverAnimation) {
-          newAnimators.push(new hoverAnimation(camera));
-        }
-      }
-      else {
-        newAnimators.push(animator);
-      }
-    });
-    animators = newAnimators;
+      });
+      animators = newAnimators;
+    }
 
     var mapX = Coordinates.sceneXToMapX(camera.position.x);
     var mapZ = Coordinates.sceneZToMapZ(camera.position.z);
@@ -181,9 +184,9 @@ function forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ) {
   this.finished = false;
 }
 
-forwardAnimation.prototype.animate = function(frameCount) {
-  this.camera.position.x += this.deltaX * frameCount;
-  this.camera.position.z += this.deltaZ * frameCount;
+forwardAnimation.prototype.animate = function() {
+  this.camera.position.x += this.deltaX;
+  this.camera.position.z += this.deltaZ;
 
   if ((this.deltaX < 0 && this.camera.position.x < this.targetX) || (this.deltaX > 0 && this.camera.position.x > this.targetX) ||
       (this.deltaZ < 0 && this.camera.position.z < this.targetZ) || (this.deltaZ > 0 && this.camera.position.z > this.targetZ)) {
@@ -201,8 +204,8 @@ function rotationAnimation(camera, targetAngle, deltaAngle) {
   this.finished = false;
 }
 
-rotationAnimation.prototype.animate = function(frameCount) {
-  this.camera.rotation.y += this.deltaAngle * frameCount;
+rotationAnimation.prototype.animate = function() {
+  this.camera.rotation.y += this.deltaAngle;
   
   if ((this.deltaAngle < 0 && this.camera.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && this.camera.rotation.y >= this.targetAngle)) {
     if (this.targetAngle >= Math.PI * 2 || this.targetAngle <= Math.PI * -2) {
@@ -224,9 +227,9 @@ function rampAnimation(camera, frameDistance, deltaY, minHeight, maxHeight) {
   this.finished = false;
 }
 
-rampAnimation.prototype.animate = function(frameCount) {
+rampAnimation.prototype.animate = function() {
   if (this.camera.position.y >= this.minHeight && this.camera.position.y <= this.maxHeight) {
-    this.camera.position.y += this.deltaY * frameCount;
+    this.camera.position.y += this.deltaY;
   }
   if (this.camera.position.y < this.minHeight) {
     this.camera.position.y = this.minHeight;
@@ -235,7 +238,7 @@ rampAnimation.prototype.animate = function(frameCount) {
     this.camera.position.y = this.maxHeight;
   }
 
-  this.ticks += frameCount;
+  this.ticks += 1;
   if (this.ticks > this.frameDistance) {
     this.finished = true;
   }
@@ -249,8 +252,8 @@ function hoverAnimation(camera) {
   this.finished = false;
 }
 
-hoverAnimation.prototype.animate = function(frameCount) {
-  this.rampAnimation.animate(frameCount);
+hoverAnimation.prototype.animate = function() {
+  this.rampAnimation.animate();
   this.finished = this.rampAnimation.finished;
 }
 
@@ -264,9 +267,9 @@ function birdsEyeAnimation(camera) {
   this.finished = false;
 };
 
-birdsEyeAnimation.prototype.animate = function(frameCount) {
+birdsEyeAnimation.prototype.animate = function() {
   if (this.camera.position.y < this.maxHeight) {
-    this.camera.position.y += this.ascentDelta * frameCount;
+    this.camera.position.y += this.ascentDelta;
   }
   else {
     this.camera.position.y = this.maxHeight;
