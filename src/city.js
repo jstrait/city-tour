@@ -66,7 +66,7 @@ var City = function(container) {
     }
 
     return true;
-  }
+  };
 
   var animationTimer, animationManager;
 
@@ -103,7 +103,7 @@ var City = function(container) {
     animationManager = new AnimationManager(terrain, renderer, scene, camera);
     animationTimer.onAnimate = animationManager.animate;
     animationTimer.start();
-  }
+  };
 
   var resize = function() {
     var width = container.clientWidth;
@@ -112,7 +112,7 @@ var City = function(container) {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
-  }
+  };
 
   var togglePause = function() {
     animationTimer.togglePause();

@@ -236,7 +236,7 @@ forwardAnimation.prototype.animate = function() {
 
     this.finished = true;
   }
-}
+};
 
 function rotationAnimation(camera, targetAngle, deltaAngle) {
   this.camera = camera;
@@ -256,7 +256,7 @@ rotationAnimation.prototype.animate = function() {
     this.camera.rotation.y = this.targetAngle;
     this.finished = true;
   }
-}
+};
 
 function rampAnimation(camera, frameDistance, deltaY, minHeight, maxHeight) {
   this.camera = camera;
@@ -283,7 +283,7 @@ rampAnimation.prototype.animate = function() {
   if (this.ticks > this.frameDistance) {
     this.finished = true;
   }
-}
+};
 
 function hoverAnimation(camera) {
   var frameDistance = (Math.random() * 300) + 300;
@@ -296,7 +296,7 @@ function hoverAnimation(camera) {
 hoverAnimation.prototype.animate = function() {
   this.rampAnimation.animate();
   this.finished = this.rampAnimation.finished;
-}
+};
 
 function birdsEyeAnimation(camera) {
   this.camera = camera;
