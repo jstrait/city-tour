@@ -254,3 +254,30 @@ hoverAnimation.prototype.animate = function(frameCount) {
   this.rampAnimation.animate(frameCount);
   this.finished = this.rampAnimation.finished;
 }
+
+function birdsEyeAnimation(camera) {
+  this.camera = camera;
+  this.maxHeight = 100;
+  this.ascentDelta = 2;
+  this.rotationDelta = -0.06;
+  this.maxRotation = -(Math.PI / 2);
+
+  this.finished = false;
+};
+
+birdsEyeAnimation.prototype.animate = function(frameCount) {
+  if (this.camera.position.y < this.maxHeight) {
+    this.camera.position.y += this.ascentDelta * frameCount;
+  }
+  else {
+    this.camera.position.y = this.maxHeight;
+    this.finished = true;
+  }
+
+  if (this.camera.rotation.x > this.maxRotation) {
+    this.camera.rotation.x += this.rotationDelta;
+  }
+  else {
+    this.camera.rotation.x = this.maxRotation;
+  }
+};
