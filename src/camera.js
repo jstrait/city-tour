@@ -88,7 +88,6 @@ var PathFinder = function(camera) {
 
 var AnimationManager = function(terrain, renderer, scene, camera) {
   var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
-  var FOWARD_MOTION_DELTA = 0.2;
 
   var animationManager = {};
   var animators = [];
