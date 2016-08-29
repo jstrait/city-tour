@@ -86,12 +86,46 @@ var PathFinder = function(camera) {
   return pathFinder;
 };
 
-var AnimationManager = function(terrain, renderer, scene, camera) {
-  var TARGET_FRAME_WINDOW = 1000 / 60;   // 60 frames per second
+var AnimationTimer = function() {
+  var FRAMES_PER_SECONDS = 60;
+  var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECONDS;
 
+  var previousFrameTimestamp;
+
+  var tick = function() {
+    var currentTimestamp = new Date().getTime();
+    var frameCount;
+
+    if (previousFrameTimestamp === undefined) {
+      frameCount = 1;
+    }
+    else {
+      frameCount = Math.floor((currentTimestamp - previousFrameTimestamp) / TARGET_FRAME_WINDOW);
+      if (frameCount < 1) {
+        frameCount = 1;
+      }
+    }
+    previousFrameTimestamp = currentTimestamp;
+
+    animationTimer.onAnimate(frameCount);
+
+    requestAnimFrame(tick);
+  };
+
+  var animationTimer = {};
+
+  animationTimer.onAnimate = function(frameCount) {};
+
+  animationTimer.start = function() {
+    requestAnimFrame(tick);
+  };
+
+  return animationTimer;
+};
+
+var AnimationManager = function(terrain, renderer, scene, camera) {
   var animationManager = {};
   var animators = [];
-  var previousFrameTimestamp;
 
   var pathFinder = new PathFinder(camera);
 
@@ -114,24 +148,10 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
     animators = [ramp, forward];
   };
 
-  animationManager.animate = function() {
-    var currentTimestamp = new Date().getTime();
-    var frameCount;
-
+  animationManager.animate = function(frameCount) {
     if (animators.length === 0) {
       init();
     }
-
-    if (previousFrameTimestamp === undefined) {
-      frameCount = 1;
-    }
-    else {
-      frameCount = Math.floor((currentTimestamp - previousFrameTimestamp) / TARGET_FRAME_WINDOW);
-      if (frameCount < 1) {
-        frameCount = 1;
-      }
-    }
-    previousFrameTimestamp = currentTimestamp;
 
     for (var i = 0; i < frameCount; i++) {
       var newAnimators = [];
@@ -168,7 +188,6 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
     camera.position.y = Math.max(camera.position.y, y + 0.5);
 
     renderer.render(scene, camera);
-    requestAnimFrame(animationManager.animate);
   };
 
   return animationManager;

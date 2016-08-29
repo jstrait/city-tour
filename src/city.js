@@ -97,8 +97,10 @@ var City = function(container) {
     container.appendChild(renderer.domElement);
     container.removeChild(document.getElementById("loading-message"));
 
+    var animationTimer = new AnimationTimer();
     var animationManager = new AnimationManager(terrain, renderer, scene, camera);
-    animationManager.animate();
+    animationTimer.onAnimate = animationManager.animate;
+    animationTimer.start();
   }
 
   var resize = function() {
