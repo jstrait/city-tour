@@ -68,6 +68,8 @@ var City = function(container) {
     return true;
   }
 
+  var animationTimer, animationManager;
+
   var init = function() {
     var SKY_COLOR = 0x66ccff;
 
@@ -97,8 +99,8 @@ var City = function(container) {
     container.appendChild(renderer.domElement);
     container.removeChild(document.getElementById("loading-message"));
 
-    var animationTimer = new AnimationTimer();
-    var animationManager = new AnimationManager(terrain, renderer, scene, camera);
+    animationTimer = new AnimationTimer();
+    animationManager = new AnimationManager(terrain, renderer, scene, camera);
     animationTimer.onAnimate = animationManager.animate;
     animationTimer.start();
   }
@@ -112,10 +114,15 @@ var City = function(container) {
     renderer.setSize(width, height);
   }
 
+  var togglePause = function() {
+    animationTimer.togglePause();
+  };
+
   var city = {};
 
   city.init = init;
   city.resize = resize;
+  city.togglePause = togglePause;
 
   return city;
 };

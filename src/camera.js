@@ -90,9 +90,14 @@ var AnimationTimer = function() {
   var FRAMES_PER_SECONDS = 60;
   var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECONDS;
 
+  var paused = true;
   var previousFrameTimestamp;
 
   var tick = function() {
+    if (paused) {
+      return;
+    }
+
     var currentTimestamp = new Date().getTime();
     var frameCount;
 
@@ -112,12 +117,29 @@ var AnimationTimer = function() {
     requestAnimFrame(tick);
   };
 
+  var start = function() {
+    paused = false;
+    previousFrameTimestamp = undefined;
+    requestAnimFrame(tick);
+  };
+
+  var pause = function() {
+    paused = true;
+  };
+
   var animationTimer = {};
 
   animationTimer.onAnimate = function(frameCount) {};
 
-  animationTimer.start = function() {
-    requestAnimFrame(tick);
+  animationTimer.start = start;
+
+  animationTimer.togglePause = function() {
+    if (paused) {
+      start();
+    }
+    else {
+      pause();
+    }
   };
 
   return animationTimer;
