@@ -168,7 +168,9 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
 
     var ramp = new rampAnimation(camera, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
     var forward = new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
+    var debugBirdseye = new debugBirdsEyeAnimation(camera);
     animators = [ramp, forward];
+    //animators = [debugBirdseye];
   };
 
   animationManager.animate = function(frameCount) {
@@ -324,4 +326,16 @@ birdsEyeAnimation.prototype.animate = function() {
   else {
     this.camera.rotation.x = this.maxRotation;
   }
+};
+
+function debugBirdsEyeAnimation(camera) {
+  this.camera = camera;
+  this.finished = false;
+};
+
+debugBirdsEyeAnimation.prototype.animate = function() {
+  this.camera.position.x = 0;
+  this.camera.position.y = 900;
+  this.camera.position.z = 0;
+  this.camera.rotation.x = -(Math.PI / 2);
 };
