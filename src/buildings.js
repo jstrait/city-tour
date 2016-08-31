@@ -197,7 +197,7 @@ var Buildings = function(terrain) {
     var mapX, mapZ;
     var blockSteepness, blockLayout, maxBlockSteepness;
     var lotTerrainAttributes;
-    var maxStoriesForLot, maxStories, actualStories;
+    var maxStoriesForLotSize, maxStories, actualStories;
 
     zonedBlocks.forEach(function(zonedBlock) {
       mapX = zonedBlock.mapX;
@@ -217,8 +217,8 @@ var Buildings = function(terrain) {
           lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
           if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-            maxStoriesForLot = calculateMaxStoriesForLot(lot.right - lot.left, lot.bottom - lot.top);
-            maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLot);
+            maxStoriesForLotSize = calculateMaxStoriesForLotSize(lot.right - lot.left, lot.bottom - lot.top);
+            maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLotSize);
 
             actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
@@ -244,7 +244,7 @@ var Buildings = function(terrain) {
     return blocks;
   };
 
-  var calculateMaxStoriesForLot = function(width, height) {
+  var calculateMaxStoriesForLotSize = function(width, height) {
     if (width < 0.25 || height < 0.25) {
       return 4; 
     }
