@@ -6,13 +6,14 @@ var ZonedBlockGenerator = function() {
   var calculateBlockProbabilityOfBuilding = function(mapX, mapZ) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
     
-    var xPercentageFromCenter = Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS;
-    var zPercentageFromCenter = Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS;
-    var percentageFromCenter = Math.max(xPercentageFromCenter, zPercentageFromCenter);
-    
+    var distanceToCityEdge = Math.min(CityConfig.HALF_BLOCK_COLUMNS, CityConfig.HALF_BLOCK_ROWS);
+    var distanceFromCenter = Math.sqrt((mapX * mapX) + (mapZ * mapZ));
+    var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
     var normalizedPercentageFromCenter;
+
     if (percentageFromCenter >= PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) {
-      normalizedPercentageFromCenter = (percentageFromCenter - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) / (1 - PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS);
+      var safeFromDecayDistance = distanceToCityEdge * PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS;
+      normalizedPercentageFromCenter = (distanceFromCenter - safeFromDecayDistance) / (distanceToCityEdge - safeFromDecayDistance);
     }
     else {
       normalizedPercentageFromCenter = 0.0;
