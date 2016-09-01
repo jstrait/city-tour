@@ -39,14 +39,14 @@ var RoadIntersection = function(mapX, mapZ) {
 };
 
 
-var RoadNetwork = function(minRow, maxRow, minColumn, maxColumn) {
+var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
   var network = [];
 
   var init = function() {
     var x, z, roadIntersection;
 
-    for (x = minRow; x <= maxRow; x++) {
-      for (z = minColumn; z <= maxColumn; z++) {
+    for (x = minColumn; x <= maxColumn; x++) {
+      for (z = minRow; z <= maxRow; z++) {
         roadIntersection = new RoadIntersection(x, z);
 
         roadIntersection.addEdge(x - 1, z);
@@ -73,8 +73,8 @@ var RoadNetwork = function(minRow, maxRow, minColumn, maxColumn) {
     var heightAtPoint1, heightAtPoint2, angle;
     var MAX_STEEPNESS = 0.3587;
 
-    for (mapX = minRow; mapX <= maxRow; mapX++) {
-      for (mapZ = minColumn; mapZ <= maxColumn; mapZ++) {
+    for (mapX = minColumn; mapX <= maxColumn; mapX++) {
+      for (mapZ = minRow; mapZ <= maxRow; mapZ++) {
         roadIntersection = network[[mapX, mapZ]];
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
