@@ -19,7 +19,7 @@ var TerrainGeometryBuilder = function() {
 
   var terrainGeometryBuilder = {};
 
-  terrainGeometryBuilder.build = function(terrain) {
+  terrainGeometryBuilder.build = function(terrain, roadNetwork) {
     var mapX, mapZ, triangle;
     var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
     var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
@@ -34,14 +34,10 @@ var TerrainGeometryBuilder = function() {
 
     for (mapX = -CityConfig.HALF_TERRAIN_COLUMNS; mapX < CityConfig.HALF_TERRAIN_COLUMNS; mapX++) {
       for (mapZ = -CityConfig.HALF_TERRAIN_ROWS; mapZ < CityConfig.HALF_TERRAIN_ROWS; mapZ++) {
-        topLeftRoad = (mapX >= -CityConfig.HALF_BLOCK_COLUMNS && mapX <= CityConfig.HALF_BLOCK_COLUMNS &&
-                       mapZ >= -CityConfig.HALF_BLOCK_ROWS && mapZ <= CityConfig.HALF_BLOCK_ROWS);
-        topRightRoad = (mapX >= (-CityConfig.HALF_BLOCK_COLUMNS - 1) && mapX <= (CityConfig.HALF_BLOCK_COLUMNS - 1) &&
-                        mapZ >= -CityConfig.HALF_BLOCK_ROWS && mapZ <= CityConfig.HALF_BLOCK_ROWS);
-        bottomLeftRoad = (mapX >= -CityConfig.HALF_BLOCK_COLUMNS && mapX <= CityConfig.HALF_BLOCK_COLUMNS &&
-                          mapZ >= (-CityConfig.HALF_BLOCK_ROWS - 1) && mapZ <= (CityConfig.HALF_BLOCK_ROWS - 1));
-        bottomRightRoad = (mapX >= -(CityConfig.HALF_BLOCK_COLUMNS + 1) && mapX <= (CityConfig.HALF_BLOCK_COLUMNS - 1) &&
-                           mapZ >= -(CityConfig.HALF_BLOCK_ROWS + 1) && mapZ <= (CityConfig.HALF_BLOCK_ROWS - 1));
+        topLeftRoad     = roadNetwork.hasIntersection(mapX, mapZ);
+        topRightRoad    = roadNetwork.hasIntersection(mapX + 1, mapZ);
+        bottomLeftRoad  = roadNetwork.hasIntersection(mapX, mapZ + 1);
+        bottomRightRoad = roadNetwork.hasIntersection(mapX + 1, mapZ + 1);
 
         topLeftX = Coordinates.mapXToSceneX(mapX);
         topLeftZ = Coordinates.mapZToSceneZ(mapZ);
@@ -344,7 +340,7 @@ var SceneBuilder = function() {
     var scene = new THREE.Scene();
 
     var terrainStartTime = new Date();
-    var terrainMeshes = new TerrainGeometryBuilder().build(terrain);
+    var terrainMeshes = new TerrainGeometryBuilder().build(terrain, roadNetwork);
     terrainMeshes.forEach(function(terrainMesh) {
       scene.add(terrainMesh);
     });

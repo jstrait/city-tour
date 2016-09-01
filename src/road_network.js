@@ -97,6 +97,10 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
 
   var roadNetwork = {};
 
+  roadNetwork.hasIntersection = function(mapX, mapZ) {
+    return network[[mapX, mapZ]] != null;
+  };
+
   roadNetwork.intersectionAt = function(mapX, mapZ) {
     return network[[mapX, mapZ]];
   };
