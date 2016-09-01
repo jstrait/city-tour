@@ -154,7 +154,7 @@ var TerrainGeometryBuilder = function() {
         if (bottomLeftRoad && !bottomRightRoad) {
           triangle = buildTriangleGeometry(bottomLeftX,  terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ,
                                            bottomLeftX, terrain.heightAtCoordinates(mapX, mapZ + 1), Coordinates.mapZToSceneZ(mapZ + 1),
-                                           topRightX,    terrain.heightAtCoordinates(mapX + 1, mapZ + 1), Coordinates.mapZToSceneZ(mapZ + 1));
+                                           bottomRightX, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), Coordinates.mapZToSceneZ(mapZ + 1));
           terrainGeometry1.merge(triangle);
         }
 
