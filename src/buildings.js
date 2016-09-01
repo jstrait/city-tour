@@ -59,7 +59,7 @@ var ZonedBlockGenerator = function() {
 
 
 
-var Buildings = function(terrain) { 
+var Buildings = function(terrain, roadNetwork) {
   var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
 
   var BLOCK_LAYOUTS = [
@@ -191,7 +191,7 @@ var Buildings = function(terrain) {
              steepness: maximumHeight - minimumHeight };
   };
 
-  var generateUnitBlocks = function(terrain, zonedBlocks) {
+  var generateUnitBlocks = function(terrain, roadNetwork, zonedBlocks) {
     var blocks = [];
     var block;
     var mapX, mapZ;
@@ -213,7 +213,17 @@ var Buildings = function(terrain) {
       }
 
       blockLayout.lots.forEach(function(lot) {
-        if (Math.random() < zonedBlock.probabilityOfBuilding) {
+        var hasAdjacentRoad = false;
+
+        if ((lot.left === 0.0   && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) ||
+            (lot.top === 0.0    && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) ||
+            (lot.right === 1.0  && roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1)) ||
+            (lot.bottom === 1.0 && roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1)))
+        {
+          hasAdjacentRoad = true;
+        }
+
+        if (hasAdjacentRoad && (Math.random() < zonedBlock.probabilityOfBuilding)) {
           lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
           if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
@@ -256,7 +266,7 @@ var Buildings = function(terrain) {
     }
   };
 
-  var blocks = generateUnitBlocks(terrain, new ZonedBlockGenerator().build());
+  var blocks = generateUnitBlocks(terrain, roadNetwork, new ZonedBlockGenerator().build());
 
   var buildings = {};
 
