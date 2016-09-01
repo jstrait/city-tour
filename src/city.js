@@ -79,10 +79,15 @@ var City = function(container) {
     }
 
     var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
+    var roadNetwork = new RoadNetwork(-CityConfig.HALF_BLOCK_COLUMNS,
+                                       CityConfig.HALF_BLOCK_COLUMNS,
+                                      -CityConfig.HALF_BLOCK_ROWS,
+                                       CityConfig.HALF_BLOCK_ROWS);
+
     var buildings = new Buildings(terrain);
 
     var sceneBuilder = new SceneBuilder();
-    scene = sceneBuilder.build(terrain, buildings);
+    scene = sceneBuilder.build(terrain, roadNetwork, buildings);
 
     // Build camera
     var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
