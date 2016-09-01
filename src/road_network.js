@@ -105,6 +105,15 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
     return network[[mapX, mapZ]];
   };
 
+  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var roadIntersection1, roadIntersection2;
+
+    roadIntersection1 = network[[mapX1, mapZ1]];
+    roadIntersection2 = network[[mapX2, mapZ2]];
+
+    return roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
+  };
+
   roadNetwork.removeEdge = removeEdge;
 
   roadNetwork.pruneSteepEdges = function(terrain) {
