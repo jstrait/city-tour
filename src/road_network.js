@@ -120,7 +120,7 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
     var mapX, mapZ;
     var roadIntersection;
     var heightAtPoint1, heightAtPoint2, angle;
-    var MAX_STEEPNESS = Math.PI / 4;
+    var MAX_STEEPNESS = Math.PI / 6;
 
     for (mapX = minColumn; mapX <= maxColumn; mapX++) {
       for (mapZ = minRow; mapZ <= maxRow; mapZ++) {
