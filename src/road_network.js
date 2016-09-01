@@ -61,11 +61,27 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
 
   init();
 
+  var removeEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var roadIntersection;
+
+    roadIntersection = network[[mapX1, mapZ1]]
+    if (roadIntersection) {
+      roadIntersection.removeEdge(mapX2, mapZ2);
+    }
+
+    roadIntersection = network[[mapX2, mapZ2]];
+    if (roadIntersection) {
+      roadIntersection.removeEdge(mapX1, mapZ1);
+    }
+  };
+
   var roadNetwork = {};
 
   roadNetwork.intersectionAt = function(mapX, mapZ) {
     return network[[mapX, mapZ]];
   };
+
+  roadNetwork.removeEdge = removeEdge;
 
   roadNetwork.pruneSteepEdges = function(terrain) {
     var mapX, mapZ;
@@ -75,34 +91,32 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
 
     for (mapX = minColumn; mapX <= maxColumn; mapX++) {
       for (mapZ = minRow; mapZ <= maxRow; mapZ++) {
-        roadIntersection = network[[mapX, mapZ]];
-
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX, mapZ - 1);
         angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
-          roadIntersection.removeEdge(mapX, mapZ - 1);
+          removeEdge(mapX, mapZ, mapX, mapZ - 1);
         }
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX, mapZ + 1);
         angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
-          roadIntersection.removeEdge(mapX, mapZ + 1);
+          removeEdge(mapX, mapZ, mapX, mapZ + 1);
         }
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX - 1, mapZ);
         angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
-          roadIntersection.removeEdge(mapX - 1, mapZ);
+          removeEdge(mapX, mapZ, mapX - 1, mapZ);
         }
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX + 1, mapZ);
         angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
-          roadIntersection.removeEdge(mapX + 1, mapZ);
+          removeEdge(mapX, mapZ, mapX + 1, mapZ);
         }
       }
     }
@@ -143,10 +157,7 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
         edgeHasBuildings = blockAboveHasBuildings || blockBelowHasBuildings;
 
         if (!edgeHasBuildings) {
-          roadIntersection = network[[mapX, mapZ]];
-          roadIntersection.removeEdge(mapX + 1, mapZ);
-          roadIntersection = network[[mapX + 1, mapZ]];
-          roadIntersection.removeEdge(mapX, mapZ);
+          removeEdge(mapX, mapZ, mapX + 1, mapZ);
         }
 
         mapX += 1;
@@ -179,10 +190,7 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
         edgeHasBuildings = blockAboveHasBuildings || blockBelowHasBuildings;
 
         if (!edgeHasBuildings) {
-          roadIntersection = network[[mapX, mapZ]];
-          roadIntersection.removeEdge(mapX - 1, mapZ);
-          roadIntersection = network[[mapX - 1, mapZ]];
-          roadIntersection.removeEdge(mapX, mapZ);
+          removeEdge(mapX, mapZ, mapX - 1, mapZ);
         }
 
         mapX -= 1;
@@ -225,10 +233,7 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
         edgeHasBuildings = blockLeftHasBuildings || blockRightHasBuildings;
 
         if (!edgeHasBuildings) {
-          roadIntersection = network[[mapX, mapZ]];
-          roadIntersection.removeEdge(mapX, mapZ + 1);
-          roadIntersection = network[[mapX, mapZ + 1]];
-          roadIntersection.removeEdge(mapX, mapZ);
+          removeEdge(mapX, mapZ, mapX, mapZ + 1);
         }
 
         mapZ += 1;
@@ -261,10 +266,7 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
         edgeHasBuildings = blockLeftHasBuildings || blockRightHasBuildings;
 
         if (!edgeHasBuildings) {
-          roadIntersection = network[[mapX, mapZ]];
-          roadIntersection.removeEdge(mapX, mapZ + 1);
-          roadIntersection = network[[mapX, mapZ + 1]];
-          roadIntersection.removeEdge(mapX, mapZ);
+          removeEdge(mapX, mapZ, mapX, mapZ + 1);
         }
 
         mapZ -= 1;
