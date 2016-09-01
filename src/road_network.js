@@ -67,5 +67,46 @@ var RoadNetwork = function(minRow, maxRow, minColumn, maxColumn) {
     return network[[mapX, mapZ]];
   };
 
+  roadNetwork.pruneSteepEdges = function(terrain) {
+    var mapX, mapZ;
+    var roadIntersection;
+    var heightAtPoint1, heightAtPoint2, angle;
+    var MAX_STEEPNESS = 0.3587;
+
+    for (mapX = minRow; mapX <= maxRow; mapX++) {
+      for (mapZ = minColumn; mapZ <= maxColumn; mapZ++) {
+        roadIntersection = network[[mapX, mapZ]];
+
+        heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
+        heightAtPoint2 = terrain.heightAtCoordinates(mapX, mapZ - 1);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        if (Math.abs(angle) > MAX_STEEPNESS) {
+          roadIntersection.removeEdge(mapX, mapZ - 1);
+        }
+
+        heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
+        heightAtPoint2 = terrain.heightAtCoordinates(mapX, mapZ + 1);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        if (Math.abs(angle) > MAX_STEEPNESS) {
+          roadIntersection.removeEdge(mapX, mapZ + 1);
+        }
+
+        heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
+        heightAtPoint2 = terrain.heightAtCoordinates(mapX - 1, mapZ);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        if (Math.abs(angle) > MAX_STEEPNESS) {
+          roadIntersection.removeEdge(mapX - 1, mapZ);
+        }
+
+        heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
+        heightAtPoint2 = terrain.heightAtCoordinates(mapX + 1, mapZ);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        if (Math.abs(angle) > MAX_STEEPNESS) {
+          roadIntersection.removeEdge(mapX + 1, mapZ);
+        }
+      }
+    }
+  };
+
   return roadNetwork;
 };

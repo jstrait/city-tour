@@ -83,6 +83,7 @@ var City = function(container) {
                                        CityConfig.HALF_BLOCK_COLUMNS,
                                       -CityConfig.HALF_BLOCK_ROWS,
                                        CityConfig.HALF_BLOCK_ROWS);
+    roadNetwork.pruneSteepEdges(terrain);
 
     var buildings = new Buildings(terrain);
 
