@@ -108,5 +108,169 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
     }
   };
 
+  roadNetwork.pruneHorizontalEdgesWithNoBuildings = function(buildings) {
+    var mapX, mapZ;
+    var edgeHasBuildings;
+    var blockAbove, blockBelow;
+    var blockAboveHasBuildings, blockBelowHasBuildings;
+    var roadIntersection;
+
+    for (mapZ = minRow; mapZ <= maxRow; mapZ++) {
+      mapX = minColumn;
+      edgeHasBuildings = false;
+
+      while (mapX < maxColumn && !edgeHasBuildings) {
+        blockAboveHasBuildings = false;
+        if (mapZ > minRow) {
+          blockAbove = buildings.blockAtCoordinates(mapX, mapZ - 1);
+          blockAbove.forEach(function(building) {
+            if (building.bottom === 1.0) {
+              blockAboveHasBuildings = true;
+            }
+          });
+        }
+
+        blockBelowHasBuildings = false;
+        if (mapZ < maxRow) {
+          blockBelow = buildings.blockAtCoordinates(mapX, mapZ);
+          blockBelow.forEach(function(building) {
+            if (building.top === 0.0) {
+              blockBelowHasBuildings = true;
+            }
+          });
+        }
+
+        edgeHasBuildings = blockAboveHasBuildings || blockBelowHasBuildings;
+
+        if (!edgeHasBuildings) {
+          roadIntersection = network[[mapX, mapZ]];
+          roadIntersection.removeEdge(mapX + 1, mapZ);
+          roadIntersection = network[[mapX + 1, mapZ]];
+          roadIntersection.removeEdge(mapX, mapZ);
+        }
+
+        mapX += 1;
+      }
+
+      mapX = maxColumn;
+      edgeHasBuildings = false;
+
+      while (mapX > minColumn && !edgeHasBuildings) {
+        blockAboveHasBuildings = false;
+        if (mapZ > minRow) {
+          blockAbove = buildings.blockAtCoordinates(mapX - 1, mapZ - 1);
+          blockAbove.forEach(function(building) {
+            if (building.bottom === 1.0) {
+              blockAboveHasBuildings = true;
+            }
+          });
+        }
+
+        blockBelowHasBuildings = false;
+        if (mapZ < maxRow) {
+          blockBelow = buildings.blockAtCoordinates(mapX - 1, mapZ);
+          blockBelow.forEach(function(building) {
+            if (building.top === 0.0) {
+              blockBelowHasBuildings = true;
+            }
+          });
+        }
+
+        edgeHasBuildings = blockAboveHasBuildings || blockBelowHasBuildings;
+
+        if (!edgeHasBuildings) {
+          roadIntersection = network[[mapX, mapZ]];
+          roadIntersection.removeEdge(mapX - 1, mapZ);
+          roadIntersection = network[[mapX - 1, mapZ]];
+          roadIntersection.removeEdge(mapX, mapZ);
+        }
+
+        mapX -= 1;
+      }
+    }
+  };
+
+  roadNetwork.pruneVerticalEdgesWithNoBuildings = function(buildings) {
+    var mapX, mapZ;
+    var edgeHasBuildings;
+    var blockLeft, blockRight;
+    var blockLeftHasBuildings, blockRightHasBuildings;
+    var roadIntersection;
+
+    for (mapX = minColumn; mapX <= maxColumn; mapX++) {
+      mapZ = minRow;
+      edgeHasBuildings = false;
+
+      while (mapZ < maxRow && !edgeHasBuildings) {
+        blockLeftHasBuildings = false;
+        if (mapX > minColumn) {
+          blockLeft = buildings.blockAtCoordinates(mapX - 1, mapZ);
+          blockLeft.forEach(function(building) {
+            if (building.right === 1.0) {
+              blockLeftHasBuildings = true;
+            }
+          });
+        }
+
+        blockRightHasBuildings = false;
+        if (mapX < maxColumn) {
+          blockRight = buildings.blockAtCoordinates(mapX, mapZ);
+          blockRight.forEach(function(building) {
+            if (building.left === 0.0) {
+              blockRightHasBuildings = true;
+            }
+          });
+        }
+
+        edgeHasBuildings = blockLeftHasBuildings || blockRightHasBuildings;
+
+        if (!edgeHasBuildings) {
+          roadIntersection = network[[mapX, mapZ]];
+          roadIntersection.removeEdge(mapX, mapZ + 1);
+          roadIntersection = network[[mapX, mapZ + 1]];
+          roadIntersection.removeEdge(mapX, mapZ);
+        }
+
+        mapZ += 1;
+      }
+
+      mapZ = maxRow - 1;
+      edgeHasBuildings = false;
+
+      while (mapZ > minRow && !edgeHasBuildings) {
+        blockLeftHasBuildings = false;
+        if (mapX > minColumn) {
+          blockLeft = buildings.blockAtCoordinates(mapX - 1, mapZ);
+          blockLeft.forEach(function(building) {
+            if (building.right === 1.0) {
+              blockLeftHasBuildings = true;
+            }
+          });
+        }
+
+        blockRightHasBuildings = false;
+        if (mapX < maxColumn) {
+          blockRight = buildings.blockAtCoordinates(mapX, mapZ);
+          blockRight.forEach(function(building) {
+            if (building.left === 0.0) {
+              blockRightHasBuildings = true;
+            }
+          });
+        }
+
+        edgeHasBuildings = blockLeftHasBuildings || blockRightHasBuildings;
+
+        if (!edgeHasBuildings) {
+          roadIntersection = network[[mapX, mapZ]];
+          roadIntersection.removeEdge(mapX, mapZ + 1);
+          roadIntersection = network[[mapX, mapZ + 1]];
+          roadIntersection.removeEdge(mapX, mapZ);
+        }
+
+        mapZ -= 1;
+      }
+    }
+  };
+
   return roadNetwork;
 };

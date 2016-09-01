@@ -86,6 +86,8 @@ var City = function(container) {
     roadNetwork.pruneSteepEdges(terrain);
 
     var buildings = new Buildings(terrain);
+    roadNetwork.pruneHorizontalEdgesWithNoBuildings(buildings);
+    roadNetwork.pruneVerticalEdgesWithNoBuildings(buildings);
 
     var sceneBuilder = new SceneBuilder();
     scene = sceneBuilder.build(terrain, roadNetwork, buildings);
