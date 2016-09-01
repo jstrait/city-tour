@@ -83,14 +83,14 @@ var TerrainGeometryBuilder = function() {
           triangle = buildTriangleGeometry(Coordinates.mapXToSceneX(mapX), terrain.heightAtCoordinates(mapX, mapZ), topLeftZ,
                                            Coordinates.mapXToSceneX(mapX),  terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ,
                                            topLeftX,    terrain.heightAtCoordinates(mapX, mapZ), topLeftZ);
-          terrainGeometry1.merge(triangle);
+          terrainGeometry2.merge(triangle);
         }
 
         if (bottomLeftRoad && !topLeftRoad) {
           triangle = buildTriangleGeometry(Coordinates.mapXToSceneX(mapX),     terrain.heightAtCoordinates(mapX, mapZ),     topLeftZ,
                                            Coordinates.mapXToSceneX(mapX),  terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ,
                                            bottomLeftX,    terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ);
-          terrainGeometry1.merge(triangle);
+          terrainGeometry2.merge(triangle);
         }
 
         if (topLeftRoad && bottomLeftRoad && !roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) {
@@ -107,14 +107,14 @@ var TerrainGeometryBuilder = function() {
                                            Coordinates.mapXToSceneX(mapX + 1), terrain.heightAtCoordinates(mapX + 1, mapZ), topRightZ,
                                            topRightX, terrain.heightAtCoordinates(mapX + 1, mapZ), topRightZ);
 
-          terrainGeometry2.merge(triangle);
+          terrainGeometry1.merge(triangle);
         }
 
         if (bottomRightRoad && !topRightRoad) {
           triangle = buildTriangleGeometry(bottomRightX,  terrain.heightAtCoordinates(mapX + 1, mapZ + 1), bottomRightZ,
                                            Coordinates.mapXToSceneX(mapX + 1), terrain.heightAtCoordinates(mapX + 1, mapZ + 1), bottomRightZ,
                                            Coordinates.mapXToSceneX(mapX + 1), terrain.heightAtCoordinates(mapX + 1, mapZ), topRightZ);
-          terrainGeometry2.merge(triangle);
+          terrainGeometry1.merge(triangle);
         }
 
         if (topRightRoad && bottomRightRoad && !roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1)) {
@@ -130,14 +130,14 @@ var TerrainGeometryBuilder = function() {
           triangle = buildTriangleGeometry(topLeftX,  terrain.heightAtCoordinates(mapX, mapZ), Coordinates.mapZToSceneZ(mapZ),
                                            topLeftX,  terrain.heightAtCoordinates(mapX, mapZ), topLeftZ,
                                            Coordinates.mapXToSceneX(mapX + 1), terrain.heightAtCoordinates(mapX + 1, mapZ), Coordinates.mapZToSceneZ(mapZ));
-          terrainGeometry1.merge(triangle);
+          terrainGeometry2.merge(triangle);
         }
 
         if (topRightRoad && !topLeftRoad) {
           triangle = buildTriangleGeometry(Coordinates.mapXToSceneX(mapX),     terrain.heightAtCoordinates(mapX, mapZ),  Coordinates.mapZToSceneZ(mapZ),
                                            topRightX,  terrain.heightAtCoordinates(mapX + 1, mapZ), topRightZ,
                                            topRightX,    terrain.heightAtCoordinates(mapX + 1, mapZ), Coordinates.mapZToSceneZ(mapZ));
-          terrainGeometry1.merge(triangle);
+          terrainGeometry2.merge(triangle);
         }
 
         if (topLeftRoad && topRightRoad && !roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) {
@@ -155,14 +155,14 @@ var TerrainGeometryBuilder = function() {
           triangle = buildTriangleGeometry(bottomLeftX,  terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ,
                                            bottomLeftX, terrain.heightAtCoordinates(mapX, mapZ + 1), Coordinates.mapZToSceneZ(mapZ + 1),
                                            topRightX,    terrain.heightAtCoordinates(mapX + 1, mapZ + 1), Coordinates.mapZToSceneZ(mapZ + 1));
-          terrainGeometry2.merge(triangle);
+          terrainGeometry1.merge(triangle);
         }
 
         if (bottomRightRoad && !bottomLeftRoad) {
           triangle = buildTriangleGeometry(Coordinates.mapXToSceneX(mapX),  terrain.heightAtCoordinates(mapX, mapZ + 1), bottomLeftZ,
                                            bottomRightX, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), Coordinates.mapZToSceneZ(mapZ + 1),
                                            bottomRightX, terrain.heightAtCoordinates(mapX + 1, mapZ + 1), bottomRightZ);
-          terrainGeometry2.merge(triangle);
+          terrainGeometry1.merge(triangle);
         }
 
         if (bottomLeftRoad && bottomRightRoad && !roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1)) {
