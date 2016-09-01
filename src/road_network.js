@@ -35,6 +35,10 @@ var RoadIntersection = function(mapX, mapZ) {
     return indexOfEdge(mapX, mapZ) > -1;
   };
 
+  roadIntersection.isEmpty = function() {
+    return edges.length === 0;
+  };
+
   return roadIntersection;
 };
 
@@ -49,10 +53,18 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
       for (z = minRow; z <= maxRow; z++) {
         roadIntersection = new RoadIntersection(x, z);
 
-        roadIntersection.addEdge(x - 1, z);
-        roadIntersection.addEdge(x + 1, z);
-        roadIntersection.addEdge(x, z - 1);
-        roadIntersection.addEdge(x, z + 1);
+        if (x > minColumn) {
+          roadIntersection.addEdge(x - 1, z);
+        }
+        if (x < maxColumn) {
+          roadIntersection.addEdge(x + 1, z);
+        }
+        if (z > minRow) {
+          roadIntersection.addEdge(x, z - 1);
+        }
+        if (z < maxRow) {
+          roadIntersection.addEdge(x, z + 1);
+        }
 
         network[[x, z]] = roadIntersection;
       }
@@ -67,11 +79,19 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
     roadIntersection = network[[mapX1, mapZ1]]
     if (roadIntersection) {
       roadIntersection.removeEdge(mapX2, mapZ2);
+
+      if (roadIntersection.isEmpty()) {
+        network[[mapX1, mapZ1]] = null;
+      }
     }
 
     roadIntersection = network[[mapX2, mapZ2]];
     if (roadIntersection) {
       roadIntersection.removeEdge(mapX1, mapZ1);
+
+      if (roadIntersection.isEmpty()) {
+        network[[mapX2, mapZ2]] = null;
+      }
     }
   };
 
