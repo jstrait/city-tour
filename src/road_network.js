@@ -111,7 +111,8 @@ var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
     roadIntersection1 = network[[mapX1, mapZ1]];
     roadIntersection2 = network[[mapX2, mapZ2]];
 
-    return roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
+    return roadIntersection1 && roadIntersection2 &&
+           roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
   };
 
   roadNetwork.removeEdge = removeEdge;
