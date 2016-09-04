@@ -43,12 +43,43 @@ var RoadIntersection = function(mapX, mapZ) {
 };
 
 
-var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
+var BaseRoadNetwork = function() {
   var network = [];
+
+  var roadNetwork = {};
+
+  roadNetwork.hasIntersection = function(mapX, mapZ) {
+    return network[[mapX, mapZ]] != null;
+  };
+
+  roadNetwork.setIntersectionAt = function(mapX, mapZ, roadIntersection) {
+    network[[mapX, mapZ]] = roadIntersection;
+  };
+
+  roadNetwork.intersectionAt = function(mapX, mapZ) {
+    return network[[mapX, mapZ]];
+  };
+
+  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var roadIntersection1, roadIntersection2;
+
+    roadIntersection1 = network[[mapX1, mapZ1]];
+    roadIntersection2 = network[[mapX2, mapZ2]];
+
+    return roadIntersection1 && roadIntersection2 &&
+           roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
+  };
+
+  return roadNetwork;
+};
+
+
+var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
+  var baseRoadNetwork = new BaseRoadNetwork();
 
   var init = function() {
     var roadIntersection = new RoadIntersection(0, 0);
-    network[[0, 0]] = roadIntersection;
+    baseRoadNetwork.setIntersectionAt(0, 0, roadIntersection);
     branchFromIntersection(0, 0);
   };
 
@@ -73,7 +104,7 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
 
   var branchFromIntersection = function(mapX, mapZ) {
     var targetMapX, targetMapZ;
-    var roadIntersection = network[[mapX, mapZ]];
+    var roadIntersection = baseRoadNetwork.intersectionAt(mapX, mapZ);
 
     targetMapX = mapX - 1;
     targetMapZ = mapZ;
@@ -109,7 +140,7 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
         roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
       }
       else {
-        network[[targetMapX, targetMapZ]] = new RoadIntersection(targetMapX, targetMapZ);
+        baseRoadNetwork.setIntersectionAt(targetMapX, targetMapZ, new RoadIntersection(targetMapX, targetMapZ));
         roadIntersection.addEdge(targetMapX, targetMapZ);
         roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
         branchFromIntersection(targetMapX, targetMapZ);
@@ -119,23 +150,9 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
 
   var roadNetwork = {};
 
-  roadNetwork.hasIntersection = function(mapX, mapZ) {
-    return network[[mapX, mapZ]] != null;
-  };
-
-  roadNetwork.intersectionAt = function(mapX, mapZ) {
-    return network[[mapX, mapZ]];
-  };
-
-  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1, roadIntersection2;
-
-    roadIntersection1 = network[[mapX1, mapZ1]];
-    roadIntersection2 = network[[mapX2, mapZ2]];
-
-    return roadIntersection1 && roadIntersection2 &&
-           roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
-  };
+  roadNetwork.hasIntersection = baseRoadNetwork.hasIntersection;
+  roadNetwork.intersectionAt = baseRoadNetwork.intersectionAt;
+  roadNetwork.hasEdgeBetween = baseRoadNetwork.hasEdgeBetween;
 
   roadNetwork.pruneSteepEdges = function(terrain) { };
   roadNetwork.pruneHorizontalEdgesWithNoBuildings = function(buildings) { };
@@ -149,7 +166,7 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
 
 
 var SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
-  var network = [];
+  var baseRoadNetwork = new BaseRoadNetwork();
 
   var init = function() {
     var x, z, roadIntersection;
@@ -171,7 +188,7 @@ var SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, max
           roadIntersection.addEdge(x, z + 1);
         }
 
-        network[[x, z]] = roadIntersection;
+        baseRoadNetwork.setIntersectionAt(x, z, roadIntersection);
       }
     }
   };
@@ -181,44 +198,30 @@ var SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, max
   var removeEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
     var roadIntersection;
 
-    roadIntersection = network[[mapX1, mapZ1]]
+    roadIntersection = baseRoadNetwork.intersectionAt(mapX1, mapZ1);
     if (roadIntersection) {
       roadIntersection.removeEdge(mapX2, mapZ2);
 
       if (roadIntersection.isEmpty()) {
-        network[[mapX1, mapZ1]] = null;
+        baseRoadNetwork.setIntersectionAt(mapX1, mapZ1, null);
       }
     }
 
-    roadIntersection = network[[mapX2, mapZ2]];
+    roadIntersection = baseRoadNetwork.intersectionAt(mapX2, mapZ2);
     if (roadIntersection) {
       roadIntersection.removeEdge(mapX1, mapZ1);
 
       if (roadIntersection.isEmpty()) {
-        network[[mapX2, mapZ2]] = null;
+        baseRoadNetwork.setIntersectionAt(mapX2, mapZ2, null);
       }
     }
   };
 
   var roadNetwork = {};
 
-  roadNetwork.hasIntersection = function(mapX, mapZ) {
-    return network[[mapX, mapZ]] != null;
-  };
-
-  roadNetwork.intersectionAt = function(mapX, mapZ) {
-    return network[[mapX, mapZ]];
-  };
-
-  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1, roadIntersection2;
-
-    roadIntersection1 = network[[mapX1, mapZ1]];
-    roadIntersection2 = network[[mapX2, mapZ2]];
-
-    return roadIntersection1 && roadIntersection2 &&
-           roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
-  };
+  roadNetwork.hasIntersection = baseRoadNetwork.hasIntersection;
+  roadNetwork.intersectionAt = baseRoadNetwork.intersectionAt;
+  roadNetwork.hasEdgeBetween = baseRoadNetwork.hasEdgeBetween;
 
   roadNetwork.removeEdge = removeEdge;
 
