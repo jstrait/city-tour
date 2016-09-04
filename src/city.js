@@ -79,10 +79,11 @@ var City = function(container) {
     }
 
     var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
-    var roadNetwork = new RoadNetwork(-CityConfig.HALF_BLOCK_COLUMNS,
-                                       CityConfig.HALF_BLOCK_COLUMNS,
-                                      -CityConfig.HALF_BLOCK_ROWS,
-                                       CityConfig.HALF_BLOCK_ROWS);
+    var roadNetwork = new AdditiveRoadNetwork(terrain,
+                                              -CityConfig.HALF_BLOCK_COLUMNS,
+                                               CityConfig.HALF_BLOCK_COLUMNS,
+                                              -CityConfig.HALF_BLOCK_ROWS,
+                                              CityConfig.HALF_BLOCK_ROWS);
     roadNetwork.pruneSteepEdges(terrain);
 
     var buildings = new Buildings(terrain, roadNetwork);

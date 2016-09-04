@@ -43,7 +43,112 @@ var RoadIntersection = function(mapX, mapZ) {
 };
 
 
-var RoadNetwork = function(minColumn, maxColumn, minRow, maxRow) {
+var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
+  var network = [];
+
+  var init = function() {
+    var roadIntersection = new RoadIntersection(0, 0);
+    network[[0, 0]] = roadIntersection;
+    branchFromIntersection(0, 0);
+  };
+
+  var calculateBlockProbabilityOfBranching = function(mapX, mapZ) {
+    var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
+    
+    var distanceToCityEdge = Math.min(CityConfig.HALF_BLOCK_COLUMNS, CityConfig.HALF_BLOCK_ROWS);
+    var distanceFromCenter = Math.sqrt((mapX * mapX) + (mapZ * mapZ));
+    var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
+    var normalizedPercentageFromCenter;
+
+    if (percentageFromCenter >= PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) {
+      var safeFromDecayDistance = distanceToCityEdge * PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS;
+      normalizedPercentageFromCenter = (distanceFromCenter - safeFromDecayDistance) / (distanceToCityEdge - safeFromDecayDistance);
+    }
+    else {
+      normalizedPercentageFromCenter = 0.0;
+    }
+
+    return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
+  };
+
+  var branchFromIntersection = function(mapX, mapZ) {
+    var targetMapX, targetMapZ;
+    var roadIntersection = network[[mapX, mapZ]];
+
+    targetMapX = mapX - 1;
+    targetMapZ = mapZ;
+    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
+
+    targetMapX = mapX;
+    targetMapZ = mapZ - 1;
+    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
+
+    targetMapX = mapX + 1;
+    targetMapZ = mapZ;
+    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
+
+    targetMapX = mapX;
+    targetMapZ = mapZ + 1;
+    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
+  };
+
+  var connectIntersections = function(roadIntersection, mapX, mapZ, targetMapX, targetMapZ) {
+    var MAX_STEEPNESS = Math.PI / 6;
+    var PROBABILITY = calculateBlockProbabilityOfBranching(mapX, mapZ);
+
+    var heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
+    var heightAtPoint2 = terrain.heightAtCoordinates(targetMapX, targetMapZ);
+    var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+    var terrainTooSteep = (Math.abs(angle) > MAX_STEEPNESS);
+
+    var random = Math.random();
+
+    if (random < PROBABILITY && !terrainTooSteep) {
+      if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
+        roadIntersection.addEdge(targetMapX, targetMapZ);
+        roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
+      }
+      else {
+        network[[targetMapX, targetMapZ]] = new RoadIntersection(targetMapX, targetMapZ);
+        roadIntersection.addEdge(targetMapX, targetMapZ);
+        roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
+        branchFromIntersection(targetMapX, targetMapZ);
+      }
+    }
+  };
+
+  var roadNetwork = {};
+
+  roadNetwork.hasIntersection = function(mapX, mapZ) {
+    return network[[mapX, mapZ]] != null;
+  };
+
+  roadNetwork.intersectionAt = function(mapX, mapZ) {
+    return network[[mapX, mapZ]];
+  };
+
+  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var roadIntersection1, roadIntersection2;
+
+    roadIntersection1 = network[[mapX1, mapZ1]];
+    roadIntersection2 = network[[mapX2, mapZ2]];
+
+    return roadIntersection1 && roadIntersection2 &&
+           roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
+  };
+
+  roadNetwork.pruneSteepEdges = function(terrain) { };
+  roadNetwork.pruneHorizontalEdgesWithNoBuildings = function(buildings) { };
+  roadNetwork.pruneVerticalEdgesWithNoBuildings = function(buildings) { };
+
+  init();
+
+  return roadNetwork;
+};
+
+
+
+var SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
   var network = [];
 
   var init = function() {
