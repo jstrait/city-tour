@@ -146,7 +146,7 @@ var AnimationTimer = function() {
   return animationTimer;
 };
 
-var AnimationManager = function(terrain, renderer, scene, cameraPole, camera) {
+var AnimationManager = function(terrain, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
@@ -211,8 +211,6 @@ var AnimationManager = function(terrain, renderer, scene, cameraPole, camera) {
 
     var y = terrain.heightAtCoordinates(mapX, mapZ);
     cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
-
-    renderer.render(scene, camera);
   };
 
   return animationManager;
