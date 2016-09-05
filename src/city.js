@@ -78,15 +78,32 @@ var City = function(container) {
       return;
     }
 
+    var masterStartTime = new Date();
+
+    var terrainStartTime = new Date();
     var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
+    var terrainEndTime = new Date();
+
+    var roadStartTime = new Date();
     var roadNetwork = new AdditiveRoadNetwork(terrain,
                                               -CityConfig.HALF_BLOCK_COLUMNS,
                                                CityConfig.HALF_BLOCK_COLUMNS,
                                               -CityConfig.HALF_BLOCK_ROWS,
                                               CityConfig.HALF_BLOCK_ROWS);
     roadNetwork.pruneSteepEdges(terrain);
+    var roadEndTime = new Date();
 
+    var buildingsStartTime = new Date();
     var buildings = new Buildings(terrain, roadNetwork);
+    var buildingsEndTime = new Date();
+
+    var masterEndTime = new Date();
+
+    console.log("Time to generate world data: " + (masterEndTime - masterStartTime) + "ms");
+    console.log("  Terrain: "      + (terrainEndTime - terrainStartTime) + "ms");
+    console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
+    console.log("  Buildings: "    + (buildingsEndTime - buildingsStartTime) + "ms");
+
     roadNetwork.pruneHorizontalEdgesWithNoBuildings(buildings);
     roadNetwork.pruneVerticalEdgesWithNoBuildings(buildings);
 
