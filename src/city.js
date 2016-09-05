@@ -93,10 +93,17 @@ var City = function(container) {
     var sceneBuilder = new SceneBuilder();
     scene = sceneBuilder.build(terrain, roadNetwork, buildings);
 
+    var cameraPoleGeometry = new THREE.BoxGeometry(1, 1, 1);
+    var cameraPoleMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color(1.0, 0.0, 1.0), });
+    var cameraPole = new THREE.Mesh(cameraPoleGeometry, cameraPoleMaterial);
+
     // Build camera
     var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
     camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
     camera.lookAt(scene.position);
+
+    cameraPole.add(camera);
+    scene.add(cameraPole);
 
     // Build renderer
     renderer = new THREE.WebGLRenderer({antialias: true});
@@ -109,7 +116,7 @@ var City = function(container) {
     container.removeChild(document.getElementById("loading-message"));
 
     animationTimer = new AnimationTimer();
-    animationManager = new AnimationManager(terrain, renderer, scene, camera);
+    animationManager = new AnimationManager(terrain, renderer, scene, cameraPole, camera);
     animationTimer.onAnimate = animationManager.animate;
     animationTimer.start();
   };

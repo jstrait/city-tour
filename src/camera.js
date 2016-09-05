@@ -1,6 +1,6 @@
 "use strict";
 
-var PathFinder = function(camera) {
+var PathFinder = function(cameraPole) {
   var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
@@ -57,11 +57,11 @@ var PathFinder = function(camera) {
     // Prevent an extra long turn (i.e. 270deg instead of 90deg)
     if (oldTargetAngle === 0.0 && targetAngle === THREE_PI_OVER_TWO) {
       oldTargetAngle = TWO_PI;
-      camera.rotation.y = TWO_PI;
+      cameraPole.rotation.y = TWO_PI;
     }
     else if (oldTargetAngle === THREE_PI_OVER_TWO && targetAngle === 0.0) {
       oldTargetAngle = -HALF_PI;
-      camera.rotation.y = -HALF_PI;
+      cameraPole.rotation.y = -HALF_PI;
     }
 
     deltaAngle = ROTATION_DELTA;
@@ -146,29 +146,29 @@ var AnimationTimer = function() {
   return animationTimer;
 };
 
-var AnimationManager = function(terrain, renderer, scene, camera) {
+var AnimationManager = function(terrain, renderer, scene, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
-  var pathFinder = new PathFinder(camera);
+  var pathFinder = new PathFinder(cameraPole);
 
   var init = function() {
     var START_X = 0;
     var START_Y = 40;
     var START_Z = CityConfig.HALF_SCENE_DEPTH;
 
-    camera.position.x = START_X;
-    camera.position.y = START_Y;
-    camera.position.z = START_Z;
+    cameraPole.position.x = START_X;
+    cameraPole.position.y = START_Y;
+    cameraPole.position.z = START_Z;
 
     var distanceToCityEdge = Math.abs(START_Z - ((CityConfig.BLOCK_ROWS * CityConfig.BLOCK_AND_STREET_DEPTH) / 2));
     var framesUntilCityEdge = Math.abs(distanceToCityEdge / pathFinder.deltaZ());
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, CityConfig.HALF_BLOCK_ROWS) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var ramp = new rampAnimation(camera, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
-    var forward = new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
-    var debugBirdseye = new debugBirdsEyeAnimation(camera);
+    var ramp = new rampAnimation(cameraPole, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
+    var forward = new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
+    var debugBirdseye = new debugBirdsEyeAnimation(cameraPole, camera);
     animators = [ramp, forward];
     //animators = [debugBirdseye];
   };
@@ -186,17 +186,17 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
 
         if (animator.finished === true) {
           if (animator instanceof rampAnimation) {
-            newAnimators.push(new hoverAnimation(camera));
+            newAnimators.push(new hoverAnimation(cameraPole));
           }
           else if (animator instanceof forwardAnimation) {
             pathFinder.nextTarget();
-            newAnimators.push(new rotationAnimation(camera, pathFinder.targetAngle(), pathFinder.deltaAngle()));
+            newAnimators.push(new rotationAnimation(cameraPole, pathFinder.targetAngle(), pathFinder.deltaAngle()));
           }
           else if (animator instanceof rotationAnimation) {
-            newAnimators.push(new forwardAnimation(camera, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
+            newAnimators.push(new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
           }
           else if (animator instanceof hoverAnimation) {
-            newAnimators.push(new hoverAnimation(camera));
+            newAnimators.push(new hoverAnimation(cameraPole));
           }
         }
         else {
@@ -206,11 +206,11 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
       animators = newAnimators;
     }
 
-    var mapX = Coordinates.sceneXToMapX(camera.position.x);
-    var mapZ = Coordinates.sceneZToMapZ(camera.position.z);
+    var mapX = Coordinates.sceneXToMapX(cameraPole.position.x);
+    var mapZ = Coordinates.sceneZToMapZ(cameraPole.position.z);
 
     var y = terrain.heightAtCoordinates(mapX, mapZ);
-    camera.position.y = Math.max(camera.position.y, y + 0.5);
+    cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
 
     renderer.render(scene, camera);
   };
@@ -219,8 +219,8 @@ var AnimationManager = function(terrain, renderer, scene, camera) {
 };
 
 
-function forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ) {
-  this.camera = camera;
+function forwardAnimation(cameraPole, targetX, deltaX, targetZ, deltaZ) {
+  this.cameraPole = cameraPole;
   this.targetX = targetX;
   this.deltaX = deltaX;
   this.targetZ = targetZ;
@@ -229,40 +229,40 @@ function forwardAnimation(camera, targetX, deltaX, targetZ, deltaZ) {
 }
 
 forwardAnimation.prototype.animate = function() {
-  this.camera.position.x += this.deltaX;
-  this.camera.position.z += this.deltaZ;
+  this.cameraPole.position.x += this.deltaX;
+  this.cameraPole.position.z += this.deltaZ;
 
-  if ((this.deltaX < 0 && this.camera.position.x < this.targetX) || (this.deltaX > 0 && this.camera.position.x > this.targetX) ||
-      (this.deltaZ < 0 && this.camera.position.z < this.targetZ) || (this.deltaZ > 0 && this.camera.position.z > this.targetZ)) {
-    this.camera.position.x = this.targetX;
-    this.camera.position.z = this.targetZ;
+  if ((this.deltaX < 0 && this.cameraPole.position.x < this.targetX) || (this.deltaX > 0 && this.cameraPole.position.x > this.targetX) ||
+      (this.deltaZ < 0 && this.cameraPole.position.z < this.targetZ) || (this.deltaZ > 0 && this.cameraPole.position.z > this.targetZ)) {
+    this.cameraPole.position.x = this.targetX;
+    this.cameraPole.position.z = this.targetZ;
 
     this.finished = true;
   }
 };
 
-function rotationAnimation(camera, targetAngle, deltaAngle) {
-  this.camera = camera;
+function rotationAnimation(cameraPole, targetAngle, deltaAngle) {
+  this.cameraPole = cameraPole;
   this.targetAngle = targetAngle;
   this.deltaAngle = deltaAngle;
   this.finished = false;
 }
 
 rotationAnimation.prototype.animate = function() {
-  this.camera.rotation.y += this.deltaAngle;
+  this.cameraPole.rotation.y += this.deltaAngle;
   
-  if ((this.deltaAngle < 0 && this.camera.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && this.camera.rotation.y >= this.targetAngle)) {
+  if ((this.deltaAngle < 0 && this.cameraPole.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && this.cameraPole.rotation.y >= this.targetAngle)) {
     if (this.targetAngle >= Math.PI * 2 || this.targetAngle <= Math.PI * -2) {
       this.targetAngle = 0;
     }
 
-    this.camera.rotation.y = this.targetAngle;
+    this.cameraPole.rotation.y = this.targetAngle;
     this.finished = true;
   }
 };
 
-function rampAnimation(camera, frameDistance, deltaY, minHeight, maxHeight) {
-  this.camera = camera;
+function rampAnimation(cameraPole, frameDistance, deltaY, minHeight, maxHeight) {
+  this.cameraPole = cameraPole;
   this.ticks = 0;
   this.frameDistance = frameDistance;
   this.deltaY = deltaY;
@@ -272,14 +272,14 @@ function rampAnimation(camera, frameDistance, deltaY, minHeight, maxHeight) {
 }
 
 rampAnimation.prototype.animate = function() {
-  if (this.camera.position.y >= this.minHeight && this.camera.position.y <= this.maxHeight) {
-    this.camera.position.y += this.deltaY;
+  if (this.cameraPole.position.y >= this.minHeight && this.cameraPole.position.y <= this.maxHeight) {
+    this.cameraPole.position.y += this.deltaY;
   }
-  if (this.camera.position.y < this.minHeight) {
-    this.camera.position.y = this.minHeight;
+  if (this.cameraPole.position.y < this.minHeight) {
+    this.cameraPole.position.y = this.minHeight;
   }  
-  if (this.camera.position.y > this.maxHeight) {
-    this.camera.position.y = this.maxHeight;
+  if (this.cameraPole.position.y > this.maxHeight) {
+    this.cameraPole.position.y = this.maxHeight;
   }
 
   this.ticks += 1;
@@ -288,11 +288,11 @@ rampAnimation.prototype.animate = function() {
   }
 };
 
-function hoverAnimation(camera) {
+function hoverAnimation(cameraPole) {
   var frameDistance = (Math.random() * 300) + 300;
-  var deltaY = (camera.position.y > 0.5) ? -0.05 : 0.05;
+  var deltaY = (cameraPole.position.y > 0.5) ? -0.05 : 0.05;
 
-  this.rampAnimation = new rampAnimation(camera, frameDistance, deltaY, 0.5, 15);
+  this.rampAnimation = new rampAnimation(cameraPole, frameDistance, deltaY, 0.5, 15);
   this.finished = false;
 }
 
@@ -301,7 +301,8 @@ hoverAnimation.prototype.animate = function() {
   this.finished = this.rampAnimation.finished;
 };
 
-function birdsEyeAnimation(camera) {
+function birdsEyeAnimation(cameraPole, camera) {
+  this.cameraPole = cameraPole;
   this.camera = camera;
   this.maxHeight = 100;
   this.ascentDelta = 2;
@@ -312,11 +313,11 @@ function birdsEyeAnimation(camera) {
 };
 
 birdsEyeAnimation.prototype.animate = function() {
-  if (this.camera.position.y < this.maxHeight) {
-    this.camera.position.y += this.ascentDelta;
+  if (this.cameraPole.position.y < this.maxHeight) {
+    this.cameraPole.position.y += this.ascentDelta;
   }
   else {
-    this.camera.position.y = this.maxHeight;
+    this.cameraPole.position.y = this.maxHeight;
     this.finished = true;
   }
 
