@@ -304,10 +304,10 @@ hoverAnimation.prototype.animate = function() {
 function birdsEyeAnimation(cameraPole, camera) {
   this.cameraPole = cameraPole;
   this.camera = camera;
-  this.maxHeight = 100;
+  this.maxHeight = 150;
   this.ascentDelta = 2;
   this.rotationDelta = -0.06;
-  this.maxRotation = -(Math.PI / 2);
+  this.maxRotation = -(Math.PI / 3);
 
   this.finished = false;
 };
