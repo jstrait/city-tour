@@ -133,7 +133,7 @@ var City = function(container) {
     container.removeChild(document.getElementById("loading-message"));
 
     animationTimer = new AnimationTimer();
-    animationManager = new AnimationManager(terrain, cameraPole, camera);
+    animationManager = new AnimationManager(terrain, roadNetwork, cameraPole, camera);
     animationTimer.onAnimate = function(frameCount) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);

@@ -146,7 +146,7 @@ var AnimationTimer = function() {
   return animationTimer;
 };
 
-var AnimationManager = function(terrain, cameraPole, camera) {
+var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
@@ -155,15 +155,22 @@ var AnimationManager = function(terrain, cameraPole, camera) {
   var init = function() {
     var START_X = 0;
     var START_Y = 40;
-    var START_Z = CityConfig.HALF_SCENE_DEPTH;
+    var SWOOP_DISTANCE_IN_BLOCKS = 20;
+
+    var furthestOutIntersection = CityConfig.HALF_BLOCK_ROWS;
+    while (!roadNetwork.hasIntersection(0, furthestOutIntersection)) {
+      furthestOutIntersection -= 1;
+    }
+
+    var startZ = furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS;
+    var distanceToCityEdge = SWOOP_DISTANCE_IN_BLOCKS * CityConfig.BLOCK_AND_STREET_DEPTH;
 
     cameraPole.position.x = START_X;
     cameraPole.position.y = START_Y;
-    cameraPole.position.z = START_Z;
+    cameraPole.position.z = startZ * CityConfig.BLOCK_AND_STREET_DEPTH;
 
-    var distanceToCityEdge = Math.abs(START_Z - ((CityConfig.BLOCK_ROWS * CityConfig.BLOCK_AND_STREET_DEPTH) / 2));
     var framesUntilCityEdge = Math.abs(distanceToCityEdge / pathFinder.deltaZ());
-    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, CityConfig.HALF_BLOCK_ROWS) + 0.5;
+    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     var ramp = new rampAnimation(cameraPole, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
