@@ -128,15 +128,17 @@ var City = function(container) {
     renderer.setClearColor(SKY_COLOR, 1);
     resize();
 
-    renderer.render(scene, camera);
-    container.appendChild(renderer.domElement); 
-
     animationTimer = new AnimationTimer();
     animationManager = new AnimationManager(terrain, roadNetwork, cameraPole, camera);
     animationTimer.onAnimate = function(frameCount) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);
     }
+
+    animationManager.animate(1);
+    renderer.render(scene, camera);
+    container.appendChild(renderer.domElement);
+
     animationTimer.start();
 
     onComplete();
