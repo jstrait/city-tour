@@ -118,6 +118,8 @@ var init = function() {
 var init2 = function() {
   var city = new City(container);
   city.init(function() {
+    container.removeChild(document.getElementById("loading-message"));
+
     window.addEventListener('resize', city.resize, false);
     window.addEventListener('click', city.togglePause, false);
     window.addEventListener('touchstart', city.togglePause, false);
