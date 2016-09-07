@@ -101,17 +101,24 @@ button:hover {
 <script src="src/terrain.js" type="text/javascript"></script>
 <script src="src/terrain_builder.js" type="text/javascript"></script>
 <script type="text/javascript">
-var startButton = document.getElementById("start-button");
-startButton.addEventListener('click', function() {
+var init = function() {
   var container = document.getElementById("container");
   container.removeChild(document.getElementById("title-screen"));
 
-  var city = new City(container);
-  city.init();
+  // Allow DOM to update to show the "Loading..." message
+  setTimeout(init2, 1);
+};
 
-  window.addEventListener('resize', city.resize, false);
-  window.addEventListener('click', city.togglePause, false);
-  window.addEventListener('touchstart', city.togglePause, false);
-}, false);
+var init2 = function() {
+  var city = new City(container);
+  city.init(function() {
+    window.addEventListener('resize', city.resize, false);
+    window.addEventListener('click', city.togglePause, false);
+    window.addEventListener('touchstart', city.togglePause, false);
+  });
+};
+
+var startButton = document.getElementById("start-button");
+startButton.addEventListener('click', init, false);
 </script>
 </html>

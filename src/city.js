@@ -70,7 +70,7 @@ var City = function(container) {
 
   var animationTimer, animationManager;
 
-  var init = function() {
+  var init = function(onComplete) {
     var SKY_COLOR = 0x66ccff;
 
     if (!detectWebGL()) {
@@ -139,6 +139,8 @@ var City = function(container) {
       renderer.render(scene, camera);
     }
     animationTimer.start();
+
+    onComplete();
   };
 
   var resize = function() {
