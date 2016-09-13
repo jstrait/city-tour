@@ -1,6 +1,8 @@
-WebGL 3D City
--------------
+City Tour
+---------
 
-A demo flythrough of a "city", built using WebGL and Three.js
+Visit a computer generated city, different each time. Sit back and enjoy the ride!
 
-<img src="http://www.joelstrait.com/blog/2012/10/18/webgl_city_unadorned.png" width="558" />
+<img src="city_tour.gif" width="400" />
+
+Made using [three.js](http://threejs.org) and WebGL.
