@@ -170,7 +170,7 @@ CityTour.verticalAnimation = function(cameraPole, camera, targetY, yDelta) {
   this.angleDelta = 0.0155140377955;
   this.framesInCurrentMode = 0;
   this.framesUntilTarget = 1500;
-  this.mode = 'driving';
+  this.mode = 'initial_swoop';
   this.finished = false;
 }
 
@@ -211,7 +211,7 @@ CityTour.verticalAnimation.prototype.animate = function() {
       this.yDelta = 2;
       this.targetAngle = -(Math.PI / 3);
     }
-    else if (this.mode === 'hovering') {
+    else if (this.mode === 'hovering' || this.mode === 'initial_swoop') {
       this.mode = 'driving';
       this.targetY = -100000;
       this.yDelta = 0.05;
