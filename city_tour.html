@@ -122,13 +122,13 @@ var init = function() {
 };
 
 var init2 = function() {
-  var city = new CityTour.City(container);
-  city.init(function() {
+  var cityTour = new CityTour.City(container);
+  cityTour.init(function() {
     container.removeChild(document.getElementById("loading-message"));
 
-    window.addEventListener('resize', city.resize, false);
-    window.addEventListener('click', city.togglePause, false);
-    window.addEventListener('touchstart', city.togglePause, false);
+    window.addEventListener('resize', cityTour.resize, false);
+    window.addEventListener('click', cityTour.togglePause, false);
+    window.addEventListener('touchstart', cityTour.togglePause, false);
   });
 };
 
