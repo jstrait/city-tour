@@ -1,12 +1,14 @@
 "use strict";
 
-var ZonedBlockGenerator = function() {
+var CityTour = CityTour || {};
+
+CityTour.ZonedBlockGenerator = function() {
   var MAX_BUILDING_STORIES = 40;
 
   var calculateBlockProbabilityOfBuilding = function(mapX, mapZ) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
     
-    var distanceToCityEdge = Math.min(CityConfig.HALF_BLOCK_COLUMNS, CityConfig.HALF_BLOCK_ROWS);
+    var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
     var distanceFromCenter = Math.sqrt((mapX * mapX) + (mapZ * mapZ));
     var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
     var normalizedPercentageFromCenter;
@@ -25,8 +27,8 @@ var ZonedBlockGenerator = function() {
   var calculateMaxStoriesForBlock = function(mapX, mapZ) {
     var squareRootOfMaxBuildingStories = Math.pow(MAX_BUILDING_STORIES, (1/9));
 
-    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX) / CityConfig.HALF_BLOCK_COLUMNS));
-    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ) / CityConfig.HALF_BLOCK_ROWS));
+    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX) / CityTour.Config.HALF_BLOCK_COLUMNS));
+    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ) / CityTour.Config.HALF_BLOCK_ROWS));
     var multiplier = Math.min(multiplierX, multiplierZ);
 
     return Math.max(1, Math.round(Math.pow(multiplier, 9)));
@@ -38,8 +40,8 @@ var ZonedBlockGenerator = function() {
     var mapX, mapZ;
     var block, blocks = [];
 
-    for (mapX = -CityConfig.HALF_BLOCK_COLUMNS; mapX < CityConfig.HALF_BLOCK_COLUMNS; mapX++) {
-      for (mapZ = -CityConfig.HALF_BLOCK_ROWS; mapZ < CityConfig.HALF_BLOCK_ROWS; mapZ++) {
+    for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS; mapX < CityTour.Config.HALF_BLOCK_COLUMNS; mapX++) {
+      for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ < CityTour.Config.HALF_BLOCK_ROWS; mapZ++) {
         block = {};
 
         block.mapX = mapX;
@@ -59,7 +61,7 @@ var ZonedBlockGenerator = function() {
 
 
 
-var Buildings = function(terrain, roadNetwork) {
+CityTour.Buildings = function(terrain, roadNetwork) {
   var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
 
   var BLOCK_LAYOUTS = [
@@ -266,7 +268,7 @@ var Buildings = function(terrain, roadNetwork) {
     }
   };
 
-  var blocks = generateUnitBlocks(terrain, roadNetwork, new ZonedBlockGenerator().build());
+  var blocks = generateUnitBlocks(terrain, roadNetwork, new CityTour.ZonedBlockGenerator().build());
 
   var buildings = {};
 

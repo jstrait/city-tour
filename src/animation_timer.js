@@ -1,6 +1,8 @@
 "use strict";
 
-var AnimationTimer = function() {
+var CityTour = CityTour || {};
+
+CityTour.AnimationTimer = function() {
   var FRAMES_PER_SECONDS = 60;
   var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECONDS;
 

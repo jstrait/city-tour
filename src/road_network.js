@@ -1,6 +1,8 @@
 "use strict";
 
-var RoadIntersection = function(mapX, mapZ) {
+var CityTour = CityTour || {};
+
+CityTour.RoadIntersection = function(mapX, mapZ) {
   var edges = [];
 
   var indexOfEdge = function(mapX, mapZ) {
@@ -43,7 +45,7 @@ var RoadIntersection = function(mapX, mapZ) {
 };
 
 
-var BaseRoadNetwork = function() {
+CityTour.BaseRoadNetwork = function() {
   var network = [];
 
   var roadNetwork = {};
@@ -74,11 +76,11 @@ var BaseRoadNetwork = function() {
 };
 
 
-var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
-  var baseRoadNetwork = new BaseRoadNetwork();
+CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
+  var baseRoadNetwork = new CityTour.BaseRoadNetwork();
 
   var init = function() {
-    var roadIntersection = new RoadIntersection(0, 0);
+    var roadIntersection = new CityTour.RoadIntersection(0, 0);
     baseRoadNetwork.setIntersectionAt(0, 0, roadIntersection);
     branchFromIntersection(0, 0);
   };
@@ -86,7 +88,7 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
   var calculateBlockProbabilityOfBranching = function(mapX, mapZ) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
     
-    var distanceToCityEdge = Math.min(CityConfig.HALF_BLOCK_COLUMNS, CityConfig.HALF_BLOCK_ROWS);
+    var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
     var distanceFromCenter = Math.sqrt((mapX * mapX) + (mapZ * mapZ));
     var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
     var normalizedPercentageFromCenter;
@@ -129,7 +131,7 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
 
     var heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
     var heightAtPoint2 = terrain.heightAtCoordinates(targetMapX, targetMapZ);
-    var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+    var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
     var terrainTooSteep = (Math.abs(angle) > MAX_STEEPNESS);
 
     var random = Math.random();
@@ -140,7 +142,7 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
         roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
       }
       else {
-        baseRoadNetwork.setIntersectionAt(targetMapX, targetMapZ, new RoadIntersection(targetMapX, targetMapZ));
+        baseRoadNetwork.setIntersectionAt(targetMapX, targetMapZ, new CityTour.RoadIntersection(targetMapX, targetMapZ));
         roadIntersection.addEdge(targetMapX, targetMapZ);
         roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
         branchFromIntersection(targetMapX, targetMapZ);
@@ -165,15 +167,15 @@ var AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow
 
 
 
-var SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
-  var baseRoadNetwork = new BaseRoadNetwork();
+CityTour.SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
+  var baseRoadNetwork = new CityTour.BaseRoadNetwork();
 
   var init = function() {
     var x, z, roadIntersection;
 
     for (x = minColumn; x <= maxColumn; x++) {
       for (z = minRow; z <= maxRow; z++) {
-        roadIntersection = new RoadIntersection(x, z);
+        roadIntersection = new CityTour.RoadIntersection(x, z);
 
         if (x > minColumn) {
           roadIntersection.addEdge(x - 1, z);
@@ -235,28 +237,28 @@ var SubtractiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, max
       for (mapZ = minRow; mapZ <= maxRow; mapZ++) {
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX, mapZ - 1);
-        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
           removeEdge(mapX, mapZ, mapX, mapZ - 1);
         }
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX, mapZ + 1);
-        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
           removeEdge(mapX, mapZ, mapX, mapZ + 1);
         }
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX - 1, mapZ);
-        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
           removeEdge(mapX, mapZ, mapX - 1, mapZ);
         }
 
         heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
         heightAtPoint2 = terrain.heightAtCoordinates(mapX + 1, mapZ);
-        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityConfig.BLOCK_DEPTH);
+        angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
         if (Math.abs(angle) > MAX_STEEPNESS) {
           removeEdge(mapX, mapZ, mapX + 1, mapZ);
         }

@@ -1,6 +1,8 @@
 "use strict";
 
-var TerrainBuilder = function() {
+var CityTour = CityTour || {};
+
+CityTour.TerrainBuilder = function() {
   var MAX_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
@@ -113,7 +115,7 @@ var TerrainBuilder = function() {
 
   terrainBuilder.build = function(columns, rows) {
     var terrainCoordinates = buildTerrainCoordinates(columns, rows);
-    return new Terrain(terrainCoordinates);
+    return new CityTour.Terrain(terrainCoordinates);
   };
 
   return terrainBuilder;

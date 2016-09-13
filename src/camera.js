@@ -1,6 +1,8 @@
 "use strict";
 
-var PathFinder = function(cameraPole) {
+var CityTour = CityTour || {};
+
+CityTour.PathFinder = function(cameraPole) {
   var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
@@ -22,15 +24,15 @@ var PathFinder = function(cameraPole) {
 
     while (oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) {
       if (deltaX === 0.0) {
-        targetMapX = Math.floor(Math.random() * CityConfig.BLOCK_ROWS) - CityConfig.HALF_BLOCK_ROWS;
+        targetMapX = Math.floor(Math.random() * CityTour.Config.BLOCK_ROWS) - CityTour.Config.HALF_BLOCK_ROWS;
       }
       else if (deltaZ === 0.0) {
-        targetMapZ = Math.floor(Math.random() * CityConfig.BLOCK_COLUMNS) - CityConfig.HALF_BLOCK_COLUMNS;
+        targetMapZ = Math.floor(Math.random() * CityTour.Config.BLOCK_COLUMNS) - CityTour.Config.HALF_BLOCK_COLUMNS;
       }
     }
 
-    targetSceneX = Coordinates.mapXToSceneX(targetMapX);
-    targetSceneZ = Coordinates.mapZToSceneZ(targetMapZ);
+    targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
+    targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
     deltaX = (deltaX === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
     deltaZ = (deltaZ === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
@@ -87,36 +89,36 @@ var PathFinder = function(cameraPole) {
   return pathFinder;
 };
 
-var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
+CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
-  var pathFinder = new PathFinder(cameraPole);
+  var pathFinder = new CityTour.PathFinder(cameraPole);
 
   var init = function() {
     var START_X = 0;
     var START_Y = 40;
     var SWOOP_DISTANCE_IN_BLOCKS = 20;
 
-    var furthestOutIntersection = CityConfig.HALF_BLOCK_ROWS;
+    var furthestOutIntersection = CityTour.Config.HALF_BLOCK_ROWS;
     while (!roadNetwork.hasIntersection(0, furthestOutIntersection)) {
       furthestOutIntersection -= 1;
     }
 
     var startZ = furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS;
-    var distanceToCityEdge = SWOOP_DISTANCE_IN_BLOCKS * CityConfig.BLOCK_AND_STREET_DEPTH;
+    var distanceToCityEdge = SWOOP_DISTANCE_IN_BLOCKS * CityTour.Config.BLOCK_AND_STREET_DEPTH;
 
     cameraPole.position.x = START_X;
     cameraPole.position.y = START_Y;
-    cameraPole.position.z = startZ * CityConfig.BLOCK_AND_STREET_DEPTH;
+    cameraPole.position.z = startZ * CityTour.Config.BLOCK_AND_STREET_DEPTH;
 
     var framesUntilCityEdge = Math.abs(distanceToCityEdge / pathFinder.deltaZ());
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var vertical = new verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
-    var forward = new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
-    var debugBirdseye = new debugBirdsEyeAnimation(cameraPole, camera);
+    var vertical = new CityTour.verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
+    var forward = new CityTour.forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
+    var debugBirdseye = new CityTour.debugBirdsEyeAnimation(cameraPole, camera);
     animators = [vertical, forward];
     //animators = [debugBirdseye];
   };
@@ -133,12 +135,12 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
         animator.animate();
 
         if (animator.finished === true) {
-          if (animator instanceof forwardAnimation) {
+          if (animator instanceof CityTour.forwardAnimation) {
             pathFinder.nextTarget();
-            newAnimators.push(new rotationAnimation(cameraPole, pathFinder.targetAngle(), pathFinder.deltaAngle()));
+            newAnimators.push(new CityTour.rotationAnimation(cameraPole, pathFinder.targetAngle(), pathFinder.deltaAngle()));
           }
-          else if (animator instanceof rotationAnimation) {
-            newAnimators.push(new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
+          else if (animator instanceof CityTour.rotationAnimation) {
+            newAnimators.push(new CityTour.forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
           }
         }
         else {
@@ -148,8 +150,8 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       animators = newAnimators;
     }
 
-    var mapX = Coordinates.sceneXToMapX(cameraPole.position.x);
-    var mapZ = Coordinates.sceneZToMapZ(cameraPole.position.z);
+    var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
+    var mapZ = CityTour.Coordinates.sceneZToMapZ(cameraPole.position.z);
 
     var y = terrain.heightAtCoordinates(mapX, mapZ);
     cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
@@ -159,7 +161,7 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 };
 
 
-function verticalAnimation(cameraPole, camera, targetY, yDelta) {
+CityTour.verticalAnimation = function(cameraPole, camera, targetY, yDelta) {
   this.cameraPole = cameraPole;
   this.camera = camera;
   this.targetY = targetY;
@@ -172,7 +174,7 @@ function verticalAnimation(cameraPole, camera, targetY, yDelta) {
   this.finished = false;
 }
 
-verticalAnimation.prototype.animate = function() {
+CityTour.verticalAnimation.prototype.animate = function() {
   var step = function(current, target, delta) {
     if (current === target) {
       return target;
@@ -227,7 +229,7 @@ verticalAnimation.prototype.animate = function() {
 };
 
 
-function forwardAnimation(cameraPole, targetX, deltaX, targetZ, deltaZ) {
+CityTour.forwardAnimation = function(cameraPole, targetX, deltaX, targetZ, deltaZ) {
   this.cameraPole = cameraPole;
   this.targetX = targetX;
   this.deltaX = deltaX;
@@ -236,7 +238,7 @@ function forwardAnimation(cameraPole, targetX, deltaX, targetZ, deltaZ) {
   this.finished = false;
 }
 
-forwardAnimation.prototype.animate = function() {
+CityTour.forwardAnimation.prototype.animate = function() {
   this.cameraPole.position.x += this.deltaX;
   this.cameraPole.position.z += this.deltaZ;
 
@@ -249,14 +251,14 @@ forwardAnimation.prototype.animate = function() {
   }
 };
 
-function rotationAnimation(cameraPole, targetAngle, deltaAngle) {
+CityTour.rotationAnimation = function(cameraPole, targetAngle, deltaAngle) {
   this.cameraPole = cameraPole;
   this.targetAngle = targetAngle;
   this.deltaAngle = deltaAngle;
   this.finished = false;
 }
 
-rotationAnimation.prototype.animate = function() {
+CityTour.rotationAnimation.prototype.animate = function() {
   this.cameraPole.rotation.y += this.deltaAngle;
   
   if ((this.deltaAngle < 0 && this.cameraPole.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && this.cameraPole.rotation.y >= this.targetAngle)) {
@@ -269,12 +271,12 @@ rotationAnimation.prototype.animate = function() {
   }
 };
 
-function debugBirdsEyeAnimation(camera) {
+CityTour.debugBirdsEyeAnimation = function(camera) {
   this.camera = camera;
   this.finished = false;
 };
 
-debugBirdsEyeAnimation.prototype.animate = function() {
+CityTour.debugBirdsEyeAnimation.prototype.animate = function() {
   this.camera.position.x = 0;
   this.camera.position.y = 900;
   this.camera.position.z = 0;

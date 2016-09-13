@@ -1,6 +1,8 @@
 "use strict";
 
-var CityConfig = (function() {
+var CityTour = CityTour || {};
+
+CityTour.Config = (function() {
   var config = {};
 
   config.STREET_WIDTH = 3;
@@ -28,29 +30,29 @@ var CityConfig = (function() {
   return config;
 })();
 
-var Coordinates = (function() {
+CityTour.Coordinates = (function() {
   var coordinates = {};
 
   coordinates.mapXToSceneX = function(mapX) {
-    return mapX * CityConfig.BLOCK_AND_STREET_WIDTH;
+    return mapX * CityTour.Config.BLOCK_AND_STREET_WIDTH;
   };
 
   coordinates.mapZToSceneZ = function(mapZ) {
-    return mapZ * CityConfig.BLOCK_AND_STREET_DEPTH;
+    return mapZ * CityTour.Config.BLOCK_AND_STREET_DEPTH;
   };
 
   coordinates.sceneXToMapX = function(sceneX) {
-    return sceneX / CityConfig.BLOCK_AND_STREET_WIDTH;
+    return sceneX / CityTour.Config.BLOCK_AND_STREET_WIDTH;
   };
 
   coordinates.sceneZToMapZ = function(sceneZ) {
-    return sceneZ / CityConfig.BLOCK_AND_STREET_DEPTH;
+    return sceneZ / CityTour.Config.BLOCK_AND_STREET_DEPTH;
   };
 
   return coordinates;
 })();
 
-var City = function(container) {
+CityTour.City = function(container) {
   var renderer, scene, camera;
 
   var detectWebGL = function() {
@@ -81,20 +83,20 @@ var City = function(container) {
     var masterStartTime = new Date();
 
     var terrainStartTime = new Date();
-    var terrain = new TerrainBuilder().build(CityConfig.TERRAIN_COLUMNS, CityConfig.TERRAIN_ROWS);
+    var terrain = new CityTour.TerrainBuilder().build(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();
-    var roadNetwork = new AdditiveRoadNetwork(terrain,
-                                              -CityConfig.HALF_BLOCK_COLUMNS,
-                                               CityConfig.HALF_BLOCK_COLUMNS,
-                                              -CityConfig.HALF_BLOCK_ROWS,
-                                              CityConfig.HALF_BLOCK_ROWS);
+    var roadNetwork = new CityTour.AdditiveRoadNetwork(terrain,
+                                                       -CityTour.Config.HALF_BLOCK_COLUMNS,
+                                                        CityTour.Config.HALF_BLOCK_COLUMNS,
+                                                       -CityTour.Config.HALF_BLOCK_ROWS,
+                                                        CityTour.Config.HALF_BLOCK_ROWS);
     roadNetwork.pruneSteepEdges(terrain);
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
-    var buildings = new Buildings(terrain, roadNetwork);
+    var buildings = new CityTour.Buildings(terrain, roadNetwork);
     var buildingsEndTime = new Date();
 
     var masterEndTime = new Date();
@@ -107,7 +109,7 @@ var City = function(container) {
     roadNetwork.pruneHorizontalEdgesWithNoBuildings(buildings);
     roadNetwork.pruneVerticalEdgesWithNoBuildings(buildings);
 
-    var sceneBuilder = new SceneBuilder();
+    var sceneBuilder = new CityTour.SceneBuilder();
     scene = sceneBuilder.build(terrain, roadNetwork, buildings);
 
     var cameraPoleGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -128,8 +130,8 @@ var City = function(container) {
     renderer.setClearColor(SKY_COLOR, 1);
     resize();
 
-    animationTimer = new AnimationTimer();
-    animationManager = new AnimationManager(terrain, roadNetwork, cameraPole, camera);
+    animationTimer = new CityTour.AnimationTimer();
+    animationManager = new CityTour.AnimationManager(terrain, roadNetwork, cameraPole, camera);
     animationTimer.onAnimate = function(frameCount) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);

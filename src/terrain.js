@@ -1,6 +1,8 @@
 "use strict";
 
-var Terrain = function(coordinates) {
+var CityTour = CityTour || {};
+
+CityTour.Terrain = function(coordinates) {
   var interpolateHeight = function(point, floor, ceiling) {
     var heightDifferential = ceiling - floor;
     var percentage = point - Math.floor(point);
