@@ -51,37 +51,33 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
           // North/South road segment
           if (roadIntersection.hasPathTo(mapX, mapZ + 1)) {
-            if (mapZ < CityTour.Config.HALF_BLOCK_ROWS) {
-              roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
-                                                 terrain.heightAtCoordinates(mapX, mapZ + 1),
-                                                 CityTour.Config.BLOCK_DEPTH);
+            roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
+                                               terrain.heightAtCoordinates(mapX, mapZ + 1),
+                                               CityTour.Config.BLOCK_DEPTH);
 
-              roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, roadSegment.length), roadMaterial);
-              roadSegmentMesh.position.x = sceneX;
-              roadSegmentMesh.rotation.x = roadSegment.angle - (Math.PI / 2);
-              roadSegmentMesh.position.y = roadSegment.midpointHeight;
-              roadSegmentMesh.position.z = sceneZ + (CityTour.Config.BLOCK_AND_STREET_DEPTH / 2);
-              roadSegmentMesh.updateMatrix();
-              roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
-            }
+            roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, roadSegment.length), roadMaterial);
+            roadSegmentMesh.position.x = sceneX;
+            roadSegmentMesh.rotation.x = roadSegment.angle - (Math.PI / 2);
+            roadSegmentMesh.position.y = roadSegment.midpointHeight;
+            roadSegmentMesh.position.z = sceneZ + (CityTour.Config.BLOCK_AND_STREET_DEPTH / 2);
+            roadSegmentMesh.updateMatrix();
+            roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
           }
 
           // East/West road segment
           if (roadIntersection.hasPathTo(mapX + 1, mapZ)) {
-            if (mapX < CityTour.Config.HALF_BLOCK_COLUMNS) {
-              roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
-                                                 terrain.heightAtCoordinates(mapX + 1, mapZ),
-                                                 CityTour.Config.BLOCK_WIDTH);
+            roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
+                                               terrain.heightAtCoordinates(mapX + 1, mapZ),
+                                               CityTour.Config.BLOCK_WIDTH);
 
-              roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(roadSegment.length, CityTour.Config.STREET_WIDTH), roadMaterial);
-              roadSegmentMesh.position.x = sceneX + (CityTour.Config.BLOCK_AND_STREET_WIDTH / 2);
-              roadSegmentMesh.rotation.x = -(Math.PI / 2);
-              roadSegmentMesh.position.y = roadSegment.midpointHeight;
-              roadSegmentMesh.rotation.y = roadSegment.angle;
-              roadSegmentMesh.position.z = sceneZ;
-              roadSegmentMesh.updateMatrix();
-              roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
-            }
+            roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(roadSegment.length, CityTour.Config.STREET_WIDTH), roadMaterial);
+            roadSegmentMesh.position.x = sceneX + (CityTour.Config.BLOCK_AND_STREET_WIDTH / 2);
+            roadSegmentMesh.rotation.x = -(Math.PI / 2);
+            roadSegmentMesh.position.y = roadSegment.midpointHeight;
+            roadSegmentMesh.rotation.y = roadSegment.angle;
+            roadSegmentMesh.position.z = sceneZ;
+            roadSegmentMesh.updateMatrix();
+            roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
           }
         }
       }
