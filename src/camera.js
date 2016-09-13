@@ -114,10 +114,11 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var ramp = new rampAnimation(cameraPole, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
+    //var ramp = new rampAnimation(cameraPole, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
+    var vertical = new verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
     var forward = new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
     var debugBirdseye = new debugBirdsEyeAnimation(cameraPole, camera);
-    animators = [ramp, forward];
+    animators = [vertical, forward];
     //animators = [debugBirdseye];
   };
 
@@ -162,6 +163,86 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   };
 
   return animationManager;
+};
+
+
+function verticalAnimation(cameraPole, camera, targetY, yDelta) {
+  this.cameraPole = cameraPole;
+  this.camera = camera;
+  this.targetY = targetY;
+  this.yDelta = yDelta;
+  this.targetAngle = 0.0;
+  this.angleDelta = 0.0155140377955;
+  this.framesInCurrentMode = 0;
+  this.framesUntilTarget = 1500;
+  this.mode = 'driving';
+  this.finished = false;
+}
+
+verticalAnimation.prototype.animate = function() {
+  this.framesInCurrentMode += 1;
+
+  if (this.cameraPole.position.y !== this.targetY) {
+    if (this.cameraPole.position.y > this.targetY) {
+      if ((this.cameraPole.position.y - this.targetY) < this.yDelta) {
+        this.cameraPole.position.y = this.targetY;
+      }
+      else {
+        this.cameraPole.position.y -= this.yDelta;
+      }
+    }
+    else if (this.cameraPole.position.y < this.targetY) {
+      if ((this.targetY - this.cameraPole.position.y) < this.yDelta) {
+        this.cameraPole.position.y = this.targetY;
+      }
+      else {
+        this.cameraPole.position.y += this.yDelta;
+      }
+    }
+  }
+
+  if (this.camera.rotation.x !== this.targetAngle) {
+    if (this.camera.rotation.x > this.targetAngle) {
+      if ((this.camera.rotation.x - this.targetAngle) < this.angleDelta) {
+        this.camera.rotation.x = this.targetAngle;
+      }
+      else {
+        this.camera.rotation.x -= this.angleDelta;
+      }
+    }
+    else if (this.camera.rotation.x < this.targetAngle) {
+
+      if ((this.targetAngle - this.camera.rotation.x) < this.angleDelta) {
+        this.camera.rotation.x = this.targetAngle;
+      }
+      else {
+        this.camera.rotation.x += this.angleDelta;
+      }
+    }
+  }
+
+  if (this.framesInCurrentMode >= this.framesUntilTarget) {
+    if (this.mode === 'driving') {
+      this.mode = 'birdseye';
+      this.targetY = 150;
+      this.yDelta = 2;
+      this.targetAngle = -(Math.PI / 3);
+    }
+    else if (this.mode === 'hovering') {
+      this.mode = 'driving';
+      this.targetY = -100000;
+      this.yDelta = 0.05;
+      this.targetAngle = 0.0;
+    }
+    else if (this.mode === 'birdseye') {
+      this.mode = 'hovering';
+      this.targetY = 15;
+      this.yDelta = 2;
+      this.targetAngle = 0.0;
+    }
+
+    this.framesInCurrentMode = 0;
+  }
 };
 
 
