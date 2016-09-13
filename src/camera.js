@@ -114,7 +114,6 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    //var ramp = new rampAnimation(cameraPole, framesUntilCityEdge, -swoopDescentDelta, terrainHeightAtTouchdown + 0.5, 1000000);
     var vertical = new verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
     var forward = new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
     var debugBirdseye = new debugBirdsEyeAnimation(cameraPole, camera);
@@ -134,18 +133,12 @@ var AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
         animator.animate();
 
         if (animator.finished === true) {
-          if (animator instanceof rampAnimation) {
-            newAnimators.push(new hoverAnimation(cameraPole));
-          }
-          else if (animator instanceof forwardAnimation) {
+          if (animator instanceof forwardAnimation) {
             pathFinder.nextTarget();
             newAnimators.push(new rotationAnimation(cameraPole, pathFinder.targetAngle(), pathFinder.deltaAngle()));
           }
           else if (animator instanceof rotationAnimation) {
             newAnimators.push(new forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
-          }
-          else if (animator instanceof hoverAnimation) {
-            newAnimators.push(new hoverAnimation(cameraPole));
           }
         }
         else {
@@ -273,74 +266,6 @@ rotationAnimation.prototype.animate = function() {
 
     this.cameraPole.rotation.y = this.targetAngle;
     this.finished = true;
-  }
-};
-
-function rampAnimation(cameraPole, frameDistance, deltaY, minHeight, maxHeight) {
-  this.cameraPole = cameraPole;
-  this.ticks = 0;
-  this.frameDistance = frameDistance;
-  this.deltaY = deltaY;
-  this.minHeight = minHeight;
-  this.maxHeight = maxHeight;
-  this.finished = false;
-}
-
-rampAnimation.prototype.animate = function() {
-  if (this.cameraPole.position.y >= this.minHeight && this.cameraPole.position.y <= this.maxHeight) {
-    this.cameraPole.position.y += this.deltaY;
-  }
-  if (this.cameraPole.position.y < this.minHeight) {
-    this.cameraPole.position.y = this.minHeight;
-  }  
-  if (this.cameraPole.position.y > this.maxHeight) {
-    this.cameraPole.position.y = this.maxHeight;
-  }
-
-  this.ticks += 1;
-  if (this.ticks > this.frameDistance) {
-    this.finished = true;
-  }
-};
-
-function hoverAnimation(cameraPole) {
-  var frameDistance = (Math.random() * 300) + 300;
-  var deltaY = (cameraPole.position.y > 0.5) ? -0.05 : 0.05;
-
-  this.rampAnimation = new rampAnimation(cameraPole, frameDistance, deltaY, 0.5, 15);
-  this.finished = false;
-}
-
-hoverAnimation.prototype.animate = function() {
-  this.rampAnimation.animate();
-  this.finished = this.rampAnimation.finished;
-};
-
-function birdsEyeAnimation(cameraPole, camera) {
-  this.cameraPole = cameraPole;
-  this.camera = camera;
-  this.maxHeight = 150;
-  this.ascentDelta = 2;
-  this.rotationDelta = -0.06;
-  this.maxRotation = -(Math.PI / 3);
-
-  this.finished = false;
-};
-
-birdsEyeAnimation.prototype.animate = function() {
-  if (this.cameraPole.position.y < this.maxHeight) {
-    this.cameraPole.position.y += this.ascentDelta;
-  }
-  else {
-    this.cameraPole.position.y = this.maxHeight;
-    this.finished = true;
-  }
-
-  if (this.camera.rotation.x > this.maxRotation) {
-    this.camera.rotation.x += this.rotationDelta;
-  }
-  else {
-    this.camera.rotation.x = this.maxRotation;
   }
 };
 
