@@ -127,8 +127,7 @@ CityTour.City = function(container) {
     // Build renderer
     renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
-    renderer.setClearColor(SKY_COLOR, 1);
-    resize();
+    renderer.setClearColor(SKY_COLOR, 1); 
 
     animationTimer = new CityTour.AnimationTimer();
     animationManager = new CityTour.AnimationManager(terrain, roadNetwork, cameraPole, camera);
@@ -136,6 +135,8 @@ CityTour.City = function(container) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);
     }
+
+    resize();
 
     animationManager.animate(1);
     renderer.render(scene, camera);
@@ -153,6 +154,8 @@ CityTour.City = function(container) {
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
+
+    renderer.render(scene, camera);
   };
 
   var togglePause = function() {
