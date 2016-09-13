@@ -92,7 +92,6 @@ CityTour.City = function(container) {
                                                         CityTour.Config.HALF_BLOCK_COLUMNS,
                                                        -CityTour.Config.HALF_BLOCK_ROWS,
                                                         CityTour.Config.HALF_BLOCK_ROWS);
-    roadNetwork.pruneSteepEdges(terrain);
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
@@ -105,9 +104,6 @@ CityTour.City = function(container) {
     console.log("  Terrain: "      + (terrainEndTime - terrainStartTime) + "ms");
     console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
     console.log("  Buildings: "    + (buildingsEndTime - buildingsStartTime) + "ms");
-
-    roadNetwork.pruneHorizontalEdgesWithNoBuildings(buildings);
-    roadNetwork.pruneVerticalEdgesWithNoBuildings(buildings);
 
     var sceneBuilder = new CityTour.Scene.Builder();
     scene = sceneBuilder.build(terrain, roadNetwork, buildings);
