@@ -109,7 +109,7 @@ CityTour.City = function(container) {
     roadNetwork.pruneHorizontalEdgesWithNoBuildings(buildings);
     roadNetwork.pruneVerticalEdgesWithNoBuildings(buildings);
 
-    var sceneBuilder = new CityTour.SceneBuilder();
+    var sceneBuilder = new CityTour.Scene.Builder();
     scene = sceneBuilder.build(terrain, roadNetwork, buildings);
 
     var cameraPoleGeometry = new THREE.BoxGeometry(1, 1, 1);
