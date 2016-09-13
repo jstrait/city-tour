@@ -7,17 +7,14 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
   var TERRAIN_COLOR_1 = new THREE.Color(0.0, 0.48, 0.0);
   var TERRAIN_COLOR_2 = new THREE.Color(0.0, 0.49, 0.0);
 
+  var reusableTriangle = new THREE.Geometry();
+  reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];
+
   var buildTriangleGeometry = function(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
-    var triangle = new THREE.Geometry();
+    reusableTriangle.vertices = [ new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2), new THREE.Vector3(x3, y3, z3) ];
+    reusableTriangle.computeFaceNormals();
 
-    triangle.vertices.push(new THREE.Vector3(x1, y1, z1));
-    triangle.vertices.push(new THREE.Vector3(x2, y2, z2));
-    triangle.vertices.push(new THREE.Vector3(x3, y3, z3));
-
-    triangle.faces.push(new THREE.Face3(0, 1, 2));
-    triangle.computeFaceNormals();
-
-    return triangle;
+    return reusableTriangle;
   };
 
   var terrainGeometryBuilder = {};
