@@ -180,46 +180,34 @@ function verticalAnimation(cameraPole, camera, targetY, yDelta) {
 }
 
 verticalAnimation.prototype.animate = function() {
+  var step = function(current, target, delta) {
+    if (current === target) {
+      return target;
+    }
+    else {
+      if (current > target) {
+        if ((current - target) < delta) {
+          return target;
+        }
+        else {
+          return current - delta;
+        }
+      }
+      else if (current < target) {
+        if ((target - current) < delta) {
+          return target;
+        }
+        else {
+          return current + delta;
+        }
+      }
+    }
+  };
+
   this.framesInCurrentMode += 1;
 
-  if (this.cameraPole.position.y !== this.targetY) {
-    if (this.cameraPole.position.y > this.targetY) {
-      if ((this.cameraPole.position.y - this.targetY) < this.yDelta) {
-        this.cameraPole.position.y = this.targetY;
-      }
-      else {
-        this.cameraPole.position.y -= this.yDelta;
-      }
-    }
-    else if (this.cameraPole.position.y < this.targetY) {
-      if ((this.targetY - this.cameraPole.position.y) < this.yDelta) {
-        this.cameraPole.position.y = this.targetY;
-      }
-      else {
-        this.cameraPole.position.y += this.yDelta;
-      }
-    }
-  }
-
-  if (this.camera.rotation.x !== this.targetAngle) {
-    if (this.camera.rotation.x > this.targetAngle) {
-      if ((this.camera.rotation.x - this.targetAngle) < this.angleDelta) {
-        this.camera.rotation.x = this.targetAngle;
-      }
-      else {
-        this.camera.rotation.x -= this.angleDelta;
-      }
-    }
-    else if (this.camera.rotation.x < this.targetAngle) {
-
-      if ((this.targetAngle - this.camera.rotation.x) < this.angleDelta) {
-        this.camera.rotation.x = this.targetAngle;
-      }
-      else {
-        this.camera.rotation.x += this.angleDelta;
-      }
-    }
-  }
+  this.cameraPole.position.y = step(this.cameraPole.position.y, this.targetY, this.yDelta);
+  this.camera.rotation.x = step(this.camera.rotation.x, this.targetAngle, this.angleDelta);
 
   if (this.framesInCurrentMode >= this.framesUntilTarget) {
     if (this.mode === 'driving') {
