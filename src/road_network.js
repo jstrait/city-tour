@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.BaseRoadNetwork = function() {
+CityTour.RoadNetwork = function() {
   var roadIntersection = function(mapX, mapZ) {
     var edges = [];
 
@@ -126,7 +126,7 @@ CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
   var additiveRoadNetworkGenerator = {};
 
   additiveRoadNetworkGenerator.generate = function() {
-    var roadNetwork = new CityTour.BaseRoadNetwork();
+    var roadNetwork = new CityTour.RoadNetwork();
     branchFromIntersection(roadNetwork, 0, 0);
 
     return roadNetwork;
