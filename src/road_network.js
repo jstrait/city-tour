@@ -2,50 +2,50 @@
 
 var CityTour = CityTour || {};
 
-CityTour.RoadIntersection = function(mapX, mapZ) {
-  var edges = [];
-
-  var indexOfEdge = function(mapX, mapZ) {
-    var i;
-
-    for (i = 0; i < edges.length; i++) {
-      if (edges[i][0] === mapX && edges[i][1] === mapZ) {
-        return i;
-      }
-    }
-
-    return -1;
-  };
-
-  var roadIntersection = {};
-
-  roadIntersection.addEdge = function(mapX, mapZ) {
-    if (indexOfEdge(mapX, mapZ) === -1) {
-      edges.push([mapX, mapZ]);
-    }
-  };
-
-  roadIntersection.removeEdge = function(mapX, mapZ) {
-    var index = indexOfEdge(mapX, mapZ);
-
-    if (index !== -1) {
-      edges.splice(index, 1);
-    }
-  };
-
-  roadIntersection.hasPathTo = function(mapX, mapZ) {
-    return indexOfEdge(mapX, mapZ) > -1;
-  };
-
-  roadIntersection.isEmpty = function() {
-    return edges.length === 0;
-  };
-
-  return roadIntersection;
-};
-
-
 CityTour.BaseRoadNetwork = function() {
+  var roadIntersection = function(mapX, mapZ) {
+    var edges = [];
+
+    var indexOfEdge = function(mapX, mapZ) {
+      var i;
+
+      for (i = 0; i < edges.length; i++) {
+        if (edges[i][0] === mapX && edges[i][1] === mapZ) {
+          return i;
+        }
+      }
+
+      return -1;
+    };
+
+    var roadIntersection = {};
+
+    roadIntersection.addEdge = function(mapX, mapZ) {
+      if (indexOfEdge(mapX, mapZ) === -1) {
+        edges.push([mapX, mapZ]);
+      }
+    };
+
+    roadIntersection.removeEdge = function(mapX, mapZ) {
+      var index = indexOfEdge(mapX, mapZ);
+
+      if (index !== -1) {
+        edges.splice(index, 1);
+      }
+    };
+
+    roadIntersection.hasPathTo = function(mapX, mapZ) {
+      return indexOfEdge(mapX, mapZ) > -1;
+    };
+
+    roadIntersection.isEmpty = function() {
+      return edges.length === 0;
+    };
+
+    return roadIntersection;
+  };
+
+
   var network = [];
 
   var roadNetwork = {};
@@ -69,11 +69,11 @@ CityTour.BaseRoadNetwork = function() {
     roadIntersection2 = network[[mapX2, mapZ2]];
 
     if (!roadIntersection1) {
-      roadIntersection1 = new CityTour.RoadIntersection(mapX1, mapZ1);
+      roadIntersection1 = new roadIntersection(mapX1, mapZ1);
       roadNetwork.setIntersectionAt(mapX1, mapZ1, roadIntersection1);
     }
     if (!roadIntersection2) {
-      roadIntersection2 = new CityTour.RoadIntersection(mapX2, mapZ2);
+      roadIntersection2 = new roadIntersection(mapX2, mapZ2);
       roadNetwork.setIntersectionAt(mapX2, mapZ2, roadIntersection2);
     }
 
