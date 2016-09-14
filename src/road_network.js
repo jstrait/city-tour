@@ -128,26 +128,26 @@ CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, m
     var random = Math.random();
 
     if (random < PROBABILITY && !isTerrainTooSteep(mapX, mapZ, targetMapX, targetMapZ)) {
-      if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
+      if (baseRoadNetwork.hasIntersection(targetMapX, targetMapZ)) {
         roadIntersection.addEdge(targetMapX, targetMapZ);
-        roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
+        baseRoadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
       }
       else {
         baseRoadNetwork.setIntersectionAt(targetMapX, targetMapZ, new CityTour.RoadIntersection(targetMapX, targetMapZ));
         roadIntersection.addEdge(targetMapX, targetMapZ);
-        roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
+        baseRoadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
         branchFromIntersection(targetMapX, targetMapZ);
       }
     }
   };
 
-  var roadNetwork = {};
+  var additiveRoadNetwork = {};
 
-  roadNetwork.hasIntersection = baseRoadNetwork.hasIntersection;
-  roadNetwork.intersectionAt = baseRoadNetwork.intersectionAt;
-  roadNetwork.hasEdgeBetween = baseRoadNetwork.hasEdgeBetween;
+  additiveRoadNetwork.hasIntersection = baseRoadNetwork.hasIntersection;
+  additiveRoadNetwork.intersectionAt = baseRoadNetwork.intersectionAt;
+  additiveRoadNetwork.hasEdgeBetween = baseRoadNetwork.hasEdgeBetween;
 
   init();
 
-  return roadNetwork;
+  return additiveRoadNetwork;
 };
