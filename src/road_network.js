@@ -71,13 +71,7 @@ CityTour.BaseRoadNetwork = function() {
 };
 
 
-CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, maxRow) {
-  var baseRoadNetwork = new CityTour.BaseRoadNetwork();
-
-  var init = function() {
-    branchFromIntersection(0, 0);
-  };
-
+CityTour.AdditiveRoadNetworkGenerator = function(terrain, minColumn, maxColumn, minRow, maxRow) {
   var calculateBlockProbabilityOfBranching = function(mapX, mapZ) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
     
@@ -97,13 +91,6 @@ CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, m
     return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
   };
 
-  var branchFromIntersection = function(mapX, mapZ) {
-    connectIntersections(mapX, mapZ, mapX - 1, mapZ);
-    connectIntersections(mapX, mapZ, mapX, mapZ - 1);
-    connectIntersections(mapX, mapZ, mapX + 1, mapZ);
-    connectIntersections(mapX, mapZ, mapX, mapZ + 1);
-  };
-
   var isTerrainTooSteep = function(mapX, mapZ, targetMapX, targetMapZ) {
     var MAX_STEEPNESS = Math.PI / 6;
 
@@ -114,27 +101,36 @@ CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, m
     return Math.abs(angle) > MAX_STEEPNESS;
   };
 
-  var connectIntersections = function(mapX, mapZ, targetMapX, targetMapZ) {
+  var branchFromIntersection = function(roadNetwork, mapX, mapZ) {
+    connectIntersections(roadNetwork, mapX, mapZ, mapX - 1, mapZ);
+    connectIntersections(roadNetwork, mapX, mapZ, mapX, mapZ - 1);
+    connectIntersections(roadNetwork, mapX, mapZ, mapX + 1, mapZ);
+    connectIntersections(roadNetwork, mapX, mapZ, mapX, mapZ + 1);
+  };
+
+  var connectIntersections = function(roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
     var PROBABILITY = calculateBlockProbabilityOfBranching(mapX, mapZ);
     var random = Math.random();
 
     if (random < PROBABILITY && !isTerrainTooSteep(mapX, mapZ, targetMapX, targetMapZ)) {
-      if (baseRoadNetwork.hasIntersection(targetMapX, targetMapZ)) {
-        baseRoadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
+      if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
+        roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
       }
       else {
-        baseRoadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
-        branchFromIntersection(targetMapX, targetMapZ);
+        roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
+        branchFromIntersection(roadNetwork, targetMapX, targetMapZ);
       }
     }
   };
 
-  var additiveRoadNetwork = {};
+  var additiveRoadNetworkGenerator = {};
 
-  additiveRoadNetwork.hasIntersection = baseRoadNetwork.hasIntersection;
-  additiveRoadNetwork.hasEdgeBetween = baseRoadNetwork.hasEdgeBetween;
+  additiveRoadNetworkGenerator.generate = function() {
+    var roadNetwork = new CityTour.BaseRoadNetwork();
+    branchFromIntersection(roadNetwork, 0, 0);
 
-  init();
+    return roadNetwork;
+  };
 
-  return additiveRoadNetwork;
+  return additiveRoadNetworkGenerator;
 };
