@@ -38,9 +38,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ <= CityTour.Config.HALF_BLOCK_ROWS; mapZ++) { 
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
-        roadIntersection = roadNetwork.intersectionAt(mapX, mapZ);
-
-        if (roadIntersection) {
+        if (roadNetwork.intersectionAt(mapX, mapZ)) {
           // Road intersection
           roadSegmentMesh = reusableIntersectionMesh;
           roadSegmentMesh.position.x = sceneX;
@@ -50,7 +48,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
 
           // North/South road segment
-          if (roadIntersection.hasPathTo(mapX, mapZ + 1)) {
+          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) {
             roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
                                                terrain.heightAtCoordinates(mapX, mapZ + 1),
                                                CityTour.Config.BLOCK_DEPTH);
@@ -65,7 +63,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           }
 
           // East/West road segment
-          if (roadIntersection.hasPathTo(mapX + 1, mapZ)) {
+          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) {
             roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
                                                terrain.heightAtCoordinates(mapX + 1, mapZ),
                                                CityTour.Config.BLOCK_WIDTH);
