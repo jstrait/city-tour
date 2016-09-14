@@ -87,12 +87,7 @@ CityTour.City = function(container) {
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();
-    var roadNetwork = new CityTour.AdditiveRoadNetworkGenerator(terrain,
-                                                                -CityTour.Config.HALF_BLOCK_COLUMNS,
-                                                                 CityTour.Config.HALF_BLOCK_COLUMNS,
-                                                                -CityTour.Config.HALF_BLOCK_ROWS,
-                                                                 CityTour.Config.HALF_BLOCK_ROWS)
-                                  .generate();
+    var roadNetwork = new CityTour.AdditiveRoadNetworkGenerator(terrain).generate();
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();

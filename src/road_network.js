@@ -71,7 +71,7 @@ CityTour.BaseRoadNetwork = function() {
 };
 
 
-CityTour.AdditiveRoadNetworkGenerator = function(terrain, minColumn, maxColumn, minRow, maxRow) {
+CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
   var calculateBlockProbabilityOfBranching = function(mapX, mapZ) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
     
