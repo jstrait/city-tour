@@ -125,18 +125,21 @@ CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, m
     connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
   };
 
-  var connectIntersections = function(roadIntersection, mapX, mapZ, targetMapX, targetMapZ) {
+  var isTerrainTooSteep = function(mapX, mapZ, targetMapX, targetMapZ) {
     var MAX_STEEPNESS = Math.PI / 6;
-    var PROBABILITY = calculateBlockProbabilityOfBranching(mapX, mapZ);
 
     var heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
     var heightAtPoint2 = terrain.heightAtCoordinates(targetMapX, targetMapZ);
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
-    var terrainTooSteep = (Math.abs(angle) > MAX_STEEPNESS);
 
+    return Math.abs(angle) > MAX_STEEPNESS;
+  };
+
+  var connectIntersections = function(roadIntersection, mapX, mapZ, targetMapX, targetMapZ) {
+    var PROBABILITY = calculateBlockProbabilityOfBranching(mapX, mapZ);
     var random = Math.random();
 
-    if (random < PROBABILITY && !terrainTooSteep) {
+    if (random < PROBABILITY && !isTerrainTooSteep(mapX, mapZ, targetMapX, targetMapZ)) {
       if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
         roadIntersection.addEdge(targetMapX, targetMapZ);
         roadNetwork.intersectionAt(targetMapX, targetMapZ).addEdge(mapX, mapZ);
