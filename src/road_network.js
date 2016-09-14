@@ -47,10 +47,8 @@ CityTour.BaseRoadNetwork = function() {
   };
 
   roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1, roadIntersection2;
-
-    roadIntersection1 = network[[mapX1, mapZ1]];
-    roadIntersection2 = network[[mapX2, mapZ2]];
+    var roadIntersection1 = network[[mapX1, mapZ1]];
+    var roadIntersection2 = network[[mapX2, mapZ2]];
 
     if (!roadIntersection1) {
       roadIntersection1 = new roadIntersection(mapX1, mapZ1);
@@ -66,10 +64,8 @@ CityTour.BaseRoadNetwork = function() {
   };
 
   roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1, roadIntersection2;
-
-    roadIntersection1 = network[[mapX1, mapZ1]];
-    roadIntersection2 = network[[mapX2, mapZ2]];
+    var roadIntersection1 = network[[mapX1, mapZ1]];
+    var roadIntersection2 = network[[mapX2, mapZ2]];
 
     return roadIntersection1 && roadIntersection2 &&
            roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
