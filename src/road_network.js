@@ -105,24 +105,12 @@ CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, m
   };
 
   var branchFromIntersection = function(mapX, mapZ) {
-    var targetMapX, targetMapZ;
     var roadIntersection = baseRoadNetwork.intersectionAt(mapX, mapZ);
 
-    targetMapX = mapX - 1;
-    targetMapZ = mapZ;
-    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
-
-    targetMapX = mapX;
-    targetMapZ = mapZ - 1;
-    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
-
-    targetMapX = mapX + 1;
-    targetMapZ = mapZ;
-    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
-
-    targetMapX = mapX;
-    targetMapZ = mapZ + 1;
-    connectIntersections(roadIntersection, mapX, mapZ, targetMapX, targetMapZ);
+    connectIntersections(roadIntersection, mapX, mapZ, mapX - 1, mapZ);
+    connectIntersections(roadIntersection, mapX, mapZ, mapX, mapZ - 1);
+    connectIntersections(roadIntersection, mapX, mapZ, mapX + 1, mapZ);
+    connectIntersections(roadIntersection, mapX, mapZ, mapX, mapZ + 1);
   };
 
   var isTerrainTooSteep = function(mapX, mapZ, targetMapX, targetMapZ) {
