@@ -26,7 +26,7 @@ CityTour.BaseRoadNetwork = function() {
       }
     };
 
-    roadIntersection.hasPathTo = function(mapX, mapZ) {
+    roadIntersection.hasEdgeTo = function(mapX, mapZ) {
       return indexOfEdge(mapX, mapZ) > -1;
     };
 
@@ -64,7 +64,7 @@ CityTour.BaseRoadNetwork = function() {
     var roadIntersection2 = network[[mapX2, mapZ2]];
 
     return roadIntersection1 && roadIntersection2 &&
-           roadIntersection1.hasPathTo(mapX2, mapZ2) && roadIntersection2.hasPathTo(mapX1, mapZ1);
+           roadIntersection1.hasEdgeTo(mapX2, mapZ2) && roadIntersection2.hasEdgeTo(mapX1, mapZ1);
   };
 
   return roadNetwork;
