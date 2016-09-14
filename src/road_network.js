@@ -26,20 +26,8 @@ CityTour.BaseRoadNetwork = function() {
       }
     };
 
-    roadIntersection.removeEdge = function(mapX, mapZ) {
-      var index = indexOfEdge(mapX, mapZ);
-
-      if (index !== -1) {
-        edges.splice(index, 1);
-      }
-    };
-
     roadIntersection.hasPathTo = function(mapX, mapZ) {
       return indexOfEdge(mapX, mapZ) > -1;
-    };
-
-    roadIntersection.isEmpty = function() {
-      return edges.length === 0;
     };
 
     return roadIntersection;
