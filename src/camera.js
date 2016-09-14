@@ -2,7 +2,42 @@
 
 var CityTour = CityTour || {};
 
-CityTour.PathFinder = function(cameraPole) {
+CityTour.PathFinder = function() {
+  var targetMapX = 0.0;
+  var targetMapZ = 0.0;
+  var deltaX = 0.0;
+  var deltaZ = 1.0;
+
+  var determineNextTargetPoint = function() {
+    var oldTargetMapX = targetMapX;
+    var oldTargetMapZ = targetMapZ;
+
+    while (oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) {
+      if (deltaX === 0.0) {
+        targetMapX = Math.floor(Math.random() * CityTour.Config.BLOCK_ROWS) - CityTour.Config.HALF_BLOCK_ROWS;
+      }
+      else if (deltaZ === 0.0) {
+        targetMapZ = Math.floor(Math.random() * CityTour.Config.BLOCK_COLUMNS) - CityTour.Config.HALF_BLOCK_COLUMNS;
+      }
+    }
+
+    deltaX = (deltaX === 0.0) ? 1.0 : 0.0;
+    deltaZ = (deltaZ === 0.0) ? 1.0 : 0.0;
+  };
+
+  var pathFinder = {};
+
+  pathFinder.targetMapX = function() { return targetMapX; };
+  pathFinder.targetMapZ = function() { return targetMapZ; };
+
+  pathFinder.nextTarget = function() {
+    determineNextTargetPoint();
+  };
+
+  return pathFinder;
+};
+
+CityTour.HorizontalAnimationController = function(cameraPole) {
   var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
@@ -18,19 +53,15 @@ CityTour.PathFinder = function(cameraPole) {
   var targetAngle = 0.0;
   var deltaAngle;
 
+  var pathFinder = new CityTour.PathFinder();
+
   var determineNextTargetPoint = function() {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
-
-    while (oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) {
-      if (deltaX === 0.0) {
-        targetMapX = Math.floor(Math.random() * CityTour.Config.BLOCK_ROWS) - CityTour.Config.HALF_BLOCK_ROWS;
-      }
-      else if (deltaZ === 0.0) {
-        targetMapZ = Math.floor(Math.random() * CityTour.Config.BLOCK_COLUMNS) - CityTour.Config.HALF_BLOCK_COLUMNS;
-      }
-    }
-
+    
+    pathFinder.nextTarget();
+    targetMapX = pathFinder.targetMapX();
+    targetMapZ = pathFinder.targetMapZ();
     targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
     targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
@@ -70,30 +101,30 @@ CityTour.PathFinder = function(cameraPole) {
     deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
   };
 
-  var pathFinder = {};
+  var horizontalAnimationController = {};
 
-  pathFinder.targetSceneX = function() { return targetSceneX; };
-  pathFinder.targetMapX = function() { return targetMapX; };
-  pathFinder.targetSceneZ = function() { return targetSceneZ; };
-  pathFinder.targetMapZ = function() { return targetMapZ; };
-  pathFinder.deltaX  = function() { return deltaX; };
-  pathFinder.deltaZ  = function() { return deltaZ; };
-  pathFinder.targetAngle = function() { return targetAngle; };
-  pathFinder.deltaAngle = function() { return deltaAngle; };
+  horizontalAnimationController.targetSceneX = function() { return targetSceneX; };
+  horizontalAnimationController.targetMapX = function() { return targetMapX; };
+  horizontalAnimationController.targetSceneZ = function() { return targetSceneZ; };
+  horizontalAnimationController.targetMapZ = function() { return targetMapZ; };
+  horizontalAnimationController.deltaX  = function() { return deltaX; };
+  horizontalAnimationController.deltaZ  = function() { return deltaZ; };
+  horizontalAnimationController.targetAngle = function() { return targetAngle; };
+  horizontalAnimationController.deltaAngle = function() { return deltaAngle; };
 
-  pathFinder.nextTarget = function() {
+  horizontalAnimationController.nextTarget = function() {
     determineNextTargetPoint();
     determineRotationAngle();
   };
 
-  return pathFinder;
+  return horizontalAnimationController;
 };
 
 CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
-  var pathFinder = new CityTour.PathFinder(cameraPole);
+  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole);
 
   var init = function() {
     var START_X = 0;
@@ -112,12 +143,12 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     cameraPole.position.y = START_Y;
     cameraPole.position.z = startZ * CityTour.Config.BLOCK_AND_STREET_DEPTH;
 
-    var framesUntilCityEdge = Math.abs(distanceToCityEdge / pathFinder.deltaZ());
+    var framesUntilCityEdge = Math.abs(distanceToCityEdge / horizontalAnimationController.deltaZ());
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     var vertical = new CityTour.verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
-    var forward = new CityTour.forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ());
+    var forward = new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ());
     var debugBirdseye = new CityTour.debugBirdsEyeAnimation(cameraPole, camera);
     animators = [vertical, forward];
     //animators = [debugBirdseye];
@@ -136,11 +167,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 
         if (animator.finished === true) {
           if (animator instanceof CityTour.forwardAnimation) {
-            pathFinder.nextTarget();
-            newAnimators.push(new CityTour.rotationAnimation(cameraPole, pathFinder.targetAngle(), pathFinder.deltaAngle()));
+            horizontalAnimationController.nextTarget();
+            newAnimators.push(new CityTour.rotationAnimation(cameraPole, horizontalAnimationController.targetAngle(), horizontalAnimationController.deltaAngle()));
           }
           else if (animator instanceof CityTour.rotationAnimation) {
-            newAnimators.push(new CityTour.forwardAnimation(cameraPole, pathFinder.targetSceneX(), pathFinder.deltaX(), pathFinder.targetSceneZ(), pathFinder.deltaZ()));
+            newAnimators.push(new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ()));
           }
         }
         else {
