@@ -99,8 +99,6 @@ CityTour.AdditiveRoadNetwork = function(terrain, minColumn, maxColumn, minRow, m
   var baseRoadNetwork = new CityTour.BaseRoadNetwork();
 
   var init = function() {
-    var roadIntersection = new CityTour.RoadIntersection(0, 0);
-    baseRoadNetwork.setIntersectionAt(0, 0, roadIntersection);
     branchFromIntersection(0, 0);
   };
 
