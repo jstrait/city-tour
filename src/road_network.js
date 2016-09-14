@@ -101,6 +101,12 @@ CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
     return Math.abs(angle) > MAX_STEEPNESS;
   };
 
+  var shouldConnectIntersections = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var probabilityOfConnection = calculateBlockProbabilityOfBranching(mapX1, mapZ1);
+
+    return (Math.random() < probabilityOfConnection) && !isTerrainTooSteep(mapX1, mapZ1, mapX2, mapZ2)
+  };
+
   var branchFromIntersection = function(roadNetwork, mapX, mapZ) {
     connectIntersections(roadNetwork, mapX, mapZ, mapX - 1, mapZ);
     connectIntersections(roadNetwork, mapX, mapZ, mapX, mapZ - 1);
@@ -109,10 +115,7 @@ CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
   };
 
   var connectIntersections = function(roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
-    var PROBABILITY = calculateBlockProbabilityOfBranching(mapX, mapZ);
-    var random = Math.random();
-
-    if (random < PROBABILITY && !isTerrainTooSteep(mapX, mapZ, targetMapX, targetMapZ)) {
+    if (shouldConnectIntersections(mapX, mapZ, targetMapX, targetMapZ)) {
       if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
         roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
       }
