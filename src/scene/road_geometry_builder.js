@@ -38,7 +38,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ <= CityTour.Config.HALF_BLOCK_ROWS; mapZ++) { 
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
-        if (roadNetwork.intersectionAt(mapX, mapZ)) {
+        if (roadNetwork.hasIntersection(mapX, mapZ)) {
           // Road intersection
           roadSegmentMesh = reusableIntersectionMesh;
           roadSegmentMesh.position.x = sceneX;
