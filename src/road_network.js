@@ -74,7 +74,7 @@ CityTour.BaseRoadNetwork = function() {
 CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
   var calculateBlockProbabilityOfBranching = function(mapX, mapZ) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
-    
+
     var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
     var distanceFromCenter = Math.sqrt((mapX * mapX) + (mapZ * mapZ));
     var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
