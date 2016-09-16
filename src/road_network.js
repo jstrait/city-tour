@@ -34,25 +34,25 @@ CityTour.RoadNetwork = function() {
   };
 
 
-  var network = [];
+  var intersections = [];
 
   var roadNetwork = {};
 
   roadNetwork.hasIntersection = function(mapX, mapZ) {
-    return network[[mapX, mapZ]] != null;
+    return intersections[[mapX, mapZ]] != null;
   };
 
   roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1 = network[[mapX1, mapZ1]];
-    var roadIntersection2 = network[[mapX2, mapZ2]];
+    var roadIntersection1 = intersections[[mapX1, mapZ1]];
+    var roadIntersection2 = intersections[[mapX2, mapZ2]];
 
     if (!roadIntersection1) {
       roadIntersection1 = new roadIntersection(mapX1, mapZ1);
-      network[[mapX1, mapZ2]] = roadIntersection1;
+      intersections[[mapX1, mapZ2]] = roadIntersection1;
     }
     if (!roadIntersection2) {
       roadIntersection2 = new roadIntersection(mapX2, mapZ2);
-      network[[mapX2, mapZ2]] = roadIntersection2;
+      intersections[[mapX2, mapZ2]] = roadIntersection2;
     }
 
     roadIntersection1.addEdge(mapX2, mapZ2);
@@ -60,8 +60,8 @@ CityTour.RoadNetwork = function() {
   };
 
   roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1 = network[[mapX1, mapZ1]];
-    var roadIntersection2 = network[[mapX2, mapZ2]];
+    var roadIntersection1 = intersections[[mapX1, mapZ1]];
+    var roadIntersection2 = intersections[[mapX2, mapZ2]];
 
     return roadIntersection1 && roadIntersection2 &&
            roadIntersection1.hasEdgeTo(mapX2, mapZ2) && roadIntersection2.hasEdgeTo(mapX1, mapZ1);
