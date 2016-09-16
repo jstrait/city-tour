@@ -28,10 +28,20 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
     targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
     targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
-    deltaX = (deltaX === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
-    deltaZ = (deltaZ === 0.0) ? FORWARD_MOTION_DELTA : 0.0;
-    deltaX *= (oldTargetMapX > targetMapX) ? -1 : 1;
-    deltaZ *= (oldTargetMapZ > targetMapZ) ? -1 : 1;
+    deltaX = 0.0;
+    deltaZ = 0.0;
+    if (oldTargetMapX > targetMapX) {
+      deltaX = -FORWARD_MOTION_DELTA;
+    }
+    else if (oldTargetMapX < targetMapX) {
+      deltaX = FORWARD_MOTION_DELTA;
+    }
+    else if (oldTargetMapZ > targetMapZ) {
+      deltaZ = -FORWARD_MOTION_DELTA;
+    }
+    else if (oldTargetMapZ < targetMapZ) {
+      deltaZ = FORWARD_MOTION_DELTA;
+    }
   };
 
   var determineRotationAngle = function() {
