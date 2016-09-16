@@ -61,8 +61,8 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     var oldTargetMapZ = targetMapZ;
 
     var newTargetCoordinates = chooseNewTarget();
-    var newTargetMapX = newTargetCoordinates[0];
-    var newTargetMapZ = newTargetCoordinates[1];
+    targetMapX = newTargetCoordinates[0];
+    targetMapZ = newTargetCoordinates[1];
 
     var Node = function(x, z) {
       return {
@@ -94,7 +94,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     currentNode.distance = 0;
     var iterations = 0;
 
-    while((x != newTargetMapX || z != newTargetMapZ) && iterations < 2000) {
+    while((x != targetMapX || z != targetMapZ) && iterations < 2000) {
       currentNode = nodes[x][z];
 
       if (roadNetwork.hasEdgeBetween(x, z, x, z + 1)) {
