@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.HorizontalAnimationController = function(cameraPole, roadNetwork) {
+CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
   var FORWARD_MOTION_DELTA = 1;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
@@ -17,8 +17,6 @@ CityTour.HorizontalAnimationController = function(cameraPole, roadNetwork) {
   var deltaZ = -FORWARD_MOTION_DELTA;
   var targetAngle = 0.0;
   var deltaAngle;
-
-  var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
 
   var determineNextTargetPoint = function() {
     var oldTargetMapX = targetMapX;
@@ -89,7 +87,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
-  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole, roadNetwork);
+  var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
+  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole, pathFinder);
 
   var init = function() {
     var START_X = 0;
