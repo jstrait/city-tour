@@ -38,11 +38,15 @@ CityTour.PathFinder = function() {
 };
 
 CityTour.DijktrasPathFinder = function(roadNetwork) {
-  var subTargetMapX = 0;
-  var subTargetMapZ = 0;
-
-  var targetMapX = 0;
-  var targetMapZ = 0;
+  var Node = function(x, z) {
+    return {
+      isVisited: false,
+      distance:  Number.POSITIVE_INFINITY,
+      previous:  null,
+      x:         x,
+      z:         z,
+    };
+  };
 
   var chooseNewTarget = function() {
     var newTargetMapX = Number.POSITIVE_INFINITY;
@@ -56,6 +60,24 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     return [newTargetMapX, newTargetMapZ];
   };
 
+  var extractShortestPath = function(nodes, startX, startZ, endX, endZ) {
+    var currentNode, previous;
+    var path = [[endX, endZ]];
+    currentNode = nodes[endX][endZ];
+
+    while (currentNode.previous) {
+      previous = currentNode.previous;
+
+      if (previous[0] != startX || previous[1] != startZ) {
+        path.unshift([previous[0], previous[1]]);
+      }
+
+      currentNode = nodes[previous[0]][previous[1]];
+    }
+
+    return path;
+  };
+
   var generatePath = function() {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
@@ -63,16 +85,6 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     var newTargetCoordinates = chooseNewTarget();
     targetMapX = newTargetCoordinates[0];
     targetMapZ = newTargetCoordinates[1];
-
-    var Node = function(x, z) {
-      return {
-        isVisited: false,
-        distance:  Number.POSITIVE_INFINITY,
-        previous:  null,
-        x:         x,
-        z:         z,
-      };
-    };
 
     var nodes = [];
     var unvisitedSet = new Set();
@@ -149,21 +161,15 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
       iterations += 1;
     }
 
-    var path = [[x, z]];
-    currentNode = nodes[x][z];
-    var previous;
-    while (currentNode.previous) {
-      previous = currentNode.previous;
-
-      if (previous[0] != oldTargetMapX || previous[1] != oldTargetMapZ) {
-        path.unshift([previous[0], previous[1]]);
-      }
-
-      currentNode = nodes[previous[0]][previous[1]];
-    }
+    var path = extractShortestPath(nodes, oldTargetMapX, oldTargetMapZ, targetMapX, targetMapZ);
 
     return path;
   };
+
+  var targetMapX = 0;
+  var targetMapZ = 0;
+  var subTargetMapX = 0;
+  var subTargetMapZ = 0;
 
   var path = [];
 
