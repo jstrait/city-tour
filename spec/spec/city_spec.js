@@ -1,6 +1,6 @@
 "use strict";
 
-describe("CityTour.CityTour.Coordinates", function() {
+describe("CityTour.Coordinates", function() {
   describe(".mapXToSceneX", function() {
     it("returns the correct value for 0", function() {
       expect(CityTour.Coordinates.mapXToSceneX(0)).toBe(0);
