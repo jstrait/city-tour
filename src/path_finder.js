@@ -60,18 +60,15 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     return [newTargetMapX, newTargetMapZ];
   };
 
-  var extractShortestPath = function(nodes, startX, startZ, endX, endZ) {
-    var currentNode, previous;
-    var path = [[endX, endZ]];
-    currentNode = nodes[endX][endZ];
+  var extractShortestPath = function(nodes, endX, endZ) {
+    var path = [];
+    var currentNode = nodes[endX][endZ];
+    var previous;
 
     while (currentNode.previous) {
+      path.unshift([currentNode.x, currentNode.z]);
+
       previous = currentNode.previous;
-
-      if (previous[0] != startX || previous[1] != startZ) {
-        path.unshift([previous[0], previous[1]]);
-      }
-
       currentNode = nodes[previous[0]][previous[1]];
     }
 
@@ -161,7 +158,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
       iterations += 1;
     }
 
-    var path = extractShortestPath(nodes, oldTargetMapX, oldTargetMapZ, targetMapX, targetMapZ);
+    var path = extractShortestPath(nodes, targetMapX, targetMapZ);
 
     return path;
   };
