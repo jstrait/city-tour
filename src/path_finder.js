@@ -154,7 +154,10 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     var previous;
     while (currentNode.previous) {
       previous = currentNode.previous;
-      path.unshift([previous[0], previous[1]]);
+
+      if (previous[0] != oldTargetMapX || previous[1] != oldTargetMapZ) {
+        path.unshift([previous[0], previous[1]]);
+      }
       
       currentNode = nodes[previous[0]][previous[1]];
     }
