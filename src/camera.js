@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
-  var FORWARD_MOTION_DELTA = 1;
+  var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
   var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
