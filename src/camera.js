@@ -37,7 +37,152 @@ CityTour.PathFinder = function() {
   return pathFinder;
 };
 
-CityTour.HorizontalAnimationController = function(cameraPole) {
+CityTour.DijktrasPathFinder = function(roadNetwork) {
+  var subTargetMapX = 0;
+  var subTargetMapZ = 0;
+
+  var targetMapX = 0;
+  var targetMapZ = 0;
+
+  var chooseNewTarget = function() {
+    var newTargetMapX = Number.POSITIVE_INFINITY;
+    var newTargetMapZ = Number.POSITIVE_INFINITY;
+
+    while (!roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ)) {
+      newTargetMapX = (Math.round(Math.random() * CityTour.Config.BLOCK_COLUMNS)) - CityTour.Config.HALF_BLOCK_COLUMNS;
+      newTargetMapZ = (Math.round(Math.random() * CityTour.Config.BLOCK_ROWS)) - CityTour.Config.HALF_BLOCK_ROWS;
+    }
+
+    return [newTargetMapX, newTargetMapZ];
+  };
+
+  var generatePath = function() {
+    var oldTargetMapX = targetMapX;
+    var oldTargetMapZ = targetMapZ;
+
+    var newTargetCoordinates = chooseNewTarget();
+    var newTargetMapX = newTargetCoordinates[0];
+    var newTargetMapZ = newTargetCoordinates[1];
+
+    var Node = function(x, z) {
+      return {
+        isVisited: false,
+        distance:  Number.POSITIVE_INFINITY,
+        previous:  null,
+        x:         x,
+        z:         z,
+      };
+    };
+
+    var nodes = [];
+    var unvisitedSet = new Set();
+    var x, z;
+
+    for (x = -CityTour.Config.HALF_BLOCK_COLUMNS; x <= CityTour.Config.HALF_BLOCK_COLUMNS; x++) {
+      nodes[x] = [];
+      for (z = -CityTour.Config.HALF_BLOCK_ROWS; z <= CityTour.Config.HALF_BLOCK_ROWS; z++) {
+        nodes[x][z] = new Node(x, z);
+      }
+    }
+
+    x = oldTargetMapX;
+    z = oldTargetMapZ;
+    var currentNode, adjacentNode;
+    var shortestLength, shortestIndex;
+
+    currentNode = nodes[x][z];
+    currentNode.distance = 0;
+    var iterations = 0;
+
+    while((x != newTargetMapX || z != newTargetMapZ) && iterations < 2000) {
+      currentNode = nodes[x][z];
+
+      if (roadNetwork.hasEdgeBetween(x, z, x, z + 1)) {
+        adjacentNode = nodes[x][z + 1];
+        if (!adjacentNode.isVisited) {
+          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+          adjacentNode.previous = [x, z];
+          unvisitedSet.add(adjacentNode);
+        }
+      }
+
+      if (roadNetwork.hasEdgeBetween(x, z, x + 1, z)) {
+        adjacentNode = nodes[x + 1][z];
+        if (!adjacentNode.isVisited) {
+          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+          adjacentNode.previous = [x, z];
+          unvisitedSet.add(adjacentNode);
+        }
+      }
+
+      if (roadNetwork.hasEdgeBetween(x, z, x, z - 1)) {
+        adjacentNode = nodes[x][z - 1];
+        if (!adjacentNode.isVisited) {
+          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+          adjacentNode.previous = [x, z];
+          unvisitedSet.add(adjacentNode);
+        }
+      }
+
+      if (roadNetwork.hasEdgeBetween(x, z, x - 1, z)) {
+        adjacentNode = nodes[x - 1][z];
+        if (!adjacentNode.isVisited) {
+          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+          adjacentNode.previous = [x, z];
+          unvisitedSet.add(adjacentNode);
+        }
+      }
+
+      currentNode.isVisited = true;
+      unvisitedSet.delete(currentNode);
+
+      shortestLength = Number.POSITIVE_INFINITY;
+      unvisitedSet.forEach(function(n) {
+        if (n.distance < shortestLength) {
+          shortestLength = n.distance;
+          shortestIndex = [n.x, n.z];
+        }
+      });
+
+      x = shortestIndex[0];
+      z = shortestIndex[1];
+      iterations += 1;
+    }
+
+    var path = [[x, z]];
+    currentNode = nodes[x][z];
+    var previous;
+    while (currentNode.previous) {
+      previous = currentNode.previous;
+      path.unshift([previous[0], previous[1]]);
+      
+      currentNode = nodes[previous[0]][previous[1]];
+    }
+
+    return path;
+  };
+
+  var path = [];
+
+  var dijktrasPathFinder = {};
+
+  dijktrasPathFinder.targetMapX = function() { return subTargetMapX; };
+  dijktrasPathFinder.targetMapZ = function() { return subTargetMapZ; };
+
+  dijktrasPathFinder.nextTarget = function() {
+    if (path.length === 0) {
+      path = generatePath();
+    }
+
+    var nextTargetPoint = path.splice(0, 1);
+    subTargetMapX = nextTargetPoint[0][0];
+    subTargetMapZ = nextTargetPoint[0][1];
+  };
+
+  return dijktrasPathFinder;
+};
+
+CityTour.HorizontalAnimationController = function(cameraPole, roadNetwork) {
   var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
@@ -53,7 +198,7 @@ CityTour.HorizontalAnimationController = function(cameraPole) {
   var targetAngle = 0.0;
   var deltaAngle;
 
-  var pathFinder = new CityTour.PathFinder();
+  var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
 
   var determineNextTargetPoint = function() {
     var oldTargetMapX = targetMapX;
@@ -124,7 +269,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
   var animators = [];
 
-  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole);
+  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole, roadNetwork);
 
   var init = function() {
     var START_X = 0;
