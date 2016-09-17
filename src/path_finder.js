@@ -75,6 +75,64 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     return path;
   };
 
+  var evaluateNodeConnections = function(currentNode, nodes, unvisitedSet) {
+    var x = currentNode.x;
+    var z = currentNode.z;
+    var adjacentNode;
+
+    if (roadNetwork.hasEdgeBetween(x, z, x, z + 1)) {
+      adjacentNode = nodes[x][z + 1];
+      if (!adjacentNode.isVisited) {
+        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+        adjacentNode.previous = [x, z];
+        unvisitedSet.add(adjacentNode);
+      }
+    }
+
+    if (roadNetwork.hasEdgeBetween(x, z, x + 1, z)) {
+      adjacentNode = nodes[x + 1][z];
+      if (!adjacentNode.isVisited) {
+        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+        adjacentNode.previous = [x, z];
+        unvisitedSet.add(adjacentNode);
+      }
+    }
+
+    if (roadNetwork.hasEdgeBetween(x, z, x, z - 1)) {
+      adjacentNode = nodes[x][z - 1];
+      if (!adjacentNode.isVisited) {
+        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+        adjacentNode.previous = [x, z];
+        unvisitedSet.add(adjacentNode);
+      }
+    }
+
+    if (roadNetwork.hasEdgeBetween(x, z, x - 1, z)) {
+      adjacentNode = nodes[x - 1][z];
+      if (!adjacentNode.isVisited) {
+        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
+        adjacentNode.previous = [x, z];
+        unvisitedSet.add(adjacentNode);
+      }
+    }
+
+    currentNode.isVisited = true;
+  };
+
+  var unvisitedNodeWithShortestLength = function(unvisitedSet) {
+    var shortestLength = Number.POSITIVE_INFINITY;
+    var shortestIndex = null;
+
+    unvisitedSet.forEach(function(node) {
+      if (node.distance < shortestLength) {
+        shortestLength = node.distance;
+        shortestIndex = [node.x, node.z];
+      }
+    });
+
+    return shortestIndex;
+  };
+
   var generatePath = function() {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
@@ -106,53 +164,10 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     while((x != targetMapX || z != targetMapZ) && iterations < 2000) {
       currentNode = nodes[x][z];
 
-      if (roadNetwork.hasEdgeBetween(x, z, x, z + 1)) {
-        adjacentNode = nodes[x][z + 1];
-        if (!adjacentNode.isVisited) {
-          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-          adjacentNode.previous = [x, z];
-          unvisitedSet.add(adjacentNode);
-        }
-      }
-
-      if (roadNetwork.hasEdgeBetween(x, z, x + 1, z)) {
-        adjacentNode = nodes[x + 1][z];
-        if (!adjacentNode.isVisited) {
-          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-          adjacentNode.previous = [x, z];
-          unvisitedSet.add(adjacentNode);
-        }
-      }
-
-      if (roadNetwork.hasEdgeBetween(x, z, x, z - 1)) {
-        adjacentNode = nodes[x][z - 1];
-        if (!adjacentNode.isVisited) {
-          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-          adjacentNode.previous = [x, z];
-          unvisitedSet.add(adjacentNode);
-        }
-      }
-
-      if (roadNetwork.hasEdgeBetween(x, z, x - 1, z)) {
-        adjacentNode = nodes[x - 1][z];
-        if (!adjacentNode.isVisited) {
-          adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-          adjacentNode.previous = [x, z];
-          unvisitedSet.add(adjacentNode);
-        }
-      }
-
-      currentNode.isVisited = true;
+      evaluateNodeConnections(currentNode, nodes, unvisitedSet); 
       unvisitedSet.delete(currentNode);
 
-      shortestLength = Number.POSITIVE_INFINITY;
-      unvisitedSet.forEach(function(n) {
-        if (n.distance < shortestLength) {
-          shortestLength = n.distance;
-          shortestIndex = [n.x, n.z];
-        }
-      });
-
+      shortestIndex = unvisitedNodeWithShortestLength(unvisitedSet);
       x = shortestIndex[0];
       z = shortestIndex[1];
       iterations += 1;
