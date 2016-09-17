@@ -83,8 +83,11 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     if (roadNetwork.hasEdgeBetween(x, z, x, z + 1)) {
       adjacentNode = nodes[x][z + 1];
       if (!adjacentNode.isVisited) {
-        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-        adjacentNode.previous = [x, z];
+        var candidateDistance = currentNode.distance + 1;
+        if (candidateDistance < adjacentNode.distance) {
+          adjacentNode.distance = candidateDistance;
+          adjacentNode.previous = [x, z];
+        }
         unvisitedSet.add(adjacentNode);
       }
     }
@@ -92,8 +95,11 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     if (roadNetwork.hasEdgeBetween(x, z, x + 1, z)) {
       adjacentNode = nodes[x + 1][z];
       if (!adjacentNode.isVisited) {
-        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-        adjacentNode.previous = [x, z];
+        var candidateDistance = currentNode.distance + 1;
+        if (candidateDistance < adjacentNode.distance) {
+          adjacentNode.distance = candidateDistance;
+          adjacentNode.previous = [x, z];
+        }
         unvisitedSet.add(adjacentNode);
       }
     }
@@ -101,8 +107,11 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     if (roadNetwork.hasEdgeBetween(x, z, x, z - 1)) {
       adjacentNode = nodes[x][z - 1];
       if (!adjacentNode.isVisited) {
-        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-        adjacentNode.previous = [x, z];
+        var candidateDistance = currentNode.distance + 1;
+        if (candidateDistance < adjacentNode.distance) {
+          adjacentNode.distance = candidateDistance;
+          adjacentNode.previous = [x, z];
+        }
         unvisitedSet.add(adjacentNode);
       }
     }
@@ -110,8 +119,11 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     if (roadNetwork.hasEdgeBetween(x, z, x - 1, z)) {
       adjacentNode = nodes[x - 1][z];
       if (!adjacentNode.isVisited) {
-        adjacentNode.distance = Math.min(currentNode.distance + 1, adjacentNode.distance);
-        adjacentNode.previous = [x, z];
+        var candidateDistance = currentNode.distance + 1;
+        if (candidateDistance < adjacentNode.distance) {
+          adjacentNode.distance = candidateDistance;
+          adjacentNode.previous = [x, z];
+        }
         unvisitedSet.add(adjacentNode);
       }
     }
