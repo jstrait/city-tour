@@ -147,8 +147,8 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
 
     x = startX;
     z = startZ;
-    var currentNode, adjacentNode;
-    var shortestLength, shortestIndex;
+    var currentNode;
+    var shortestIndex;
 
     currentNode = nodes[x][z];
     currentNode.distance = 0;
