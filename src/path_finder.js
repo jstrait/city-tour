@@ -78,75 +78,32 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
   var evaluateNodeConnections = function(currentNode, nodes, unvisitedSet) {
     var x = currentNode.x;
     var z = currentNode.z;
-    var adjacentNode, candidateDistance;
 
-    if (roadNetwork.hasEdgeBetween(x, z, x, z + 1)) {
-      adjacentNode = nodes[x][z + 1];
+    var evaluateAdjancentNode = function(adjacentX, adjacentZ) {
+      var adjacentNode, candidateDistance;
+    
+      if (roadNetwork.hasEdgeBetween(x, z, adjacentX, adjacentZ)) {
+        adjacentNode = nodes[adjacentX][adjacentZ];
 
-      if (!adjacentNode) {
-        adjacentNode = new Node(x, z + 1);
-        nodes[x][z + 1] = adjacentNode;
-        unvisitedSet.add(adjacentNode);
-      }
-      if (!adjacentNode.isVisited) {
-        candidateDistance = currentNode.distance + 1;
-        if (candidateDistance < adjacentNode.distance) {
-          adjacentNode.distance = candidateDistance;
-          adjacentNode.previous = [x, z];
+        if (!adjacentNode) {
+          adjacentNode = new Node(adjacentX, adjacentZ);
+          nodes[adjacentX][adjacentZ] = adjacentNode;
+          unvisitedSet.add(adjacentNode);
+        }
+        if (!adjacentNode.isVisited) {
+          candidateDistance = currentNode.distance + 1;
+          if (candidateDistance < adjacentNode.distance) {
+            adjacentNode.distance = candidateDistance;
+            adjacentNode.previous = [x, z];
+          }
         }
       }
-    }
+    };
 
-    if (roadNetwork.hasEdgeBetween(x, z, x + 1, z)) {
-      adjacentNode = nodes[x + 1][z];
-
-      if (!adjacentNode) {
-        adjacentNode = new Node(x + 1, z);
-        nodes[x + 1][z] = adjacentNode;
-        unvisitedSet.add(adjacentNode);
-      }
-      if (!adjacentNode.isVisited) {
-        candidateDistance = currentNode.distance + 1;
-        if (candidateDistance < adjacentNode.distance) {
-          adjacentNode.distance = candidateDistance;
-          adjacentNode.previous = [x, z];
-        }
-      }
-    }
-
-    if (roadNetwork.hasEdgeBetween(x, z, x, z - 1)) {
-      adjacentNode = nodes[x][z - 1];
-
-      if (!adjacentNode) {
-        adjacentNode = new Node(x, z - 1);
-        nodes[x][z - 1] = adjacentNode;
-        unvisitedSet.add(adjacentNode);
-      }
-      if (!adjacentNode.isVisited) {
-        candidateDistance = currentNode.distance + 1;
-        if (candidateDistance < adjacentNode.distance) {
-          adjacentNode.distance = candidateDistance;
-          adjacentNode.previous = [x, z];
-        }
-      }
-    }
-
-    if (roadNetwork.hasEdgeBetween(x, z, x - 1, z)) {
-      adjacentNode = nodes[x - 1][z];
-
-      if (!adjacentNode) {
-        adjacentNode = new Node(x - 1, z);
-        nodes[x - 1][z] = adjacentNode;
-        unvisitedSet.add(adjacentNode);
-      }
-      if (!adjacentNode.isVisited) {
-        candidateDistance = currentNode.distance + 1;
-        if (candidateDistance < adjacentNode.distance) {
-          adjacentNode.distance = candidateDistance;
-          adjacentNode.previous = [x, z];
-        }
-      }
-    }
+    evaluateAdjancentNode(x - 1, z);
+    evaluateAdjancentNode(x + 1, z);
+    evaluateAdjancentNode(x, z - 1);
+    evaluateAdjancentNode(x, z + 1);
 
     currentNode.isVisited = true;
   };
