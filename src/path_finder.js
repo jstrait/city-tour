@@ -122,6 +122,34 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     return shortestLengthNode;
   };
 
+  var simplifyPath = function(path) {
+    var xRun = 0;
+    var zRun = 0;
+    var previousX = null;
+    var previousZ = null;
+
+    var simplifiedPath = [];
+
+    var i, x, z;
+    for (i = 0; i < path.length; i++) {
+      x = path[i][0];
+      z = path[i][1];
+      xRun = (x === previousX) ? xRun + 1 : 0;
+      zRun = (z === previousZ) ? zRun + 1 : 0;
+
+      if (((xRun === 1 && zRun === 0) || (xRun === 0 && zRun === 1)) && (i > 1)) {
+        simplifiedPath.push([previousX, previousZ]);
+      }
+
+      previousX = x;
+      previousZ = z;
+    };
+
+    simplifiedPath.push([x, z]);
+
+    return simplifiedPath;
+  };
+
   var findShortestPath = function(startX, startZ, endX, endZ) {
     var nodes = [];
     var unvisitedSet = new Set();
@@ -147,6 +175,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     }
 
     var path = extractShortestPath(nodes, endX, endZ);
+    path = simplifyPath(path);
 
     return path;
   };
