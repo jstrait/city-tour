@@ -121,16 +121,16 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
 
   var unvisitedNodeWithShortestLength = function(unvisitedSet) {
     var shortestLength = Number.POSITIVE_INFINITY;
-    var shortestIndex = null;
+    var shortestLengthNode = null;
 
     unvisitedSet.forEach(function(node) {
       if (node.distance < shortestLength) {
         shortestLength = node.distance;
-        shortestIndex = [node.x, node.z];
+        shortestLengthNode = node;
       }
     });
 
-    return shortestIndex;
+    return shortestLengthNode;
   };
 
   var findShortestPath = function(startX, startZ, endX, endZ) {
@@ -145,24 +145,17 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
       }
     }
 
-    x = startX;
-    z = startZ;
     var currentNode;
-    var shortestIndex;
 
-    currentNode = nodes[x][z];
+    currentNode = nodes[startX][startZ];
     currentNode.distance = 0;
     var iterations = 0;
 
-    while((x != endX || z != endZ) && iterations < 2000) {
-      currentNode = nodes[x][z];
-
+    while((currentNode.x != endX || currentNode.z != endZ) && iterations < 2000) {
       evaluateNodeConnections(currentNode, nodes, unvisitedSet); 
       unvisitedSet.delete(currentNode);
 
-      shortestIndex = unvisitedNodeWithShortestLength(unvisitedSet);
-      x = shortestIndex[0];
-      z = shortestIndex[1];
+      currentNode = unvisitedNodeWithShortestLength(unvisitedSet);
       iterations += 1;
     }
 
