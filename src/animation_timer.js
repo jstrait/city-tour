@@ -30,13 +30,13 @@ CityTour.AnimationTimer = function() {
 
     animationTimer.onAnimate(frameCount);
 
-    requestAnimFrame(tick);
+    requestAnimationFrame(tick);
   };
 
   var start = function() {
     paused = false;
     previousFrameTimestamp = undefined;
-    requestAnimFrame(tick);
+    requestAnimationFrame(tick);
   };
 
   var pause = function() {
