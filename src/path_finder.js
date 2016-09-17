@@ -133,14 +133,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     return shortestIndex;
   };
 
-  var generatePath = function() {
-    var oldTargetMapX = targetMapX;
-    var oldTargetMapZ = targetMapZ;
-
-    var newTargetCoordinates = chooseNewTarget();
-    targetMapX = newTargetCoordinates[0];
-    targetMapZ = newTargetCoordinates[1];
-
+  var findShortestPath = function(startX, startZ, endX, endZ) {
     var nodes = [];
     var unvisitedSet = new Set();
     var x, z;
@@ -152,8 +145,8 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
       }
     }
 
-    x = oldTargetMapX;
-    z = oldTargetMapZ;
+    x = startX;
+    z = startZ;
     var currentNode, adjacentNode;
     var shortestLength, shortestIndex;
 
@@ -161,7 +154,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     currentNode.distance = 0;
     var iterations = 0;
 
-    while((x != targetMapX || z != targetMapZ) && iterations < 2000) {
+    while((x != endX || z != endZ) && iterations < 2000) {
       currentNode = nodes[x][z];
 
       evaluateNodeConnections(currentNode, nodes, unvisitedSet); 
@@ -173,7 +166,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
       iterations += 1;
     }
 
-    var path = extractShortestPath(nodes, targetMapX, targetMapZ);
+    var path = extractShortestPath(nodes, endX, endZ);
 
     return path;
   };
@@ -192,7 +185,11 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
 
   dijktrasPathFinder.nextTarget = function() {
     if (path.length === 0) {
-      path = generatePath();
+      var newTargetCoordinates = chooseNewTarget();
+      path = findShortestPath(targetMapX, targetMapZ, newTargetCoordinates[0], newTargetCoordinates[1]);
+
+      targetMapX = newTargetCoordinates[0];
+      targetMapZ = newTargetCoordinates[1];
     }
 
     var nextTargetPoint = path.splice(0, 1);
