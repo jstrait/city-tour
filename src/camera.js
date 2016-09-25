@@ -2,6 +2,79 @@
 
 var CityTour = CityTour || {};
 
+CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
+  var animationManager = {};
+  var animators = [];
+
+  var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
+  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole, pathFinder);
+
+  var init = function() {
+    var START_X = 0;
+    var START_Y = 40;
+    var SWOOP_DISTANCE_IN_BLOCKS = 20;
+
+    var furthestOutIntersection = CityTour.Config.HALF_BLOCK_ROWS;
+    while (!roadNetwork.hasIntersection(0, furthestOutIntersection)) {
+      furthestOutIntersection -= 1;
+    }
+
+    var startZ = furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS;
+    var distanceToCityEdge = SWOOP_DISTANCE_IN_BLOCKS * CityTour.Config.BLOCK_AND_STREET_DEPTH;
+
+    cameraPole.position.x = START_X;
+    cameraPole.position.y = START_Y;
+    cameraPole.position.z = startZ * CityTour.Config.BLOCK_AND_STREET_DEPTH;
+
+    var framesUntilCityEdge = Math.abs(distanceToCityEdge / horizontalAnimationController.deltaZ());
+    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
+    var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
+
+    var vertical = new CityTour.verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
+    var forward = new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ());
+    var debugBirdseye = new CityTour.debugBirdsEyeAnimation(cameraPole, camera);
+    animators = [vertical, forward];
+    //animators = [debugBirdseye];
+  };
+
+  animationManager.animate = function(frameCount) {
+    if (animators.length === 0) {
+      init();
+    }
+
+    for (var i = 0; i < frameCount; i++) {
+      var newAnimators = [];
+
+      animators.forEach(function (animator) {
+        animator.animate();
+
+        if (animator.finished === true) {
+          if (animator instanceof CityTour.forwardAnimation) {
+            horizontalAnimationController.nextTarget();
+            newAnimators.push(new CityTour.rotationAnimation(cameraPole, horizontalAnimationController.targetAngle(), horizontalAnimationController.deltaAngle()));
+          }
+          else if (animator instanceof CityTour.rotationAnimation) {
+            newAnimators.push(new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ()));
+          }
+        }
+        else {
+          newAnimators.push(animator);
+        }
+      });
+      animators = newAnimators;
+    }
+
+    var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
+    var mapZ = CityTour.Coordinates.sceneZToMapZ(cameraPole.position.z);
+
+    var y = terrain.heightAtCoordinates(mapX, mapZ);
+    cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
+  };
+
+  return animationManager;
+};
+
+
 CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
   var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
@@ -120,78 +193,6 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
   };
 
   return horizontalAnimationController;
-};
-
-CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
-  var animationManager = {};
-  var animators = [];
-
-  var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
-  var horizontalAnimationController  = new CityTour.HorizontalAnimationController(cameraPole, pathFinder);
-
-  var init = function() {
-    var START_X = 0;
-    var START_Y = 40;
-    var SWOOP_DISTANCE_IN_BLOCKS = 20;
-
-    var furthestOutIntersection = CityTour.Config.HALF_BLOCK_ROWS;
-    while (!roadNetwork.hasIntersection(0, furthestOutIntersection)) {
-      furthestOutIntersection -= 1;
-    }
-
-    var startZ = furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS;
-    var distanceToCityEdge = SWOOP_DISTANCE_IN_BLOCKS * CityTour.Config.BLOCK_AND_STREET_DEPTH;
-
-    cameraPole.position.x = START_X;
-    cameraPole.position.y = START_Y;
-    cameraPole.position.z = startZ * CityTour.Config.BLOCK_AND_STREET_DEPTH;
-
-    var framesUntilCityEdge = Math.abs(distanceToCityEdge / horizontalAnimationController.deltaZ());
-    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
-    var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
-
-    var vertical = new CityTour.verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
-    var forward = new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ());
-    var debugBirdseye = new CityTour.debugBirdsEyeAnimation(cameraPole, camera);
-    animators = [vertical, forward];
-    //animators = [debugBirdseye];
-  };
-
-  animationManager.animate = function(frameCount) {
-    if (animators.length === 0) {
-      init();
-    }
-
-    for (var i = 0; i < frameCount; i++) {
-      var newAnimators = [];
-
-      animators.forEach(function (animator) {
-        animator.animate();
-
-        if (animator.finished === true) {
-          if (animator instanceof CityTour.forwardAnimation) {
-            horizontalAnimationController.nextTarget();
-            newAnimators.push(new CityTour.rotationAnimation(cameraPole, horizontalAnimationController.targetAngle(), horizontalAnimationController.deltaAngle()));
-          }
-          else if (animator instanceof CityTour.rotationAnimation) {
-            newAnimators.push(new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ()));
-          }
-        }
-        else {
-          newAnimators.push(animator);
-        }
-      });
-      animators = newAnimators;
-    }
-
-    var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
-    var mapZ = CityTour.Coordinates.sceneZToMapZ(cameraPole.position.z);
-
-    var y = terrain.heightAtCoordinates(mapX, mapZ);
-    cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
-  };
-
-  return animationManager;
 };
 
 
