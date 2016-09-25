@@ -31,9 +31,9 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     var vertical = new CityTour.VerticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
-    var forward = new CityTour.ForwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ());
+    var horizontal = horizontalAnimationController;
     var debugBirdseye = new CityTour.DebugBirdsEyeAnimation(cameraPole, camera);
-    animators = [vertical, forward];
+    animators = [vertical, horizontal];
     //animators = [debugBirdseye];
   };
 
@@ -43,25 +43,9 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     }
 
     for (var i = 0; i < frameCount; i++) {
-      var newAnimators = [];
-
       animators.forEach(function (animator) {
         animator.animate();
-
-        if (animator.finished() === true) {
-          if (animator instanceof CityTour.ForwardAnimation) {
-            horizontalAnimationController.nextTarget();
-            newAnimators.push(new CityTour.RotationAnimation(cameraPole, horizontalAnimationController.targetAngle(), horizontalAnimationController.deltaAngle()));
-          }
-          else if (animator instanceof CityTour.RotationAnimation) {
-            newAnimators.push(new CityTour.ForwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ()));
-          }
-        }
-        else {
-          newAnimators.push(animator);
-        }
       });
-      animators = newAnimators;
     }
 
     var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
@@ -76,7 +60,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 
 
 CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
-  var FORWARD_MOTION_DELTA = 0.2;
+  var FORWARD_MOTION_DELTA = 2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
   var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
@@ -192,6 +176,29 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
     //determineRotationAngle();
   };
 
+  var forwardAnimator = new CityTour.ForwardAnimation(cameraPole, targetSceneX, deltaX, targetSceneZ, deltaZ);
+  var rotationAnimator = null;
+
+  horizontalAnimationController.animate = function() {
+    if (forwardAnimator != null) {
+      forwardAnimator.animate();
+    
+      if (forwardAnimator.finished()) {
+        forwardAnimator = null;
+        horizontalAnimationController.nextTarget();
+        rotationAnimator = new CityTour.RotationAnimation(cameraPole, targetAngle, deltaAngle);
+      }
+    }
+    else if (rotationAnimator != null) {
+      rotationAnimator.animate();
+
+      if (rotationAnimator.finished()) {
+        rotationAnimator = null;
+        forwardAnimator = new CityTour.ForwardAnimation(cameraPole, targetSceneX, deltaX, targetSceneZ, deltaZ);
+      }
+    }
+  };
+
   return horizontalAnimationController;
 };
 
@@ -260,6 +267,7 @@ CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
 
   var verticalAnimation = {};
   verticalAnimation.animate = animate;
+  verticalAnimation.finished = function() { return finished; };
 
   return verticalAnimation;
 };
@@ -290,7 +298,7 @@ CityTour.ForwardAnimation = function(cameraPole, targetX, deltaX, targetZ, delta
 
 
 CityTour.RotationAnimation = function(cameraPole, targetAngle, deltaAngle) {
-  finished = false;
+  var finished = false;
 
   var animate = function() {
     cameraPole.rotation.y += deltaAngle;
@@ -324,6 +332,7 @@ CityTour.DebugBirdsEyeAnimation = function(camera) {
     camera.position.z = 0;
     camera.rotation.x = -(Math.PI / 2);
   };
+  debugBirdsEyeAnimation.finished = function() { return finished; };
 
   return debugBirdsEyeAnimation;
 };
