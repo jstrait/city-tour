@@ -30,9 +30,9 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var vertical = new CityTour.verticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
-    var forward = new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ());
-    var debugBirdseye = new CityTour.debugBirdsEyeAnimation(cameraPole, camera);
+    var vertical = new CityTour.VerticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
+    var forward = new CityTour.ForwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ());
+    var debugBirdseye = new CityTour.DebugBirdsEyeAnimation(cameraPole, camera);
     animators = [vertical, forward];
     //animators = [debugBirdseye];
   };
@@ -48,13 +48,13 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       animators.forEach(function (animator) {
         animator.animate();
 
-        if (animator.finished === true) {
-          if (animator instanceof CityTour.forwardAnimation) {
+        if (animator.finished() === true) {
+          if (animator instanceof CityTour.ForwardAnimation) {
             horizontalAnimationController.nextTarget();
-            newAnimators.push(new CityTour.rotationAnimation(cameraPole, horizontalAnimationController.targetAngle(), horizontalAnimationController.deltaAngle()));
+            newAnimators.push(new CityTour.RotationAnimation(cameraPole, horizontalAnimationController.targetAngle(), horizontalAnimationController.deltaAngle()));
           }
-          else if (animator instanceof CityTour.rotationAnimation) {
-            newAnimators.push(new CityTour.forwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ()));
+          else if (animator instanceof CityTour.RotationAnimation) {
+            newAnimators.push(new CityTour.ForwardAnimation(cameraPole, horizontalAnimationController.targetSceneX(), horizontalAnimationController.deltaX(), horizontalAnimationController.targetSceneZ(), horizontalAnimationController.deltaZ()));
           }
         }
         else {
@@ -196,20 +196,14 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
 };
 
 
-CityTour.verticalAnimation = function(cameraPole, camera, targetY, yDelta) {
-  this.cameraPole = cameraPole;
-  this.camera = camera;
-  this.targetY = targetY;
-  this.yDelta = yDelta;
-  this.targetAngle = 0.0;
-  this.angleDelta = 0.0155140377955;
-  this.framesInCurrentMode = 0;
-  this.framesUntilTarget = 1500;
-  this.mode = 'initial_swoop';
-  this.finished = false;
-}
+CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
+  var targetAngle = 0.0;
+  var angleDelta = 0.0155140377955;
+  var framesInCurrentMode = 0;
+  var framesUntilTarget = 1500;
+  var mode = 'initial_swoop';
+  var finished = false;
 
-CityTour.verticalAnimation.prototype.animate = function() {
   var step = function(current, target, delta) {
     if (current === target) {
       return target;
@@ -234,86 +228,102 @@ CityTour.verticalAnimation.prototype.animate = function() {
     }
   };
 
-  this.framesInCurrentMode += 1;
+  var animate = function() {
+    framesInCurrentMode += 1;
 
-  this.cameraPole.position.y = step(this.cameraPole.position.y, this.targetY, this.yDelta);
-  this.camera.rotation.x = step(this.camera.rotation.x, this.targetAngle, this.angleDelta);
+    cameraPole.position.y = step(cameraPole.position.y, targetY, yDelta);
+    camera.rotation.x = step(camera.rotation.x, targetAngle, angleDelta);
 
-  if (this.framesInCurrentMode >= this.framesUntilTarget) {
-    if (this.mode === 'driving') {
-      this.mode = 'birdseye';
-      this.targetY = 150;
-      this.yDelta = 2;
-      this.targetAngle = -(Math.PI / 3);
-    }
-    else if (this.mode === 'hovering' || this.mode === 'initial_swoop') {
-      this.mode = 'driving';
-      this.targetY = -100000;
-      this.yDelta = 0.05;
-      this.targetAngle = 0.0;
-    }
-    else if (this.mode === 'birdseye') {
-      this.mode = 'hovering';
-      this.targetY = 15;
-      this.yDelta = 2;
-      this.targetAngle = 0.0;
-    }
+    if (framesInCurrentMode >= framesUntilTarget) {
+      if (mode === 'driving') {
+        mode = 'birdseye';
+        targetY = 150;
+        yDelta = 2;
+        targetAngle = -(Math.PI / 3);
+      }
+      else if (mode === 'hovering' || mode === 'initial_swoop') {
+        mode = 'driving';
+        targetY = -100000;
+        yDelta = 0.05;
+        targetAngle = 0.0;
+      }
+      else if (mode === 'birdseye') {
+        mode = 'hovering';
+        targetY = 15;
+        yDelta = 2;
+        targetAngle = 0.0;
+      }
 
-    this.framesInCurrentMode = 0;
-  }
+      framesInCurrentMode = 0;
+    }
+  };
+
+  var verticalAnimation = {};
+  verticalAnimation.animate = animate;
+
+  return verticalAnimation;
 };
 
 
-CityTour.forwardAnimation = function(cameraPole, targetX, deltaX, targetZ, deltaZ) {
-  this.cameraPole = cameraPole;
-  this.targetX = targetX;
-  this.deltaX = deltaX;
-  this.targetZ = targetZ;
-  this.deltaZ = deltaZ;
-  this.finished = false;
-}
+CityTour.ForwardAnimation = function(cameraPole, targetX, deltaX, targetZ, deltaZ) {
+  var finished = false;
 
-CityTour.forwardAnimation.prototype.animate = function() {
-  this.cameraPole.position.x += this.deltaX;
-  this.cameraPole.position.z += this.deltaZ;
+  var animate = function() {
+    cameraPole.position.x += deltaX;
+    cameraPole.position.z += deltaZ;
 
-  if ((this.deltaX < 0 && this.cameraPole.position.x < this.targetX) || (this.deltaX > 0 && this.cameraPole.position.x > this.targetX) ||
-      (this.deltaZ < 0 && this.cameraPole.position.z < this.targetZ) || (this.deltaZ > 0 && this.cameraPole.position.z > this.targetZ)) {
-    this.cameraPole.position.x = this.targetX;
-    this.cameraPole.position.z = this.targetZ;
+    if ((deltaX < 0 && cameraPole.position.x < targetX) || (deltaX > 0 && cameraPole.position.x > targetX) ||
+        (deltaZ < 0 && cameraPole.position.z < targetZ) || (deltaZ > 0 && cameraPole.position.z > targetZ)) {
+      cameraPole.position.x = targetX;
+      cameraPole.position.z = targetZ;
 
-    this.finished = true;
-  }
-};
-
-CityTour.rotationAnimation = function(cameraPole, targetAngle, deltaAngle) {
-  this.cameraPole = cameraPole;
-  this.targetAngle = targetAngle;
-  this.deltaAngle = deltaAngle;
-  this.finished = false;
-}
-
-CityTour.rotationAnimation.prototype.animate = function() {
-  this.cameraPole.rotation.y += this.deltaAngle;
-  
-  if ((this.deltaAngle < 0 && this.cameraPole.rotation.y <= this.targetAngle) || (this.deltaAngle > 0 && this.cameraPole.rotation.y >= this.targetAngle)) {
-    if (this.targetAngle >= Math.PI * 2 || this.targetAngle <= Math.PI * -2) {
-      this.targetAngle = 0;
+      finished = true;
     }
+  };
 
-    this.cameraPole.rotation.y = this.targetAngle;
-    this.finished = true;
-  }
+  var forwardAnimation = {};
+  forwardAnimation.animate = animate;
+  forwardAnimation.finished = function() { return finished; };
+
+  return forwardAnimation;
 };
 
-CityTour.debugBirdsEyeAnimation = function(camera) {
-  this.camera = camera;
-  this.finished = false;
+
+CityTour.RotationAnimation = function(cameraPole, targetAngle, deltaAngle) {
+  finished = false;
+
+  var animate = function() {
+    cameraPole.rotation.y += deltaAngle;
+    
+    if ((deltaAngle < 0 && cameraPole.rotation.y <= targetAngle) || (deltaAngle > 0 && cameraPole.rotation.y >= targetAngle)) {
+      if (targetAngle >= Math.PI * 2 || targetAngle <= Math.PI * -2) {
+        targetAngle = 0;
+      }
+
+      cameraPole.rotation.y = targetAngle;
+      finished = true;
+    }
+  };
+
+  var rotationAnimation = {};
+  rotationAnimation.animate = animate;
+  rotationAnimation.finished = function() { return finished; };
+
+  return rotationAnimation;
 };
 
-CityTour.debugBirdsEyeAnimation.prototype.animate = function() {
-  this.camera.position.x = 0;
-  this.camera.position.y = 900;
-  this.camera.position.z = 0;
-  this.camera.rotation.x = -(Math.PI / 2);
+
+CityTour.DebugBirdsEyeAnimation = function(camera) {
+  var finished = false;
+
+  var debugBirdsEyeAnimation = {};
+
+  debugBirdsEyeAnimation.animate = function() {
+    camera.position.x = 0;
+    camera.position.y = 900;
+    camera.position.z = 0;
+    camera.rotation.x = -(Math.PI / 2);
+  };
+
+  return debugBirdsEyeAnimation;
 };
