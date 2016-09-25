@@ -60,7 +60,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 
 
 CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
-  var FORWARD_MOTION_DELTA = 2;
+  var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
   var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
@@ -160,18 +160,7 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
     deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
   };
 
-  var horizontalAnimationController = {};
-
-  horizontalAnimationController.targetSceneX = function() { return targetSceneX; };
-  horizontalAnimationController.targetMapX = function() { return targetMapX; };
-  horizontalAnimationController.targetSceneZ = function() { return targetSceneZ; };
-  horizontalAnimationController.targetMapZ = function() { return targetMapZ; };
-  horizontalAnimationController.deltaX  = function() { return deltaX; };
-  horizontalAnimationController.deltaZ  = function() { return deltaZ; };
-  horizontalAnimationController.targetAngle = function() { return targetAngle; };
-  horizontalAnimationController.deltaAngle = function() { return deltaAngle; };
-
-  horizontalAnimationController.nextTarget = function() {
+  var nextTarget = function() {
     determineNextTargetPoint();
     //determineRotationAngle();
   };
@@ -179,13 +168,18 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
   var forwardAnimator = new CityTour.ForwardAnimation(cameraPole, targetSceneX, deltaX, targetSceneZ, deltaZ);
   var rotationAnimator = null;
 
+
+  var horizontalAnimationController = {};
+
+  horizontalAnimationController.deltaZ = function() { return deltaZ; };
+
   horizontalAnimationController.animate = function() {
     if (forwardAnimator != null) {
       forwardAnimator.animate();
     
       if (forwardAnimator.finished()) {
         forwardAnimator = null;
-        horizontalAnimationController.nextTarget();
+        nextTarget();
         rotationAnimator = new CityTour.RotationAnimation(cameraPole, targetAngle, deltaAngle);
       }
     }
