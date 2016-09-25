@@ -26,13 +26,16 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     cameraPole.position.y = START_Y;
     cameraPole.position.z = startZ * CityTour.Config.BLOCK_AND_STREET_DEPTH;
 
-    horizontalAnimationController = new CityTour.HorizontalAnimationController(cameraPole, pathFinder)
+    horizontalAnimationController = new CityTour.HorizontalAnimationController(cameraPole.position.x,
+                                                                               cameraPole.position.z,
+                                                                               cameraPole.rotation.y,
+                                                                               pathFinder)
 
     var framesUntilCityEdge = Math.abs(distanceToCityEdge / horizontalAnimationController.deltaZ());
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection) + 0.5;
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    var vertical = new CityTour.VerticalAnimation(cameraPole, camera, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
+    var vertical = new CityTour.VerticalAnimation(cameraPole.position.y, camera.rotation.x, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
     var horizontal = horizontalAnimationController;
     var debugBirdseye = new CityTour.DebugBirdsEyeAnimation(cameraPole, camera);
     animators = [vertical, horizontal];
@@ -49,6 +52,12 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
         animator.animate();
       });
     }
+
+    cameraPole.position.x = animators[1].xPosition();
+    cameraPole.position.y = animators[0].yPosition();
+    cameraPole.position.z = animators[1].zPosition();
+    cameraPole.rotation.y = animators[1].yRotation();
+    camera.rotation.x = animators[0].xRotation();
 
     var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
     var mapZ = CityTour.Coordinates.sceneZToMapZ(cameraPole.position.z);
@@ -96,12 +105,16 @@ CityTour.ClampedMotionGenerator = function(start, target, delta) {
 };
 
 
-CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
-  var FORWARD_MOTION_DELTA = 2;
+CityTour.HorizontalAnimationController = function(initialXPosition, initialZPosition, initialYRotation, pathFinder) {
+  var FORWARD_MOTION_DELTA = 0.2;
   var ROTATION_DELTA = 0.03;
   var HALF_PI = Math.PI / 2.0;
   var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
   var TWO_PI = Math.PI * 2.0;
+
+  var xPosition = initialXPosition;
+  var zPosition = initialZPosition;
+  var yRotation = initialYRotation;
 
   var targetMapX = 0.0;
   var targetSceneX = 0.0;
@@ -142,39 +155,42 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
 
     // Prevent an extra long turn (i.e. 270deg instead of 90deg)
     if (oldTargetAngle === 0.0 && targetAngle === THREE_PI_OVER_TWO) {
-      cameraPole.rotation.y = TWO_PI;
+      yRotation = TWO_PI;
     }
     else if (oldTargetAngle === THREE_PI_OVER_TWO && targetAngle === 0.0) {
-      cameraPole.rotation.y = -HALF_PI;
+      yRotation = -HALF_PI;
     }
   };
 
 
-  var angleMotionGenerator = new CityTour.ClampedMotionGenerator(0.0, 0.0, ROTATION_DELTA);
-  var xMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.position.x, 0.0, deltaX);
-  var zMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.position.z, 0.0, deltaZ);
+  var angleMotionGenerator = new CityTour.ClampedMotionGenerator(yRotation, 0.0, ROTATION_DELTA);
+  var xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, 0.0, deltaX);
+  var zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, 0.0, deltaZ);
 
   var horizontalAnimationController = {};
 
   horizontalAnimationController.deltaZ = function() { return deltaZ; };
+  horizontalAnimationController.xPosition = function() { return xPosition; };
+  horizontalAnimationController.zPosition = function() { return zPosition; };
+  horizontalAnimationController.yRotation = function() { return yRotation; };
 
   horizontalAnimationController.animate = function() {
-    if (cameraPole.rotation.y === targetAngle &&
-        cameraPole.position.x === targetSceneX &&
-        cameraPole.position.z === targetSceneZ) {
+    if (yRotation === targetAngle &&
+        xPosition === targetSceneX &&
+        zPosition === targetSceneZ) {
       determineNextTargetPoint();
 
-      angleMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.rotation.y, targetAngle, ROTATION_DELTA);
-      xMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.position.x, targetSceneX, deltaX);
-      zMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.position.z, targetSceneZ, deltaZ);
+      angleMotionGenerator = new CityTour.ClampedMotionGenerator(yRotation, targetAngle, ROTATION_DELTA);
+      xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, targetSceneX, deltaX);
+      zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, targetSceneZ, deltaZ);
     }
 
-    if (cameraPole.rotation.y != targetAngle) {
-      cameraPole.rotation.y = angleMotionGenerator.next();
+    if (yRotation != targetAngle) {
+      yRotation = angleMotionGenerator.next();
     }
     else {
-      cameraPole.position.x = xMotionGenerator.next();
-      cameraPole.position.z = zMotionGenerator.next();
+      xPosition = xMotionGenerator.next();
+      zPosition = zMotionGenerator.next();
     }
   };
 
@@ -182,7 +198,11 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
 };
 
 
-CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
+CityTour.VerticalAnimation = function(initialYPosition, initialXRotation, initialTargetY, initialYDelta) {
+  var yPosition = initialYPosition;
+  var xRotation = initialXRotation;
+  var targetY = initialTargetY;
+  var yDelta = initialYDelta;
   var targetAngle = 0.0;
   var angleDelta = 0.0155140377955;
   var framesInCurrentMode = 0;
@@ -190,14 +210,14 @@ CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
   var mode = 'initial_swoop';
   var finished = false;
 
-  var yMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.position.y, targetY, yDelta);
-  var xRotationGenerator = new CityTour.ClampedMotionGenerator(camera.rotation.x, targetAngle, angleDelta);
+  var yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetY, yDelta);
+  var xRotationGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetAngle, angleDelta);
 
   var animate = function() {
     framesInCurrentMode += 1;
 
-    cameraPole.position.y = yMotionGenerator.next();
-    camera.rotation.x = xRotationGenerator.next();
+    yPosition = yMotionGenerator.next();
+    xRotation = xRotationGenerator.next();
 
     if (framesInCurrentMode >= framesUntilTarget) {
       if (mode === 'driving') {
@@ -219,14 +239,16 @@ CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
         targetAngle = 0.0;
       }
 
-      yMotionGenerator = new CityTour.ClampedMotionGenerator(cameraPole.position.y, targetY, yDelta);
-      xRotationGenerator = new CityTour.ClampedMotionGenerator(camera.rotation.x, targetAngle, angleDelta);
+      yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetY, yDelta);
+      xRotationGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetAngle, angleDelta);
 
       framesInCurrentMode = 0;
     }
   };
 
   var verticalAnimation = {};
+  verticalAnimation.yPosition = function() { return yPosition; };
+  verticalAnimation.xRotation = function() { return xRotation; };
   verticalAnimation.animate = animate;
   verticalAnimation.finished = function() { return finished; };
 
