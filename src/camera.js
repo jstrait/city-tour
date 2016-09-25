@@ -138,9 +138,6 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
     }
   };
 
-  var nextTarget = function() {
-    determineNextTargetPoint();
-  };
 
   var horizontalAnimationController = {};
 
@@ -150,7 +147,7 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
     if (cameraPole.rotation.y === targetAngle &&
         cameraPole.position.x === targetSceneX &&
         cameraPole.position.z === targetSceneZ) {
-      nextTarget();
+      determineNextTargetPoint();
     }
 
     if (cameraPole.rotation.y != targetAngle) {
