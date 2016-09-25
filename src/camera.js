@@ -206,7 +206,6 @@ CityTour.VerticalAnimation = function(initialYPosition, initialXRotation, initia
   var framesInCurrentMode = 0;
   var framesUntilTarget = 1500;
   var mode = 'initial_swoop';
-  var finished = false;
 
   var yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetY, yDelta);
   var xRotationGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetAngle, angleDelta);
@@ -248,15 +247,12 @@ CityTour.VerticalAnimation = function(initialYPosition, initialXRotation, initia
   verticalAnimation.yPosition = function() { return yPosition; };
   verticalAnimation.xRotation = function() { return xRotation; };
   verticalAnimation.animate = animate;
-  verticalAnimation.finished = function() { return finished; };
 
   return verticalAnimation;
 };
 
 
 CityTour.DebugBirdsEyeAnimation = function(camera) {
-  var finished = false;
-
   var debugBirdsEyeAnimation = {};
 
   debugBirdsEyeAnimation.animate = function() {
@@ -265,7 +261,6 @@ CityTour.DebugBirdsEyeAnimation = function(camera) {
     camera.position.z = 0;
     camera.rotation.x = -(Math.PI / 2);
   };
-  debugBirdsEyeAnimation.finished = function() { return finished; };
 
   return debugBirdsEyeAnimation;
 };
