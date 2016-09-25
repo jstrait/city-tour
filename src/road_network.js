@@ -72,11 +72,19 @@ CityTour.RoadNetwork = function() {
 
 
 CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
-  var calculateBlockProbabilityOfBranching = function(mapX, mapZ) {
+  var calculateBlockProbabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
 
+    // Guarantee roads along x and z axes
+    if (mapX1 === 0 && mapX2 === 0 && mapZ2 >= -CityTour.Config.HALF_BLOCK_ROWS && mapZ2 <= CityTour.Config.HALF_BLOCK_ROWS) {
+      return 1.0;
+    }
+    else if (mapZ1 === 0 && mapZ2 === 0 && mapX2 >= -CityTour.Config.HALF_BLOCK_COLUMNS && mapX2 <= CityTour.Config.HALF_BLOCK_COLUMNS) {
+      return 1.0;
+    }
+
     var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
-    var distanceFromCenter = Math.sqrt((mapX * mapX) + (mapZ * mapZ));
+    var distanceFromCenter = Math.sqrt((mapX1 * mapX1) + (mapZ1 * mapZ1));
     var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
     var normalizedPercentageFromCenter;
 
@@ -102,7 +110,7 @@ CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
   };
 
   var shouldConnectIntersections = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var probabilityOfConnection = calculateBlockProbabilityOfBranching(mapX1, mapZ1);
+    var probabilityOfConnection = calculateBlockProbabilityOfBranching(mapX1, mapZ1, mapX2, mapZ2);
 
     return (Math.random() < probabilityOfConnection) && !isTerrainTooSteep(mapX1, mapZ1, mapX2, mapZ2)
   };
