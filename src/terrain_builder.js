@@ -84,6 +84,7 @@ CityTour.TerrainBuilder = function() {
     var midX = left + ((right - left) / 2);
 
     var jitter;
+    var newJitterAmount;
     var halfJitterAmount = jitterAmount / 2;
 
     // Left column
@@ -104,10 +105,11 @@ CityTour.TerrainBuilder = function() {
     terrainCoordinates[midY][midX] = middleAverage;
 
     if ((midY - top) >= 2) {
-      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, top, midX, midY, left);
-      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, top, right, midY, midX);
-      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, midY, midX, bottom, left);
-      midpointDisplace(terrainCoordinates, (jitterAmount * jitterDecay), jitterDecay, midY, right, bottom, midX);
+      newJitterAmount = jitterAmount * jitterDecay;
+      midpointDisplace(terrainCoordinates, newJitterAmount, jitterDecay, top, midX, midY, left);
+      midpointDisplace(terrainCoordinates, newJitterAmount, jitterDecay, top, right, midY, midX);
+      midpointDisplace(terrainCoordinates, newJitterAmount, jitterDecay, midY, midX, bottom, left);
+      midpointDisplace(terrainCoordinates, newJitterAmount, jitterDecay, midY, right, bottom, midX);
     }
   };
 
