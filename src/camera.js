@@ -129,11 +129,9 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
 
     // Prevent an extra long turn (i.e. 270deg instead of 90deg)
     if (oldTargetAngle === 0.0 && targetAngle === THREE_PI_OVER_TWO) {
-      oldTargetAngle = TWO_PI;
       cameraPole.rotation.y = TWO_PI;
     }
     else if (oldTargetAngle === THREE_PI_OVER_TWO && targetAngle === 0.0) {
-      oldTargetAngle = -HALF_PI;
       cameraPole.rotation.y = -HALF_PI;
     }
   };
