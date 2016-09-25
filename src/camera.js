@@ -71,35 +71,46 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
   var targetMapZ = 0.0;
   var targetSceneZ = 0.0;
   var deltaX = 0.0;
-  var deltaZ = -FORWARD_MOTION_DELTA;
+  var deltaZ = FORWARD_MOTION_DELTA;
   var targetAngle = 0.0;
-  var deltaAngle;
+
+  var clampedStep = function(current, target, delta) {
+    if (current === target) {
+      return target;
+    }
+    else {
+      if (current > target) {
+        if ((current - target) < delta) {
+          return target;
+        }
+        else {
+          return current - delta;
+        }
+      }
+      else if (current < target) {
+        if ((target - current) < delta) {
+          return target;
+        }
+        else {
+          return current + delta;
+        }
+      }
+    }
+  };
 
   var determineNextTargetPoint = function() {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
-    
+
     pathFinder.nextTarget();
     targetMapX = pathFinder.targetMapX();
     targetMapZ = pathFinder.targetMapZ();
     targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
     targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
-    deltaX = 0.0;
-    deltaZ = 0.0;
-    if (oldTargetMapX > targetMapX) {
-      deltaX = -FORWARD_MOTION_DELTA;
-    }
-    else if (oldTargetMapX < targetMapX) {
-      deltaX = FORWARD_MOTION_DELTA;
-    }
-    else if (oldTargetMapZ > targetMapZ) {
-      deltaZ = -FORWARD_MOTION_DELTA;
-    }
-    else if (oldTargetMapZ < targetMapZ) {
-      deltaZ = FORWARD_MOTION_DELTA;
-    }
-    
+    deltaX = (oldTargetMapX === targetMapX) ? 0.0 : FORWARD_MOTION_DELTA;
+    deltaZ = (oldTargetMapZ === targetMapZ) ? 0.0 : FORWARD_MOTION_DELTA;
+
     determineRotationAngle2(oldTargetMapX, oldTargetMapZ, targetMapX, targetMapZ);
   };
 
@@ -128,9 +139,6 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
       oldTargetAngle = -HALF_PI;
       cameraPole.rotation.y = -HALF_PI;
     }
-
-    deltaAngle = ROTATION_DELTA;
-    deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
   };
 
   var determineRotationAngle2 = function(oldTargetMapX, oldTargetMapZ, targetMapX, targetMapZ) {
@@ -155,9 +163,6 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
       oldTargetAngle = -HALF_PI;
       cameraPole.rotation.y = -HALF_PI;
     }
-
-    deltaAngle = ROTATION_DELTA;
-    deltaAngle *= (targetAngle > oldTargetAngle) ? 1 : -1;
   };
 
   var nextTarget = function() {
@@ -165,31 +170,23 @@ CityTour.HorizontalAnimationController = function(cameraPole, pathFinder) {
     //determineRotationAngle();
   };
 
-  var forwardAnimator = new CityTour.ForwardAnimation(cameraPole, targetSceneX, deltaX, targetSceneZ, deltaZ);
-  var rotationAnimator = null;
-
-
   var horizontalAnimationController = {};
 
   horizontalAnimationController.deltaZ = function() { return deltaZ; };
 
   horizontalAnimationController.animate = function() {
-    if (forwardAnimator != null) {
-      forwardAnimator.animate();
-    
-      if (forwardAnimator.finished()) {
-        forwardAnimator = null;
-        nextTarget();
-        rotationAnimator = new CityTour.RotationAnimation(cameraPole, targetAngle, deltaAngle);
-      }
+    if (cameraPole.rotation.y === targetAngle &&
+        cameraPole.position.x === targetSceneX &&
+        cameraPole.position.z === targetSceneZ) {
+      nextTarget();
     }
-    else if (rotationAnimator != null) {
-      rotationAnimator.animate();
 
-      if (rotationAnimator.finished()) {
-        rotationAnimator = null;
-        forwardAnimator = new CityTour.ForwardAnimation(cameraPole, targetSceneX, deltaX, targetSceneZ, deltaZ);
-      }
+    if (cameraPole.rotation.y != targetAngle) {
+      cameraPole.rotation.y = clampedStep(cameraPole.rotation.y, targetAngle, ROTATION_DELTA);
+    }
+    else {
+      cameraPole.position.x = clampedStep(cameraPole.position.x, targetSceneX, deltaX);
+      cameraPole.position.z = clampedStep(cameraPole.position.z, targetSceneZ, deltaZ);
     }
   };
 
@@ -264,54 +261,6 @@ CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
   verticalAnimation.finished = function() { return finished; };
 
   return verticalAnimation;
-};
-
-
-CityTour.ForwardAnimation = function(cameraPole, targetX, deltaX, targetZ, deltaZ) {
-  var finished = false;
-
-  var animate = function() {
-    cameraPole.position.x += deltaX;
-    cameraPole.position.z += deltaZ;
-
-    if ((deltaX < 0 && cameraPole.position.x < targetX) || (deltaX > 0 && cameraPole.position.x > targetX) ||
-        (deltaZ < 0 && cameraPole.position.z < targetZ) || (deltaZ > 0 && cameraPole.position.z > targetZ)) {
-      cameraPole.position.x = targetX;
-      cameraPole.position.z = targetZ;
-
-      finished = true;
-    }
-  };
-
-  var forwardAnimation = {};
-  forwardAnimation.animate = animate;
-  forwardAnimation.finished = function() { return finished; };
-
-  return forwardAnimation;
-};
-
-
-CityTour.RotationAnimation = function(cameraPole, targetAngle, deltaAngle) {
-  var finished = false;
-
-  var animate = function() {
-    cameraPole.rotation.y += deltaAngle;
-    
-    if ((deltaAngle < 0 && cameraPole.rotation.y <= targetAngle) || (deltaAngle > 0 && cameraPole.rotation.y >= targetAngle)) {
-      if (targetAngle >= Math.PI * 2 || targetAngle <= Math.PI * -2) {
-        targetAngle = 0;
-      }
-
-      cameraPole.rotation.y = targetAngle;
-      finished = true;
-    }
-  };
-
-  var rotationAnimation = {};
-  rotationAnimation.animate = animate;
-  rotationAnimation.finished = function() { return finished; };
-
-  return rotationAnimation;
 };
 
 
