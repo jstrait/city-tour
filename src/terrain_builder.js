@@ -22,17 +22,20 @@ CityTour.TerrainBuilder = function() {
     return terrainCoordinates;
   };
 
-  var normalizeCoordinates = function(terrainCoordinates, columns, rows) {
+  var normalizeCoordinates = function(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate) {
+    var x, z;
     var halfColumns = columns / 2;
     var halfRows = rows / 2;
-    var x, z;
+    var columnOffset = halfColumns + ((columnsToGenerate - columns) / 2);
+    var rowOffset = halfRows + ((rowsToGenerate - rows) / 2);
 
     var normalizedTerrainCoordinates = [];
 
-    for (x = 0; x <= columns; x++) {
-      normalizedTerrainCoordinates[x - halfColumns] = [];
-      for (z = 0; z <= rows; z++) {
-        normalizedTerrainCoordinates[x - halfColumns][z - halfRows] = terrainCoordinates[x][z];
+    for (x = -halfColumns; x <= halfColumns; x++) {
+      normalizedTerrainCoordinates[x] = [];
+
+      for (z = -halfRows; z <= halfRows; z++) {
+        normalizedTerrainCoordinates[x][z] = terrainCoordinates[x + columnOffset][z + rowOffset];
       }
     }
 
@@ -40,10 +43,18 @@ CityTour.TerrainBuilder = function() {
   };
 
 
+  var nextPowerOfTwo = function(n) {
+    return Math.pow(2, Math.ceil(Math.log2(n)));
+  };
+
+
   var buildTerrainCoordinates = function(columns, rows) {
     var x, z;
 
-    var terrainCoordinates = emptyTerrain(columns, rows);
+    var columnsToGenerate = nextPowerOfTwo(columns);
+    var rowsToGenerate = nextPowerOfTwo(rows);
+
+    var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
     // Initial randomization of corners
     terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
@@ -56,19 +67,19 @@ CityTour.TerrainBuilder = function() {
                      HEIGHT_JITTER_PER_ITERATION,
                      HEIGHT_JITTER_DECAY_PER_ITERATION,
                      0,
-                     rows,
-                     columns,
+                     rowsToGenerate,
+                     columnsToGenerate,
                      0);
 
     // Clamp negative heights to 0
-    for (x = 0; x <= columns; x++) {
-      for (z = 0; z <= rows; z++) {
+    for (x = 0; x <= columnsToGenerate; x++) {
+      for (z = 0; z <= rowsToGenerate; z++) {
         //terrainCoordinates[x][z] = Math.max(0.0, terrainCoordinates[x][z]);
       }
     }
 
     // Convert to final coordinates
-    var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, rows);
+    var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
 
     return finalTerrainCoordinates;
   };
