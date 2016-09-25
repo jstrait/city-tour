@@ -205,7 +205,7 @@ CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
   var mode = 'initial_swoop';
   var finished = false;
 
-  var step = function(current, target, delta) {
+  var clampedStep = function(current, target, delta) {
     if (current === target) {
       return target;
     }
@@ -232,8 +232,8 @@ CityTour.VerticalAnimation = function(cameraPole, camera, targetY, yDelta) {
   var animate = function() {
     framesInCurrentMode += 1;
 
-    cameraPole.position.y = step(cameraPole.position.y, targetY, yDelta);
-    camera.rotation.x = step(camera.rotation.x, targetAngle, angleDelta);
+    cameraPole.position.y = clampedStep(cameraPole.position.y, targetY, yDelta);
+    camera.rotation.x = clampedStep(camera.rotation.x, targetAngle, angleDelta);
 
     if (framesInCurrentMode >= framesUntilTarget) {
       if (mode === 'driving') {
