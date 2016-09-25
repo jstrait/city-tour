@@ -127,6 +127,7 @@ CityTour.City = function(container) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);
     }
+    animationManager.init();
 
     resize();
 
