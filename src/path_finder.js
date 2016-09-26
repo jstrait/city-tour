@@ -49,13 +49,13 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
   };
 
   var chooseNewTarget = function() {
-    var newTargetMapX = Number.POSITIVE_INFINITY;
-    var newTargetMapZ = Number.POSITIVE_INFINITY;
+    var newTargetMapX;
+    var newTargetMapZ;
 
-    while (!roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ)) {
+    do {
       newTargetMapX = (Math.round(Math.random() * CityTour.Config.BLOCK_COLUMNS)) - CityTour.Config.HALF_BLOCK_COLUMNS;
       newTargetMapZ = (Math.round(Math.random() * CityTour.Config.BLOCK_ROWS)) - CityTour.Config.HALF_BLOCK_ROWS;
-    }
+    } while (!roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ));
 
     return [newTargetMapX, newTargetMapZ];
   };
