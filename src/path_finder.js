@@ -164,14 +164,12 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     nodes[startX][startZ] = new Node(startX, startZ);
     currentNode = nodes[startX][startZ];
     currentNode.distance = 0;
-    var iterations = 0;
 
-    while((currentNode.x != endX || currentNode.z != endZ) && iterations < 2000) {
+    while(currentNode.x != endX || currentNode.z != endZ) {
       evaluateNodeConnections(currentNode, nodes, unvisitedSet); 
       unvisitedSet.delete(currentNode);
 
       currentNode = unvisitedNodeWithShortestLength(unvisitedSet);
-      iterations += 1;
     }
 
     var path = extractShortestPath(nodes, endX, endZ);
