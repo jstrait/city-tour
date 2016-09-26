@@ -4,10 +4,8 @@ var CityTour = CityTour || {};
 
 CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
-  var animators = [];
 
   var horizontalMotionController, verticalMotionController;
-
   var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
 
   animationManager.init = function() {
@@ -37,19 +35,15 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     var swoopDescentDelta = (START_Y - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     verticalMotionController = new CityTour.VerticalAnimation(cameraPole.position.y, camera.rotation.x, terrainHeightAtTouchdown + 0.5, swoopDescentDelta);
-    var debugBirdseye = new CityTour.DebugBirdsEyeAnimation(cameraPole, camera);
-    //animators = [debugBirdseye];
   };
 
   animationManager.animate = function(frameCount) {
-    for (var i = 0; i < frameCount; i++) {
-      animators.forEach(function (animator) {
-        animator.animate();
-      });
-    }
+    var i;
 
-    horizontalMotionController.animate();
-    verticalMotionController.animate();
+    for (i = 0; i < frameCount; i++) {
+      horizontalMotionController.animate();
+      verticalMotionController.animate();
+    }
 
     cameraPole.position.x = horizontalMotionController.xPosition();
     cameraPole.position.y = verticalMotionController.yPosition();
