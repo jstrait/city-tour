@@ -73,6 +73,8 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
         bottomLeftHeight = terrain.heightAtCoordinates(mapX, mapZ + 1);
         bottomRightHeight = terrain.heightAtCoordinates(mapX + 1, mapZ + 1);
 
+
+        // Core triangles
         triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ,
                                          bottomLeftX, bottomLeftHeight, bottomLeftZ,
                                          topRightX,   topRightHeight,   topRightZ);
@@ -153,7 +155,6 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
 
           terrainGeometry2.merge(triangle);
         }
-
 
 
         // Extra bottom-side triangles
