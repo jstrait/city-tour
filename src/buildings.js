@@ -200,6 +200,7 @@ CityTour.Buildings = function(terrain, roadNetwork) {
     var blockSteepness, blockLayout, maxBlockSteepness;
     var lotTerrainAttributes;
     var maxStoriesForLotSize, maxStories, actualStories;
+    var hasAdjacentRoad;
 
     zonedBlocks.forEach(function(zonedBlock) {
       mapX = zonedBlock.mapX;
@@ -215,34 +216,31 @@ CityTour.Buildings = function(terrain, roadNetwork) {
       }
 
       blockLayout.lots.forEach(function(lot) {
-        var hasAdjacentRoad = false;
+        if (Math.random() < zonedBlock.probabilityOfBuilding) {
+          hasAdjacentRoad = (lot.left === 0.0   && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) ||
+                            (lot.top === 0.0    && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) ||
+                            (lot.right === 1.0  && roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1)) ||
+                            (lot.bottom === 1.0 && roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1));
 
-        if ((lot.left === 0.0   && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) ||
-            (lot.top === 0.0    && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) ||
-            (lot.right === 1.0  && roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1)) ||
-            (lot.bottom === 1.0 && roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1)))
-        {
-          hasAdjacentRoad = true;
-        }
+          if (hasAdjacentRoad) {
+            lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
-        if (hasAdjacentRoad && (Math.random() < zonedBlock.probabilityOfBuilding)) {
-          lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
+            if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
+              maxStoriesForLotSize = calculateMaxStoriesForLotSize(lot.right - lot.left, lot.bottom - lot.top);
+              maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLotSize);
 
-          if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-            maxStoriesForLotSize = calculateMaxStoriesForLotSize(lot.right - lot.left, lot.bottom - lot.top);
-            maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLotSize);
+              actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
-            actualStories = Math.max(1, Math.round(Math.random() * maxStories));
-
-            block.push({
-              left: lot.left,
-              right: lot.right,
-              top: lot.top,
-              bottom: lot.bottom,
-              yFloor: lotTerrainAttributes.minimumHeight,
-              ySurface: lotTerrainAttributes.maximumHeight,
-              stories: actualStories,
-            });
+              block.push({
+                left: lot.left,
+                right: lot.right,
+                top: lot.top,
+                bottom: lot.bottom,
+                yFloor: lotTerrainAttributes.minimumHeight,
+                ySurface: lotTerrainAttributes.maximumHeight,
+                stories: actualStories,
+              });
+            }
           }
         }
       });
