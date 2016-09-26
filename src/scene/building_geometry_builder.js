@@ -5,13 +5,16 @@ CityTour.Scene = CityTour.Scene || {};
 
 CityTour.Scene.BuildingGeometryBuilder = function() {
   var buildMaterials = function() {
+    var i;
+    var random;
+    var r, g, b;
     var buildingMaterials = [];
 
-    for (var i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
-      var random = Math.random() * 0.7;
-      var r = random;
-      var g = random;
-      var b = random;
+    for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
+      random = Math.random() * 0.7;
+      r = random;
+      g = random;
+      b = random;
 
       buildingMaterials.push(new THREE.MeshLambertMaterial({ color: new THREE.Color(r, g, b), }));
     }
@@ -20,9 +23,10 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
   };
 
   var buildEmptyGeometriesForBuildings = function() {
+    var i;
     var buildingGeometries = [];
 
-    for (var i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
+    for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
       buildingGeometries.push(new THREE.Geometry());
     }
 
@@ -40,7 +44,10 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     var storyHeight, buildingHeight;
     var materialIndex;
 
+    var mapLotWidth, mapLotDepth, mapLotXMidpoint, mapLotZMidpoint;
+
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
+    var cylinderMesh;
 
     for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS; mapX < CityTour.Config.HALF_BLOCK_COLUMNS; mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX) + HALF_STREET_WIDTH;
@@ -51,10 +58,10 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
         block = buildings.blockAtCoordinates(mapX, mapZ);
 
         block.forEach(function(lot) {
-          var mapLotWidth = lot.right - lot.left;
-          var mapLotDepth = lot.bottom - lot.top;
-          var mapLotXMidpoint = lot.left + (mapLotWidth / 2);
-          var mapLotZMidpoint = lot.top + (mapLotDepth / 2);
+          mapLotWidth = lot.right - lot.left;
+          mapLotDepth = lot.bottom - lot.top;
+          mapLotXMidpoint = lot.left + (mapLotWidth / 2);
+          mapLotZMidpoint = lot.top + (mapLotDepth / 2);
 
           storyHeight = ((CityTour.Config.MAX_STORY_HEIGHT - CityTour.Config.MIN_STORY_HEIGHT) * Math.random()) + CityTour.Config.MIN_STORY_HEIGHT;
           buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor); 
@@ -75,12 +82,12 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
 
           // Add antenna to tall buildings
           if (lot.stories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
-            var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
-            cylinder.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * mapLotXMidpoint);
-            cylinder.position.y = lot.yFloor + buildingHeight + 5;
-            cylinder.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * mapLotZMidpoint);
-            cylinder.updateMatrix();
-            buildingGeometries[materialIndex].merge(cylinder.geometry, cylinder.matrix);
+            cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
+            cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * mapLotXMidpoint);
+            cylinderMesh.position.y = lot.yFloor + buildingHeight + 5;
+            cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * mapLotZMidpoint);
+            cylinderMesh.updateMatrix();
+            buildingGeometries[materialIndex].merge(cylinderMesh.geometry, cylinderMesh.matrix);
           }
         });
       }
@@ -91,13 +98,14 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
   var buildingGeometryBuilder = {};
 
   buildingGeometryBuilder.build = function(buildings) {
+    var i;
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
+    var buildingMeshes = [];
 
     generateBuildingGeometries(buildings, buildingGeometries);
 
-    var buildingMeshes = [];
-    for (var i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
+    for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
       buildingMeshes.push(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
     }
 
