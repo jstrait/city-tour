@@ -65,7 +65,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
           reusableBuildingMesh.scale.y = buildingHeight;
           reusableBuildingMesh.position.y = (buildingHeight / 2) + lot.yFloor;
 
-          reusableBuildingMesh.scale.z = mapLotDepth * CityTour.Config.BLOCK_WIDTH;
+          reusableBuildingMesh.scale.z = mapLotDepth * CityTour.Config.BLOCK_DEPTH;
           reusableBuildingMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * mapLotZMidpoint);
 
           reusableBuildingMesh.updateMatrix();
