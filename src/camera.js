@@ -294,16 +294,19 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
   var xRotation = camera.rotation.x;
   var yRotation = cameraPole.rotation.y;
 
-  var deltaX = 22;
-  var deltaY = 22;
-  var deltaZ = 22;
-  var angleDelta = 0.06;
+  var FRAME_DURATION = 50.0;
+
+  var deltaX = Math.abs((targetXPosition - xPosition) / FRAME_DURATION);
+  var deltaY = Math.abs((targetYPosition - yPosition) / FRAME_DURATION);
+  var deltaZ = Math.abs((targetZPosition - zPosition) / FRAME_DURATION);
+  var xRotationDelta = Math.abs((targetXRotation - xRotation) / FRAME_DURATION);
+  var yRotationDelta = Math.abs((targetYRotation - yRotation) / FRAME_DURATION);
 
   var xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, targetXPosition, deltaX);
   var yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetYPosition, deltaY);
   var zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, targetZPosition, deltaZ);
-  var xAngleMotionGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetXRotation, angleDelta);
-  var yAngleMotionGenerator = new CityTour.ClampedMotionGenerator(yRotation, targetYRotation, angleDelta);
+  var xAngleMotionGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+  var yAngleMotionGenerator = new CityTour.ClampedMotionGenerator(yRotation, targetYRotation, yRotationDelta);
 
   var debugAnimation = {};
 
