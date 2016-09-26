@@ -30,6 +30,9 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
   };
 
   var generateBuildingGeometries = function(buildings, buildingGeometries) {
+    var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
+    var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
+
     var mapX, mapZ, sceneX, sceneZ;
     var block;
     var storyHeight, buildingHeight;
@@ -38,10 +41,10 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
 
     for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS; mapX < CityTour.Config.HALF_BLOCK_COLUMNS; mapX++) {
-      sceneX = CityTour.Coordinates.mapXToSceneX(mapX) + (CityTour.Config.STREET_WIDTH / 2);
+      sceneX = CityTour.Coordinates.mapXToSceneX(mapX) + HALF_STREET_WIDTH;
 
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ < CityTour.Config.HALF_BLOCK_ROWS; mapZ++) {
-        sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ) + (CityTour.Config.STREET_DEPTH / 2);
+        sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ) + HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(mapX, mapZ);
 
