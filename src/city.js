@@ -155,11 +155,16 @@ CityTour.City = function(container) {
     animationTimer.togglePause();
   };
 
+  var toggleDebug = function() {
+    animationManager.toggleDebug();
+  }
+
   var city = {};
 
   city.init = init;
   city.resize = resize;
   city.togglePause = togglePause;
+  city.toggleDebug = toggleDebug;
 
   return city;
 };

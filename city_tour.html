@@ -129,6 +129,12 @@ var init2 = function() {
     window.addEventListener('resize', cityTour.resize, false);
     window.addEventListener('click', cityTour.togglePause, false);
     window.addEventListener('touchstart', cityTour.togglePause, false);
+
+    window.addEventListener('keyup', function(e) {
+      if (e.keyCode === 68 || e.keyCode === 100) {   // 'd' or 'D'
+        cityTour.toggleDebug();
+      }
+    }, false);
   });
 };
 

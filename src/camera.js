@@ -5,7 +5,10 @@ var CityTour = CityTour || {};
 CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var animationManager = {};
 
-  var horizontalMotionController, verticalMotionController;
+  var debug = false;
+  var scheduleDebugChange = false;
+
+  var horizontalMotionController, verticalMotionController, debugAnimationController;
   var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
 
   animationManager.init = function() {
@@ -45,17 +48,54 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       verticalMotionController.animate();
     }
 
-    cameraPole.position.x = horizontalMotionController.xPosition();
-    cameraPole.position.y = verticalMotionController.yPosition();
-    cameraPole.position.z = horizontalMotionController.zPosition();
-    cameraPole.rotation.y = horizontalMotionController.yRotation();
-    camera.rotation.x = verticalMotionController.xRotation();
+    if (scheduleDebugChange) {
+      debug = !debug;
+      scheduleDebugChange = false;
+
+      if (debug) {
+        debugAnimationController = new CityTour.DebugAnimation(cameraPole, camera, 0.0, 900, 0.0, -(Math.PI / 2), 0.0);
+      }
+      else {
+        debugAnimationController = new CityTour.DebugAnimation(cameraPole,
+                                                               camera,
+                                                               horizontalMotionController.xPosition(),
+                                                               verticalMotionController.yPosition(),
+                                                               horizontalMotionController.zPosition(),
+                                                               verticalMotionController.xRotation(),
+                                                               horizontalMotionController.yRotation());
+      }
+    }
+
+    if (debugAnimationController) {
+      debugAnimationController.animate();
+
+      cameraPole.position.x = debugAnimationController.xPosition();
+      cameraPole.position.y = debugAnimationController.yPosition();
+      cameraPole.position.z = debugAnimationController.zPosition();
+      cameraPole.rotation.y = debugAnimationController.yRotation();
+      camera.rotation.x = debugAnimationController.xRotation();
+
+      if (!debug && debugAnimationController.finished()) {
+        debugAnimationController = null;
+      }
+    }
+    else {
+      cameraPole.position.x = horizontalMotionController.xPosition();
+      cameraPole.position.y = verticalMotionController.yPosition();
+      cameraPole.position.z = horizontalMotionController.zPosition();
+      cameraPole.rotation.y = horizontalMotionController.yRotation();
+      camera.rotation.x = verticalMotionController.xRotation();
+    }
 
     var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
     var mapZ = CityTour.Coordinates.sceneZToMapZ(cameraPole.position.z);
 
     var y = terrain.heightAtCoordinates(mapX, mapZ);
     cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
+  };
+
+  animationManager.toggleDebug = function() {
+    scheduleDebugChange = true;
   };
 
   return animationManager;
@@ -92,6 +132,8 @@ CityTour.ClampedMotionGenerator = function(start, target, delta) {
 
     return current;
   };
+
+  clampedMotionGenerator.finished = function() { return current === target; };
 
   return clampedMotionGenerator;
 };
@@ -245,16 +287,45 @@ CityTour.VerticalAnimation = function(initialYPosition, initialXRotation, initia
   return verticalAnimation;
 };
 
+CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYPosition, targetZPosition, targetXRotation, targetYRotation) {
+  var xPosition = cameraPole.position.x;
+  var yPosition = cameraPole.position.y;
+  var zPosition = cameraPole.position.z;
+  var xRotation = camera.rotation.x;
+  var yRotation = cameraPole.rotation.y;
 
-CityTour.DebugBirdsEyeAnimation = function(camera) {
-  var debugBirdsEyeAnimation = {};
+  var deltaX = 22;
+  var deltaY = 22;
+  var deltaZ = 22;
+  var angleDelta = 0.06;
 
-  debugBirdsEyeAnimation.animate = function() {
-    camera.position.x = 0;
-    camera.position.y = 900;
-    camera.position.z = 0;
-    camera.rotation.x = -(Math.PI / 2);
+  var xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, targetXPosition, deltaX);
+  var yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetYPosition, deltaY);
+  var zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, targetZPosition, deltaZ);
+  var xAngleMotionGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetXRotation, angleDelta);
+  var yAngleMotionGenerator = new CityTour.ClampedMotionGenerator(yRotation, targetYRotation, angleDelta);
+
+  var debugAnimation = {};
+
+  debugAnimation.animate = function() {
+    xPosition = xMotionGenerator.next();
+    yPosition = yMotionGenerator.next();
+    zPosition = zMotionGenerator.next();
+    xRotation = xAngleMotionGenerator.next();
+    yRotation = yAngleMotionGenerator.next();
   };
 
-  return debugBirdsEyeAnimation;
+  debugAnimation.xPosition = function() { return xPosition; };
+  debugAnimation.yPosition = function() { return yPosition; };
+  debugAnimation.zPosition = function() { return zPosition; };
+  debugAnimation.xRotation = function() { return xRotation; };
+  debugAnimation.yRotation = function() { return yRotation; };
+  debugAnimation.finished = function() { return xMotionGenerator.finished() &&
+                                                yMotionGenerator.finished() &&
+                                                zMotionGenerator.finished() &&
+                                                xAngleMotionGenerator.finished() &&
+                                                yAngleMotionGenerator.finished()
+                                       };
+
+  return debugAnimation;
 };
