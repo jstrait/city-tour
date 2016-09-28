@@ -168,32 +168,40 @@ CityTour.ZonedBlockGenerator = function() {
   zonedBlockGenerator.build = function(terrain, roadNetwork) {
     var mapX, mapZ;
     var block, blocks = [];
+    var hasTopRoad, hasRightRoad, hasBottomRoad, hasLeftRoad;
     var blockLayout, blockSteepness, maxBlockSteepness;
 
     for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS; mapX < CityTour.Config.HALF_BLOCK_COLUMNS; mapX++) {
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ < CityTour.Config.HALF_BLOCK_ROWS; mapZ++) {
-        block = {};
+        hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ);
+        hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1);
+        hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1);
+        hasLeftRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1);
 
-        block.mapX = mapX;
-        block.mapZ = mapZ;
-        block.probabilityOfBuilding = calculateBlockProbabilityOfBuilding(mapX, mapZ);
-        block.maxStories = calculateMaxStoriesForBlock(mapX, mapZ);
+        if (hasTopRoad || hasRightRoad || hasBottomRoad || hasLeftRoad) {
+          block = {};
 
-        blockSteepness = blockTerrainAttributes(terrain, mapX, mapZ, mapX + 1, mapZ + 1).steepness;
+          block.mapX = mapX;
+          block.mapZ = mapZ;
+          block.probabilityOfBuilding = calculateBlockProbabilityOfBuilding(mapX, mapZ);
+          block.maxStories = calculateMaxStoriesForBlock(mapX, mapZ);
 
-        maxBlockSteepness = -100000;
-        while (blockSteepness > maxBlockSteepness) {
-          blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
-          maxBlockSteepness = blockLayout.maxBlockSteepness;
+          block.hasTopRoad = hasTopRoad;
+          block.hasRightRoad = hasRightRoad;
+          block.hasBottomRoad = hasBottomRoad;
+          block.hasLeftRoad = hasLeftRoad;
+
+          blockSteepness = blockTerrainAttributes(terrain, mapX, mapZ, mapX + 1, mapZ + 1).steepness;
+
+          maxBlockSteepness = -100000;
+          while (blockSteepness > maxBlockSteepness) {
+            blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
+            maxBlockSteepness = blockLayout.maxBlockSteepness;
+          }
+          block.layout = blockLayout;
+
+          blocks.push(block);
         }
-        block.layout = blockLayout;
-
-        block.hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ);
-        block.hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1);
-        block.hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1);
-        block.hasLeftRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1);
-
-        blocks.push(block);
       }
     }
 

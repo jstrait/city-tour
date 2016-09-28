@@ -55,7 +55,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ < CityTour.Config.HALF_BLOCK_ROWS; mapZ++) {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ) + HALF_STREET_DEPTH;
 
-        block = buildings.blockAtCoordinates(mapX, mapZ);
+        block = buildings.blockAtCoordinates(mapX, mapZ) || [];
 
         block.forEach(function(lot) {
           mapLotWidth = lot.right - lot.left;
