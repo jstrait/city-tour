@@ -165,7 +165,7 @@ CityTour.ZonedBlockGenerator = function() {
 
   var zonedBlockGenerator = {};
 
-  zonedBlockGenerator.build = function(terrain) {
+  zonedBlockGenerator.build = function(terrain, roadNetwork) {
     var mapX, mapZ;
     var block, blocks = [];
     var blockLayout, blockSteepness, maxBlockSteepness;
@@ -187,6 +187,11 @@ CityTour.ZonedBlockGenerator = function() {
           maxBlockSteepness = blockLayout.maxBlockSteepness;
         }
         block.layout = blockLayout;
+
+        block.hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ);
+        block.hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1);
+        block.hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1);
+        block.hasLeftRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1);
 
         blocks.push(block);
       }
@@ -219,7 +224,7 @@ CityTour.Buildings = function(terrain, roadNetwork) {
              steepness: maximumHeight - minimumHeight };
   };
 
-  var generateUnitBlocks = function(terrain, roadNetwork, zonedBlocks) {
+  var generateUnitBlocks = function(terrain, zonedBlocks) {
     var blocks = [];
     var block;
     var mapX, mapZ;
@@ -234,10 +239,10 @@ CityTour.Buildings = function(terrain, roadNetwork) {
 
       zonedBlock.layout.lots.forEach(function(lot) {
         if (Math.random() < zonedBlock.probabilityOfBuilding) {
-          hasAdjacentRoad = (lot.left === 0.0   && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) ||
-                            (lot.top === 0.0    && roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) ||
-                            (lot.right === 1.0  && roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1)) ||
-                            (lot.bottom === 1.0 && roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1));
+          hasAdjacentRoad = (lot.left === 0.0   && zonedBlock.hasLeftRoad) ||
+                            (lot.top === 0.0    && zonedBlock.hasTopRoad) ||
+                            (lot.right === 1.0  && zonedBlock.hasRightRoad) ||
+                            (lot.bottom === 1.0 && zonedBlock.hasBottomRoad);
 
           if (hasAdjacentRoad) {
             lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
@@ -283,7 +288,7 @@ CityTour.Buildings = function(terrain, roadNetwork) {
     }
   };
 
-  var blocks = generateUnitBlocks(terrain, roadNetwork, new CityTour.ZonedBlockGenerator().build(terrain));
+  var blocks = generateUnitBlocks(terrain, new CityTour.ZonedBlockGenerator().build(terrain, roadNetwork));
 
   var buildings = {};
 
