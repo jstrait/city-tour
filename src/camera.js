@@ -260,12 +260,14 @@ CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPos
         targetYPosition = 150;
         yPositionDelta = 2;
         targetXRotation = -(Math.PI / 3);
+        pathFinder = new CityTour.AerialPathFinder(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
       }
       else if (verticalMode === 'hovering' || verticalMode === 'initial_swoop') {
         verticalMode = 'driving';
         targetYPosition = -100000;
         yPositionDelta = 0.05;
         targetXRotation = 0.0;
+        pathFinder = new CityTour.DijktrasPathFinder(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
       }
       else if (verticalMode === 'birdseye') {
         verticalMode = 'hovering';

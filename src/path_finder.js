@@ -2,9 +2,9 @@
 
 var CityTour = CityTour || {};
 
-CityTour.PathFinder = function() {
-  var targetMapX = 0.0;
-  var targetMapZ = 0.0;
+CityTour.AerialPathFinder = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
+  var targetMapX = initialTargetMapX;
+  var targetMapZ = initialTargetMapZ;
   var deltaX = 0.0;
   var deltaZ = 1.0;
 
@@ -12,7 +12,7 @@ CityTour.PathFinder = function() {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
 
-    while (oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) {
+    while ((oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) || !roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
       if (deltaX === 0.0) {
         targetMapX = Math.floor(Math.random() * CityTour.Config.BLOCK_ROWS) - CityTour.Config.HALF_BLOCK_ROWS;
       }
@@ -36,6 +36,7 @@ CityTour.PathFinder = function() {
 
   return pathFinder;
 };
+
 
 CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
   var Node = function(x, z) {
