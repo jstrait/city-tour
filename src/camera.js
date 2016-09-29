@@ -166,7 +166,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
 
   var framesInCurrentVerticalMode = 0;
   var VERTICAL_MODE_DURATION_IN_FRAMES = 1500;
-  var verticalMode = 'initial_swoop';
+  var verticalMode = 'driving';
 
   var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork, 0, CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
 
@@ -258,7 +258,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
         targetXRotation = -(Math.PI / 3);
         pathFinder = new CityTour.AerialPathFinder(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
       }
-      else if (verticalMode === 'hovering' || verticalMode === 'initial_swoop') {
+      else if (verticalMode === 'hovering') {
         verticalMode = 'driving';
         targetYPosition = -100000;
         yPositionDelta = 0.05;
