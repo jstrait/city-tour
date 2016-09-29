@@ -31,12 +31,6 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       cameraPole.rotation.y = vehicleController.yRotation();
       camera.rotation.x = vehicleController.xRotation();
     }
-
-    var mapX = CityTour.Coordinates.sceneXToMapX(cameraPole.position.x);
-    var mapZ = CityTour.Coordinates.sceneZToMapZ(cameraPole.position.z);
-
-    var y = terrain.heightAtCoordinates(mapX, mapZ);
-    cameraPole.position.y = Math.max(cameraPole.position.y, y + 0.5);
   }
 
   animationManager.init = function() {
@@ -58,7 +52,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection);
     var swoopDescentDelta = (INITIAL_Y_POSITION - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
-    vehicleController = new CityTour.VehicleController(roadNetwork,
+    vehicleController = new CityTour.VehicleController(terrain,
+                                                       roadNetwork,
                                                        INITIAL_X_POSITION,
                                                        initialZPosition,
                                                        initialTargetZPosition,
@@ -144,7 +139,7 @@ CityTour.ClampedMotionGenerator = function(start, target, delta) {
 };
 
 
-CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialTargetYPosition, initialYPositionDelta) {
+CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialTargetYPosition, initialYPositionDelta) {
   var HALF_PI = Math.PI / 2.0;
   var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
   var TWO_PI = Math.PI * 2.0;
@@ -250,7 +245,9 @@ CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPos
 
     framesInCurrentVerticalMode += 1;
 
-    yPosition = yMotionGenerator.next();
+    var terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(xPosition), CityTour.Coordinates.sceneZToMapZ(zPosition));
+    yPosition = Math.max(yMotionGenerator.next(), terrainHeight + 0.5);
+
     xRotation = xRotationGenerator.next();
 
     if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
