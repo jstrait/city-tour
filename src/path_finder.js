@@ -37,7 +37,7 @@ CityTour.PathFinder = function() {
   return pathFinder;
 };
 
-CityTour.DijktrasPathFinder = function(roadNetwork) {
+CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
   var Node = function(x, z) {
     return {
       isVisited: false,
@@ -178,10 +178,10 @@ CityTour.DijktrasPathFinder = function(roadNetwork) {
     return path;
   };
 
-  var targetMapX = 0;
-  var targetMapZ = 0;
-  var subTargetMapX = 0;
-  var subTargetMapZ = 0;
+  var targetMapX = initialTargetMapX;
+  var targetMapZ = initialTargetMapZ;
+  var subTargetMapX = initialTargetMapX;
+  var subTargetMapZ = initialTargetMapZ;
 
   var path = [];
 
