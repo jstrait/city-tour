@@ -223,7 +223,6 @@ CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPos
 
   var vehicleController = {};
 
-  vehicleController.deltaZ = function() { return zPositionDelta; };
   vehicleController.xPosition = function() { return xPosition; };
   vehicleController.yPosition = function() { return yPosition; };
   vehicleController.zPosition = function() { return zPosition; };
