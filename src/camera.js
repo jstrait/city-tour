@@ -260,7 +260,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
       }
       else if (verticalMode === 'hovering') {
         verticalMode = 'driving';
-        targetYPosition = -100000;
+        targetYPosition = Number.NEGATIVE_INFINITY;
         yPositionDelta = 0.05;
         targetXRotation = 0.0;
         pathFinder = new CityTour.DijktrasPathFinder(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
