@@ -156,9 +156,7 @@ CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPos
   var xRotation = initialXRotation;
   var yRotation = initialYRotation;
 
-  var targetMapX = 0.0;
   var targetSceneX = 0.0;
-  var targetMapZ = 0.0;
   var targetSceneZ = 0.0;
   var xPositionDelta = 0.0;
   var zPositionDelta = HORIZONTAL_MOTION_DELTA;
@@ -176,8 +174,9 @@ CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPos
   var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork);
 
   var determineNextTargetPoint = function() {
-    var oldTargetMapX = targetMapX;
-    var oldTargetMapZ = targetMapZ;
+    var oldTargetSceneX = targetSceneX;
+    var oldTargetSceneZ = targetSceneZ;
+    var targetMapX, targetMapZ;
 
     pathFinder.nextTarget();
     targetMapX = pathFinder.targetMapX();
@@ -185,17 +184,17 @@ CityTour.VehicleController = function(roadNetwork, initialXPosition, initialZPos
     targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
     targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
-    xPositionDelta = (oldTargetMapX === targetMapX) ? 0.0 : HORIZONTAL_MOTION_DELTA;
-    zPositionDelta = (oldTargetMapZ === targetMapZ) ? 0.0 : HORIZONTAL_MOTION_DELTA;
+    xPositionDelta = (oldTargetSceneX === targetSceneX) ? 0.0 : HORIZONTAL_MOTION_DELTA;
+    zPositionDelta = (oldTargetSceneZ === targetSceneZ) ? 0.0 : HORIZONTAL_MOTION_DELTA;
 
-    determineRotationAngle(oldTargetMapX, oldTargetMapZ, targetMapX, targetMapZ);
+    determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
   };
 
-  var determineRotationAngle = function(oldTargetMapX, oldTargetMapZ, targetMapX, targetMapZ) {
+  var determineRotationAngle = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
     var oldTargetYRotation = targetYRotation;
 
-    var x = targetMapX - oldTargetMapX;
-    var z = -(targetMapZ - oldTargetMapZ);
+    var x = targetSceneX - oldTargetSceneX;
+    var z = -(targetSceneZ - oldTargetSceneZ);
     var angle = Math.atan2(z, x);
     if (angle < HALF_PI) {
       angle += TWO_PI;
