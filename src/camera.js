@@ -200,12 +200,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
 
     targetYRotation = rightHandedAngle;
 
-    // Prevent an extra long turn (i.e. 270deg instead of 90deg)
-    if (oldTargetYRotation === 0.0 && targetYRotation === THREE_PI_OVER_TWO) {
-      yRotation = TWO_PI;
+    // Prevent turns wider than 180 degrees 
+    if ((oldTargetYRotation - targetYRotation) > Math.PI) {
+      yRotation -= TWO_PI;
     }
-    else if (oldTargetYRotation === THREE_PI_OVER_TWO && targetYRotation === 0.0) {
-      yRotation = -HALF_PI;
+    else if ((oldTargetYRotation - targetYRotation) < -Math.PI) {
+      yRotation += TWO_PI;
     }
   };
 
@@ -291,6 +291,14 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
   var zPosition = cameraPole.position.z;
   var xRotation = camera.rotation.x;
   var yRotation = cameraPole.rotation.y;
+
+  // Prevent turns more than 180 degrees
+  if ((yRotation - targetYRotation) > Math.PI) {
+    yRotation -= Math.PI * 2;
+  }
+  else if ((yRotation - targetYRotation) < -Math.PI) {
+    yRotation += Math.PI * 2;
+  }
 
   var xPositionDelta = Math.abs((targetXPosition - xPosition) / ANIMATION_DURATION_IN_FRAMES);
   var yPositionDelta = Math.abs((targetYPosition - yPosition) / ANIMATION_DURATION_IN_FRAMES);
