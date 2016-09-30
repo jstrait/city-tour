@@ -51,7 +51,7 @@ CityTour.RoadNetwork = function() {
 
     if (!roadIntersection1) {
       roadIntersection1 = new roadIntersection(mapX1, mapZ1);
-      intersections[mapX1][mapZ2] = roadIntersection1;
+      intersections[mapX1][mapZ1] = roadIntersection1;
     }
     if (!roadIntersection2) {
       roadIntersection2 = new roadIntersection(mapX2, mapZ2);
