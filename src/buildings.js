@@ -51,7 +51,7 @@ CityTour.ZonedBlockGenerator = function() {
 
 
     {
-      maxBlockSteepness: 1000000,
+      maxBlockSteepness: Number.POSITIVE_INFINITY,
       lots: [ { left:     0.0,  right: 0.25,  top: 0.0,    bottom:  (1/3), },
               { left:     0.75, right: 1.0,   top: 0.0,    bottom:  (1/3), },
               { left:     0.0,  right: 0.25,  top: (2/3),  bottom:  1.0, },
@@ -71,7 +71,7 @@ CityTour.ZonedBlockGenerator = function() {
     },
 
     {
-      maxBlockSteepness: 1000000,
+      maxBlockSteepness: Number.POSITIVE_INFINITY,
       lots: [ { left:     0.0,  right: 0.5,    top: 0.0,    bottom:  (1/3), },
               { left:     0.0,  right: 0.5,    top: (1/3),  bottom:  0.5, },
               { left:     0.0,  right: 0.5,    top: 0.5,    bottom:  (2/3), },
@@ -90,7 +90,7 @@ CityTour.ZonedBlockGenerator = function() {
     },
 
     {
-      maxBlockSteepness: 1000000,
+      maxBlockSteepness: Number.POSITIVE_INFINITY,
       lots: [ { left:     0.0,  right: 0.25,  top: 0.0,     bottom:  0.1667, },
               { left:     0.0,  right: 0.25,  top: 0.1667,  bottom:  (1/3), },
               { left:     0.0,  right: 0.25,  top: (1/3),   bottom:  0.5, },
@@ -193,7 +193,7 @@ CityTour.ZonedBlockGenerator = function() {
 
           blockSteepness = blockTerrainAttributes(terrain, mapX, mapZ, mapX + 1, mapZ + 1).steepness;
 
-          maxBlockSteepness = -100000;
+          maxBlockSteepness = Number.NEGATIVE_INFINITY;
           while (blockSteepness > maxBlockSteepness) {
             blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
             maxBlockSteepness = blockLayout.maxBlockSteepness;
@@ -292,7 +292,7 @@ CityTour.Buildings = function(terrain, roadNetwork) {
       return 10;
     }
     else {
-      return 10000;
+      return Number.POSITIVE_INFINITY;
     }
   };
 
