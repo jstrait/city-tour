@@ -6,28 +6,17 @@ CityTour.RoadNetwork = function() {
   var roadIntersection = function(mapX, mapZ) {
     var edges = [];
 
-    var indexOfEdge = function(mapX, mapZ) {
-      var i;
-
-      for (i = 0; i < edges.length; i++) {
-        if (edges[i][0] === mapX && edges[i][1] === mapZ) {
-          return i;
-        }
-      }
-
-      return -1;
-    };
-
     var roadIntersection = {};
 
     roadIntersection.addEdge = function(mapX, mapZ) {
-      if (indexOfEdge(mapX, mapZ) === -1) {
-        edges.push([mapX, mapZ]);
+      if (!edges[mapX]) {
+        edges[mapX] = [];
       }
+      edges[mapX][mapZ] = true;
     };
 
     roadIntersection.hasEdgeTo = function(mapX, mapZ) {
-      return indexOfEdge(mapX, mapZ) > -1;
+      return edges[mapX] != undefined && edges[mapX][mapZ] != null;
     };
 
     return roadIntersection;
