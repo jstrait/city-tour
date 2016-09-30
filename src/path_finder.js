@@ -80,7 +80,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTa
     var x = currentNode.x;
     var z = currentNode.z;
 
-    var evaluateAdjancentNode = function(adjacentX, adjacentZ) {
+    var evaluateAdjacentNode = function(adjacentX, adjacentZ) {
       var adjacentNode, candidateDistance;
     
       if (roadNetwork.hasEdgeBetween(x, z, adjacentX, adjacentZ)) {
@@ -101,10 +101,10 @@ CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTa
       }
     };
 
-    evaluateAdjancentNode(x - 1, z);
-    evaluateAdjancentNode(x + 1, z);
-    evaluateAdjancentNode(x, z - 1);
-    evaluateAdjancentNode(x, z + 1);
+    evaluateAdjacentNode(x - 1, z);
+    evaluateAdjacentNode(x + 1, z);
+    evaluateAdjacentNode(x, z - 1);
+    evaluateAdjacentNode(x, z + 1);
 
     currentNode.isVisited = true;
   };
