@@ -63,8 +63,8 @@ CityTour.RoadNetwork = function() {
   };
 
   roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1 = intersections[mapX1][mapZ1];
-    var roadIntersection2 = intersections[mapX2][mapZ2];
+    var roadIntersection1 = intersections[mapX1][mapZ1] || false;
+    var roadIntersection2 = intersections[mapX2][mapZ2] || false;
 
     return roadIntersection1 && roadIntersection2 &&
            roadIntersection1.hasEdgeTo(mapX2, mapZ2) && roadIntersection2.hasEdgeTo(mapX1, mapZ1);
