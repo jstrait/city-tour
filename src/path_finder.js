@@ -126,8 +126,8 @@ CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTa
   var simplifyPath = function(path) {
     var xRun = 0;
     var zRun = 0;
-    var previousX = null;
-    var previousZ = null;
+    var previousX = subTargetMapX;
+    var previousZ = subTargetMapZ;
 
     var simplifiedPath = [];
 
@@ -138,7 +138,7 @@ CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTa
       xRun = (x === previousX) ? xRun + 1 : 0;
       zRun = (z === previousZ) ? zRun + 1 : 0;
 
-      if (((xRun === 1 && zRun === 0) || (xRun === 0 && zRun === 1)) && (i > 1)) {
+      if (((xRun === 1 && zRun === 0) || (xRun === 0 && zRun === 1)) && (i > 0)) {
         simplifiedPath.push([previousX, previousZ]);
       }
 
