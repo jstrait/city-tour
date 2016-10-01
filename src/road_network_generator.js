@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.RoadNetworkGenerator = function(terrain) {
+CityTour.RoadNetworkGenerator = function() {
   var calculateBlockProbabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
 
@@ -30,7 +30,7 @@ CityTour.RoadNetworkGenerator = function(terrain) {
     return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
   };
 
-  var isTerrainTooSteep = function(mapX, mapZ, targetMapX, targetMapZ) {
+  var isTerrainTooSteep = function(terrain, mapX, mapZ, targetMapX, targetMapZ) {
     var MAX_STEEPNESS = Math.PI / 6;
 
     var heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
@@ -40,36 +40,36 @@ CityTour.RoadNetworkGenerator = function(terrain) {
     return Math.abs(angle) > MAX_STEEPNESS;
   };
 
-  var shouldConnectIntersections = function(mapX1, mapZ1, mapX2, mapZ2) {
+  var shouldConnectIntersections = function(terrain, mapX1, mapZ1, mapX2, mapZ2) {
     var probabilityOfConnection = calculateBlockProbabilityOfBranching(mapX1, mapZ1, mapX2, mapZ2);
 
-    return (Math.random() < probabilityOfConnection) && !isTerrainTooSteep(mapX1, mapZ1, mapX2, mapZ2)
+    return (Math.random() < probabilityOfConnection) && !isTerrainTooSteep(terrain, mapX1, mapZ1, mapX2, mapZ2)
   };
 
-  var branchFromIntersection = function(roadNetwork, mapX, mapZ) {
-    connectIntersections(roadNetwork, mapX, mapZ, mapX - 1, mapZ);
-    connectIntersections(roadNetwork, mapX, mapZ, mapX, mapZ - 1);
-    connectIntersections(roadNetwork, mapX, mapZ, mapX + 1, mapZ);
-    connectIntersections(roadNetwork, mapX, mapZ, mapX, mapZ + 1);
+  var branchFromIntersection = function(terrain, roadNetwork, mapX, mapZ) {
+    connectIntersections(terrain, roadNetwork, mapX, mapZ, mapX - 1, mapZ);
+    connectIntersections(terrain, roadNetwork, mapX, mapZ, mapX, mapZ - 1);
+    connectIntersections(terrain, roadNetwork, mapX, mapZ, mapX + 1, mapZ);
+    connectIntersections(terrain, roadNetwork, mapX, mapZ, mapX, mapZ + 1);
   };
 
-  var connectIntersections = function(roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
-    if (shouldConnectIntersections(mapX, mapZ, targetMapX, targetMapZ)) {
+  var connectIntersections = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
+    if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
       if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
         roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
       }
       else {
         roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
-        branchFromIntersection(roadNetwork, targetMapX, targetMapZ);
+        branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
       }
     }
   };
 
   var roadNetworkGenerator = {};
 
-  roadNetworkGenerator.generate = function() {
+  roadNetworkGenerator.generate = function(terrain) {
     var roadNetwork = new CityTour.RoadNetwork();
-    branchFromIntersection(roadNetwork, 0, 0);
+    branchFromIntersection(terrain, roadNetwork, 0, 0);
 
     return roadNetwork;
   };
