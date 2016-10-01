@@ -88,8 +88,8 @@ CityTour.BuildingsGenerator = function() {
 
   var buildingsGenerator = {};
 
-  buildingsGenerator.generate = function(terrain, roadNetwork) {
-    var blocks = generateUnitBlocks(terrain, new CityTour.ZonedBlockGenerator().build(terrain, roadNetwork));
+  buildingsGenerator.generate = function(terrain, zonedBlocks) {
+    var blocks = generateUnitBlocks(terrain, zonedBlocks);
 
     var buildings = {};
 

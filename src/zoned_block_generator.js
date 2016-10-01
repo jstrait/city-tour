@@ -165,7 +165,7 @@ CityTour.ZonedBlockGenerator = function() {
 
   var zonedBlockGenerator = {};
 
-  zonedBlockGenerator.build = function(terrain, roadNetwork) {
+  zonedBlockGenerator.generate = function(terrain, roadNetwork) {
     var mapX, mapZ;
     var block, blocks = [];
     var hasTopRoad, hasRightRoad, hasBottomRoad, hasLeftRoad;
