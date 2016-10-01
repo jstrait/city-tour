@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.AnimationTimer = function() {
+CityTour.Timer = function() {
   var FRAMES_PER_SECONDS = 60;
   var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECONDS;
 
@@ -28,7 +28,7 @@ CityTour.AnimationTimer = function() {
     }
     previousFrameTimestamp = currentTimestamp;
 
-    animationTimer.onAnimate(frameCount);
+    timer.onTick(frameCount);
 
     requestAnimationFrame(tick);
   };
@@ -43,13 +43,13 @@ CityTour.AnimationTimer = function() {
     paused = true;
   };
 
-  var animationTimer = {};
+  var timer = {};
 
-  animationTimer.onAnimate = function(frameCount) {};
+  timer.onTick = function(frameCount) {};
 
-  animationTimer.start = start;
+  timer.start = start;
 
-  animationTimer.togglePause = function() {
+  timer.togglePause = function() {
     if (paused) {
       start();
     }
@@ -58,5 +58,5 @@ CityTour.AnimationTimer = function() {
     }
   };
 
-  return animationTimer;
+  return timer;
 };

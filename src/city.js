@@ -70,7 +70,7 @@ CityTour.City = function(container) {
     return true;
   };
 
-  var animationTimer, animationManager;
+  var timer, animationManager;
 
   var init = function(onComplete) {
     var SKY_COLOR = 0x66ccff;
@@ -121,9 +121,9 @@ CityTour.City = function(container) {
     renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
     renderer.setClearColor(SKY_COLOR, 1); 
 
-    animationTimer = new CityTour.AnimationTimer();
+    timer = new CityTour.Timer();
     animationManager = new CityTour.AnimationManager(terrain, roadNetwork, cameraPole, camera);
-    animationTimer.onAnimate = function(frameCount) {
+    timer.onTick = function(frameCount) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);
     }
@@ -135,7 +135,7 @@ CityTour.City = function(container) {
     renderer.render(scene, camera);
     container.appendChild(renderer.domElement);
 
-    animationTimer.start();
+    timer.start();
 
     onComplete();
   };
@@ -152,7 +152,7 @@ CityTour.City = function(container) {
   };
 
   var togglePause = function() {
-    animationTimer.togglePause();
+    timer.togglePause();
   };
 
   var toggleDebug = function() {
