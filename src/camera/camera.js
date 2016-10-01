@@ -141,7 +141,6 @@ CityTour.ClampedMotionGenerator = function(start, target, delta) {
 
 CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialTargetYPosition, initialYPositionDelta) {
   var HALF_PI = Math.PI / 2.0;
-  var THREE_PI_OVER_TWO = (3.0 * Math.PI) / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
   var HORIZONTAL_MOTION_DELTA = 0.2;

@@ -30,7 +30,6 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_ROAD, });
     var roadGeometry = new THREE.Geometry();
     var roadSegmentMesh;
-    var roadIntersection;
     var roadSegment;
 
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, CityTour.Config.STREET_DEPTH), roadMaterial);
