@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.BuildingsGenerator = function() {
+CityTour.BuildingsGenerator = (function() {
   var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
 
   var blockTerrainAttributes = function(terrain, left, top, right, bottom) {
@@ -101,4 +101,4 @@ CityTour.BuildingsGenerator = function() {
   }
 
   return buildingsGenerator;
-};
+})();

@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.TerrainGenerator = function() {
+CityTour.TerrainGenerator = (function() {
   var MAX_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
@@ -132,4 +132,4 @@ CityTour.TerrainGenerator = function() {
   };
 
   return terrainGenerator;
-};
+})();

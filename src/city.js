@@ -83,16 +83,16 @@ CityTour.City = function(container) {
     var masterStartTime = new Date();
 
     var terrainStartTime = new Date();
-    var terrain = new CityTour.TerrainGenerator().generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
+    var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();
-    var roadNetwork = new CityTour.RoadNetworkGenerator().generate(terrain);
+    var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain);
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
-    var zonedBlocks = new CityTour.ZonedBlockGenerator().generate(terrain, roadNetwork);
-    var buildings = new CityTour.BuildingsGenerator().generate(terrain, zonedBlocks);
+    var zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork);
+    var buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
     var buildingsEndTime = new Date();
 
     var masterEndTime = new Date();

@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.ZonedBlockGenerator = function() {
+CityTour.ZonedBlockGenerator = (function() {
   var BLOCK_LAYOUTS = [
     {
       maxBlockSteepness: 1,
@@ -209,4 +209,4 @@ CityTour.ZonedBlockGenerator = function() {
   };
 
   return zonedBlockGenerator;
-};
+})();
