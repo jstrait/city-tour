@@ -38,16 +38,13 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTarge
 };
 
 
-CityTour.RoadNavigator = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
-  var Node = function(x, z) {
-    return {
-      isVisited: false,
-      distance:  Number.POSITIVE_INFINITY,
-      previous:  null,
-      x:         x,
-      z:         z,
-    };
-  };
+CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, initialTargetMapZ) {
+  var targetMapX = initialTargetMapX;
+  var targetMapZ = initialTargetMapZ;
+  var subTargetMapX = initialTargetMapX;
+  var subTargetMapZ = initialTargetMapZ;
+
+  var path = [];
 
   var chooseNewTarget = function() {
     var newTargetMapX;
@@ -59,6 +56,69 @@ CityTour.RoadNavigator = function(roadNetwork, initialTargetMapX, initialTargetM
     } while (!roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ));
 
     return [newTargetMapX, newTargetMapZ];
+  };
+
+  var simplifyPath = function(path) {
+    var xRun = 0;
+    var zRun = 0;
+    var previousX = subTargetMapX;
+    var previousZ = subTargetMapZ;
+
+    var simplifiedPath = [];
+
+    var i, x, z;
+    for (i = 0; i < path.length; i++) {
+      x = path[i][0];
+      z = path[i][1];
+      xRun = (x === previousX) ? xRun + 1 : 0;
+      zRun = (z === previousZ) ? zRun + 1 : 0;
+
+      if (((xRun === 1 && zRun === 0) || (xRun === 0 && zRun === 1)) && (i > 0)) {
+        simplifiedPath.push([previousX, previousZ]);
+      }
+
+      previousX = x;
+      previousZ = z;
+    };
+
+    simplifiedPath.push([x, z]);
+
+    return simplifiedPath;
+  };
+
+  var roadNavigator = {};
+
+  roadNavigator.targetMapX = function() { return subTargetMapX; };
+  roadNavigator.targetMapZ = function() { return subTargetMapZ; };
+
+  roadNavigator.nextTarget = function() {
+    if (path.length === 0) {
+      var newTargetCoordinates = chooseNewTarget();
+      path = pathFinder.shortestPath(targetMapX, targetMapZ, newTargetCoordinates[0], newTargetCoordinates[1]);
+      path = simplifyPath(path);
+
+      targetMapX = newTargetCoordinates[0];
+      targetMapZ = newTargetCoordinates[1];
+    }
+
+    var nextTargetPoint = path.splice(0, 1);
+    subTargetMapX = nextTargetPoint[0][0];
+    subTargetMapZ = nextTargetPoint[0][1];
+  };
+
+  return roadNavigator;
+};
+
+
+CityTour.PathFinder = function(roadNetwork) {
+  var Node = function(x, z) {
+    return {
+      isVisited: false,
+      distance:  Number.POSITIVE_INFINITY,
+      previous:  null,
+      x:         x,
+      z:         z,
+    };
   };
 
   var extractShortestPath = function(nodes, endX, endZ) {
@@ -123,35 +183,7 @@ CityTour.RoadNavigator = function(roadNetwork, initialTargetMapX, initialTargetM
     return shortestLengthNode;
   };
 
-  var simplifyPath = function(path) {
-    var xRun = 0;
-    var zRun = 0;
-    var previousX = subTargetMapX;
-    var previousZ = subTargetMapZ;
-
-    var simplifiedPath = [];
-
-    var i, x, z;
-    for (i = 0; i < path.length; i++) {
-      x = path[i][0];
-      z = path[i][1];
-      xRun = (x === previousX) ? xRun + 1 : 0;
-      zRun = (z === previousZ) ? zRun + 1 : 0;
-
-      if (((xRun === 1 && zRun === 0) || (xRun === 0 && zRun === 1)) && (i > 0)) {
-        simplifiedPath.push([previousX, previousZ]);
-      }
-
-      previousX = x;
-      previousZ = z;
-    };
-
-    simplifiedPath.push([x, z]);
-
-    return simplifiedPath;
-  };
-
-  var findShortestPath = function(startX, startZ, endX, endZ) {
+  var shortestPath = function(startX, startZ, endX, endZ) {
     var nodes = [];
     var unvisitedSet = new Set();
     var x;
@@ -173,37 +205,13 @@ CityTour.RoadNavigator = function(roadNetwork, initialTargetMapX, initialTargetM
       currentNode = unvisitedNodeWithShortestLength(unvisitedSet);
     }
 
-    var path = extractShortestPath(nodes, endX, endZ);
-    path = simplifyPath(path);
-
-    return path;
+    return extractShortestPath(nodes, endX, endZ);
   };
 
-  var targetMapX = initialTargetMapX;
-  var targetMapZ = initialTargetMapZ;
-  var subTargetMapX = initialTargetMapX;
-  var subTargetMapZ = initialTargetMapZ;
 
-  var path = [];
+  var pathFinder = {};
 
-  var roadNavigator = {};
+  pathFinder.shortestPath = shortestPath;
 
-  roadNavigator.targetMapX = function() { return subTargetMapX; };
-  roadNavigator.targetMapZ = function() { return subTargetMapZ; };
-
-  roadNavigator.nextTarget = function() {
-    if (path.length === 0) {
-      var newTargetCoordinates = chooseNewTarget();
-      path = findShortestPath(targetMapX, targetMapZ, newTargetCoordinates[0], newTargetCoordinates[1]);
-
-      targetMapX = newTargetCoordinates[0];
-      targetMapZ = newTargetCoordinates[1];
-    }
-
-    var nextTargetPoint = path.splice(0, 1);
-    subTargetMapX = nextTargetPoint[0][0];
-    subTargetMapZ = nextTargetPoint[0][1];
-  };
-
-  return roadNavigator;
+  return pathFinder;
 };

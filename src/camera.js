@@ -168,7 +168,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   var VERTICAL_MODE_DURATION_IN_FRAMES = 1500;
   var verticalMode = 'driving';
 
-  var navigator = new CityTour.RoadNavigator(roadNetwork, 0, CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
+  var pathFinder = new CityTour.PathFinder(roadNetwork);
+  var navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, 0, CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
 
   var determineNextTargetPoint = function() {
     var oldTargetSceneX = targetSceneX;
@@ -263,7 +264,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
         targetYPosition = Number.NEGATIVE_INFINITY;
         yPositionDelta = 0.05;
         targetXRotation = 0.0;
-        navigator = new CityTour.RoadNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+        navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
       }
       else if (verticalMode === 'birdseye') {
         verticalMode = 'hovering';
