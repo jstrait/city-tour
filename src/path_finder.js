@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.AerialPathFinder = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
+CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
   var targetMapX = initialTargetMapX;
   var targetMapZ = initialTargetMapZ;
   var deltaX = 0.0;
@@ -25,20 +25,20 @@ CityTour.AerialPathFinder = function(roadNetwork, initialTargetMapX, initialTarg
     deltaZ = (deltaZ === 0.0) ? 1.0 : 0.0;
   };
 
-  var pathFinder = {};
+  var aerialNavigator = {};
 
-  pathFinder.targetMapX = function() { return targetMapX; };
-  pathFinder.targetMapZ = function() { return targetMapZ; };
+  aerialNavigator.targetMapX = function() { return targetMapX; };
+  aerialNavigator.targetMapZ = function() { return targetMapZ; };
 
-  pathFinder.nextTarget = function() {
+  aerialNavigator.nextTarget = function() {
     determineNextTargetPoint();
   };
 
-  return pathFinder;
+  return aerialNavigator;
 };
 
 
-CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
+CityTour.RoadNavigator = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
   var Node = function(x, z) {
     return {
       isVisited: false,
@@ -186,12 +186,12 @@ CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTa
 
   var path = [];
 
-  var dijktrasPathFinder = {};
+  var roadNavigator = {};
 
-  dijktrasPathFinder.targetMapX = function() { return subTargetMapX; };
-  dijktrasPathFinder.targetMapZ = function() { return subTargetMapZ; };
+  roadNavigator.targetMapX = function() { return subTargetMapX; };
+  roadNavigator.targetMapZ = function() { return subTargetMapZ; };
 
-  dijktrasPathFinder.nextTarget = function() {
+  roadNavigator.nextTarget = function() {
     if (path.length === 0) {
       var newTargetCoordinates = chooseNewTarget();
       path = findShortestPath(targetMapX, targetMapZ, newTargetCoordinates[0], newTargetCoordinates[1]);
@@ -205,5 +205,5 @@ CityTour.DijktrasPathFinder = function(roadNetwork, initialTargetMapX, initialTa
     subTargetMapZ = nextTargetPoint[0][1];
   };
 
-  return dijktrasPathFinder;
+  return roadNavigator;
 };

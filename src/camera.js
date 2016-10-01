@@ -168,16 +168,16 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   var VERTICAL_MODE_DURATION_IN_FRAMES = 1500;
   var verticalMode = 'driving';
 
-  var pathFinder = new CityTour.DijktrasPathFinder(roadNetwork, 0, CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
+  var navigator = new CityTour.RoadNavigator(roadNetwork, 0, CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
 
   var determineNextTargetPoint = function() {
     var oldTargetSceneX = targetSceneX;
     var oldTargetSceneZ = targetSceneZ;
     var targetMapX, targetMapZ;
 
-    pathFinder.nextTarget();
-    targetMapX = pathFinder.targetMapX();
-    targetMapZ = pathFinder.targetMapZ();
+    navigator.nextTarget();
+    targetMapX = navigator.targetMapX();
+    targetMapZ = navigator.targetMapZ();
     targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
     targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
@@ -256,14 +256,14 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
         targetYPosition = 150;
         yPositionDelta = 2;
         targetXRotation = -(Math.PI / 3);
-        pathFinder = new CityTour.AerialPathFinder(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
       }
       else if (verticalMode === 'hovering') {
         verticalMode = 'driving';
         targetYPosition = Number.NEGATIVE_INFINITY;
         yPositionDelta = 0.05;
         targetXRotation = 0.0;
-        pathFinder = new CityTour.DijktrasPathFinder(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+        navigator = new CityTour.RoadNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
       }
       else if (verticalMode === 'birdseye') {
         verticalMode = 'hovering';
