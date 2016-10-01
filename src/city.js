@@ -83,7 +83,7 @@ CityTour.City = function(container) {
     var masterStartTime = new Date();
 
     var terrainStartTime = new Date();
-    var terrain = new CityTour.TerrainBuilder().build(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
+    var terrain = new CityTour.TerrainGenerator().generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();

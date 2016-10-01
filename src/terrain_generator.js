@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.TerrainBuilder = function() {
+CityTour.TerrainGenerator = function() {
   var MAX_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
@@ -124,12 +124,12 @@ CityTour.TerrainBuilder = function() {
     }
   };
 
-  var terrainBuilder = {};
+  var terrainGenerator = {};
 
-  terrainBuilder.build = function(columns, rows) {
+  terrainGenerator.generate = function(columns, rows) {
     var terrainCoordinates = buildTerrainCoordinates(columns, rows);
     return new CityTour.Terrain(terrainCoordinates);
   };
 
-  return terrainBuilder;
+  return terrainGenerator;
 };
