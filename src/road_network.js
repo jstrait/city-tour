@@ -63,7 +63,7 @@ CityTour.RoadNetwork = function() {
 };
 
 
-CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
+CityTour.RoadNetworkGenerator = function(terrain) {
   var calculateBlockProbabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
     var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
 
@@ -126,14 +126,14 @@ CityTour.AdditiveRoadNetworkGenerator = function(terrain) {
     }
   };
 
-  var additiveRoadNetworkGenerator = {};
+  var roadNetworkGenerator = {};
 
-  additiveRoadNetworkGenerator.generate = function() {
+  roadNetworkGenerator.generate = function() {
     var roadNetwork = new CityTour.RoadNetwork();
     branchFromIntersection(roadNetwork, 0, 0);
 
     return roadNetwork;
   };
 
-  return additiveRoadNetworkGenerator;
+  return roadNetworkGenerator;
 };
