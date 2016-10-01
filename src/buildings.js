@@ -213,7 +213,7 @@ CityTour.ZonedBlockGenerator = function() {
 
 
 
-CityTour.Buildings = function(terrain, roadNetwork) {
+CityTour.BuildingsGenerator = function() {
   var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
 
   var blockTerrainAttributes = function(terrain, left, top, right, bottom) {
@@ -296,13 +296,20 @@ CityTour.Buildings = function(terrain, roadNetwork) {
     }
   };
 
-  var blocks = generateUnitBlocks(terrain, new CityTour.ZonedBlockGenerator().build(terrain, roadNetwork));
 
-  var buildings = {};
+  var buildingsGenerator = {};
 
-  buildings.blockAtCoordinates = function(mapX, mapZ) {
-    return blocks[mapX][mapZ];
-  };
+  buildingsGenerator.generate = function(terrain, roadNetwork) {
+    var blocks = generateUnitBlocks(terrain, new CityTour.ZonedBlockGenerator().build(terrain, roadNetwork));
 
-  return buildings;
+    var buildings = {};
+
+    buildings.blockAtCoordinates = function(mapX, mapZ) {
+      return blocks[mapX][mapZ];
+    };
+
+    return buildings;
+  }
+
+  return buildingsGenerator;
 };

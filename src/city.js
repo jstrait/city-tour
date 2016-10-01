@@ -91,7 +91,7 @@ CityTour.City = function(container) {
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
-    var buildings = new CityTour.Buildings(terrain, roadNetwork);
+    var buildings = new CityTour.BuildingsGenerator().generate(terrain, roadNetwork);
     var buildingsEndTime = new Date();
 
     var masterEndTime = new Date();
