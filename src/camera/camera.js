@@ -78,7 +78,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       scheduleDebugChange = false;
 
       if (debug) {
-        debugAnimationController = new CityTour.DebugAnimation(cameraPole, camera, 0.0, 900, 0.0, -(Math.PI / 2), 0.0);
+        debugAnimationController = new CityTour.DebugAnimation(cameraPole, camera, 0.0, 900, 0.0, -(Math.PI / 2), 0.0, true);
       }
       else {
         debugAnimationController = new CityTour.DebugAnimation(cameraPole,
@@ -87,7 +87,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
                                                                vehicleController.yPosition(),
                                                                vehicleController.zPosition(),
                                                                vehicleController.xRotation(),
-                                                               vehicleController.yRotation());
+                                                               vehicleController.yRotation(),
+                                                               false);
       }
     }
 
@@ -136,6 +137,46 @@ CityTour.ClampedMotionGenerator = function(start, target, delta) {
   clampedMotionGenerator.finished = function() { return current === target; };
 
   return clampedMotionGenerator;
+};
+
+
+CityTour.SineMotionGenerator = function(start, target, delta) {
+  var HALF_PI = Math.PI / 2;
+
+  var current = start;
+  var totalDistance = target - start;
+  var x, xTarget;
+  if (delta > 0.0) {
+    x = 0.0;
+    xTarget = HALF_PI;
+  }
+  else {
+    x = HALF_PI;
+    xTarget = Math.PI;
+  }
+
+  var sineMotionGenerator = {};
+
+  sineMotionGenerator.next = function() {
+    if (x >= xTarget) {
+      return current;
+    }
+    else {
+      if (delta > 0) {
+        current = start + (totalDistance * Math.sin(x));
+      }
+      else {
+        current = start + (totalDistance * (1.0 - Math.sin(x)));
+      }
+      x += Math.abs(delta);
+    }
+
+    return current;
+  };
+
+  sineMotionGenerator.finished = function() { return x >= xTarget; };
+
+  return sineMotionGenerator;
 };
 
 
@@ -283,7 +324,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
 };
 
 
-CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYPosition, targetZPosition, targetXRotation, targetYRotation) {
+CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYPosition, targetZPosition, targetXRotation, targetYRotation, up) {
   var ANIMATION_DURATION_IN_FRAMES = 50.0;
 
   var xPosition = cameraPole.position.x;
@@ -300,17 +341,26 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
     yRotation += Math.PI * 2;
   }
 
-  var xPositionDelta = Math.abs((targetXPosition - xPosition) / ANIMATION_DURATION_IN_FRAMES);
-  var yPositionDelta = Math.abs((targetYPosition - yPosition) / ANIMATION_DURATION_IN_FRAMES);
-  var zPositionDelta = Math.abs((targetZPosition - zPosition) / ANIMATION_DURATION_IN_FRAMES);
-  var xRotationDelta = Math.abs((targetXRotation - xRotation) / ANIMATION_DURATION_IN_FRAMES);
-  var yRotationDelta = Math.abs((targetYRotation - yRotation) / ANIMATION_DURATION_IN_FRAMES);
+  var xPositionDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
+  var yPositionDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
+  var zPositionDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
+  var xRotationDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
+  var yRotationDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
 
-  var xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, targetXPosition, xPositionDelta);
-  var yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-  var zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, targetZPosition, zPositionDelta);
-  var xAngleMotionGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-  var yAngleMotionGenerator = new CityTour.ClampedMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+  if (up) {
+    var xMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
+    var yMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, -yPositionDelta);
+    var zMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
+    var xAngleMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+    var yAngleMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+  }
+  else {
+    var xMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
+    var yMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta);
+    var zMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
+    var xAngleMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, -xRotationDelta);
+    var yAngleMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+  }
 
   var debugAnimation = {};
 
