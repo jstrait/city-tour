@@ -73,6 +73,14 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       vehicleController.animate();
     }
 
+    if (!debug && debugAnimationController) {
+      debugAnimationController.setTargetXPosition(vehicleController.xPosition());
+      debugAnimationController.setTargetYPosition(vehicleController.yPosition());
+      debugAnimationController.setTargetZPosition(vehicleController.zPosition());
+      debugAnimationController.setTargetXRotation(vehicleController.xRotation());
+      debugAnimationController.setTargetYRotation(vehicleController.yRotation());
+    }
+
     if (scheduleDebugChange) {
       debug = !debug;
       scheduleDebugChange = false;
@@ -172,6 +180,11 @@ CityTour.SineMotionGenerator = function(start, target, delta) {
     }
 
     return current;
+  };
+
+  sineMotionGenerator.setTarget = function(newTarget) {
+    target = newTarget;
+    totalDistance = target - start;
   };
 
   sineMotionGenerator.finished = function() { return x >= xTarget; };
@@ -363,6 +376,26 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
   }
 
   var debugAnimation = {};
+
+  debugAnimation.setTargetXPosition = function(newTargetXPosition) {
+    xMotionGenerator.setTarget(newTargetXPosition);
+  };
+
+  debugAnimation.setTargetYPosition = function(newTargetYPosition) {
+    yMotionGenerator.setTarget(newTargetYPosition);
+  };
+
+  debugAnimation.setTargetZPosition = function(newTargetZPosition) {
+    zMotionGenerator.setTarget(newTargetZPosition);
+  };
+
+  debugAnimation.setTargetYRotation = function(newTargetYRotation) {
+    yAngleMotionGenerator.setTarget(newTargetYRotation);
+  };
+
+  debugAnimation.setTargetXRotation = function(newTargetXRotation) {
+    xAngleMotionGenerator.setTarget(newTargetXRotation);
+  };
 
   debugAnimation.animate = function() {
     xPosition = xMotionGenerator.next();
