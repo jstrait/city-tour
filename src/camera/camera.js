@@ -117,10 +117,7 @@ CityTour.ClampedLinearMotionGenerator = function(start, target, delta) {
   var clampedLinearMotionGenerator = {};
 
   clampedLinearMotionGenerator.next = function() {
-    if (current === target) {
-      return current;
-    }
-    else {
+    if (current !== target) {
       if (current > target) {
         if ((current - target) < delta) {
           current = target;
@@ -158,7 +155,7 @@ CityTour.SineMotionGenerator = function(start, target, delta, direction) {
     direction = 'forward';
   }
   
-  var x, xTarget;
+  var x, xTarget, distancePercentage;
   if (direction === 'forward') {
     x = 0.0;
     xTarget = HALF_PI;
@@ -171,16 +168,15 @@ CityTour.SineMotionGenerator = function(start, target, delta, direction) {
   var sineMotionGenerator = {};
 
   sineMotionGenerator.next = function() {
-    if (x >= xTarget) {
-      return current;
-    }
-    else {
+    if (x < xTarget) {
       if (direction === 'forward') {
-        current = start + (totalDistance * Math.sin(x));
+        distancePercentage = Math.sin(x);
       }
       else {
-        current = start + (totalDistance * (1.0 - Math.sin(x)));
+        distancePercentage = 1.0 - Math.sin(x);
       }
+
+      current = start + (totalDistance * distancePercentage);
       x += delta;
     }
 
