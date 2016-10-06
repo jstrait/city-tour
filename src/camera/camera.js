@@ -148,13 +148,18 @@ CityTour.ClampedLinearMotionGenerator = function(start, target, delta) {
 };
 
 
-CityTour.SineMotionGenerator = function(start, target, delta) {
+CityTour.SineMotionGenerator = function(start, target, delta, direction) {
   var HALF_PI = Math.PI / 2;
 
   var current = start;
   var totalDistance = target - start;
+
+  if (direction === undefined) {
+    direction = 'forward';
+  }
+  
   var x, xTarget;
-  if (delta > 0.0) {
+  if (direction === 'forward') {
     x = 0.0;
     xTarget = HALF_PI;
   }
@@ -170,13 +175,13 @@ CityTour.SineMotionGenerator = function(start, target, delta) {
       return current;
     }
     else {
-      if (delta > 0) {
+      if (direction === 'forward') {
         current = start + (totalDistance * Math.sin(x));
       }
       else {
         current = start + (totalDistance * (1.0 - Math.sin(x)));
       }
-      x += Math.abs(delta);
+      x += delta;
     }
 
     return current;
@@ -361,18 +366,18 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
   var yRotationDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
 
   if (up) {
-    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
-    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, -yPositionDelta);
-    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
-    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta, 'forward');
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta, 'backward');
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta, 'forward');
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta, 'forward');
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta, 'forward');
   }
   else {
-    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
-    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
-    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, -xRotationDelta);
-    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta, 'forward');
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta, 'forward');
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta, 'forward');
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta, 'backward');
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta, 'forward');
   }
 
   var debugAnimation = {};
