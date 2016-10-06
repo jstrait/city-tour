@@ -361,48 +361,48 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
   var yRotationDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
 
   if (up) {
-    var xMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
-    var yMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, -yPositionDelta);
-    var zMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
-    var xAngleMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-    var yAngleMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, -yPositionDelta);
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
   }
   else {
-    var xMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
-    var yMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-    var zMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
-    var xAngleMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, -xRotationDelta);
-    var yAngleMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta);
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta);
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta);
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, -xRotationDelta);
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta);
   }
 
   var debugAnimation = {};
 
   debugAnimation.setTargetXPosition = function(newTargetXPosition) {
-    xMotionGenerator.setTarget(newTargetXPosition);
+    xPositionMotionGenerator.setTarget(newTargetXPosition);
   };
 
   debugAnimation.setTargetYPosition = function(newTargetYPosition) {
-    yMotionGenerator.setTarget(newTargetYPosition);
+    yPositionMotionGenerator.setTarget(newTargetYPosition);
   };
 
   debugAnimation.setTargetZPosition = function(newTargetZPosition) {
-    zMotionGenerator.setTarget(newTargetZPosition);
-  };
-
-  debugAnimation.setTargetYRotation = function(newTargetYRotation) {
-    yAngleMotionGenerator.setTarget(newTargetYRotation);
+    zPositionMotionGenerator.setTarget(newTargetZPosition);
   };
 
   debugAnimation.setTargetXRotation = function(newTargetXRotation) {
-    xAngleMotionGenerator.setTarget(newTargetXRotation);
+    xRotationMotionGenerator.setTarget(newTargetXRotation);
+  };
+
+  debugAnimation.setTargetYRotation = function(newTargetYRotation) {
+    yRotationMotionGenerator.setTarget(newTargetYRotation);
   };
 
   debugAnimation.animate = function() {
-    xPosition = xMotionGenerator.next();
-    yPosition = yMotionGenerator.next();
-    zPosition = zMotionGenerator.next();
-    xRotation = xAngleMotionGenerator.next();
-    yRotation = yAngleMotionGenerator.next();
+    xPosition = xPositionMotionGenerator.next();
+    yPosition = yPositionMotionGenerator.next();
+    zPosition = zPositionMotionGenerator.next();
+    xRotation = xRotationMotionGenerator.next();
+    yRotation = yRotationMotionGenerator.next();
   };
 
   debugAnimation.xPosition = function() { return xPosition; };
@@ -410,11 +410,11 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
   debugAnimation.zPosition = function() { return zPosition; };
   debugAnimation.xRotation = function() { return xRotation; };
   debugAnimation.yRotation = function() { return yRotation; };
-  debugAnimation.finished = function() { return xMotionGenerator.finished() &&
-                                                yMotionGenerator.finished() &&
-                                                zMotionGenerator.finished() &&
-                                                xAngleMotionGenerator.finished() &&
-                                                yAngleMotionGenerator.finished()
+  debugAnimation.finished = function() { return xPositionMotionGenerator.finished() &&
+                                                yPositionMotionGenerator.finished() &&
+                                                zPositionMotionGenerator.finished() &&
+                                                xRotationMotionGenerator.finished() &&
+                                                yRotationMotionGenerator.finished()
                                        };
 
   return debugAnimation;
