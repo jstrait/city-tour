@@ -111,12 +111,12 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 };
 
 
-CityTour.ClampedMotionGenerator = function(start, target, delta) {
+CityTour.ClampedLinearMotionGenerator = function(start, target, delta) {
   var current = start;
 
-  var clampedMotionGenerator = {};
+  var clampedLinearMotionGenerator = {};
 
-  clampedMotionGenerator.next = function() {
+  clampedLinearMotionGenerator.next = function() {
     if (current === target) {
       return current;
     }
@@ -142,9 +142,9 @@ CityTour.ClampedMotionGenerator = function(start, target, delta) {
     return current;
   };
 
-  clampedMotionGenerator.finished = function() { return current === target; };
+  clampedLinearMotionGenerator.finished = function() { return current === target; };
 
-  return clampedMotionGenerator;
+  return clampedLinearMotionGenerator;
 };
 
 
@@ -264,11 +264,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   };
 
 
-  var xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, 0.0, xPositionDelta);
-  var yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-  var zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, initialTargetZPosition, zPositionDelta);
-  var xRotationGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-  var yRotationGenerator = new CityTour.ClampedMotionGenerator(yRotation, 0.0, Y_ROTATION_DELTA);
+  var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, 0.0, xPositionDelta);
+  var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
+  var zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, initialTargetZPosition, zPositionDelta);
+  var xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+  var yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, 0.0, Y_ROTATION_DELTA);
 
   var vehicleController = {};
 
@@ -284,9 +284,9 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
         zPosition === targetSceneZ) {
       determineNextTargetPoint();
 
-      yRotationGenerator = new CityTour.ClampedMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
-      xMotionGenerator = new CityTour.ClampedMotionGenerator(xPosition, targetSceneX, xPositionDelta);
-      zMotionGenerator = new CityTour.ClampedMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
+      yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
+      xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
+      zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
     }
 
     if (yRotation != targetYRotation) {
@@ -326,8 +326,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
         targetXRotation = 0.0;
       }
 
-      yMotionGenerator = new CityTour.ClampedMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-      xRotationGenerator = new CityTour.ClampedMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+      yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
+      xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
 
       framesInCurrentVerticalMode = 0;
     }
