@@ -265,6 +265,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
 
 CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYPosition, targetZPosition, targetXRotation, targetYRotation, up) {
   var ANIMATION_DURATION_IN_FRAMES = 50.0;
+  var MOTION_DELTA = 1.0 / ANIMATION_DURATION_IN_FRAMES;
 
   var xPosition = cameraPole.position.x;
   var yPosition = cameraPole.position.y;
@@ -280,25 +281,19 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
     yRotation += Math.PI * 2;
   }
 
-  var xPositionDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
-  var yPositionDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
-  var zPositionDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
-  var xRotationDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
-  var yRotationDelta = 1.0 / ANIMATION_DURATION_IN_FRAMES;
-
   if (up) {
-    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta, 'forward');
-    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta, 'backward');
-    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta, 'forward');
-    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta, 'forward');
-    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta, 'forward');
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, MOTION_DELTA, 'forward');
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, MOTION_DELTA, 'backward');
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, MOTION_DELTA, 'forward');
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, MOTION_DELTA, 'forward');
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, MOTION_DELTA, 'forward');
   }
   else {
-    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, xPositionDelta, 'forward');
-    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, yPositionDelta, 'forward');
-    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, zPositionDelta, 'forward');
-    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, xRotationDelta, 'backward');
-    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, yRotationDelta, 'forward');
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, MOTION_DELTA, 'forward');
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, MOTION_DELTA, 'forward');
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, MOTION_DELTA, 'forward');
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, MOTION_DELTA, 'backward');
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, MOTION_DELTA, 'forward');
   }
 
   var debugAnimation = {};
