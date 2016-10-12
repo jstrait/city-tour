@@ -49,8 +49,6 @@ CityTour.TerrainGenerator = (function() {
 
 
   var buildTerrainCoordinates = function(columns, rows) {
-    var x, z;
-
     var columnsToGenerate = nextPowerOfTwo(columns);
     var rowsToGenerate = nextPowerOfTwo(rows);
 
