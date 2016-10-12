@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.TerrainGenerator = (function() {
-  var MAX_TERRAIN_HEIGHT = 6;
+  var MAX_INITIAL_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
 
@@ -57,10 +57,10 @@ CityTour.TerrainGenerator = (function() {
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
     // Initial randomization of corners
-    terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[0][rows] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[columns][0] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
-    terrainCoordinates[columns][rows] = Math.floor(Math.random() * MAX_TERRAIN_HEIGHT);
+    terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rows] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columns][0] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columns][rows] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     midpointDisplace(terrainCoordinates,
