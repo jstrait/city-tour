@@ -199,6 +199,34 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
     if (yRotation === targetYRotation &&
         xPosition === targetSceneX &&
         zPosition === targetSceneZ) {
+      if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
+        if (verticalMode === 'driving') {
+          verticalMode = 'birdseye';
+          targetYPosition = 150;
+          yPositionDelta = 2;
+          targetXRotation = -(Math.PI / 3);
+          navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+        }
+        else if (verticalMode === 'hovering') {
+          verticalMode = 'driving';
+          targetYPosition = Number.NEGATIVE_INFINITY;
+          yPositionDelta = 0.05;
+          targetXRotation = 0.0;
+          navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+        }
+        else if (verticalMode === 'birdseye') {
+          verticalMode = 'hovering';
+          targetYPosition = 15;
+          yPositionDelta = 2;
+          targetXRotation = 0.0;
+        }
+
+        yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
+        xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+
+        framesInCurrentVerticalMode = 0;
+      }
+
       determineNextTargetPoint();
 
       yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
@@ -220,34 +248,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
     yPosition = Math.max(yMotionGenerator.next(), terrainHeight + 0.5);
 
     xRotation = xRotationGenerator.next();
-
-    if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
-      if (verticalMode === 'driving') {
-        verticalMode = 'birdseye';
-        targetYPosition = 150;
-        yPositionDelta = 2;
-        targetXRotation = -(Math.PI / 3);
-        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
-      }
-      else if (verticalMode === 'hovering') {
-        verticalMode = 'driving';
-        targetYPosition = Number.NEGATIVE_INFINITY;
-        yPositionDelta = 0.05;
-        targetXRotation = 0.0;
-        navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
-      }
-      else if (verticalMode === 'birdseye') {
-        verticalMode = 'hovering';
-        targetYPosition = 15;
-        yPositionDelta = 2;
-        targetXRotation = 0.0;
-      }
-
-      yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-      xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-
-      framesInCurrentVerticalMode = 0;
-    }
   };
 
   return vehicleController;
