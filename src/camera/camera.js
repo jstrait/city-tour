@@ -180,6 +180,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
     }
   };
 
+  var isAtTargetPoint = function() {
+    return yRotation === targetYRotation &&
+           xPosition === targetSceneX &&
+           zPosition === targetSceneZ;
+  };
 
   var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, 0.0, xPositionDelta);
   var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
@@ -196,9 +201,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   vehicleController.xRotation = function() { return xRotation; };
 
   vehicleController.animate = function() {
-    if (yRotation === targetYRotation &&
-        xPosition === targetSceneX &&
-        zPosition === targetSceneZ) {
+    if (isAtTargetPoint()) {
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
         if (verticalMode === 'driving') {
           verticalMode = 'birdseye';
