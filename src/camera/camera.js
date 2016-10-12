@@ -135,7 +135,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   var xRotationDelta = 0.0155140377955;
 
   var framesInCurrentVerticalMode = 0;
-  var VERTICAL_MODE_DURATION_IN_FRAMES = 1500;
+  var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
   var verticalMode = 'driving';
 
   var pathFinder = new CityTour.PathFinder(roadNetwork);
