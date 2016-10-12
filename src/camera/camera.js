@@ -251,12 +251,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
       zPosition = zMotionGenerator.next();
     }
 
-    framesInCurrentVerticalMode += 1;
-
     var terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(xPosition), CityTour.Coordinates.sceneZToMapZ(zPosition));
     yPosition = Math.max(yMotionGenerator.next(), terrainHeight + MINIMUM_HEIGHT_OFF_GROUND);
 
     xRotation = xRotationGenerator.next();
+
+    framesInCurrentVerticalMode += 1;
   };
 
   return vehicleController;
