@@ -60,7 +60,6 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
                                                        INITIAL_Y_ROTATION,
                                                        INITIAL_Y_POSITION,
                                                        INITIAL_X_ROTATION,
-                                                       terrainHeightAtTouchdown + 0.5,
                                                        swoopDescentDelta);
 
     syncCamera();
@@ -111,7 +110,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 };
 
 
-CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialTargetYPosition, initialYPositionDelta) {
+CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialYPositionDelta) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -130,7 +129,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   var zPositionDelta = HORIZONTAL_MOTION_DELTA;
   var targetYRotation = 0.0;
 
-  var targetYPosition = initialTargetYPosition;
+  var targetYPosition = Number.NEGATIVE_INFINITY;
   var yPositionDelta = initialYPositionDelta;
   var targetXRotation = 0.0;
   var xRotationDelta = 0.0155140377955;
