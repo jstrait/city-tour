@@ -71,13 +71,6 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    // Clamp negative heights to 0
-    for (x = 0; x <= columnsToGenerate; x++) {
-      for (z = 0; z <= rowsToGenerate; z++) {
-        //terrainCoordinates[x][z] = Math.max(0.0, terrainCoordinates[x][z]);
-      }
-    }
-
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
 
