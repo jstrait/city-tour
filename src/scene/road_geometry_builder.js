@@ -71,7 +71,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
                                                terrain.heightAtCoordinates(mapX + 1, mapZ),
                                                CityTour.Config.BLOCK_WIDTH);
 
-            roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(roadSegment.length, CityTour.Config.STREET_WIDTH), roadMaterial);
+            roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(roadSegment.length, CityTour.Config.STREET_DEPTH), roadMaterial);
             roadSegmentMesh.position.x = sceneX + HALF_BLOCK_AND_STREET_WIDTH;
             roadSegmentMesh.rotation.x = -HALF_PI;
             roadSegmentMesh.position.y = roadSegment.midpointHeight;
