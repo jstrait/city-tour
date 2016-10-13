@@ -18,11 +18,11 @@ First, blueprints of the world are generated:
 * Empty building lots along roads
 * Buildings in the lots
 
-The results are different each time due to random variation, but follow rules that can be configured.
+The results are different each time due to random variation, but follow configurable rules.
 
 Next, this abstract definition is turned into a 3D model that can be rendered with WebGL, with the help of [three.js](http://threejs.org).
 
-Finally, a rendering loop begins which moves a three.js camera around the scene. This camera has logic to follow the terrain and road network, etc.
+Finally, a rendering loop begins which moves a three.js camera around the scene.
 
 
 ## Local Development
