@@ -1,6 +1,8 @@
 # City Tour
 
-Visit a computer generated city, different each time. Sit back and enjoy the ride!
+Visit a procedurally generated city, different each time. Sit back and enjoy the ride!
+
+<http://www.joelstrait.com/citytour/>
 
 <img src="city_tour.gif" width="400" />
 
