@@ -26,7 +26,7 @@ CityTour.BuildingsGenerator = (function() {
     var block;
     var mapX, mapZ;
     var lotTerrainAttributes;
-    var maxStoriesForLotSize, maxStories, actualStories;
+    var maxStories, actualStories;
     var hasAdjacentRoad;
 
     zonedBlocks.forEach(function(zonedBlock) {
@@ -45,9 +45,7 @@ CityTour.BuildingsGenerator = (function() {
             lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
             if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-              maxStoriesForLotSize = calculateMaxStoriesForLotSize(lot.width, lot.depth);
-              maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLotSize);
-
+              maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
               actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
               block.push({
@@ -68,18 +66,6 @@ CityTour.BuildingsGenerator = (function() {
     });
 
     return blocks;
-  };
-
-  var calculateMaxStoriesForLotSize = function(width, height) {
-    if (width < 0.25 || height < 0.25) {
-      return 4; 
-    }
-    else if (width < 0.5 || height < 0.5) {
-      return 10;
-    }
-    else {
-      return Number.POSITIVE_INFINITY;
-    }
   };
 
 

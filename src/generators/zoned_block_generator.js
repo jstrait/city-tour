@@ -122,6 +122,16 @@ CityTour.ZonedBlockGenerator = (function() {
       lot.depth = lot.bottom - lot.top;
       lot.midpointX = lot.left + (lot.width / 2);
       lot.midpointZ = lot.top + (lot.depth / 2);
+
+      if (lot.width < 0.25 || lot.depth < 0.25) {
+        lot.maxStories = 4; 
+      }
+      else if (lot.width < 0.5 || lot.depth < 0.5) {
+        lot.maxStories = 10;
+      }
+      else {
+        lot.maxStories = Number.POSITIVE_INFINITY;
+      }
     });
   });
 
