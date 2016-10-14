@@ -90,17 +90,20 @@ CityTour.City = function(container) {
     var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain);
     var roadEndTime = new Date();
 
-    var buildingsStartTime = new Date();
+    var zonedBlocksStartTime = new Date();
     var zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork);
+    var zonedBlocksEndTime = new Date();
+    var buildingsStartTime = new Date();
     var buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
     var buildingsEndTime = new Date();
 
     var masterEndTime = new Date();
 
     console.log("Time to generate world data: " + (masterEndTime - masterStartTime) + "ms");
-    console.log("  Terrain: "      + (terrainEndTime - terrainStartTime) + "ms");
+    console.log("  Terrain:      " + (terrainEndTime - terrainStartTime) + "ms");
     console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
-    console.log("  Buildings: "    + (buildingsEndTime - buildingsStartTime) + "ms");
+    console.log("  Lots:         " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
+    console.log("  Buildings:    " + (buildingsEndTime - buildingsStartTime) + "ms");
 
     var sceneBuilder = new CityTour.Scene.Builder();
     scene = sceneBuilder.build(terrain, roadNetwork, buildings);
