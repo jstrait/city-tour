@@ -93,10 +93,11 @@ CityTour.TerrainGenerator = (function() {
 
     for (z = (rows / 2) + 4; z > (rows / 2); z--) {
       for (x = 0; x <= columns; x++) {
-        terrainCoordinates[x][z].material = WATER;
         terrainCoordinates[x][z].height = minimumRiverBankHeight;
       }
     }
+
+    floodFill(terrainCoordinates, 0, (rows / 2) + 4, minimumRiverBankHeight, WATER);
 
 
     // Convert to final coordinates
@@ -104,6 +105,38 @@ CityTour.TerrainGenerator = (function() {
 
     return finalTerrainCoordinates;
   };
+
+
+  var floodFill = function(terrainCoordinates, x, z, height, material) {
+    terrainCoordinates[x][z].height = height;
+    terrainCoordinates[x][z].material = material;
+
+    if (terrainCoordinates[x - 1] &&
+        terrainCoordinates[x - 1][z] &&
+        terrainCoordinates[x - 1][z].height <= height &&
+        terrainCoordinates[x - 1][z].material != material) { 
+      floodFill(terrainCoordinates, x - 1, z, height, material);
+    }
+    if (terrainCoordinates[x + 1] &&
+        terrainCoordinates[x + 1][z] &&
+        terrainCoordinates[x + 1][z].height <= height &&
+        terrainCoordinates[x + 1][z].material != material) { 
+      floodFill(terrainCoordinates, x + 1, z, height, material);
+    }
+    if (terrainCoordinates[x] &&
+        terrainCoordinates[x][z - 1] &&
+        terrainCoordinates[x][z - 1].height <= height &&
+        terrainCoordinates[x][z - 1].material != material) { 
+      floodFill(terrainCoordinates, x, z - 1, height, material);
+    }
+    if (terrainCoordinates[x] &&
+        terrainCoordinates[x][z + 1] &&
+        terrainCoordinates[x][z + 1].height <= height &&
+        terrainCoordinates[x][z + 1].material != material) { 
+      floodFill(terrainCoordinates, x, z + 1, height, material);
+    }
+  };
+
 
   // Adapted from http://stevelosh.com/blog/2016/02/midpoint-displacement/
   var midpointDisplace = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
