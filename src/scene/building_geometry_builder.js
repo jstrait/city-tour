@@ -61,14 +61,14 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
           storyHeight = ((CityTour.Config.MAX_STORY_HEIGHT - CityTour.Config.MIN_STORY_HEIGHT) * Math.random()) + CityTour.Config.MIN_STORY_HEIGHT;
           buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor); 
 
-          reusableBuildingMesh.scale.x = lot.width * CityTour.Config.BLOCK_WIDTH;
-          reusableBuildingMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.midpointX);
+          reusableBuildingMesh.scale.x = lot.dimensions.width * CityTour.Config.BLOCK_WIDTH;
+          reusableBuildingMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
 
           reusableBuildingMesh.scale.y = buildingHeight;
           reusableBuildingMesh.position.y = (buildingHeight / 2) + lot.yFloor;
 
-          reusableBuildingMesh.scale.z = lot.depth * CityTour.Config.BLOCK_DEPTH;
-          reusableBuildingMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.midpointZ);
+          reusableBuildingMesh.scale.z = lot.dimensions.depth * CityTour.Config.BLOCK_DEPTH;
+          reusableBuildingMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
 
           reusableBuildingMesh.updateMatrix();
 
@@ -78,9 +78,9 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
           // Add antenna to tall buildings
           if (lot.stories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
             cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
-            cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.midpointX);
+            cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
             cylinderMesh.position.y = lot.yFloor + buildingHeight + 5;
-            cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.midpointZ);
+            cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
             cylinderMesh.updateMatrix();
             buildingGeometries[materialIndex].merge(cylinderMesh.geometry, cylinderMesh.matrix);
           }

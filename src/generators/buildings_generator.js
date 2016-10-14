@@ -51,14 +51,7 @@ CityTour.BuildingsGenerator = (function() {
               actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
               block.push({
-                left: lot.left,
-                right: lot.right,
-                top: lot.top,
-                bottom: lot.bottom,
-                width: lot.width,
-                depth: lot.depth,
-                midpointX: lot.midpointX,
-                midpointZ: lot.midpointZ,
+                dimensions: lot,
                 yFloor: lotTerrainAttributes.minimumHeight,
                 ySurface: lotTerrainAttributes.maximumHeight,
                 stories: actualStories,
