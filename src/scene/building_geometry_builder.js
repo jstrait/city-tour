@@ -44,8 +44,6 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     var storyHeight, buildingHeight;
     var materialIndex;
 
-    var mapLotXMidpoint, mapLotZMidpoint;
-
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
     var cylinderMesh;
 
