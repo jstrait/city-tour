@@ -17,7 +17,7 @@ CityTour.TerrainGenerator = (function() {
       terrainCoordinates[x] = [];
 
       for (z = 0; z <= rows; z++) {
-        terrainCoordinates[x][z] = 0.0;
+        terrainCoordinates[x][z] = { material: LAND, height: 0.0 };
       }
     }
 
@@ -38,11 +38,9 @@ CityTour.TerrainGenerator = (function() {
       normalizedTerrainCoordinates[x] = [];
 
       for (z = -halfRows; z <= halfRows; z++) {
-        material = (terrainCoordinates[x + columnOffset][z + rowOffset] === -20.0) ? WATER : LAND;
-
         normalizedTerrainCoordinates[x][z] = {
-          material: material,
-          height: terrainCoordinates[x + columnOffset][z + rowOffset],
+          material: terrainCoordinates[x + columnOffset][z + rowOffset].material,
+          height: terrainCoordinates[x + columnOffset][z + rowOffset].height,
         }
       }
     }
@@ -63,10 +61,10 @@ CityTour.TerrainGenerator = (function() {
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
     // Initial randomization of corners
-    terrainCoordinates[0][0] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[0][rows] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columns][0] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columns][rows] = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][0].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rows].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columns][0].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columns][rows].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     midpointDisplace(terrainCoordinates,
@@ -77,12 +75,29 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    var trenchHeight = -20.0;
-    for (var z = (rows / 2) + 4; z > (rows / 2); z--) {
-      for (var x = 0; x < columns; x++) {
-        terrainCoordinates[x][z] = trenchHeight;
+    var x, z;
+
+    var minimumRiverBankHeight = Number.POSITIVE_INFINITY;
+    var z = (rows / 2) + 4;
+    for (x = 0; x <= columns; x++) {
+      if (terrainCoordinates[x][z].height < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[x][z].height;
       }
     }
+    var z = rows / 2;
+    for (x = 0; x <= columns; x++) {
+      if (terrainCoordinates[x][z].height < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[x][z].height;
+      }
+    }
+
+    for (z = (rows / 2) + 4; z > (rows / 2); z--) {
+      for (x = 0; x <= columns; x++) {
+        terrainCoordinates[x][z].material = WATER;
+        terrainCoordinates[x][z].height = minimumRiverBankHeight;
+      }
+    }
+
 
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
@@ -92,10 +107,10 @@ CityTour.TerrainGenerator = (function() {
 
   // Adapted from http://stevelosh.com/blog/2016/02/midpoint-displacement/
   var midpointDisplace = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
-    var topLeftHeight     = terrainCoordinates[top][left];
-    var topRightHeight    = terrainCoordinates[top][right];
-    var bottomLeftHeight  = terrainCoordinates[bottom][left];
-    var bottomRightHeight = terrainCoordinates[bottom][right];
+    var topLeftHeight     = terrainCoordinates[top][left].height;
+    var topRightHeight    = terrainCoordinates[top][right].height;
+    var bottomLeftHeight  = terrainCoordinates[bottom][left].height;
+    var bottomRightHeight = terrainCoordinates[bottom][right].height;
 
     var midY = top + ((bottom - top) / 2);
     var midX = left + ((right - left) / 2);
@@ -106,20 +121,20 @@ CityTour.TerrainGenerator = (function() {
 
     // Left column
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[midY][left] = ((topLeftHeight + bottomLeftHeight) / 2) + jitter;
+    terrainCoordinates[midY][left].height = ((topLeftHeight + bottomLeftHeight) / 2) + jitter;
     // Right column
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[midY][right] = ((topRightHeight + bottomRightHeight) / 2) + jitter;
+    terrainCoordinates[midY][right].height = ((topRightHeight + bottomRightHeight) / 2) + jitter;
     // Top row
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[top][midX] = ((topLeftHeight + topRightHeight) / 2) + jitter;
+    terrainCoordinates[top][midX].height = ((topLeftHeight + topRightHeight) / 2) + jitter;
     // Bottom row
     jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-    terrainCoordinates[bottom][midX] = ((bottomLeftHeight + bottomRightHeight) / 2) + jitter;
+    terrainCoordinates[bottom][midX].height = ((bottomLeftHeight + bottomRightHeight) / 2) + jitter;
 
     // Middle
-    var middleAverage = (terrainCoordinates[midY][left] + terrainCoordinates[midY][right] + terrainCoordinates[top][midX] + terrainCoordinates[bottom][midX]) / 4;
-    terrainCoordinates[midY][midX] = middleAverage;
+    var middleAverage = (terrainCoordinates[midY][left].height + terrainCoordinates[midY][right].height + terrainCoordinates[top][midX].height + terrainCoordinates[bottom][midX].height) / 4;
+    terrainCoordinates[midY][midX].height = middleAverage;
 
     if ((midY - top) >= 2) {
       newJitterAmount = jitterAmount * jitterDecay;
