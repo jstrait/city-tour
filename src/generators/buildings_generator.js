@@ -45,7 +45,7 @@ CityTour.BuildingsGenerator = (function() {
             lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
             if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
-              maxStoriesForLotSize = calculateMaxStoriesForLotSize(lot.right - lot.left, lot.bottom - lot.top);
+              maxStoriesForLotSize = calculateMaxStoriesForLotSize(lot.width, lot.depth);
               maxStories = Math.min(zonedBlock.maxStories, maxStoriesForLotSize);
 
               actualStories = Math.max(1, Math.round(Math.random() * maxStories));
