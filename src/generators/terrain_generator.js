@@ -6,6 +6,8 @@ CityTour.TerrainGenerator = (function() {
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
+  var LAND = 'land';
+  var WATER = 'water';
 
   var emptyTerrain = function(columns, rows) {
     var x, z;
@@ -28,6 +30,7 @@ CityTour.TerrainGenerator = (function() {
     var halfRows = rows / 2;
     var columnOffset = halfColumns + ((columnsToGenerate - columns) / 2);
     var rowOffset = halfRows + ((rowsToGenerate - rows) / 2);
+    var material;
 
     var normalizedTerrainCoordinates = [];
 
@@ -35,7 +38,12 @@ CityTour.TerrainGenerator = (function() {
       normalizedTerrainCoordinates[x] = [];
 
       for (z = -halfRows; z <= halfRows; z++) {
-        normalizedTerrainCoordinates[x][z] = terrainCoordinates[x + columnOffset][z + rowOffset];
+        material = (terrainCoordinates[x + columnOffset][z + rowOffset] === -20.0) ? WATER : LAND;
+
+        normalizedTerrainCoordinates[x][z] = {
+          material: material,
+          height: terrainCoordinates[x + columnOffset][z + rowOffset],
+        }
       }
     }
 
@@ -68,6 +76,13 @@ CityTour.TerrainGenerator = (function() {
                      rowsToGenerate,
                      columnsToGenerate,
                      0);
+
+    var trenchHeight = -20.0;
+    for (var z = (rows / 2) + 4; z > (rows / 2); z--) {
+      for (var x = 0; x < columns; x++) {
+        terrainCoordinates[x][z] = trenchHeight;
+      }
+    }
 
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
