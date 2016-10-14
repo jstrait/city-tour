@@ -116,6 +116,15 @@ CityTour.ZonedBlockGenerator = (function() {
     },
   ];
 
+  BLOCK_LAYOUTS.forEach(function(blockLayout) {
+    blockLayout.lots.forEach(function(lot) {
+      lot.width = lot.right - lot.left;
+      lot.depth = lot.bottom - lot.top;
+      lot.midpointX = lot.left + (lot.width / 2);
+      lot.midpointZ = lot.top + (lot.depth / 2);
+    });
+  });
+
   var MAX_BUILDING_STORIES = 40;
 
   var calculateBlockProbabilityOfBuilding = function(mapX, mapZ) {

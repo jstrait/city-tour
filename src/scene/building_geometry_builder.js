@@ -44,7 +44,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     var storyHeight, buildingHeight;
     var materialIndex;
 
-    var mapLotWidth, mapLotDepth, mapLotXMidpoint, mapLotZMidpoint;
+    var mapLotXMidpoint, mapLotZMidpoint;
 
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
     var cylinderMesh;
@@ -58,22 +58,17 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
         block = buildings.blockAtCoordinates(mapX, mapZ) || [];
 
         block.forEach(function(lot) {
-          mapLotWidth = lot.right - lot.left;
-          mapLotDepth = lot.bottom - lot.top;
-          mapLotXMidpoint = lot.left + (mapLotWidth / 2);
-          mapLotZMidpoint = lot.top + (mapLotDepth / 2);
-
           storyHeight = ((CityTour.Config.MAX_STORY_HEIGHT - CityTour.Config.MIN_STORY_HEIGHT) * Math.random()) + CityTour.Config.MIN_STORY_HEIGHT;
           buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor); 
 
-          reusableBuildingMesh.scale.x = mapLotWidth * CityTour.Config.BLOCK_WIDTH;
-          reusableBuildingMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * mapLotXMidpoint);
+          reusableBuildingMesh.scale.x = lot.width * CityTour.Config.BLOCK_WIDTH;
+          reusableBuildingMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.midpointX);
 
           reusableBuildingMesh.scale.y = buildingHeight;
           reusableBuildingMesh.position.y = (buildingHeight / 2) + lot.yFloor;
 
-          reusableBuildingMesh.scale.z = mapLotDepth * CityTour.Config.BLOCK_DEPTH;
-          reusableBuildingMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * mapLotZMidpoint);
+          reusableBuildingMesh.scale.z = lot.depth * CityTour.Config.BLOCK_DEPTH;
+          reusableBuildingMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.midpointZ);
 
           reusableBuildingMesh.updateMatrix();
 
@@ -83,9 +78,9 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
           // Add antenna to tall buildings
           if (lot.stories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
             cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
-            cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * mapLotXMidpoint);
+            cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.midpointX);
             cylinderMesh.position.y = lot.yFloor + buildingHeight + 5;
-            cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * mapLotZMidpoint);
+            cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.midpointZ);
             cylinderMesh.updateMatrix();
             buildingGeometries[materialIndex].merge(cylinderMesh.geometry, cylinderMesh.matrix);
           }
