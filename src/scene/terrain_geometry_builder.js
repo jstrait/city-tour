@@ -6,7 +6,8 @@ CityTour.Scene = CityTour.Scene || {};
 CityTour.Scene.TerrainGeometryBuilder = function() {
   var TERRAIN_COLOR_1 = new THREE.Color(0.0, 0.48, 0.0);
   var TERRAIN_COLOR_2 = new THREE.Color(0.0, 0.49, 0.0);
-  var WATER_COLOR = new THREE.Color(0.1, 0.2, 1.0);
+  var WATER_COLOR_1 = new THREE.Color(0.1, 0.2, 1.0);
+  var WATER_COLOR_2 = new THREE.Color(0.1, 0.19, 1.0);
 
   var LAND = 'land';
   var WATER = 'water';
@@ -35,10 +36,12 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
 
     var terrainGeometry1 = new THREE.Geometry();
     var terrainGeometry2 = new THREE.Geometry();
-    var waterGeometry = new THREE.Geometry();
+    var waterGeometry1 = new THREE.Geometry();
+    var waterGeometry2 = new THREE.Geometry();
     var terrainMaterial1 = new THREE.MeshLambertMaterial({ color: TERRAIN_COLOR_1 });
     var terrainMaterial2 = new THREE.MeshLambertMaterial({ color: TERRAIN_COLOR_2 });
-    var waterMaterial = new THREE.MeshLambertMaterial({ color: WATER_COLOR });
+    var waterMaterial1 = new THREE.MeshLambertMaterial({ color: WATER_COLOR_1 });
+    var waterMaterial2 = new THREE.MeshLambertMaterial({ color: WATER_COLOR_2 });
 
     for (mapX = -CityTour.Config.HALF_TERRAIN_COLUMNS; mapX < CityTour.Config.HALF_TERRAIN_COLUMNS; mapX++) {
       for (mapZ = -CityTour.Config.HALF_TERRAIN_ROWS; mapZ < CityTour.Config.HALF_TERRAIN_ROWS; mapZ++) {
@@ -90,7 +93,7 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
                                          bottomLeftX, bottomLeftHeight, bottomLeftZ,
                                          topRightX,   topRightHeight,   topRightZ);
         if (topLeftMaterial === WATER && topRightMaterial === WATER && bottomLeftMaterial === WATER) {
-          waterGeometry.merge(triangle);
+          waterGeometry1.merge(triangle);
         }
         else {
           terrainGeometry1.merge(triangle);
@@ -100,7 +103,7 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
                                          bottomRightX, bottomRightHeight, bottomRightZ,
                                          topRightX,    topRightHeight, topRightZ);
         if (bottomLeftMaterial === WATER && topRightMaterial === WATER && bottomRightMaterial === WATER) {
-          waterGeometry.merge(triangle);
+          waterGeometry2.merge(triangle);
         }
         else {
           terrainGeometry2.merge(triangle);;
@@ -205,9 +208,10 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
 
     var mesh1 = new THREE.Mesh(terrainGeometry1, terrainMaterial1);
     var mesh2 = new THREE.Mesh(terrainGeometry2, terrainMaterial2);
-    var waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
+    var waterMesh1 = new THREE.Mesh(waterGeometry1, waterMaterial1);
+    var waterMesh2 = new THREE.Mesh(waterGeometry2, waterMaterial2);
 
-    return [mesh1, mesh2, waterMesh];
+    return [mesh1, mesh2, waterMesh1, waterMesh2];
   };
 
   return terrainGeometryBuilder;
