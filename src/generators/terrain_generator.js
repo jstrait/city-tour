@@ -77,9 +77,22 @@ CityTour.TerrainGenerator = (function() {
 
     var x, z;
 
+    var topCurve = new THREE.CubicBezierCurve(
+	    new THREE.Vector2(0, (rows / 2) + 4),
+      new THREE.Vector2(columns / 3, (rows / 2) - 3),
+      new THREE.Vector2((columns / 3) * 2, (rows / 2) + 7),
+      new THREE.Vector2(columns, (rows / 2) + 6)
+    );
 
-    var topCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 6), new THREE.Vector2(columns, (rows / 2) + 3));
-    var bottomCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 10), new THREE.Vector2(columns, (rows / 2) + 20));
+    var bottomCurve = new THREE.CubicBezierCurve(
+	    new THREE.Vector2(0, (rows / 2) + 20),
+      new THREE.Vector2(columns / 3, (rows / 2) + 4),
+      new THREE.Vector2((columns / 3) * 2, (rows / 2) + 17),
+      new THREE.Vector2(columns, (rows / 2) + 10)
+    );
+
+    //var topCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 6), new THREE.Vector2(columns, (rows / 2) + 3));
+    //var bottomCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 10), new THREE.Vector2(columns, (rows / 2) + 20));
 
     var vector, topVector, bottomVector;
     var minimumRiverBankHeight = Number.POSITIVE_INFINITY;
@@ -91,7 +104,6 @@ CityTour.TerrainGenerator = (function() {
     }
     for (x = 0.0; x <= 1.0; x += 1 / columns) {
       vector = bottomCurve.getPoint(x);
-      console.log(vector.x + ", " + vector.y);
       if (terrainCoordinates[vector.x][Math.round(vector.y)].height < minimumRiverBankHeight) {
         minimumRiverBankHeight = terrainCoordinates[vector.x][Math.round(vector.y)].height;
       }
