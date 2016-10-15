@@ -75,27 +75,40 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    var x, z;
+    addRiver(terrainCoordinates, rows, columns);
+    
+    // Convert to final coordinates
+    var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
 
-    var topCurve = new THREE.CubicBezierCurve(
+    return finalTerrainCoordinates;
+  };
+
+
+  var addRiver = function(terrainCoordinates, rows, columns) {
+    var x, z;
+    var minimumRiverBankHeight;
+    var vector, topVector, bottomVector;
+    var topCurve, bottomCurve;
+
+    topCurve = new THREE.CubicBezierCurve(
 	    new THREE.Vector2(0, (rows / 2) + 4),
       new THREE.Vector2(columns / 3, (rows / 2) - 3),
       new THREE.Vector2((columns / 3) * 2, (rows / 2) + 7),
       new THREE.Vector2(columns, (rows / 2) + 6)
     );
 
-    var bottomCurve = new THREE.CubicBezierCurve(
+    bottomCurve = new THREE.CubicBezierCurve(
 	    new THREE.Vector2(0, (rows / 2) + 20),
       new THREE.Vector2(columns / 3, (rows / 2) + 4),
       new THREE.Vector2((columns / 3) * 2, (rows / 2) + 17),
       new THREE.Vector2(columns, (rows / 2) + 10)
     );
 
-    //var topCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 6), new THREE.Vector2(columns, (rows / 2) + 3));
-    //var bottomCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 10), new THREE.Vector2(columns, (rows / 2) + 20));
+    //topCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 6), new THREE.Vector2(columns, (rows / 2) + 3));
+    //bottomCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 10), new THREE.Vector2(columns, (rows / 2) + 20));
 
-    var vector, topVector, bottomVector;
-    var minimumRiverBankHeight = Number.POSITIVE_INFINITY;
+
+    minimumRiverBankHeight = Number.POSITIVE_INFINITY;
     for (x = 0.0; x <= 1.0; x += 1 / columns) {
       vector = topCurve.getPoint(x);
       if (terrainCoordinates[vector.x][Math.round(vector.y)].height < minimumRiverBankHeight) {
@@ -119,12 +132,6 @@ CityTour.TerrainGenerator = (function() {
     }
 
     floodFill(terrainCoordinates, 0, topCurve.getPoint(0).y, minimumRiverBankHeight, WATER);
-
-
-    // Convert to final coordinates
-    var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
-
-    return finalTerrainCoordinates;
   };
 
 
