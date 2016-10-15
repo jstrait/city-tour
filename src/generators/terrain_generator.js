@@ -77,27 +77,36 @@ CityTour.TerrainGenerator = (function() {
 
     var x, z;
 
+
+    var topCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 6), new THREE.Vector2(columns, (rows / 2) + 3));
+    var bottomCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 10), new THREE.Vector2(columns, (rows / 2) + 20));
+
+    var vector, topVector, bottomVector;
     var minimumRiverBankHeight = Number.POSITIVE_INFINITY;
-    var z = (rows / 2) + 4;
-    for (x = 0; x <= columns; x++) {
-      if (terrainCoordinates[x][z].height < minimumRiverBankHeight) {
-        minimumRiverBankHeight = terrainCoordinates[x][z].height;
+    for (x = 0.0; x <= 1.0; x += 1 / columns) {
+      vector = topCurve.getPoint(x);
+      if (terrainCoordinates[vector.x][Math.round(vector.y)].height < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[vector.x][Math.round(vector.y)].height;
       }
     }
-    var z = rows / 2;
-    for (x = 0; x <= columns; x++) {
-      if (terrainCoordinates[x][z].height < minimumRiverBankHeight) {
-        minimumRiverBankHeight = terrainCoordinates[x][z].height;
-      }
-    }
-
-    for (z = (rows / 2) + 4; z > (rows / 2); z--) {
-      for (x = 0; x <= columns; x++) {
-        terrainCoordinates[x][z].height = minimumRiverBankHeight;
+    for (x = 0.0; x <= 1.0; x += 1 / columns) {
+      vector = bottomCurve.getPoint(x);
+      console.log(vector.x + ", " + vector.y);
+      if (terrainCoordinates[vector.x][Math.round(vector.y)].height < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[vector.x][Math.round(vector.y)].height;
       }
     }
 
-    floodFill(terrainCoordinates, 0, (rows / 2) + 4, minimumRiverBankHeight, WATER);
+    for (x = 0.0; x <= 1.0; x += 1 / columns) {
+      topVector = topCurve.getPoint(x);
+      bottomVector = bottomCurve.getPoint(x);
+
+      for (z = Math.ceil(topVector.y); z < bottomVector.y; z++) {
+        terrainCoordinates[topVector.x][z].height = minimumRiverBankHeight;
+      }
+    }
+
+    floodFill(terrainCoordinates, 0, topCurve.getPoint(0).y, minimumRiverBankHeight, WATER);
 
 
     // Convert to final coordinates
