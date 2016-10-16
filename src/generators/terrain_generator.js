@@ -93,7 +93,7 @@ CityTour.TerrainGenerator = (function() {
   var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
     var MIN_RIVER_SUBDIVISIONS = 3;
     var MAX_RIVER_SUBDIVISIONS = 8;
-    var MAX_BEND_AMOUNT = 20;
+    var MAX_BEND_AMOUNT = 20 * SUB_DIVISIONS;
 
     var i, x, z, xStep;
     var xCoordinate, zCoordinate;
@@ -113,8 +113,8 @@ CityTour.TerrainGenerator = (function() {
     topCurvePoints = [];
     bottomCurvePoints = [];
     for (i = 0; i < baseCurvePoints.length; i++) {
-      topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + 4  ));
-      bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + 10 ));
+      topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + (4 * SUB_DIVISIONS) ));
+      bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + (10 * SUB_DIVISIONS) ));
     }
     topCurve = new THREE.SplineCurve(topCurvePoints);
     bottomCurve = new THREE.SplineCurve(bottomCurvePoints);
