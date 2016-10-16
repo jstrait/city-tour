@@ -36,8 +36,6 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
   var generateBuildingGeometries = function(buildings, buildingGeometries) {
     var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
-    var MIN_STORIES_FOR_ANTENNA = 25;
-    var PROBABILITY_OF_TALL_BUILDING_ANTENNA = 0.3;
 
     var mapX, mapZ, sceneX, sceneZ;
     var block;
@@ -73,8 +71,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
           materialIndex = Math.floor(Math.random() * CityTour.Config.MAX_BUILDING_MATERIALS);
           buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
 
-          // Add antenna to tall buildings
-          if (lot.stories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
+          if (lot.roofStyle === 'antenna') {
             cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
             cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
             cylinderMesh.position.y = lot.yFloor + buildingHeight + 5;
