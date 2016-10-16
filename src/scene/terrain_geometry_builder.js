@@ -26,6 +26,7 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
 
   terrainGeometryBuilder.build = function(terrain, roadNetwork) {
     var mapX, mapZ, triangle;
+    var leftRoad, topRoad, bottomRoad, rightRoad;
     var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
     var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
     var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight;
@@ -53,31 +54,44 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
         bottomLeftRoad  = roadNetwork.hasIntersection(mapX, mapZ + triangleDepth);
         bottomRightRoad = roadNetwork.hasIntersection(mapX + triangleWidth, mapZ + triangleDepth);
 
+        leftRoad = (Math.floor(mapX) === mapX) && roadNetwork.hasEdgeBetween(mapX, Math.floor(mapZ), mapX, Math.floor(mapZ) + 1);
+        rightRoad = (Math.ceil(mapX + triangleWidth) === (mapX + triangleWidth)) && roadNetwork.hasEdgeBetween(mapX + triangleWidth, Math.floor(mapZ), mapX + triangleWidth, Math.floor(mapZ) + 1);
+        topRoad = (Math.floor(mapZ) === mapZ) && roadNetwork.hasEdgeBetween(Math.floor(mapX), mapZ, Math.floor(mapX) + 1, mapZ);
+        bottomRoad = (Math.ceil(mapZ + triangleDepth) === (mapZ + triangleDepth)) && roadNetwork.hasEdgeBetween(Math.floor(mapX), mapZ + triangleDepth, Math.floor(mapX) + 1, mapZ + triangleDepth);
+
         topLeftX = CityTour.Coordinates.mapXToSceneX(mapX);
         topLeftZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
-        if (topLeftRoad) {
+        if (topLeftRoad || leftRoad) {
           topLeftX += halfStreetWidth;
+        }
+        if (topLeftRoad || topRoad) {
           topLeftZ += halfStreetDepth;
         }
 
         topRightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
         topRightZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
-        if (topRightRoad) {
+        if (topRightRoad || rightRoad) {
           topRightX -= halfStreetWidth;
+        }
+        if (topRightRoad || topRoad) {
           topRightZ += halfStreetDepth;
         }
 
         bottomLeftX = CityTour.Coordinates.mapXToSceneX(mapX);
         bottomLeftZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
-        if (bottomLeftRoad) {
+        if (bottomLeftRoad || leftRoad) {
           bottomLeftX += halfStreetWidth;
+        }
+        if (bottomLeftRoad || bottomRoad) {
           bottomLeftZ -= halfStreetDepth;
         }
 
         bottomRightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
         bottomRightZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
-        if (bottomRightRoad) {
+        if (bottomRightRoad || rightRoad) {
           bottomRightX -= halfStreetWidth;
+        }
+        if (bottomRightRoad || bottomRoad) {
           bottomRightZ -= halfStreetDepth;
         }
 
@@ -109,103 +123,111 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
           waterGeometry2.merge(triangle);
         }
         else {
-          terrainGeometry2.merge(triangle);;
+          terrainGeometry2.merge(triangle);
         }
 
 
         // Extra left-side triangles
-        if (topLeftRoad && !bottomLeftRoad) {
-          triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX), topLeftHeight, topLeftZ,
-                                           CityTour.Coordinates.mapXToSceneX(mapX), bottomLeftHeight, bottomLeftZ,
-                                           topLeftX, topLeftHeight, topLeftZ);
-          terrainGeometry2.merge(triangle);
-        }
+        if (!leftRoad) {
+          if (topLeftRoad && !bottomLeftRoad) {
+            triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX), topLeftHeight, topLeftZ,
+                                             CityTour.Coordinates.mapXToSceneX(mapX), bottomLeftHeight, bottomLeftZ,
+                                             topLeftX, topLeftHeight, topLeftZ);
+            terrainGeometry2.merge(triangle);
+          }
 
-        if (bottomLeftRoad && !topLeftRoad) {
-          triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX),  topLeftHeight,     topLeftZ,
-                                           CityTour.Coordinates.mapXToSceneX(mapX),  bottomLeftHeight, bottomLeftZ,
-                                           bottomLeftX, bottomLeftHeight, bottomLeftZ);
-          terrainGeometry2.merge(triangle);
-        }
+          if (bottomLeftRoad && !topLeftRoad) {
+            triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX),  topLeftHeight,     topLeftZ,
+                                             CityTour.Coordinates.mapXToSceneX(mapX),  bottomLeftHeight, bottomLeftZ,
+                                             bottomLeftX, bottomLeftHeight, bottomLeftZ);
+            terrainGeometry2.merge(triangle);
+          }
 
-        if (topLeftRoad && bottomLeftRoad && !roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + triangleDepth)) {
-          triangle = buildTriangleGeometry(bottomLeftX - CityTour.Config.STREET_WIDTH, bottomLeftHeight, bottomLeftZ,
-                                           bottomLeftX, bottomLeftHeight, bottomLeftZ,
-                                           topLeftX, topLeftHeight, topLeftZ);
-          terrainGeometry2.merge(triangle);
+          if (topLeftRoad && bottomLeftRoad) {
+            triangle = buildTriangleGeometry(bottomLeftX - CityTour.Config.STREET_WIDTH, bottomLeftHeight, bottomLeftZ,
+                                             bottomLeftX, bottomLeftHeight, bottomLeftZ,
+                                             topLeftX, topLeftHeight, topLeftZ);
+            terrainGeometry2.merge(triangle);
+          }
         }
 
 
         // Extra right-side triangles
-        if (topRightRoad && !bottomRightRoad) {
-          triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), bottomRightHeight, bottomRightZ,
-                                           CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), topRightHeight, topRightZ,
-                                           topRightX, topRightHeight, topRightZ);
+        if (!rightRoad) {
+          if (topRightRoad && !bottomRightRoad) {
+            triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), bottomRightHeight, bottomRightZ,
+                                             CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), topRightHeight, topRightZ,
+                                             topRightX, topRightHeight, topRightZ);
 
-          terrainGeometry1.merge(triangle);
+            terrainGeometry1.merge(triangle);
+          }
+
+          if (bottomRightRoad && !topRightRoad) {
+            triangle = buildTriangleGeometry(bottomRightX, bottomRightHeight, bottomRightZ,
+                                             CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), bottomRightHeight, bottomRightZ,
+                                             CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), topRightHeight, topRightZ);
+            terrainGeometry1.merge(triangle);
+          }
+
+          if (topRightRoad && bottomRightRoad) {
+            triangle = buildTriangleGeometry(topRightX,    topRightHeight, topRightZ,
+                                             bottomRightX, bottomRightHeight, bottomRightZ,
+                                             topRightX + CityTour.Config.STREET_WIDTH, topRightHeight, topRightZ);
+            terrainGeometry1.merge(triangle);
+          }
         }
-
-        if (bottomRightRoad && !topRightRoad) {
-          triangle = buildTriangleGeometry(bottomRightX, bottomRightHeight, bottomRightZ,
-                                           CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), bottomRightHeight, bottomRightZ,
-                                           CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), topRightHeight, topRightZ);
-          terrainGeometry1.merge(triangle);
-        }
-
-        if (topRightRoad && bottomRightRoad && !roadNetwork.hasEdgeBetween(mapX + triangleWidth, mapZ, mapX + triangleWidth, mapZ + triangleDepth)) {
-          triangle = buildTriangleGeometry(topRightX,    topRightHeight, topRightZ,
-                                           bottomRightX, bottomRightHeight, bottomRightZ,
-                                           topRightX + CityTour.Config.STREET_WIDTH, topRightHeight, topRightZ);
-          terrainGeometry1.merge(triangle);
-        }
-
 
         // Extra top-side triangles
-        if (topLeftRoad && !topRightRoad) {
-          triangle = buildTriangleGeometry(topLeftX,  topLeftHeight, CityTour.Coordinates.mapZToSceneZ(mapZ),
-                                           topLeftX,  topLeftHeight, topLeftZ,
-                                           CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), topRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ));
-          terrainGeometry2.merge(triangle);
-        }
+        if (!topRoad) {
+          if (topLeftRoad && !topRightRoad) {
+            triangle = buildTriangleGeometry(topLeftX,  topLeftHeight, CityTour.Coordinates.mapZToSceneZ(mapZ),
+                                             topLeftX,  topLeftHeight, topLeftZ,
+                                             CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth), topRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ));
+            terrainGeometry2.merge(triangle);
+          }
 
-        if (topRightRoad && !topLeftRoad) {
-          triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX), topLeftHeight, CityTour.Coordinates.mapZToSceneZ(mapZ),
-                                           topRightX, topRightHeight, topRightZ,
-                                           topRightX, topRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ));
-          terrainGeometry2.merge(triangle);
-        }
+          if (topRightRoad && !topLeftRoad) {
+            triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX), topLeftHeight, CityTour.Coordinates.mapZToSceneZ(mapZ),
+                                             topRightX, topRightHeight, topRightZ,
+                                             topRightX, topRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ));
+            terrainGeometry2.merge(triangle);
+          }
 
-        if (topLeftRoad && topRightRoad && !roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + triangleWidth, mapZ)) {
-          triangle = buildTriangleGeometry(topLeftX, topLeftHeight, topLeftZ,
-                                           topRightX, topRightHeight, topRightZ,
-                                           topRightX, topRightHeight, topRightZ - CityTour.Config.STREET_DEPTH);
+          if (topLeftRoad && topRightRoad) {
+            triangle = buildTriangleGeometry(topLeftX, topLeftHeight, topLeftZ,
+                                             topRightX, topRightHeight, topRightZ,
+                                             topRightX, topRightHeight, topRightZ - CityTour.Config.STREET_DEPTH);
 
-          terrainGeometry2.merge(triangle);
+            terrainGeometry2.merge(triangle);
+          }
         }
 
 
         // Extra bottom-side triangles
-        if (bottomLeftRoad && !bottomRightRoad) {
-          triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ,
-                                           bottomLeftX,  bottomLeftHeight, CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth),
-                                           bottomRightX, bottomRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth));
-          terrainGeometry1.merge(triangle);
+        if (!bottomRoad) {
+          if (bottomLeftRoad && !bottomRightRoad) {
+            triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ,
+                                             bottomLeftX,  bottomLeftHeight, CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth),
+                                             bottomRightX, bottomRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth));
+            terrainGeometry1.merge(triangle);
+          }
+
+          if (bottomRightRoad && !bottomLeftRoad) {
+            triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX), bottomLeftHeight, bottomLeftZ,
+                                             bottomRightX, bottomRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth),
+                                             bottomRightX, bottomRightHeight, bottomRightZ);
+            terrainGeometry1.merge(triangle);
+          }
+
+          if (bottomLeftRoad && bottomRightRoad) {
+            triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ,
+                                             bottomLeftX,  bottomLeftHeight, bottomLeftZ + CityTour.Config.STREET_DEPTH,
+                                             bottomRightX, bottomRightHeight, bottomRightZ);
+
+            terrainGeometry1.merge(triangle);
+          }
         }
 
-        if (bottomRightRoad && !bottomLeftRoad) {
-          triangle = buildTriangleGeometry(CityTour.Coordinates.mapXToSceneX(mapX), bottomLeftHeight, bottomLeftZ,
-                                           bottomRightX, bottomRightHeight, CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth),
-                                           bottomRightX, bottomRightHeight, bottomRightZ);
-          terrainGeometry1.merge(triangle);
-        }
-
-        if (bottomLeftRoad && bottomRightRoad && !roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + triangleWidth, mapZ + triangleDepth)) {
-          triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ,
-                                           bottomLeftX,  bottomLeftHeight, bottomLeftZ + CityTour.Config.STREET_DEPTH,
-                                           bottomRightX, bottomRightHeight, bottomRightZ);
-
-          terrainGeometry1.merge(triangle);
-        }
       }
     }
 
