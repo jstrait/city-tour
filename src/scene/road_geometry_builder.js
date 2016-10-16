@@ -35,10 +35,10 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, CityTour.Config.STREET_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -HALF_PI;
 
-    for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS; mapX <= CityTour.Config.HALF_BLOCK_COLUMNS; mapX++) {
+    for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
 
-      for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ <= CityTour.Config.HALF_BLOCK_ROWS; mapZ++) { 
+      for (mapZ = roadNetwork.minRow(); mapZ <= roadNetwork.maxRow(); mapZ++) { 
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
         if (roadNetwork.hasIntersection(mapX, mapZ)) {

@@ -80,7 +80,7 @@ CityTour.PathFinder = function(roadNetwork) {
     var unvisitedSet = new Set();
     var x;
 
-    for (x = -CityTour.Config.HALF_BLOCK_COLUMNS; x <= CityTour.Config.HALF_BLOCK_COLUMNS; x++) {
+    for (x = roadNetwork.minColumn(); x <= roadNetwork.maxColumn(); x++) {
       nodes[x] = [];
     }
 

@@ -15,8 +15,8 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
     var newTargetMapZ;
 
     do {
-      newTargetMapX = (Math.round(Math.random() * CityTour.Config.BLOCK_COLUMNS)) - CityTour.Config.HALF_BLOCK_COLUMNS;
-      newTargetMapZ = (Math.round(Math.random() * CityTour.Config.BLOCK_ROWS)) - CityTour.Config.HALF_BLOCK_ROWS;
+      newTargetMapX = (Math.round(Math.random() * (roadNetwork.maxColumn() - roadNetwork.minColumn()))) - ((roadNetwork.maxColumn() - roadNetwork.minColumn()) / 2);
+      newTargetMapZ = (Math.round(Math.random() * (roadNetwork.maxRow() - roadNetwork.minRow()))) - ((roadNetwork.maxRow() - roadNetwork.minRow()) / 2);
     } while (!roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ));
 
     return [newTargetMapX, newTargetMapZ];

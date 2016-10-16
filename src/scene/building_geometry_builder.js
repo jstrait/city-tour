@@ -33,7 +33,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     return buildingGeometries;
   };
 
-  var generateBuildingGeometries = function(buildings, buildingGeometries) {
+  var generateBuildingGeometries = function(buildings, buildingGeometries, roadNetwork) {
     var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
 
@@ -45,10 +45,10 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
     var cylinderMesh;
 
-    for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS; mapX < CityTour.Config.HALF_BLOCK_COLUMNS; mapX++) {
+    for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX) + HALF_STREET_WIDTH;
 
-      for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS; mapZ < CityTour.Config.HALF_BLOCK_ROWS; mapZ++) {
+      for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ) + HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(mapX, mapZ) || [];
@@ -87,13 +87,13 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
 
   var buildingGeometryBuilder = {};
 
-  buildingGeometryBuilder.build = function(buildings) {
+  buildingGeometryBuilder.build = function(buildings, roadNetwork) {
     var i;
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
     var buildingMeshes = [];
 
-    generateBuildingGeometries(buildings, buildingGeometries);
+    generateBuildingGeometries(buildings, buildingGeometries, roadNetwork);
 
     for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
       buildingMeshes.push(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));

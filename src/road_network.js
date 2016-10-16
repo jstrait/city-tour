@@ -23,6 +23,7 @@ CityTour.RoadNetwork = function() {
   };
 
 
+  var minColumn = 0, maxColumn = 0, minRow = 0, maxRow = 0;
   var intersections = [];
   for (var mapX = -CityTour.Config.HALF_TERRAIN_COLUMNS; mapX <= CityTour.Config.HALF_TERRAIN_COLUMNS; mapX++) {
     intersections[mapX] = []; 
@@ -49,6 +50,11 @@ CityTour.RoadNetwork = function() {
 
     intersection1.addEdge(mapX2, mapZ2);
     intersection2.addEdge(mapX1, mapZ1);
+
+    minColumn = Math.min(minColumn, mapX1, mapX2);
+    maxColumn = Math.max(maxColumn, mapX1, mapX2);
+    minRow = Math.min(minRow, mapZ1, mapZ2);
+    maxRow = Math.max(maxRow, mapZ1, mapZ2);
   };
 
   roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
@@ -58,6 +64,11 @@ CityTour.RoadNetwork = function() {
     return intersection1 && intersection2 &&
            intersection1.hasEdgeTo(mapX2, mapZ2) && intersection2.hasEdgeTo(mapX1, mapZ1);
   };
+
+  roadNetwork.minColumn = function() { return minColumn; }
+  roadNetwork.maxColumn = function() { return maxColumn; }
+  roadNetwork.minRow = function() { return minRow; }
+  roadNetwork.maxRow = function() { return maxRow; }
 
   return roadNetwork;
 };

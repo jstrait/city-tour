@@ -33,23 +33,22 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     }
   }
 
-  animationManager.init = function() {
-    var INITIAL_X_POSITION = 0;
+  animationManager.init = function(centerX, centerZ) {
+    var INITIAL_X_POSITION = centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH;
     var INITIAL_Y_POSITION = 40;
     var INITIAL_X_ROTATION = 0.0;
     var INITIAL_Y_ROTATION = 0.0;
     var SWOOP_DISTANCE_IN_BLOCKS = 20;
     var DISTANCE_TO_CITY_EDGE = SWOOP_DISTANCE_IN_BLOCKS * CityTour.Config.BLOCK_AND_STREET_DEPTH;
 
-    var furthestOutIntersection = CityTour.Config.HALF_BLOCK_ROWS;
-    while (!roadNetwork.hasIntersection(0, furthestOutIntersection)) {
+    var furthestOutIntersection = centerZ + CityTour.Config.HALF_BLOCK_ROWS;
+    while (!roadNetwork.hasIntersection(centerX, furthestOutIntersection)) {
       furthestOutIntersection -= 1;
     }
-
     var initialTargetZPosition = CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection);
     var initialZPosition = (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH;
     var framesUntilCityEdge = Math.abs(DISTANCE_TO_CITY_EDGE / 0.2);
-    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(0.0, furthestOutIntersection);
+    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(centerX, furthestOutIntersection);
     var swoopDescentDelta = (INITIAL_Y_POSITION - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     vehicleController = new CityTour.VehicleController(terrain,
@@ -60,7 +59,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
                                                        INITIAL_Y_ROTATION,
                                                        INITIAL_Y_POSITION,
                                                        INITIAL_X_ROTATION,
-                                                       swoopDescentDelta);
+                                                       swoopDescentDelta,
+                                                       CityTour.Coordinates.mapXToSceneX(centerX));
 
     syncCamera();
   };
@@ -110,7 +110,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 };
 
 
-CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialYPositionDelta) {
+CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialYPositionDelta, initialTargetXPosition) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -129,7 +129,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   var xRotation = initialXRotation;
   var yRotation = initialYRotation;
 
-  var targetSceneX = 0.0;
+  var targetSceneX = initialTargetXPosition;
   var targetSceneZ = initialTargetZPosition;
   var xPositionDelta = 0.0;
   var zPositionDelta = HORIZONTAL_MOTION_DELTA;
@@ -145,7 +145,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   var verticalMode = DRIVING_MODE;
 
   var pathFinder = new CityTour.PathFinder(roadNetwork);
-  var navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, 0, CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
+  var navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(initialTargetXPosition), CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
 
   var determineNextTargetPoint = function() {
     var oldTargetSceneX = targetSceneX;

@@ -24,7 +24,7 @@ CityTour.Scene.Builder = function() {
 
     var buildingsStartTime = new Date();
     if (buildings) {
-      var buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings);
+      var buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
       buildingMeshes.forEach(function(buildingMesh) {
         scene.add(buildingMesh);
       });
