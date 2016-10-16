@@ -3,7 +3,7 @@
 require 'rb-fsevent'
 
 def build
-  `uglifyjs src/*.js src/**/*.js --compress --mangle > city_tour.js`
+  `uglifyjs src/*.js src/**/*.js --compress --mangle --source-map city_tour.js.map > city_tour.js`
 end
 
 if (ARGV[0] || '').downcase == 'watch'

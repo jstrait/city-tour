@@ -1,3 +1,4 @@
 *.swp
 .DS_Store
 city_tour.js
+city_tour.js.map
