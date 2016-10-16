@@ -3,23 +3,23 @@
 var CityTour = CityTour || {};
 
 CityTour.RoadNetwork = function() {
-  var roadIntersection = function(mapX, mapZ) {
+  var Intersection = function(mapX, mapZ) {
     var edges = [];
 
-    var roadIntersection = {};
+    var intersection = {};
 
-    roadIntersection.addEdge = function(mapX, mapZ) {
+    intersection.addEdge = function(mapX, mapZ) {
       if (!edges[mapX]) {
         edges[mapX] = [];
       }
       edges[mapX][mapZ] = true;
     };
 
-    roadIntersection.hasEdgeTo = function(mapX, mapZ) {
+    intersection.hasEdgeTo = function(mapX, mapZ) {
       return edges[mapX] != undefined && edges[mapX][mapZ] != null;
     };
 
-    return roadIntersection;
+    return intersection;
   };
 
 
@@ -35,28 +35,28 @@ CityTour.RoadNetwork = function() {
   };
 
   roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1 = intersections[mapX1][mapZ1];
-    var roadIntersection2 = intersections[mapX2][mapZ2];
+    var intersection1 = intersections[mapX1][mapZ1];
+    var intersection2 = intersections[mapX2][mapZ2];
 
-    if (!roadIntersection1) {
-      roadIntersection1 = new roadIntersection(mapX1, mapZ1);
-      intersections[mapX1][mapZ1] = roadIntersection1;
+    if (!intersection1) {
+      intersection1 = new Intersection(mapX1, mapZ1);
+      intersections[mapX1][mapZ1] = intersection1;
     }
-    if (!roadIntersection2) {
-      roadIntersection2 = new roadIntersection(mapX2, mapZ2);
-      intersections[mapX2][mapZ2] = roadIntersection2;
+    if (!intersection2) {
+      intersection2 = new Intersection(mapX2, mapZ2);
+      intersections[mapX2][mapZ2] = intersection2;
     }
 
-    roadIntersection1.addEdge(mapX2, mapZ2);
-    roadIntersection2.addEdge(mapX1, mapZ1);
+    intersection1.addEdge(mapX2, mapZ2);
+    intersection2.addEdge(mapX1, mapZ1);
   };
 
   roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var roadIntersection1 = intersections[mapX1][mapZ1] || false;
-    var roadIntersection2 = intersections[mapX2][mapZ2] || false;
+    var intersection1 = intersections[mapX1][mapZ1] || false;
+    var intersection2 = intersections[mapX2][mapZ2] || false;
 
-    return roadIntersection1 && roadIntersection2 &&
-           roadIntersection1.hasEdgeTo(mapX2, mapZ2) && roadIntersection2.hasEdgeTo(mapX1, mapZ1);
+    return intersection1 && intersection2 &&
+           intersection1.hasEdgeTo(mapX2, mapZ2) && intersection2.hasEdgeTo(mapX1, mapZ1);
   };
 
   return roadNetwork;
