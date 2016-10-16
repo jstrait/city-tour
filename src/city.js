@@ -74,6 +74,7 @@ CityTour.City = function(container) {
 
   var init = function(onComplete) {
     var SKY_COLOR = 0x66ccff;
+    var GENERATE_BUILDINGS = false;
 
     if (!detectWebGL()) {
       document.getElementById("loading-message").innerText = "This page is not compatible with your browser, because it requires WebGL.";
@@ -91,10 +92,10 @@ CityTour.City = function(container) {
     var roadEndTime = new Date();
 
     var zonedBlocksStartTime = new Date();
-    var zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork);
+    var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork) : false;
     var zonedBlocksEndTime = new Date();
     var buildingsStartTime = new Date();
-    var buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
+    var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
     var buildingsEndTime = new Date();
 
     var masterEndTime = new Date();

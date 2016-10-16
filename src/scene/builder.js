@@ -23,10 +23,12 @@ CityTour.Scene.Builder = function() {
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
-    var buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings);
-    buildingMeshes.forEach(function(buildingMesh) {
-      scene.add(buildingMesh);
-    });
+    if (buildings) {
+      var buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings);
+      buildingMeshes.forEach(function(buildingMesh) {
+        scene.add(buildingMesh);
+      });
+    }
     var buildingsEndTime = new Date();
 
     var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
