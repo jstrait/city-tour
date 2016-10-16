@@ -81,7 +81,7 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    addRiver(terrainCoordinates, rowsToGenerate, columnsToGenerate);
+    addRiver(terrainCoordinates, rowsToGenerate / 2, columnsToGenerate);
 
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
@@ -90,45 +90,43 @@ CityTour.TerrainGenerator = (function() {
   };
 
 
-  var addRiver = function(terrainCoordinates, rows, columns) {
-    var x, z;
+  var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
+    var x, z, xStep;
     var minimumRiverBankHeight;
     var vector, topVector, bottomVector;
     var topCurve, bottomCurve;
 
     topCurve = new THREE.CubicBezierCurve(
-	    new THREE.Vector2(0, (rows / 2) + 4),
-      new THREE.Vector2(columns / 3, (rows / 2) - 3),
-      new THREE.Vector2((columns / 3) * 2, (rows / 2) + 7),
-      new THREE.Vector2(columns, (rows / 2) + 6)
+	    new THREE.Vector2(0, middleRow + 4),
+      new THREE.Vector2(columnsToGenerate / 3, middleRow - 3),
+      new THREE.Vector2((columnsToGenerate / 3) * 2, middleRow + 7),
+      new THREE.Vector2(columnsToGenerate, middleRow + 6)
     );
 
     bottomCurve = new THREE.CubicBezierCurve(
-	    new THREE.Vector2(0, (rows / 2) + 20),
-      new THREE.Vector2(columns / 3, (rows / 2) + 4),
-      new THREE.Vector2((columns / 3) * 2, (rows / 2) + 17),
-      new THREE.Vector2(columns, (rows / 2) + 10)
+	    new THREE.Vector2(0, middleRow + 20),
+      new THREE.Vector2(columnsToGenerate / 3, middleRow + 4),
+      new THREE.Vector2((columnsToGenerate / 3) * 2, middleRow + 17),
+      new THREE.Vector2(columnsToGenerate, middleRow + 10)
     );
 
-    //topCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 6), new THREE.Vector2(columns, (rows / 2) + 3));
-    //bottomCurve = new THREE.LineCurve(new THREE.Vector2(0, (rows / 2) + 10), new THREE.Vector2(columns, (rows / 2) + 20));
-
+    xStep = 1 / columnsToGenerate;
 
     minimumRiverBankHeight = Number.POSITIVE_INFINITY;
-    for (x = 0.0; x <= 1.0; x += 1 / columns) {
+    for (x = 0.0; x <= 1.0; x += xStep) {
       vector = topCurve.getPoint(x);
       if (terrainCoordinates[vector.x][Math.round(vector.y)].height < minimumRiverBankHeight) {
         minimumRiverBankHeight = terrainCoordinates[vector.x][Math.round(vector.y)].height;
       }
     }
-    for (x = 0.0; x <= 1.0; x += 1 / columns) {
+    for (x = 0.0; x <= 1.0; x += xStep) {
       vector = bottomCurve.getPoint(x);
       if (terrainCoordinates[vector.x][Math.round(vector.y)].height < minimumRiverBankHeight) {
         minimumRiverBankHeight = terrainCoordinates[vector.x][Math.round(vector.y)].height;
       }
     }
 
-    for (x = 0.0; x <= 1.0; x += 1 / columns) {
+    for (x = 0.0; x <= 1.0; x += xStep) {
       topVector = topCurve.getPoint(x);
       bottomVector = bottomCurve.getPoint(x);
 
