@@ -10,6 +10,8 @@ CityTour.TerrainGenerator = (function() {
   var LAND = 'land';
   var WATER = 'water';
 
+  var PROBABILITY_OF_RIVER = 0.5;
+
   var emptyTerrain = function(columns, rows) {
     var x, z;
     var terrainCoordinates = [];
@@ -81,7 +83,9 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    addRiver(terrainCoordinates, rowsToGenerate * (68 / 128), columnsToGenerate);
+    if (Math.random() < PROBABILITY_OF_RIVER) {
+      addRiver(terrainCoordinates, rowsToGenerate * (68 / 128), columnsToGenerate);
+    }
 
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
