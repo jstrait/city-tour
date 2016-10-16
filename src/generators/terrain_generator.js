@@ -81,7 +81,7 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    addRiver(terrainCoordinates, rowsToGenerate / 2, columnsToGenerate);
+    addRiver(terrainCoordinates, rowsToGenerate * (68 / 128), columnsToGenerate);
 
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
@@ -91,25 +91,33 @@ CityTour.TerrainGenerator = (function() {
 
 
   var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
-    var x, z, xStep;
+    var MIN_RIVER_SUBDIVISIONS = 3;
+    var MAX_RIVER_SUBDIVISIONS = 8;
+    var MAX_BEND_AMOUNT = 20;
+
+    var i, x, z, xStep;
     var xCoordinate, zCoordinate;
     var minimumRiverBankHeight;
     var vector, topVector, bottomVector;
-    var topCurve, bottomCurve;
+    var baseCurvePoints, topCurvePoints, bottomCurvePoints;
+    var baseCurve, topCurve, bottomCurve;
 
-    topCurve = new THREE.SplineCurve([
-      new THREE.Vector2(0, middleRow + 4),
-      new THREE.Vector2(columnsToGenerate / 3, middleRow + 10),
-      new THREE.Vector2((columnsToGenerate / 3) * 2, middleRow + 4),
-      new THREE.Vector2(columnsToGenerate, middleRow + 6),
-    ]);
+    var riverSubDivisions = Math.round((Math.random() * (MAX_RIVER_SUBDIVISIONS - MIN_RIVER_SUBDIVISIONS))) + MIN_RIVER_SUBDIVISIONS;
+    baseCurvePoints = [new THREE.Vector2(0, middleRow)];
+    for (i = 1; i <= riverSubDivisions; i++) {
+      var column = columnsToGenerate * i * (1 / riverSubDivisions);
+      baseCurvePoints.push(new THREE.Vector2(column, middleRow + ((Math.random() * MAX_BEND_AMOUNT) - (MAX_BEND_AMOUNT / 2))));
+    }
+    baseCurve = new THREE.SplineCurve(baseCurvePoints);
 
-    bottomCurve = new THREE.SplineCurve([
-      new THREE.Vector2(0, middleRow + 20),
-      new THREE.Vector2(columnsToGenerate / 3, middleRow + 22),
-      new THREE.Vector2((columnsToGenerate / 3) * 2, middleRow + 15),
-      new THREE.Vector2(columnsToGenerate, middleRow + 22),
-    ]);
+    topCurvePoints = [];
+    bottomCurvePoints = [];
+    for (i = 0; i < baseCurvePoints.length; i++) {
+      topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + 4  ));
+      bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + 10 ));
+    }
+    topCurve = new THREE.SplineCurve(topCurvePoints);
+    bottomCurve = new THREE.SplineCurve(bottomCurvePoints);
 
     xStep = 1 / columnsToGenerate;
 
@@ -133,12 +141,13 @@ CityTour.TerrainGenerator = (function() {
       }
     }
 
-    for (x = 0.0; x <= 1.0; x += xStep) {
+    for (x = 0.0; x <= 1.0; x += xStep / 2) {
       topVector = topCurve.getPointAt(x);
       bottomVector = bottomCurve.getPointAt(x);
+      xCoordinate = Math.round(topVector.x);
 
       for (z = Math.ceil(topVector.y); z < bottomVector.y; z++) {
-        terrainCoordinates[Math.round(topVector.x)][z].height = minimumRiverBankHeight;
+        terrainCoordinates[xCoordinate][z].height = minimumRiverBankHeight;
       }
     }
 
