@@ -62,9 +62,9 @@ CityTour.TerrainGenerator = (function() {
 
     // Initial randomization of corners
     terrainCoordinates[0][0].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[0][rows].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columns][0].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columns][rows].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rowsToGenerate].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate][0].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate][rowsToGenerate].height = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     midpointDisplace(terrainCoordinates,
@@ -75,7 +75,7 @@ CityTour.TerrainGenerator = (function() {
                      columnsToGenerate,
                      0);
 
-    addRiver(terrainCoordinates, rows, columns);
+    addRiver(terrainCoordinates, rowsToGenerate, columnsToGenerate);
     
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
