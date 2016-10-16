@@ -3,6 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.TerrainGenerator = (function() {
+  var SUB_DIVISIONS = 1;
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
@@ -31,16 +32,21 @@ CityTour.TerrainGenerator = (function() {
     var columnOffset = halfColumns + ((columnsToGenerate - columns) / 2);
     var rowOffset = halfRows + ((rowsToGenerate - rows) / 2);
     var material;
+    var stepAmount = 1 / SUB_DIVISIONS;
+    var oldXIndex, oldZIndex;
 
     var normalizedTerrainCoordinates = [];
 
-    for (x = -halfColumns; x <= halfColumns; x++) {
+    for (x = -halfColumns; x <= halfColumns; x += stepAmount) {
       normalizedTerrainCoordinates[x] = [];
+      oldXIndex = (x * SUB_DIVISIONS) + columnOffset;
 
-      for (z = -halfRows; z <= halfRows; z++) {
+      for (z = -halfRows; z <= halfRows; z += stepAmount) {
+        oldZIndex = (z * SUB_DIVISIONS) + rowOffset;
+
         normalizedTerrainCoordinates[x][z] = {
-          material: terrainCoordinates[x + columnOffset][z + rowOffset].material,
-          height: terrainCoordinates[x + columnOffset][z + rowOffset].height,
+          material: terrainCoordinates[oldXIndex][oldZIndex].material,
+          height: terrainCoordinates[oldXIndex][oldZIndex].height,
         }
       }
     }
@@ -55,8 +61,8 @@ CityTour.TerrainGenerator = (function() {
 
 
   var buildTerrainCoordinates = function(columns, rows) {
-    var columnsToGenerate = nextPowerOfTwo(columns);
-    var rowsToGenerate = nextPowerOfTwo(rows);
+    var columnsToGenerate = nextPowerOfTwo(columns * SUB_DIVISIONS);
+    var rowsToGenerate = nextPowerOfTwo(rows * SUB_DIVISIONS);
 
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
@@ -76,7 +82,7 @@ CityTour.TerrainGenerator = (function() {
                      0);
 
     addRiver(terrainCoordinates, rowsToGenerate, columnsToGenerate);
-    
+
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
 
@@ -210,7 +216,7 @@ CityTour.TerrainGenerator = (function() {
 
   terrainGenerator.generate = function(columns, rows) {
     var terrainCoordinates = buildTerrainCoordinates(columns, rows);
-    return new CityTour.Terrain(terrainCoordinates);
+    return new CityTour.Terrain(terrainCoordinates, SUB_DIVISIONS);
   };
 
   return terrainGenerator;

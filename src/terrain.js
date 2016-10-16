@@ -2,7 +2,10 @@
 
 var CityTour = CityTour || {};
 
-CityTour.Terrain = function(coordinates) {
+CityTour.Terrain = function(coordinates, subDivisions) {
+  var xStep = 1 / subDivisions;
+  var zStep = 1 / subDivisions;
+  
   var interpolateHeight = function(point, floor, ceiling) {
     var heightDifferential = ceiling - floor;
     var percentage = point - Math.floor(point);
@@ -11,27 +14,32 @@ CityTour.Terrain = function(coordinates) {
 
   var terrain = {};
 
+  terrain.subDivisions = function() { return subDivisions; };
+
   terrain.materialAtCoordinates = function(x, z) {
     return coordinates[x][z].material;
   }
 
   terrain.heightAtCoordinates = function(x, z) {
-    var xIsWhole = (Math.floor(x) === x);
-    var zIsWhole = (Math.floor(z) === z);
     var leftHeight, rightHeight, topHeight, bottomHeight;
     var topRowInterpolatedHeight, bottomRowInterpolatedHeight;
 
-    if (xIsWhole && zIsWhole) {
+    var xIntegerCoordinate = x / xStep;
+    var zIntegerCoordinate = z / zStep;
+    var xIsExact = Math.floor(xIntegerCoordinate) === xIntegerCoordinate;
+    var zIsExact = Math.floor(zIntegerCoordinate) === zIntegerCoordinate;
+
+    if (xIsExact && zIsExact) {
       return coordinates[x][z].height;
     }
 
-    if (!xIsWhole && zIsWhole) {
+    if (!xIsExact && zIsExact) {
       leftHeight = coordinates[Math.floor(x)][z].height;
       rightHeight = coordinates[Math.ceil(x)][z].height;
 
       return interpolateHeight(x, leftHeight, rightHeight);
     }
-    else if (xIsWhole && !zIsWhole) {
+    else if (xIsExact && !zIsExact) {
       topHeight = coordinates[x][Math.floor(z)].height;
       bottomHeight = coordinates[x][Math.ceil(z)].height;
 

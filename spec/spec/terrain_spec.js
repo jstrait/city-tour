@@ -30,7 +30,7 @@ describe("CityTour.Terrain", function() {
     },
   };
 
-  var terrain = new CityTour.Terrain(terrainMesh);
+  var terrain = new CityTour.Terrain(terrainMesh, 1);
 
   describe(".heightAtCoordinates", function() {
     it("returns the correct height for coordinates on an intersection", function() {
