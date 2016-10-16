@@ -13,6 +13,11 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.hasIntersection(1, 2)).toBe(true);
     expect(roadNetwork.hasIntersection(3, 4)).toBe(true);
     expect(roadNetwork.hasIntersection(5, 6)).toBe(false);
+  
+    expect(roadNetwork.hasIntersection(5.5, 6)).toBe(false);
+    expect(roadNetwork.hasIntersection(5, 6.2)).toBe(false);
+    expect(roadNetwork.hasIntersection(5.5, 6.2)).toBe(false);
+    expect(roadNetwork.hasIntersection("a", "b")).toBe(false);
   });
 
   it(".hasEdgeBetween", function() {

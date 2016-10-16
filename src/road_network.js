@@ -31,7 +31,7 @@ CityTour.RoadNetwork = function() {
   var roadNetwork = {};
 
   roadNetwork.hasIntersection = function(mapX, mapZ) {
-    return intersections[mapX][mapZ] != null;
+    return (intersections[mapX] && intersections[mapX][mapZ] != null) || false;
   };
 
   roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
