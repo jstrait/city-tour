@@ -33,7 +33,6 @@ CityTour.TerrainGenerator = (function() {
     var halfRows = rows / 2;
     var columnOffset = halfColumns + ((columnsToGenerate - columns) / 2);
     var rowOffset = halfRows + ((rowsToGenerate - rows) / 2);
-    var material;
     var stepAmount = 1 / SUB_DIVISIONS;
     var oldXIndex, oldZIndex;
 
