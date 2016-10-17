@@ -75,8 +75,6 @@ CityTour.City = function(container) {
   var init = function(onComplete) {
     var SKY_COLOR = 0x66ccff;
     var GENERATE_BUILDINGS = true;
-    var CENTER_X = 0;
-    var CENTER_Z = 0;
 
     if (!detectWebGL()) {
       document.getElementById("loading-message").innerText = "This page is not compatible with your browser, because it requires WebGL.";
@@ -89,12 +87,17 @@ CityTour.City = function(container) {
     var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
     var terrainEndTime = new Date();
 
+    var centerX = 0, centerZ = 0;
+    while(terrain.materialAtCoordinates(centerX, centerZ) != 'land') {
+      centerZ -= 1;
+    }
+
     var roadStartTime = new Date();
-    var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, CENTER_X, CENTER_Z);
+    var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, centerX, centerZ);
     var roadEndTime = new Date();
 
     var zonedBlocksStartTime = new Date();
-    var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, CENTER_X, CENTER_Z) : false;
+    var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ) : false;
     var zonedBlocksEndTime = new Date();
     var buildingsStartTime = new Date();
     var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
@@ -134,7 +137,7 @@ CityTour.City = function(container) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);
     }
-    animationManager.init(CENTER_X, CENTER_Z);
+    animationManager.init(centerX, centerZ);
 
     resize();
 
