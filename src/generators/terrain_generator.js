@@ -10,7 +10,7 @@ CityTour.TerrainGenerator = (function() {
   var LAND = 'land';
   var WATER = 'water';
 
-  var PROBABILITY_OF_RIVER = 0.5;
+  var PROBABILITY_OF_RIVER = 2 / 3;
 
   var emptyTerrain = function(columns, rows) {
     var x, z;
