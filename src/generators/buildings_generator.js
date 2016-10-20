@@ -3,8 +3,6 @@
 var CityTour = CityTour || {};
 
 CityTour.BuildingsGenerator = (function() {
-  var MAX_TERRAIN_STEEPNESS_FOR_BUILDING = 3;
-
   var MIN_STORIES_FOR_ANTENNA = 25;
   var PROBABILITY_OF_TALL_BUILDING_ANTENNA = 0.3;
   var ROOF_STYLE_ANTENNA = 'antenna';
@@ -50,7 +48,7 @@ CityTour.BuildingsGenerator = (function() {
           if (hasAdjacentRoad) {
             lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
-            if (lotTerrainAttributes.steepness < MAX_TERRAIN_STEEPNESS_FOR_BUILDING) {
+            if (lotTerrainAttributes.steepness < CityTour.Config.MIN_STORY_HEIGHT) {
               maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
               actualStories = Math.max(1, Math.round(Math.random() * maxStories));
 
