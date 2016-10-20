@@ -64,7 +64,7 @@ CityTour.BuildingsGenerator = (function() {
               block.push({
                 dimensions: lot,
                 roofStyle: roofStyle,
-                yFloor: lotTerrainAttributes.minimumHeight,
+                yFloor: zonedBlock.minimumHeight,
                 ySurface: lotTerrainAttributes.maximumHeight,
                 stories: actualStories,
               });

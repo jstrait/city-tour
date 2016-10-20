@@ -190,7 +190,7 @@ CityTour.ZonedBlockGenerator = (function() {
     var mapX, mapZ;
     var block, blocks = [];
     var hasTopRoad, hasRightRoad, hasBottomRoad, hasLeftRoad;
-    var blockLayout, blockSteepness, maxBlockSteepness;
+    var blockLayout, terrainAttributes, blockSteepness, maxBlockSteepness;
 
     for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX; mapX < CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX; mapX++) {
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ; mapZ < CityTour.Config.HALF_BLOCK_ROWS + centerMapZ; mapZ++) {
@@ -212,13 +212,15 @@ CityTour.ZonedBlockGenerator = (function() {
           block.hasBottomRoad = hasBottomRoad;
           block.hasLeftRoad = hasLeftRoad;
 
-          blockSteepness = blockTerrainAttributes(terrain, mapX, mapZ, mapX + 1, mapZ + 1).steepness;
+          terrainAttributes = blockTerrainAttributes(terrain, mapX, mapZ, mapX + 1, mapZ + 1);
+          blockSteepness = terrainAttributes.steepness;
 
           maxBlockSteepness = Number.NEGATIVE_INFINITY;
           while (blockSteepness > maxBlockSteepness) {
             blockLayout = BLOCK_LAYOUTS[Math.floor(Math.random() * BLOCK_LAYOUTS.length)];
             maxBlockSteepness = blockLayout.maxBlockSteepness;
           }
+          block.minimumHeight = terrainAttributes.minimumHeight;
           block.layout = blockLayout;
 
           blocks.push(block);
