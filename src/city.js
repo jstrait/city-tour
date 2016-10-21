@@ -22,10 +22,6 @@ CityTour.Config = (function() {
   config.MIN_STORY_HEIGHT = 1.2;
   config.MAX_STORY_HEIGHT = 1.5;
   config.MAX_BUILDING_MATERIALS = 50;
-  config.TOTAL_SCENE_WIDTH = config.TERRAIN_COLUMNS * config.BLOCK_AND_STREET_WIDTH;
-  config.HALF_SCENE_WIDTH = config.TOTAL_SCENE_WIDTH / 2;
-  config.TOTAL_SCENE_DEPTH = config.TERRAIN_ROWS * config.BLOCK_AND_STREET_DEPTH;
-  config.HALF_SCENE_DEPTH = config.TOTAL_SCENE_DEPTH / 2;
 
   return config;
 })();
