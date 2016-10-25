@@ -35,6 +35,9 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, CityTour.Config.STREET_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -HALF_PI;
 
+    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, 1.0), roadMaterial);
+    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.STREET_DEPTH), roadMaterial);
+
     for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
 
@@ -56,9 +59,10 @@ CityTour.Scene.RoadGeometryBuilder = function() {
                                                terrain.heightAtCoordinates(mapX, mapZ + 1),
                                                CityTour.Config.BLOCK_DEPTH);
 
-            roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH, roadSegment.length), roadMaterial);
+            roadSegmentMesh = reusableNorthSouthMesh;
             roadSegmentMesh.position.x = sceneX;
             roadSegmentMesh.rotation.x = roadSegment.angle - HALF_PI;
+            roadSegmentMesh.scale.y = roadSegment.length;
             roadSegmentMesh.position.y = roadSegment.midpointHeight;
             roadSegmentMesh.position.z = sceneZ + HALF_BLOCK_AND_STREET_DEPTH;
             roadSegmentMesh.updateMatrix();
@@ -71,7 +75,8 @@ CityTour.Scene.RoadGeometryBuilder = function() {
                                                terrain.heightAtCoordinates(mapX + 1, mapZ),
                                                CityTour.Config.BLOCK_WIDTH);
 
-            roadSegmentMesh = new THREE.Mesh(new THREE.PlaneGeometry(roadSegment.length, CityTour.Config.STREET_DEPTH), roadMaterial);
+            roadSegmentMesh = reusableEastWestMesh;
+            roadSegmentMesh.scale.x = roadSegment.length;
             roadSegmentMesh.position.x = sceneX + HALF_BLOCK_AND_STREET_WIDTH;
             roadSegmentMesh.rotation.x = -HALF_PI;
             roadSegmentMesh.position.y = roadSegment.midpointHeight;
