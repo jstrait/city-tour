@@ -236,7 +236,7 @@ CityTour.TerrainGenerator = (function() {
 
   // As described at https://en.wikipedia.org/wiki/Diamond-square_algorithm and http://stevelosh.com/blog/2016/06/diamond-square/
   var diamondSquare = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
-    var i, j;
+    var i, j, startI = 0;
     var jitter;
     var halfJitterAmount = jitterAmount / 2;
     var terms;
@@ -261,49 +261,15 @@ CityTour.TerrainGenerator = (function() {
       }
 
       // Diamond step
-      for (i = halfWidth; i <= right; i += width) {
-        for (j = 0; j <= bottom; j += height) {
-          terms = 4;
-
-          if (i === 0) {
-            leftDiamondHeight = 0;
-            terms -= 1;
-          }
-          else {
-            leftDiamondHeight = terrainCoordinates[i - halfWidth][j].height;
-          }
-          
-          if (j === 0) {
-            topDiamondHeight = 0;
-            terms -= 1;
-          }
-          else {
-            topDiamondHeight = terrainCoordinates[i][j - halfHeight].height;
-          }
-
-          if (i === right) {
-            rightDiamondHeight = 0;
-            terms -= 1;
-          }
-          else {
-            rightDiamondHeight = terrainCoordinates[i + halfWidth][j].height;
-          }
-          
-          if (j === bottom) {
-            bottomDiamondHeight = 0;
-            terms -= 1;
-          }
-          else {
-            bottomDiamondHeight = terrainCoordinates[i][j + halfHeight].height;
-          }
-
-          jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-          terrainCoordinates[i][j].height = ((leftDiamondHeight + topDiamondHeight + rightDiamondHeight + bottomDiamondHeight) / terms) + jitter;
+      for (j = 0; j <= bottom; j += height) {
+        if (startI === 0) {
+          startI = halfWidth;
         }
-      }
+        else {
+          startI = 0;
+        }
 
-      for (i = 0; i <= right; i += width) {
-        for (j = halfHeight; j <= bottom; j += height) {
+        for (i = startI; i <= right; i += width) { 
           terms = 4;
 
           if (i === 0) {
