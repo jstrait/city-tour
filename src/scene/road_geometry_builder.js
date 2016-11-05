@@ -68,17 +68,17 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var sidewalkGeometry = new THREE.Geometry();
     var sidewalkSegmentMesh;
 
-    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH * 0.5, CityTour.Config.STREET_DEPTH * 0.5), roadMaterial);
+    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.ROAD_DEPTH), roadMaterial);
     reusableIntersectionMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.STREET_DEPTH * 0.5), roadMaterial);
+    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.ROAD_DEPTH), roadMaterial);
     reusableIntersectionFillerNorthSouthMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH * 0.5, CityTour.Config.SIDEWALK_DEPTH), roadMaterial);
+    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.SIDEWALK_DEPTH), roadMaterial);
     reusableIntersectionFillerEastWestMesh.rotation.x = -HALF_PI;
 
-    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH * 0.5, 1.0), roadMaterial);
-    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.STREET_DEPTH * 0.5), roadMaterial);
+    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, 1.0), roadMaterial);
+    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.ROAD_DEPTH), roadMaterial);
 
     var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, 1.0), sidewalkMaterial);
     var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.SIDEWALK_DEPTH), sidewalkMaterial);
