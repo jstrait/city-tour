@@ -19,7 +19,10 @@ CityTour.Scene.Builder = function() {
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();
-    scene.add(new CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork));
+    var roadMeshes = new CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork);
+    roadMeshes.forEach(function(roadMesh) {
+      scene.add(roadMesh);
+    });
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();

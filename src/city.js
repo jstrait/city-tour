@@ -7,6 +7,8 @@ CityTour.Config = (function() {
 
   config.STREET_WIDTH = 3;
   config.STREET_DEPTH = 3;
+  config.SIDEWALK_WIDTH = config.STREET_WIDTH * 0.25;
+  config.SIDEWALK_DEPTH = config.STREET_DEPTH * 0.25;
   config.BLOCK_WIDTH = 8;
   config.BLOCK_DEPTH = 8;
   config.BLOCK_AND_STREET_WIDTH = config.BLOCK_WIDTH + config.STREET_WIDTH;
