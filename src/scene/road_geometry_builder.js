@@ -4,6 +4,8 @@ var CityTour = CityTour || {};
 CityTour.Scene = CityTour.Scene || {};
 
 CityTour.Scene.RoadGeometryBuilder = function() {
+  var HALF_PI = Math.PI / 2;
+
   var COLOR_ROAD = 0xaaaaaa;
   var COLOR_SIDEWALK = 0xffffff;
 
@@ -19,10 +21,38 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     }
   };
 
+  var buildReusableIntersectionCornerMesh = function(sidewalkMaterial) {
+    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.SIDEWALK_DEPTH), sidewalkMaterial);
+    reusableIntersectionSidewalkCornerMesh.rotation.x = -HALF_PI;
+
+    var intersectionSidewalkCornerGeometry = new THREE.Geometry();
+
+    reusableIntersectionSidewalkCornerMesh.position.x = -(CityTour.Config.STREET_WIDTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.position.z = -(CityTour.Config.STREET_DEPTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.updateMatrix();
+    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
+
+    reusableIntersectionSidewalkCornerMesh.position.x = (CityTour.Config.STREET_WIDTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.position.z = -(CityTour.Config.STREET_DEPTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.updateMatrix();
+    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
+
+    reusableIntersectionSidewalkCornerMesh.position.x = -(CityTour.Config.STREET_WIDTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.position.z = (CityTour.Config.STREET_DEPTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.updateMatrix();
+    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
+
+    reusableIntersectionSidewalkCornerMesh.position.x = (CityTour.Config.STREET_WIDTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.position.z = (CityTour.Config.STREET_DEPTH * 0.375);
+    reusableIntersectionSidewalkCornerMesh.updateMatrix();
+    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
+
+    return new THREE.Mesh(intersectionSidewalkCornerGeometry, sidewalkMaterial);
+  };
+
   var roadGeometryBuilder = {};
 
   roadGeometryBuilder.build = function(terrain, roadNetwork) {
-    var HALF_PI = Math.PI / 2;
     var HALF_BLOCK_AND_STREET_WIDTH = CityTour.Config.BLOCK_AND_STREET_WIDTH / 2;
     var HALF_BLOCK_AND_STREET_DEPTH = CityTour.Config.BLOCK_AND_STREET_DEPTH / 2;
     
@@ -41,9 +71,6 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.STREET_WIDTH * 0.5, CityTour.Config.STREET_DEPTH * 0.5), roadMaterial);
     reusableIntersectionMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.SIDEWALK_DEPTH), sidewalkMaterial);
-    reusableIntersectionSidewalkCornerMesh.rotation.x = -HALF_PI;
-
     var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.STREET_DEPTH * 0.5), roadMaterial);
     reusableIntersectionFillerNorthSouthMesh.rotation.x = -HALF_PI;
 
@@ -55,6 +82,8 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
     var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, 1.0), sidewalkMaterial);
     var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.SIDEWALK_DEPTH), sidewalkMaterial);
+
+    var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
 
     for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
@@ -71,30 +100,10 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           roadSegmentMesh.updateMatrix();
           roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
 
-          sidewalkSegmentMesh = reusableIntersectionSidewalkCornerMesh;
+          sidewalkSegmentMesh = intersectionSidewalkCornerMesh;
+          sidewalkSegmentMesh.position.x = sceneX;
           sidewalkSegmentMesh.position.y = terrain.heightAtCoordinates(mapX, mapZ);
-
-          // Upper left sidewalk
-          sidewalkSegmentMesh.position.x = sceneX - (CityTour.Config.STREET_WIDTH * 0.375);
-          sidewalkSegmentMesh.position.z = sceneZ - (CityTour.Config.STREET_DEPTH * 0.375);
-          sidewalkSegmentMesh.updateMatrix();
-          sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-
-          // Upper right sidewalk
-          sidewalkSegmentMesh.position.x = sceneX + (CityTour.Config.STREET_WIDTH * 0.375);
-          sidewalkSegmentMesh.position.z = sceneZ - (CityTour.Config.STREET_DEPTH * 0.375);
-          sidewalkSegmentMesh.updateMatrix();
-          sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-
-          // Lower left sidewalk
-          sidewalkSegmentMesh.position.x = sceneX - (CityTour.Config.STREET_WIDTH * 0.375);
-          sidewalkSegmentMesh.position.z = sceneZ + (CityTour.Config.STREET_DEPTH * 0.375);
-          sidewalkSegmentMesh.updateMatrix();
-          sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-
-          // Lower right sidewalk
-          sidewalkSegmentMesh.position.x = sceneX + (CityTour.Config.STREET_WIDTH * 0.375);
-          sidewalkSegmentMesh.position.z = sceneZ + (CityTour.Config.STREET_DEPTH * 0.375);
+          sidewalkSegmentMesh.position.z = sceneZ;
           sidewalkSegmentMesh.updateMatrix();
           sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
