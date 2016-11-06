@@ -24,7 +24,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
   };
 
   var buildReusableIntersectionCornerMesh = function(sidewalkMaterial) {
-    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.SIDEWALK_DEPTH), sidewalkMaterial);
+    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.SIDEWALK_DEPTH));
     reusableIntersectionSidewalkCornerMesh.rotation.x = -HALF_PI;
 
     var intersectionSidewalkCornerGeometry = new THREE.Geometry();
@@ -49,7 +49,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     reusableIntersectionSidewalkCornerMesh.updateMatrix();
     intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
 
-    return new THREE.Mesh(intersectionSidewalkCornerGeometry, sidewalkMaterial);
+    return new THREE.Mesh(intersectionSidewalkCornerGeometry);
   };
 
   var roadGeometryBuilder = {};
@@ -73,20 +73,20 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var sidewalkGeometry = new THREE.Geometry();
     var sidewalkSegmentMesh;
 
-    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.ROAD_DEPTH), roadMaterial);
+    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.ROAD_DEPTH));
     reusableIntersectionMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.ROAD_DEPTH), roadMaterial);
+    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.ROAD_DEPTH));
     reusableIntersectionFillerNorthSouthMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.SIDEWALK_DEPTH), roadMaterial);
+    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.SIDEWALK_DEPTH));
     reusableIntersectionFillerEastWestMesh.rotation.x = -HALF_PI;
 
-    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, 1.0), roadMaterial);
-    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.ROAD_DEPTH), roadMaterial);
+    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, 1.0));
+    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.ROAD_DEPTH));
 
-    var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, 1.0), sidewalkMaterial);
-    var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.SIDEWALK_DEPTH), sidewalkMaterial);
+    var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, 1.0));
+    var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.SIDEWALK_DEPTH));
 
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
 
