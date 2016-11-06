@@ -41,11 +41,12 @@ CityTour.RoadNetworkGenerator = (function() {
   };
 
   var shouldConnectIntersections = function(terrain, centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2) {
-    var probabilityOfConnection = calculateBlockProbabilityOfBranching(centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2);
     var edgeIsOnLand = terrain.materialAtCoordinates(mapX1, mapZ1) === 'land' &&
                        terrain.materialAtCoordinates(mapX2, mapZ2) === 'land';
 
-    return edgeIsOnLand && (Math.random() < probabilityOfConnection) && !isTerrainTooSteep(terrain, mapX1, mapZ1, mapX2, mapZ2);
+    return edgeIsOnLand &&
+           (Math.random() < calculateBlockProbabilityOfBranching(centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2)) &&
+           !isTerrainTooSteep(terrain, mapX1, mapZ1, mapX2, mapZ2);
   };
 
   var branchFromIntersection = function(terrain, roadNetwork, centerMapX, centerMapZ, mapX, mapZ) {
