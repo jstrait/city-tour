@@ -8,7 +8,7 @@ CityTour.RoadNetworkGenerator = (function() {
   var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS;
   var MAX_STEEPNESS = Math.PI / 6;
 
-  var calculateBlockProbabilityOfBranching = function(centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2) {
+  var probabilityOfBranching = function(centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2) {
     // Guarantee roads along x and z axes
     if (mapX1 === centerMapX && mapX2 === centerMapX && mapZ2 >= (-CityTour.Config.HALF_BLOCK_ROWS + centerMapZ) && mapZ2 <= (CityTour.Config.HALF_BLOCK_ROWS + centerMapZ)) {
       return 1.0;
@@ -45,7 +45,7 @@ CityTour.RoadNetworkGenerator = (function() {
                        terrain.materialAtCoordinates(mapX2, mapZ2) === 'land';
 
     return edgeIsOnLand &&
-           (Math.random() < calculateBlockProbabilityOfBranching(centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2)) &&
+           (Math.random() < probabilityOfBranching(centerMapX, centerMapZ, mapX1, mapZ1, mapX2, mapZ2)) &&
            !isTerrainTooSteep(terrain, mapX1, mapZ1, mapX2, mapZ2);
   };
 
