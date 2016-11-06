@@ -194,10 +194,10 @@ CityTour.ZonedBlockGenerator = (function() {
 
     for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX; mapX < CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX; mapX++) {
       for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ; mapZ < CityTour.Config.HALF_BLOCK_ROWS + centerMapZ; mapZ++) {
-        hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ);
-        hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1);
-        hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1);
-        hasLeftRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1);
+        hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        hasLeftRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
         if (hasTopRoad || hasRightRoad || hasBottomRoad || hasLeftRoad) {
           block = {};

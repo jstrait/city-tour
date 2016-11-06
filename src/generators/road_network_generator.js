@@ -7,6 +7,7 @@ CityTour.RoadNetworkGenerator = (function() {
   var DISTANCE_TO_CITY_EDGE = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
   var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS;
   var MAX_STEEPNESS = Math.PI / 6;
+  var MAX_BRIDGE_LENGTH = 10;
 
   var buildRoadNetwork = function(terrain, centerMapX, centerMapZ) {
     var MIN_MAP_X = -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX;
@@ -63,13 +64,58 @@ CityTour.RoadNetworkGenerator = (function() {
     };
 
     var connectIntersections = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
-      if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
-        if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
-          roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
+      if (terrain.materialAtCoordinates(targetMapX, targetMapZ) === CityTour.Terrain.WATER) {
+        var xDelta, zDelta;
+        if (targetMapX === mapX) {
+          xDelta = 0.0;
         }
         else {
-          roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ);
-          branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
+          xDelta = (targetMapX < mapX) ? -1 : 1;
+        }
+        if (targetMapZ === mapZ) {
+          zDelta = 0.0;
+        }
+        else {
+          zDelta = (targetMapZ < mapZ) ? -1 : 1;
+        }
+        var finalX = targetMapX;
+        var finalZ = targetMapZ;
+
+        // TODO: Also adds bounds checking for edge of map
+        var bridgeLength = 1;
+        while (terrain.materialAtCoordinates(finalX, finalZ) === CityTour.Terrain.WATER) {
+          if (roadNetwork.hasIntersection(finalX, finalZ)) {
+            return;
+          }
+          
+          finalX += xDelta;
+          finalZ += zDelta;
+          bridgeLength += 1;
+        }
+
+        if (bridgeLength > MAX_BRIDGE_LENGTH) {
+          return;
+        }
+
+        var tempX = mapX;
+        var tempZ = mapZ;
+        while (tempX < finalX || tempZ < finalZ) {
+          roadNetwork.addEdge(tempX, tempZ, tempX + xDelta, tempZ + zDelta, CityTour.RoadNetwork.BRIDGE_SURFACE);
+          tempX += xDelta;
+          tempZ += zDelta;
+        }
+        
+        branchFromIntersection(terrain, roadNetwork, finalX, finalZ);
+      }
+      else {
+        if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
+          if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
+            roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
+          }
+          else {
+            roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
+            branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
+          }
         }
       }
     };

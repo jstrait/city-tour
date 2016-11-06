@@ -8,15 +8,21 @@ CityTour.RoadNetwork = function() {
 
     var intersection = {};
 
-    intersection.addEdge = function(mapX, mapZ) {
+    intersection.addEdge = function(mapX, mapZ, surfaceType) {
       if (!edges[mapX]) {
         edges[mapX] = [];
       }
-      edges[mapX][mapZ] = true;
+      edges[mapX][mapZ] = surfaceType;
     };
 
-    intersection.hasEdgeTo = function(mapX, mapZ) {
-      return edges[mapX] != undefined && edges[mapX][mapZ] != null;
+    intersection.hasEdgeTo = function(mapX, mapZ, surfaceType) {
+      var hasEdge = edges[mapX] != undefined && edges[mapX][mapZ] != null;
+      if (surfaceType) {
+        return hasEdge && edges[mapX][mapZ] === surfaceType;
+      }
+      else {
+        return hasEdge;
+      }
     };
 
     return intersection;
@@ -35,7 +41,7 @@ CityTour.RoadNetwork = function() {
     return (intersections[mapX] && intersections[mapX][mapZ] != null) || false;
   };
 
-  roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
+  roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1];
     var intersection2 = intersections[mapX2][mapZ2];
 
@@ -48,8 +54,8 @@ CityTour.RoadNetwork = function() {
       intersections[mapX2][mapZ2] = intersection2;
     }
 
-    intersection1.addEdge(mapX2, mapZ2);
-    intersection2.addEdge(mapX1, mapZ1);
+    intersection1.addEdge(mapX2, mapZ2, surfaceType);
+    intersection2.addEdge(mapX1, mapZ1, surfaceType);
 
     minColumn = Math.min(minColumn, mapX1, mapX2);
     maxColumn = Math.max(maxColumn, mapX1, mapX2);
@@ -57,12 +63,12 @@ CityTour.RoadNetwork = function() {
     maxRow = Math.max(maxRow, mapZ1, mapZ2);
   };
 
-  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
+  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1] || false;
     var intersection2 = intersections[mapX2][mapZ2] || false;
 
     return intersection1 && intersection2 &&
-           intersection1.hasEdgeTo(mapX2, mapZ2) && intersection2.hasEdgeTo(mapX1, mapZ1);
+           intersection1.hasEdgeTo(mapX2, mapZ2, surfaceType) && intersection2.hasEdgeTo(mapX1, mapZ1, surfaceType);
   };
 
   roadNetwork.minColumn = function() { return minColumn; }
@@ -72,3 +78,6 @@ CityTour.RoadNetwork = function() {
 
   return roadNetwork;
 };
+
+CityTour.RoadNetwork.TERRAIN_SURFACE = 'terrain';
+CityTour.RoadNetwork.BRIDGE_SURFACE = 'bridge';
