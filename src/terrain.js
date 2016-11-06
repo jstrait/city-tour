@@ -5,7 +5,7 @@ var CityTour = CityTour || {};
 CityTour.Terrain = function(coordinates, subDivisions) {
   var xStep = 1 / subDivisions;
   var zStep = 1 / subDivisions;
-  
+
   var interpolateHeight = function(point, floor, ceiling) {
     var heightDifferential = ceiling - floor;
     var percentage = point - Math.floor(point);
@@ -60,3 +60,6 @@ CityTour.Terrain = function(coordinates, subDivisions) {
 
   return terrain;
 };
+
+CityTour.Terrain.LAND = 'land';
+CityTour.Terrain.WATER = 'water';

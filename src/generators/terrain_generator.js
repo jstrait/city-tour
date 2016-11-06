@@ -7,8 +7,6 @@ CityTour.TerrainGenerator = (function() {
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
   var HEIGHT_JITTER_PER_ITERATION = 20;
   var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
-  var LAND = 'land';
-  var WATER = 'water';
 
   var PROBABILITY_OF_RIVER = 2 / 3;
 
@@ -20,7 +18,7 @@ CityTour.TerrainGenerator = (function() {
       terrainCoordinates[x] = [];
 
       for (z = 0; z <= rows; z++) {
-        terrainCoordinates[x][z] = { material: LAND, height: 0.0 };
+        terrainCoordinates[x][z] = { material: CityTour.Terrain.LAND, height: 0.0 };
       }
     }
 
@@ -158,7 +156,7 @@ CityTour.TerrainGenerator = (function() {
       }
     }
 
-    floodFill(terrainCoordinates, 0, topCurve.getPointAt(0.0).y, minimumRiverBankHeight, WATER);
+    floodFill(terrainCoordinates, 0, topCurve.getPointAt(0.0).y, minimumRiverBankHeight, CityTour.Terrain.WATER);
   };
 
 

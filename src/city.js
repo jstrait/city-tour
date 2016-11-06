@@ -88,7 +88,7 @@ CityTour.City = function(container) {
     var terrainEndTime = new Date();
 
     var centerX = 0, centerZ = 0;
-    while(terrain.materialAtCoordinates(centerX, centerZ) != 'land') {
+    while(terrain.materialAtCoordinates(centerX, centerZ) != CityTour.Terrain.LAND) {
       centerZ -= 1;
     }
 

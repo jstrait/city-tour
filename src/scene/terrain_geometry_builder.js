@@ -9,9 +9,6 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
   var WATER_COLOR_1 = new THREE.Color(0.1, 0.2, 1.0);
   var WATER_COLOR_2 = new THREE.Color(0.1, 0.19, 1.0);
 
-  var LAND = 'land';
-  var WATER = 'water';
-
   var reusableTriangle = new THREE.Geometry();
   reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];
 
@@ -109,7 +106,7 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
         triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ,
                                          bottomLeftX, bottomLeftHeight, bottomLeftZ,
                                          topRightX,   topRightHeight,   topRightZ);
-        if (topLeftMaterial === WATER && topRightMaterial === WATER && bottomLeftMaterial === WATER) {
+        if (topLeftMaterial === CityTour.Terrain.WATER && topRightMaterial === CityTour.Terrain.WATER && bottomLeftMaterial === CityTour.Terrain.WATER) {
           waterGeometry1.merge(triangle);
         }
         else {
@@ -119,7 +116,7 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
         triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ,
                                          bottomRightX, bottomRightHeight, bottomRightZ,
                                          topRightX,    topRightHeight, topRightZ);
-        if (bottomLeftMaterial === WATER && topRightMaterial === WATER && bottomRightMaterial === WATER) {
+        if (bottomLeftMaterial === CityTour.Terrain.WATER && topRightMaterial === CityTour.Terrain.WATER && bottomRightMaterial === CityTour.Terrain.WATER) {
           waterGeometry2.merge(triangle);
         }
         else {
