@@ -9,7 +9,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
   var SIDEWALK_Z_CENTER = (CityTour.Config.STREET_DEPTH / 2) - (CityTour.Config.SIDEWALK_DEPTH / 2);
 
   var COLOR_ROAD = 0xaaaaaa;
-  var COLOR_SIDEWALK = 0xffffff;
+  var COLOR_SIDEWALK = 0xcccccc;
 
   var calculateRoadSegment = function(heightAtPoint1, heightAtPoint2, mapLength) {
     var midpointHeight = (heightAtPoint1 + heightAtPoint2) / 2;
