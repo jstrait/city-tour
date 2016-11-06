@@ -20,10 +20,9 @@ CityTour.RoadNetworkGenerator = (function() {
     var xDistance = mapX1 - centerMapX;
     var zDistance = mapZ1 - centerMapZ; 
     var distanceFromCenter = Math.sqrt((xDistance * xDistance) + (zDistance * zDistance));
-    var percentageFromCenter = (distanceFromCenter / DISTANCE_TO_CITY_EDGE);
     var normalizedPercentageFromCenter;
 
-    if (percentageFromCenter >= PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS) {
+    if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
       normalizedPercentageFromCenter = (distanceFromCenter - SAFE_FROM_DECAY_DISTANCE) / (DISTANCE_TO_CITY_EDGE - SAFE_FROM_DECAY_DISTANCE);
     }
     else {
