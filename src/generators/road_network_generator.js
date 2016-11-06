@@ -81,7 +81,6 @@ CityTour.RoadNetworkGenerator = (function() {
         var finalX = targetMapX;
         var finalZ = targetMapZ;
 
-        // TODO: Also adds bounds checking for edge of map
         var bridgeLength = 1;
         while (terrain.materialAtCoordinates(finalX, finalZ) === CityTour.Terrain.WATER) {
           if (roadNetwork.hasIntersection(finalX, finalZ)) {
@@ -91,6 +90,13 @@ CityTour.RoadNetworkGenerator = (function() {
           finalX += xDelta;
           finalZ += zDelta;
           bridgeLength += 1;
+
+          if (finalX < -CityTour.Config.HALF_TERRAIN_COLUMNS ||
+              finalX > CityTour.Config.HALF_TERRAIN_COLUMNS  ||
+              finalZ < -CityTour.Config.HALF_TERRAIN_ROWS    ||
+              finalZ > CityTour.Config.HALF_TERRAIN_ROWS) {
+            return;
+          }
         }
 
         if (bridgeLength > MAX_BRIDGE_LENGTH) {
