@@ -3,11 +3,12 @@
 var CityTour = CityTour || {};
 
 CityTour.RoadNetwork = function(terrain) {
-  var Intersection = function(mapX, mapZ, surfaceType) {
+  var Intersection = function(mapX, mapZ, height, surfaceType) {
     var edges = [];
 
     var intersection = {};
 
+    intersection.getHeight = function() { return height; };
     intersection.getSurfaceType = function() { return surfaceType; };
 
     intersection.addEdge = function(mapX, mapZ, surfaceType) {
@@ -53,6 +54,15 @@ CityTour.RoadNetwork = function(terrain) {
     return (intersections[mapX] && intersections[mapX][mapZ] != null) || false;
   };
 
+  roadNetwork.getIntersectionHeight = function(mapX, mapZ) {
+    if (roadNetwork.hasIntersection(mapX, mapZ)) {
+      return intersections[mapX][mapZ].getHeight();
+    }
+    else {
+      return false;
+    }
+  };
+
   roadNetwork.getIntersectionSurfaceType = function(mapX, mapZ) {
     if (roadNetwork.hasIntersection(mapX, mapZ)) {
       return intersections[mapX][mapZ].getSurfaceType();
@@ -62,20 +72,22 @@ CityTour.RoadNetwork = function(terrain) {
     }
   };
 
-  roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
+  roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2, nonTerrainHeight, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1];
     var intersection2 = intersections[mapX2][mapZ2];
-    var intersectionSurfaceType;
+    var intersectionHeight, intersectionSurfaceType;
 
     if (!intersection1) {
+      intersectionHeight = (terrain.materialAtCoordinates(mapX1, mapZ1) === CityTour.Terrain.LAND) ? terrain.heightAtCoordinates(mapX1, mapZ1) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.materialAtCoordinates(mapX1, mapZ1) === CityTour.Terrain.LAND) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
-      intersection1 = new Intersection(mapX1, mapZ1, intersectionSurfaceType);
+      intersection1 = new Intersection(mapX1, mapZ1, intersectionHeight, intersectionSurfaceType);
       intersections[mapX1][mapZ1] = intersection1;
     }
 
     if (!intersection2) {
+      intersectionHeight = (terrain.materialAtCoordinates(mapX2, mapZ2) === CityTour.Terrain.LAND) ? terrain.heightAtCoordinates(mapX2, mapZ2) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.materialAtCoordinates(mapX2, mapZ2) === CityTour.Terrain.LAND) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
-      intersection2 = new Intersection(mapX2, mapZ2, intersectionSurfaceType);
+      intersection2 = new Intersection(mapX2, mapZ2, intersectionHeight, intersectionSurfaceType);
       intersections[mapX2][mapZ2] = intersection2;
     }
 
