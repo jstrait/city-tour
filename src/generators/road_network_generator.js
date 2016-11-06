@@ -126,7 +126,7 @@ CityTour.RoadNetworkGenerator = (function() {
       }
     };
 
-    var roadNetwork = new CityTour.RoadNetwork();
+    var roadNetwork = new CityTour.RoadNetwork(terrain);
     branchFromIntersection(terrain, roadNetwork, centerMapX, centerMapZ);
 
     return roadNetwork;

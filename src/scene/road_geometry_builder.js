@@ -87,7 +87,8 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
 
-    var hasNorthRoad, hasEastRoad, hasSouthRoad, hasWestRoad;
+    var northRoad, eastRoad, southRoad, westRoad;
+    var selfSurfaceHeight, southSurfaceHeight, eastSurfaceHeight;
 
     for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
@@ -96,34 +97,41 @@ CityTour.Scene.RoadGeometryBuilder = function() {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
         if (roadNetwork.hasIntersection(mapX, mapZ)) {
-          hasNorthRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ - 1);
-          hasEastRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)
-          hasSouthRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1);
-          hasWestRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX - 1, mapZ);
+          if (roadNetwork.getIntersectionSurfaceType(mapX, mapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            selfSurfaceHeight = terrain.heightAtCoordinates(mapX, mapZ);
+          }
+          else {
+            selfSurfaceHeight = 2;
+          }
+
+          northRoad = roadNetwork.edgeBetween(mapX, mapZ, mapX, mapZ - 1);
+          eastRoad = roadNetwork.edgeBetween(mapX, mapZ, mapX + 1, mapZ);
+          southRoad = roadNetwork.edgeBetween(mapX, mapZ, mapX, mapZ + 1);
+          westRoad = roadNetwork.edgeBetween(mapX, mapZ, mapX - 1, mapZ);
 
           // Road intersection
           roadSegmentMesh = reusableIntersectionMesh;
           roadSegmentMesh.position.x = sceneX;
-          roadSegmentMesh.position.y = terrain.heightAtCoordinates(mapX, mapZ);
+          roadSegmentMesh.position.y = selfSurfaceHeight;
           roadSegmentMesh.position.z = sceneZ;
           roadSegmentMesh.updateMatrix();
           roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
 
           sidewalkSegmentMesh = intersectionSidewalkCornerMesh;
           sidewalkSegmentMesh.position.x = sceneX;
-          sidewalkSegmentMesh.position.y = terrain.heightAtCoordinates(mapX, mapZ);
+          sidewalkSegmentMesh.position.y = selfSurfaceHeight;
           sidewalkSegmentMesh.position.z = sceneZ;
           sidewalkSegmentMesh.updateMatrix();
           sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
           sidewalkSegmentMesh = reusableIntersectionFillerEastWestMesh;
-          sidewalkSegmentMesh.position.y = terrain.heightAtCoordinates(mapX, mapZ);
+          sidewalkSegmentMesh.position.y = selfSurfaceHeight;
 
           // Top sidewalk "filler"
           sidewalkSegmentMesh.position.x = sceneX;
           sidewalkSegmentMesh.position.z = sceneZ - SIDEWALK_Z_CENTER;
           sidewalkSegmentMesh.updateMatrix();
-          if (hasNorthRoad) {
+          if (northRoad != false) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -134,7 +142,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           sidewalkSegmentMesh.position.x = sceneX;
           sidewalkSegmentMesh.position.z = sceneZ + SIDEWALK_Z_CENTER;
           sidewalkSegmentMesh.updateMatrix();
-          if (hasSouthRoad) {
+          if (southRoad != false) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -142,13 +150,13 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           }
 
           sidewalkSegmentMesh = reusableIntersectionFillerNorthSouthMesh;
-          sidewalkSegmentMesh.position.y = terrain.heightAtCoordinates(mapX, mapZ);
+          sidewalkSegmentMesh.position.y = selfSurfaceHeight;
 
           // Left sidewalk "filler"
           sidewalkSegmentMesh.position.x = sceneX - SIDEWALK_X_CENTER;
           sidewalkSegmentMesh.position.z = sceneZ;
           sidewalkSegmentMesh.updateMatrix();
-          if (hasWestRoad) {
+          if (westRoad != false) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -159,7 +167,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           sidewalkSegmentMesh.position.x = sceneX + SIDEWALK_X_CENTER;
           sidewalkSegmentMesh.position.z = sceneZ;
           sidewalkSegmentMesh.updateMatrix();
-          if (hasEastRoad) {
+          if (eastRoad != false) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -168,9 +176,16 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
 
           // North/South road segment
-          if (hasSouthRoad) {
-            roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
-                                               terrain.heightAtCoordinates(mapX, mapZ + 1),
+          if (southRoad != false) {
+            if (southRoad === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+              southSurfaceHeight = terrain.heightAtCoordinates(mapX, mapZ + 1);
+            }
+            else {
+              southSurfaceHeight = 2;
+            }
+
+            roadSegment = calculateRoadSegment(selfSurfaceHeight,
+                                               southSurfaceHeight,
                                                CityTour.Config.BLOCK_DEPTH);
 
             roadSegmentMesh = reusableNorthSouthMesh;
@@ -200,9 +215,16 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           }
 
           // East/West road segment
-          if (hasEastRoad) {
-            roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
-                                               terrain.heightAtCoordinates(mapX + 1, mapZ),
+          if (eastRoad != false) {
+            if (eastRoad === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+              eastSurfaceHeight = terrain.heightAtCoordinates(mapX + 1, mapZ);
+            }
+            else {
+              eastSurfaceHeight = 2;
+            }
+
+            roadSegment = calculateRoadSegment(selfSurfaceHeight,
+                                               eastSurfaceHeight,
                                                CityTour.Config.BLOCK_WIDTH);
 
             roadSegmentMesh = reusableEastWestMesh;

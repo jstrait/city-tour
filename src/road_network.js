@@ -2,11 +2,13 @@
 
 var CityTour = CityTour || {};
 
-CityTour.RoadNetwork = function() {
-  var Intersection = function(mapX, mapZ) {
+CityTour.RoadNetwork = function(terrain) {
+  var Intersection = function(mapX, mapZ, surfaceType) {
     var edges = [];
 
     var intersection = {};
+
+    intersection.getSurfaceType = function() { return surfaceType; };
 
     intersection.addEdge = function(mapX, mapZ, surfaceType) {
       if (!edges[mapX]) {
@@ -22,6 +24,16 @@ CityTour.RoadNetwork = function() {
       }
       else {
         return hasEdge;
+      }
+    };
+
+    intersection.getEdge = function(mapX, mapZ) {
+      var hasEdge = edges[mapX] != undefined && edges[mapX][mapZ] != null;
+      if (hasEdge) {
+        return edges[mapX][mapZ];
+      }
+      else {
+        return false;
       }
     };
 
@@ -41,16 +53,29 @@ CityTour.RoadNetwork = function() {
     return (intersections[mapX] && intersections[mapX][mapZ] != null) || false;
   };
 
+  roadNetwork.getIntersectionSurfaceType = function(mapX, mapZ) {
+    if (roadNetwork.hasIntersection(mapX, mapZ)) {
+      return intersections[mapX][mapZ].getSurfaceType();
+    }
+    else {
+      return false;
+    }
+  };
+
   roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1];
     var intersection2 = intersections[mapX2][mapZ2];
+    var intersectionSurfaceType;
 
     if (!intersection1) {
-      intersection1 = new Intersection(mapX1, mapZ1);
+      intersectionSurfaceType = (terrain.materialAtCoordinates(mapX1, mapZ1) === CityTour.Terrain.LAND) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
+      intersection1 = new Intersection(mapX1, mapZ1, intersectionSurfaceType);
       intersections[mapX1][mapZ1] = intersection1;
     }
+
     if (!intersection2) {
-      intersection2 = new Intersection(mapX2, mapZ2);
+      intersectionSurfaceType = (terrain.materialAtCoordinates(mapX2, mapZ2) === CityTour.Terrain.LAND) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
+      intersection2 = new Intersection(mapX2, mapZ2, intersectionSurfaceType);
       intersections[mapX2][mapZ2] = intersection2;
     }
 
@@ -69,6 +94,12 @@ CityTour.RoadNetwork = function() {
 
     return intersection1 && intersection2 &&
            intersection1.hasEdgeTo(mapX2, mapZ2, surfaceType) && intersection2.hasEdgeTo(mapX1, mapZ1, surfaceType);
+  };
+
+  roadNetwork.edgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var intersection1 = intersections[mapX1][mapZ1] || false;
+
+    return intersection1.getEdge(mapX2, mapZ2);
   };
 
   roadNetwork.minColumn = function() { return minColumn; }
