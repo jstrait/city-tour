@@ -103,10 +103,14 @@ CityTour.RoadNetworkGenerator = (function() {
           return;
         }
 
+        var heightAtTerminal1 = terrain.heightAtCoordinates(mapX, mapZ);
+        var heightAtTerminal2 = terrain.heightAtCoordinates(finalX, finalZ);
+        var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2);
+
         var tempX = mapX;
         var tempZ = mapZ;
         while (tempX < finalX || tempZ < finalZ) {
-          roadNetwork.addEdge(tempX, tempZ, tempX + xDelta, tempZ + zDelta, 2, CityTour.RoadNetwork.BRIDGE_SURFACE);
+          roadNetwork.addEdge(tempX, tempZ, tempX + xDelta, tempZ + zDelta, roadDeckHeight, CityTour.RoadNetwork.BRIDGE_SURFACE);
           tempX += xDelta;
           tempZ += zDelta;
         }
