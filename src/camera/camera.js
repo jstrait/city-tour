@@ -251,8 +251,50 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
       zPosition = zMotionGenerator.next();
     }
 
-    var terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(xPosition), CityTour.Coordinates.sceneZToMapZ(zPosition));
-    yPosition = Math.max(yMotionGenerator.next(), terrainHeight + MINIMUM_HEIGHT_OFF_GROUND);
+    // Calculate Road height
+    var roadHeight;
+    var mapX = CityTour.Coordinates.sceneXToMapX(xPosition);
+    var mapZ = CityTour.Coordinates.sceneZToMapZ(zPosition);
+    var xIsExact = Math.floor(mapX) === mapX;
+    var zIsExact = Math.floor(mapZ) === mapZ;
+    if (xIsExact && zIsExact) {
+      roadHeight = roadNetwork.getIntersectionHeight(mapX, mapZ);
+    }
+    else if (xIsExact) {
+      var ceil = roadNetwork.getIntersectionHeight(mapX, Math.ceil(mapZ));
+      var floor = roadNetwork.getIntersectionHeight(mapX, Math.floor(mapZ));
+
+      if (ceil !== false && floor !== false) {
+        var heightDifferential = ceil - floor;
+        var percentage = mapZ - Math.floor(mapZ);
+        roadHeight = floor + (heightDifferential * percentage);
+      }
+      else {
+        roadHeight = false;
+      }
+    }
+    else if (zIsExact) {
+      var ceil = roadNetwork.getIntersectionHeight(Math.ceil(mapX), mapZ);
+      var floor = roadNetwork.getIntersectionHeight(Math.floor(mapX), mapZ);
+
+      if (ceil !== false && floor !== false) {
+        var heightDifferential = ceil - floor;
+        var percentage = mapX - Math.floor(mapX);
+        roadHeight = floor + (heightDifferential * percentage);
+      }
+      else {
+        roadHeight = false;
+      }
+    }
+    else {
+      roadHeight = false;
+    }
+
+    if (roadHeight === false) {
+      roadHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(xPosition), CityTour.Coordinates.sceneZToMapZ(zPosition));
+    }
+
+    yPosition = Math.max(yMotionGenerator.next(), roadHeight + MINIMUM_HEIGHT_OFF_GROUND);
 
     xRotation = xRotationGenerator.next();
 
