@@ -146,6 +146,8 @@ CityTour.City = function(container) {
     container.appendChild(renderer.domElement);
 
     timer.start();
+    masterEndTime = new Date();
+    console.log("Time to generate world+scene: " + (masterEndTime - masterStartTime) + "ms");
 
     onComplete();
   };
