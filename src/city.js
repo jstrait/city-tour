@@ -5,10 +5,10 @@ var CityTour = CityTour || {};
 CityTour.Config = (function() {
   var config = {};
 
-  config.STREET_WIDTH = 3;
-  config.STREET_DEPTH = 3;
-  config.SIDEWALK_WIDTH = config.STREET_WIDTH * 0.25;
-  config.SIDEWALK_DEPTH = config.STREET_DEPTH * 0.25;
+  config.STREET_WIDTH = 4;
+  config.STREET_DEPTH = 4;
+  config.SIDEWALK_WIDTH = config.STREET_WIDTH * 0.24;
+  config.SIDEWALK_DEPTH = config.STREET_DEPTH * 0.24;
   config.ROAD_WIDTH = config.STREET_WIDTH - (config.SIDEWALK_WIDTH * 2);
   config.ROAD_DEPTH = config.STREET_DEPTH - (config.SIDEWALK_DEPTH * 2);
   config.BLOCK_WIDTH = 8;
