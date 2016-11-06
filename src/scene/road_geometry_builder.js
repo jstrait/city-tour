@@ -87,6 +87,8 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
 
+    var hasNorthRoad, hasEastRoad, hasSouthRoad, hasWestRoad;
+
     for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
 
@@ -94,6 +96,11 @@ CityTour.Scene.RoadGeometryBuilder = function() {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
         if (roadNetwork.hasIntersection(mapX, mapZ)) {
+          hasNorthRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ - 1);
+          hasEastRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)
+          hasSouthRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1);
+          hasWestRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX - 1, mapZ);
+
           // Road intersection
           roadSegmentMesh = reusableIntersectionMesh;
           roadSegmentMesh.position.x = sceneX;
@@ -116,7 +123,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           sidewalkSegmentMesh.position.x = sceneX;
           sidewalkSegmentMesh.position.z = sceneZ - SIDEWALK_Z_CENTER;
           sidewalkSegmentMesh.updateMatrix();
-          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ - 1)) {
+          if (hasNorthRoad) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -127,7 +134,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           sidewalkSegmentMesh.position.x = sceneX;
           sidewalkSegmentMesh.position.z = sceneZ + SIDEWALK_Z_CENTER;
           sidewalkSegmentMesh.updateMatrix();
-          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) {
+          if (hasSouthRoad) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -141,7 +148,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           sidewalkSegmentMesh.position.x = sceneX - SIDEWALK_X_CENTER;
           sidewalkSegmentMesh.position.z = sceneZ;
           sidewalkSegmentMesh.updateMatrix();
-          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX - 1, mapZ)) {
+          if (hasWestRoad) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -152,7 +159,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           sidewalkSegmentMesh.position.x = sceneX + SIDEWALK_X_CENTER;
           sidewalkSegmentMesh.position.z = sceneZ;
           sidewalkSegmentMesh.updateMatrix();
-          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) {
+          if (hasEastRoad) {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
@@ -161,7 +168,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
 
           // North/South road segment
-          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1)) {
+          if (hasSouthRoad) {
             roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
                                                terrain.heightAtCoordinates(mapX, mapZ + 1),
                                                CityTour.Config.BLOCK_DEPTH);
@@ -193,7 +200,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
           }
 
           // East/West road segment
-          if (roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ)) {
+          if (hasEastRoad) {
             roadSegment = calculateRoadSegment(terrain.heightAtCoordinates(mapX, mapZ),
                                                terrain.heightAtCoordinates(mapX + 1, mapZ),
                                                CityTour.Config.BLOCK_WIDTH);
