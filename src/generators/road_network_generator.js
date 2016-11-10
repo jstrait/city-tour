@@ -65,6 +65,13 @@ CityTour.RoadNetworkGenerator = (function() {
 
     var connectIntersections = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
       if (terrain.materialAtCoordinates(targetMapX, targetMapZ) === CityTour.Terrain.WATER) {
+        var xDistance = mapX - centerMapX;
+        var zDistance = mapZ - centerMapZ; 
+        var distanceFromCenter = Math.sqrt((xDistance * xDistance) + (zDistance * zDistance));
+        if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
+          return;
+        }
+
         var xDelta, zDelta;
         if (targetMapX === mapX) {
           xDelta = 0.0;
