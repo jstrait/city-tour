@@ -63,73 +63,92 @@ CityTour.RoadNetworkGenerator = (function() {
       connectIntersections(terrain, roadNetwork, mapX, mapZ, mapX, mapZ + 1);
     };
 
+    var calculateBridgeAttributes = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
+      var xDistance = mapX - centerMapX;
+      var zDistance = mapZ - centerMapZ; 
+      var distanceFromCenter = Math.sqrt((xDistance * xDistance) + (zDistance * zDistance));
+      if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
+        return null;
+      }
+
+      var xDelta, zDelta;
+      if (targetMapX === mapX) {
+        xDelta = 0.0;
+      }
+      else {
+        xDelta = (targetMapX < mapX) ? -1 : 1;
+      }
+      if (targetMapZ === mapZ) {
+        zDelta = 0.0;
+      }
+      else {
+        zDelta = (targetMapZ < mapZ) ? -1 : 1;
+      }
+      var finalX = targetMapX;
+      var finalZ = targetMapZ;
+
+      var bridgeLength = 1;
+      while (terrain.materialAtCoordinates(finalX, finalZ) === CityTour.Terrain.WATER) {
+        if (roadNetwork.hasIntersection(finalX, finalZ)) {
+          return null;
+        }
+
+        finalX += xDelta;
+        finalZ += zDelta;
+        bridgeLength += 1;
+
+        if (finalX < -CityTour.Config.HALF_TERRAIN_COLUMNS ||
+            finalX > CityTour.Config.HALF_TERRAIN_COLUMNS  ||
+            finalZ < -CityTour.Config.HALF_TERRAIN_ROWS    ||
+            finalZ > CityTour.Config.HALF_TERRAIN_ROWS) {
+          return null;
+        }
+      }
+
+      if (bridgeLength > MAX_BRIDGE_LENGTH) {
+        return null;
+      }
+
+      var heightAtTerminal1 = terrain.heightAtCoordinates(mapX, mapZ);
+      var heightAtTerminal2 = terrain.heightAtCoordinates(finalX, finalZ);
+      if (heightAtTerminal1 !== heightAtTerminal2) {
+        return null;
+      }
+      var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2);
+
+      if (Math.random() < 0.5) {
+        return null;
+      }
+
+      return {
+        roadDeckHeight: roadDeckHeight,
+        endX: finalX,
+        endZ: finalZ,
+        xDelta: xDelta,
+        zDelta: zDelta,
+      };
+    };
+
     var connectIntersections = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
       if (terrain.materialAtCoordinates(targetMapX, targetMapZ) === CityTour.Terrain.WATER) {
-        var xDistance = mapX - centerMapX;
-        var zDistance = mapZ - centerMapZ; 
-        var distanceFromCenter = Math.sqrt((xDistance * xDistance) + (zDistance * zDistance));
-        if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
-          return;
-        }
+        var bridgeAttributes = calculateBridgeAttributes(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ);
 
-        var xDelta, zDelta;
-        if (targetMapX === mapX) {
-          xDelta = 0.0;
-        }
-        else {
-          xDelta = (targetMapX < mapX) ? -1 : 1;
-        }
-        if (targetMapZ === mapZ) {
-          zDelta = 0.0;
-        }
-        else {
-          zDelta = (targetMapZ < mapZ) ? -1 : 1;
-        }
-        var finalX = targetMapX;
-        var finalZ = targetMapZ;
-
-        var bridgeLength = 1;
-        while (terrain.materialAtCoordinates(finalX, finalZ) === CityTour.Terrain.WATER) {
-          if (roadNetwork.hasIntersection(finalX, finalZ)) {
-            return;
+        if (bridgeAttributes !== null) {
+          var tempX = mapX;
+          var tempZ = mapZ;
+          while (tempX < bridgeAttributes.endX || tempZ < bridgeAttributes.endZ) {
+            roadNetwork.addEdge(tempX,
+                                tempZ,
+                                tempX + bridgeAttributes.xDelta,
+                                tempZ + bridgeAttributes.zDelta,
+                                bridgeAttributes.roadDeckHeight,
+                                CityTour.RoadNetwork.BRIDGE_SURFACE);
+            tempX += bridgeAttributes.xDelta;
+            tempZ += bridgeAttributes.zDelta;
           }
-          
-          finalX += xDelta;
-          finalZ += zDelta;
-          bridgeLength += 1;
 
-          if (finalX < -CityTour.Config.HALF_TERRAIN_COLUMNS ||
-              finalX > CityTour.Config.HALF_TERRAIN_COLUMNS  ||
-              finalZ < -CityTour.Config.HALF_TERRAIN_ROWS    ||
-              finalZ > CityTour.Config.HALF_TERRAIN_ROWS) {
-            return;
-          }
+          branchFromIntersection(terrain, roadNetwork, bridgeAttributes.endX, bridgeAttributes.endZ);
         }
-
-        if (bridgeLength > MAX_BRIDGE_LENGTH) {
-          return;
-        }
-
-        var heightAtTerminal1 = terrain.heightAtCoordinates(mapX, mapZ);
-        var heightAtTerminal2 = terrain.heightAtCoordinates(finalX, finalZ);
-        if (heightAtTerminal1 !== heightAtTerminal2) {
-          return;
-        }
-        var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2);
-
-        if (Math.random() < 0.5) {
-          return;
-        }
-
-        var tempX = mapX;
-        var tempZ = mapZ;
-        while (tempX < finalX || tempZ < finalZ) {
-          roadNetwork.addEdge(tempX, tempZ, tempX + xDelta, tempZ + zDelta, roadDeckHeight, CityTour.RoadNetwork.BRIDGE_SURFACE);
-          tempX += xDelta;
-          tempZ += zDelta;
-        }
-        
-        branchFromIntersection(terrain, roadNetwork, finalX, finalZ);
       }
       else {
         if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
