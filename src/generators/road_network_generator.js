@@ -117,6 +117,10 @@ CityTour.RoadNetworkGenerator = (function() {
         }
         var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2);
 
+        if (Math.random() < 0.5) {
+          return;
+        }
+
         var tempX = mapX;
         var tempZ = mapZ;
         while (tempX < finalX || tempZ < finalZ) {
