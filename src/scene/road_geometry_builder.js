@@ -74,7 +74,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var sidewalkGeometry = new THREE.Geometry();
     var sidewalkSegmentMesh;
 
-    var guardrailMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GUARDRAIL, });
+    var guardrailMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GUARDRAIL, side: THREE.DoubleSide });
     var guardrailGeometry = new THREE.Geometry();
     var guardrailSegmentMesh;
 
