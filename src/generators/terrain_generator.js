@@ -91,7 +91,7 @@ CityTour.TerrainGenerator = (function() {
   };
 
 
-  var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
+  var generateRiverCurves = function(middleRow, columnsToGenerate) {
     var MIN_RIVER_BENDS = 3;
     var MAX_RIVER_BENDS = 8;
     var MAX_BEND_AMOUNT = 20 * SUB_DIVISIONS;
@@ -100,10 +100,7 @@ CityTour.TerrainGenerator = (function() {
     var TOP_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
     var BOTTOM_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
 
-    var i, x, z, xStep;
-    var xCoordinate, zCoordinate;
-    var minimumRiverBankHeight;
-    var vector, topVector, bottomVector;
+    var i;
     var baseCurvePoints, topCurvePoints, bottomCurvePoints;
     var baseCurve, topCurve, bottomCurve;
 
@@ -121,8 +118,23 @@ CityTour.TerrainGenerator = (function() {
       topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + TOP_BANK_OFFSET + Math.round(((Math.random() * TOP_BANK_MAX_JITTER) - (TOP_BANK_MAX_JITTER / 2))) ));
       bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + BOTTOM_BANK_OFFSET + Math.round(((Math.random() * BOTTOM_BANK_MAX_JITTER) - (BOTTOM_BANK_MAX_JITTER / 2))) ));
     }
+
     topCurve = new THREE.SplineCurve(topCurvePoints);
     bottomCurve = new THREE.SplineCurve(bottomCurvePoints);
+
+    return { topCurve: topCurve, bottomCurve: bottomCurve, };
+  };
+
+
+  var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
+    var x, z, xStep;
+    var xCoordinate, zCoordinate;
+    var minimumRiverBankHeight;
+    var vector, topVector, bottomVector;
+
+    var riverCurves = generateRiverCurves(middleRow, columnsToGenerate);
+    var topCurve = riverCurves.topCurve;
+    var bottomCurve = riverCurves.bottomCurve;
 
     xStep = 1 / columnsToGenerate;
 
