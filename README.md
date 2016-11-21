@@ -31,6 +31,6 @@ Finally, a rendering loop begins which moves a three.js camera around the scene.
   * First, install UglifyJS from NPM: `npm install uglify-js`
   * Next install the `rb-fsevent` Ruby gem: `gem install rb-fsevent`
   * To generate `city_tour.js` once, run `./build.rb` or `ruby build.rb`
-  * To automatically rebuild `city_tour.js` when a file in `src/` changes, run `./build.rb watch` or `ruby build.rb watch`
+  * To automatically rebuild `city_tour.js` when a file in `src/` changes, run `./build.rb --watch` or `ruby build.rb --watch`
 * Open `city_tour.html` in your browser and you should be good to go!
 * To run the tests, open `spec/SpecRunner.html` in your browser

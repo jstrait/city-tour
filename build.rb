@@ -6,7 +6,9 @@ def build
   `uglifyjs src/*.js src/**/*.js --compress --mangle --source-map city_tour.js.map > city_tour.js`
 end
 
-if (ARGV[0] || '').downcase == 'watch'
+option = (ARGV[0] || '').downcase
+
+if option == '-w' || option == '--watch'
   fsevent = FSEvent.new
 
   fsevent.watch 'src' do |directories|
