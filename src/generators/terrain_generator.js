@@ -98,10 +98,13 @@ CityTour.TerrainGenerator = (function() {
     var TOP_BANK_OFFSET = 4 * SUB_DIVISIONS;
     var BOTTOM_BANK_OFFSET = 12 * SUB_DIVISIONS;
     var TOP_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
+    var HALF_TOP_BANK_MAX_JITTER = TOP_BANK_MAX_JITTER / 2;
     var BOTTOM_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
+    var HALF_BOTTOM_BANK_MAX_JITTER = BOTTOM_BANK_MAX_JITTER / 2;
 
     var i;
     var baseCurvePoints, topCurvePoints, bottomCurvePoints;
+    var randomJitter;
     var baseCurve, topCurve, bottomCurve;
 
     var riverSubDivisions = Math.round((Math.random() * (MAX_RIVER_BENDS - MIN_RIVER_BENDS))) + MIN_RIVER_BENDS;
@@ -115,8 +118,11 @@ CityTour.TerrainGenerator = (function() {
     topCurvePoints = [];
     bottomCurvePoints = [];
     for (i = 0; i < baseCurvePoints.length; i++) {
-      topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + TOP_BANK_OFFSET + Math.round(((Math.random() * TOP_BANK_MAX_JITTER) - (TOP_BANK_MAX_JITTER / 2))) ));
-      bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + BOTTOM_BANK_OFFSET + Math.round(((Math.random() * BOTTOM_BANK_MAX_JITTER) - (BOTTOM_BANK_MAX_JITTER / 2))) ));
+      randomJitter = Math.round(((Math.random() * TOP_BANK_MAX_JITTER) - HALF_TOP_BANK_MAX_JITTER));
+      topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + TOP_BANK_OFFSET + randomJitter));
+
+      randomJitter = Math.round(((Math.random() * BOTTOM_BANK_MAX_JITTER) - HALF_BOTTOM_BANK_MAX_JITTER));
+      bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + BOTTOM_BANK_OFFSET + randomJitter));
     }
 
     topCurve = new THREE.SplineCurve(topCurvePoints);
