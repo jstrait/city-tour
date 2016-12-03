@@ -53,11 +53,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
     syncCamera();
   };
 
-  animationManager.animate = function(frameCount) {
+  animationManager.tick = function(frameCount) {
     var i;
 
     for (i = 0; i < frameCount; i++) {
-      vehicleController.animate();
+      vehicleController.tick();
 
       if (debugAnimationController) {
         if (!debug) {
@@ -68,7 +68,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
           debugAnimationController.setTargetYRotation(vehicleController.yRotation());
         }
 
-        debugAnimationController.animate();
+        debugAnimationController.tick();
       }
     }
 
@@ -205,7 +205,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
   vehicleController.yRotation = function() { return yRotation; };
   vehicleController.xRotation = function() { return xRotation; };
 
-  vehicleController.animate = function() {
+  vehicleController.tick = function() {
     if (isAtTargetPoint()) {
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
         if (verticalMode === DRIVING_MODE) {
@@ -359,7 +359,7 @@ CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYP
     yRotationMotionGenerator.setTarget(newTargetYRotation);
   };
 
-  debugAnimation.animate = function() {
+  debugAnimation.tick = function() {
     xPosition = xPositionMotionGenerator.next();
     yPosition = yPositionMotionGenerator.next();
     zPosition = zPositionMotionGenerator.next();

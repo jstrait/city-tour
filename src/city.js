@@ -121,14 +121,14 @@ CityTour.City = function(container) {
     timer = new CityTour.Timer();
     animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, cameraPole, camera);
     timer.onTick = function(frameCount) {
-      animationManager.animate(frameCount);
+      animationManager.tick(frameCount);
       renderer.render(scene, camera);
     }
     animationManager.init(worldData.centerX, worldData.centerZ);
 
     resize();
 
-    animationManager.animate(1);
+    animationManager.tick(1);
     renderer.render(scene, camera);
     container.appendChild(renderer.domElement);
 
