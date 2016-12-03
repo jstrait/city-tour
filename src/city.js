@@ -24,8 +24,46 @@ CityTour.Coordinates = (function() {
   return coordinates;
 })();
 
+
+CityTour.RenderView = function(container, scene) {
+  var renderer, poleCamera;
+
+  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+
+  poleCamera = new CityTour.PoleCamera(scene.position);
+  scene.add(poleCamera.pole());
+
+  var resize = function() {
+    var width = container.clientWidth;
+    var height = container.clientHeight;
+
+    var camera = poleCamera.camera();
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+
+    render();
+  };
+
+  var render = function() {
+    renderer.render(scene, poleCamera.camera());
+  };
+
+  var renderView = {};
+
+  renderView.render = render;
+  renderView.resize = resize;
+  renderView.domElement = function() { return renderer.domElement; };
+  renderView.poleCamera = function() { return poleCamera; };
+
+  return renderView;
+};
+
+
 CityTour.City = function(container) {
-  var renderer, scene, poleCamera, timer, animationManager;
+  var scene, timer, animationManager;
+  var renderView;
 
   var detectWebGL = function() {
     if (!window.WebGLRenderingContext) {
@@ -99,26 +137,20 @@ CityTour.City = function(container) {
     var sceneBuilder = new CityTour.Scene.Builder();
     scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
-    poleCamera = new CityTour.PoleCamera(scene.position);
-    scene.add(poleCamera.pole());
-
-    // Build renderer
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+    renderView = new CityTour.RenderView(container, scene);
+    renderView.resize();
 
     timer = new CityTour.Timer();
-    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera);
+    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, renderView.poleCamera());
     timer.onTick = function(frameCount) {
       animationManager.tick(frameCount);
-      renderer.render(scene, poleCamera.camera());
+      renderView.render();
     }
-    animationManager.init(worldData.centerX, worldData.centerZ);
-
-    resize();
+    animationManager.init(worldData.centerX, worldData.centerZ); 
 
     animationManager.tick(1);
-    renderer.render(scene, poleCamera.camera());
-    container.appendChild(renderer.domElement);
+    renderView.render();
+    container.appendChild(renderView.domElement());
 
     timer.start();
     masterEndTime = new Date();
@@ -128,15 +160,7 @@ CityTour.City = function(container) {
   };
 
   var resize = function() {
-    var width = container.clientWidth;
-    var height = container.clientHeight;
-
-    var camera = poleCamera.camera();
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
-
-    renderer.render(scene, camera);
+    renderView.resize();
   };
 
   var togglePause = function() {
