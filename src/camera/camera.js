@@ -46,9 +46,14 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
                                                          rotationX: INITIAL_X_ROTATION,
                                                          rotationY: INITIAL_Y_ROTATION,
                                                        },
-                                                       initialTargetZPosition,
-                                                       swoopDescentDelta,
-                                                       CityTour.Coordinates.mapXToSceneX(centerX));
+                                                       {
+                                                         positionX: CityTour.Coordinates.mapXToSceneX(centerX),
+                                                         positionY: Number.NEGATIVE_INFINITY,
+                                                         positionZ: initialTargetZPosition,
+                                                         rotationX: INITIAL_X_ROTATION,
+                                                         rotationY: INITIAL_Y_ROTATION,
+                                                       },
+                                                       swoopDescentDelta);
 
     currentController = vehicleController;
     
@@ -122,7 +127,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 };
 
 
-CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTargetZPosition, initialYPositionDelta, initialTargetXPosition) {
+CityTour.VehicleController = function(terrain, roadNetwork, initial, target, initialYPositionDelta) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -141,11 +146,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var xRotation = initial.rotationX;
   var yRotation = initial.rotationY;
 
-  var targetSceneX = initialTargetXPosition;
-  var targetYPosition = Number.NEGATIVE_INFINITY;
-  var targetSceneZ = initialTargetZPosition;
-  var targetXRotation = 0.0;
-  var targetYRotation = 0.0;
+  var targetSceneX = target.positionX;
+  var targetYPosition = target.positionY;
+  var targetSceneZ = target.positionZ;
+  var targetXRotation = target.rotationX;
+  var targetYRotation = target.rotationY;
 
   var xPositionDelta = 0.0;
   var yPositionDelta = initialYPositionDelta;
@@ -157,7 +162,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var verticalMode = DRIVING_MODE;
 
   var pathFinder = new CityTour.PathFinder(roadNetwork);
-  var navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(initialTargetXPosition), CityTour.Coordinates.sceneZToMapZ(initialTargetZPosition));
+  var navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
 
   var determineNextTargetPoint = function() {
     var oldTargetSceneX = targetSceneX;
@@ -206,7 +211,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
   var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, 0.0, xPositionDelta);
   var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-  var zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, initialTargetZPosition, zPositionDelta);
+  var zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
   var xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
   var yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, 0.0, Y_ROTATION_DELTA);
 
