@@ -4,12 +4,15 @@ var CityTour = CityTour || {};
 CityTour.Scene = CityTour.Scene || {};
 
 CityTour.Scene.Builder = function() {
+  var SKY_COLOR = new THREE.Color(0x66ccff);
+
   var sceneBuilder = {};
 
   sceneBuilder.build = function(terrain, roadNetwork, buildings) {
     var masterStartTime = new Date();
 
     var scene = new THREE.Scene();
+    scene.background = SKY_COLOR;
 
     var terrainStartTime = new Date();
     var terrainMeshes = new CityTour.Scene.TerrainGeometryBuilder().build(terrain, roadNetwork);

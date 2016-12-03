@@ -85,8 +85,6 @@ CityTour.City = function(container) {
   };
 
   var init = function(onComplete) {
-    var SKY_COLOR = 0x66ccff;
-
     if (!detectWebGL()) {
       document.getElementById("loading-message").innerText = "This page is not compatible with your browser, because it requires WebGL.";
       return;
@@ -108,7 +106,6 @@ CityTour.City = function(container) {
     // Build renderer
     renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
-    renderer.setClearColor(SKY_COLOR, 1); 
 
     timer = new CityTour.Timer();
     animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera);
