@@ -50,6 +50,20 @@ body {
         <input id="rotationY" type="range" value="-0.5235987755983" min="-0.75" max="-0.25" step="0.1" />
       </span>
 
+      <h3>Terrain</h3>
+      <span class="block">
+        <label>Jitter:</label>
+        <input id="terrain-jitter" type="range" value="20" min="0" max="100" step="1" />
+      </span>
+      <span class="block">
+        <label>Decay:</label>
+        <input id="terrain-decay" type="range" value="0.65" min="0.0" max="1.0" step="0.01" />
+      </span>
+      <span class="block">
+        <label>River:</label>
+        <input id="terrain-river" type="checkbox" checked />
+      </span>
+
       <button id="reset">Reset</button>
     </div>
   </div>
@@ -60,14 +74,13 @@ body {
 <script type="text/javascript">
 var generateWorldData = function() {
   var GENERATE_BUILDINGS = true;
-  var PROBABILITY_OF_RIVER = 2 / 3;
 
   var combinedStartTime = new Date();
 
   var terrainConfig = {
-    heightJitter: 20,
-    heightJitterDecay: 0.65,
-    river: (Math.random() < PROBABILITY_OF_RIVER),
+    heightJitter: parseInt(document.getElementById("terrain-jitter").value),
+    heightJitterDecay: parseFloat(document.getElementById("terrain-decay").value),
+    river: document.getElementById("terrain-river").checked,
   };
 
   var terrainStartTime = new Date();
