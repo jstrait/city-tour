@@ -148,8 +148,7 @@ CityTour.City = function(container) {
     }
     animationManager.init(worldData.centerX, worldData.centerZ); 
 
-    animationManager.tick(1);
-    renderView.render();
+    timer.onTick(1);
     container.appendChild(renderView.domElement());
 
     timer.start();
