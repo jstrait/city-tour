@@ -49,6 +49,8 @@ body {
         <label>Rotation Y:</label>
         <input id="rotationY" type="range" value="-0.5235987755983" min="-0.75" max="-0.25" step="0.1" />
       </span>
+
+      <button id="reset">Reset</button>
     </div>
   </div>
 </body>
@@ -100,25 +102,7 @@ var generateWorldData = function() {
 
 var init = function() {
   var container = document.getElementById("container");
-  var worldData = generateWorldData();
-
-  var sceneBuilder = new CityTour.Scene.Builder();
-  scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
-
-  renderView = new CityTour.RenderView(container, scene);
-
-  var poleCamera = renderView.poleCamera();
-  poleCamera.setPositionX(-600.0);
-  poleCamera.setPositionY(1000.0);
-  poleCamera.setPositionZ(1000.0);
-  poleCamera.setRotationX(-Math.PI / 4);
-  poleCamera.setRotationY(-Math.PI / 6);
-
-  renderView.resize();
-  renderView.render();
-  container.appendChild(renderView.domElement());
-
-  window.addEventListener('resize', renderView.resize, false);
+  var renderView = null, poleCamera;
 
   var positionXControl = document.getElementById("positionX");
   positionXControl.addEventListener('change', function() { poleCamera.setPositionX(parseFloat(positionXControl.value)); renderView.render(); }, false);
@@ -134,6 +118,38 @@ var init = function() {
 
   var rotationYControl = document.getElementById("rotationY");
   rotationYControl.addEventListener('change', function() { poleCamera.setRotationY(parseFloat(rotationYControl.value)); renderView.render(); }, false);
+
+  var reset = function() {
+    var worldData = generateWorldData();
+
+    var sceneBuilder = new CityTour.Scene.Builder();
+    scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
+
+    if (renderView === null) {
+      renderView = new CityTour.RenderView(container, scene);
+    }
+    else {
+      renderView.setScene(scene);
+    }
+
+    poleCamera = renderView.poleCamera();
+    poleCamera.setPositionX(parseFloat(positionXControl.value));
+    poleCamera.setPositionY(parseFloat(positionYControl.value));
+    poleCamera.setPositionZ(parseFloat(positionZControl.value));
+    poleCamera.setRotationX(parseFloat(rotationXControl.value));
+    poleCamera.setRotationY(parseFloat(rotationYControl.value));
+
+    renderView.resize();
+    renderView.render();
+  };
+
+  reset();
+  container.appendChild(renderView.domElement());
+
+  window.addEventListener('resize', renderView.resize, false);
+
+  var resetButton = document.getElementById("reset");
+  resetButton.addEventListener('click', reset, false);
 };
 
 init();

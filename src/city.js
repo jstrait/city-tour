@@ -50,10 +50,17 @@ CityTour.RenderView = function(container, scene) {
     renderer.render(scene, poleCamera.camera());
   };
 
+  var setScene = function(newScene) {
+    scene = newScene;
+    poleCamera = new CityTour.PoleCamera(scene.position);
+    scene.add(poleCamera.pole());
+  };
+
   var renderView = {};
 
   renderView.render = render;
   renderView.resize = resize;
+  renderView.setScene = setScene;
   renderView.domElement = function() { return renderer.domElement; };
   renderView.poleCamera = function() { return poleCamera; };
 
