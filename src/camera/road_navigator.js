@@ -2,6 +2,15 @@
 
 var CityTour = CityTour || {};
 
+
+/*
+   Generates target points for the camera to move to, simulating the camera
+   driving on the road network.
+   
+   A target road intersection is chosen at random, and the injected path finder
+   then finds a path to that intersection. A path is a sequence of intersections
+   to travel to that will ultimately end up at the target intersection.
+*/
 CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, initialTargetMapZ) {
   var targetMapX = initialTargetMapX;
   var targetMapZ = initialTargetMapZ;
@@ -27,6 +36,15 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
     return [newTargetMapX, newTargetMapZ];
   };
 
+
+  // Reduces path sequences that travel in the same direction to multiple intersections
+  // to a path sequence that directly travels to the final point in that direction.
+  //
+  // For example, reduces {0, 0} -> {0, 1} -> {0, 2} -> {0, 3} to {0, 0} -> {0, 3}
+  //
+  // The reason for doing this is to cause the camera to smoothly move to the final
+  // target point in the direction, and avoid stutter stops at each intermediate
+  // intersection on the way.
   var simplifyPath = function(path) {
     var xRun = 0;
     var zRun = 0;
