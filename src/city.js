@@ -25,7 +25,7 @@ CityTour.Coordinates = (function() {
 })();
 
 CityTour.City = function(container) {
-  var renderer, scene, camera;
+  var renderer, scene, camera, timer, animationManager;
 
   var detectWebGL = function() {
     if (!window.WebGLRenderingContext) {
@@ -42,18 +42,10 @@ CityTour.City = function(container) {
     return true;
   };
 
-  var timer, animationManager;
-
-  var init = function(onComplete) {
-    var SKY_COLOR = 0x66ccff;
+  var generateWorldData = function() {
     var GENERATE_BUILDINGS = true;
 
-    if (!detectWebGL()) {
-      document.getElementById("loading-message").innerText = "This page is not compatible with your browser, because it requires WebGL.";
-      return;
-    }
-
-    var masterStartTime = new Date();
+    var combinedStartTime = new Date();
 
     var terrainStartTime = new Date();
     var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
@@ -75,16 +67,39 @@ CityTour.City = function(container) {
     var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
     var buildingsEndTime = new Date();
 
-    var masterEndTime = new Date();
+    var combinedEndTime = new Date();
 
-    console.log("Time to generate world data: " + (masterEndTime - masterStartTime) + "ms");
+    console.log("Time to generate world data: " + (combinedEndTime - combinedStartTime) + "ms");
     console.log("  Terrain:      " + (terrainEndTime - terrainStartTime) + "ms");
     console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
     console.log("  Lots:         " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
     console.log("  Buildings:    " + (buildingsEndTime - buildingsStartTime) + "ms");
 
+    return {
+      terrain: terrain,
+      roadNetwork: roadNetwork,
+      buildings: buildings,
+      centerX: centerX,
+      centerZ: centerZ,
+    };
+  };
+
+  var init = function(onComplete) {
+    var SKY_COLOR = 0x66ccff;
+
+    if (!detectWebGL()) {
+      document.getElementById("loading-message").innerText = "This page is not compatible with your browser, because it requires WebGL.";
+      return;
+    }
+
+    var masterStartTime = new Date();
+    var masterEndTime;
+
+    // Generate abstract terrain, road network, building representations
+    var worldData = generateWorldData();
+
     var sceneBuilder = new CityTour.Scene.Builder();
-    scene = sceneBuilder.build(terrain, roadNetwork, buildings);
+    scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
     var cameraPoleGeometry = new THREE.BoxGeometry(1, 1, 1);
     var cameraPoleMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color(1.0, 0.0, 1.0), });
@@ -104,12 +119,12 @@ CityTour.City = function(container) {
     renderer.setClearColor(SKY_COLOR, 1); 
 
     timer = new CityTour.Timer();
-    animationManager = new CityTour.AnimationManager(terrain, roadNetwork, cameraPole, camera);
+    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, cameraPole, camera);
     timer.onTick = function(frameCount) {
       animationManager.animate(frameCount);
       renderer.render(scene, camera);
     }
-    animationManager.init(centerX, centerZ);
+    animationManager.init(worldData.centerX, worldData.centerZ);
 
     resize();
 
