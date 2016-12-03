@@ -39,12 +39,14 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 
     vehicleController = new CityTour.VehicleController(terrain,
                                                        roadNetwork,
-                                                       INITIAL_X_POSITION,
-                                                       initialZPosition,
+                                                       {
+                                                         positionX: INITIAL_X_POSITION,
+                                                         positionY: INITIAL_Y_POSITION,
+                                                         positionZ: initialZPosition,
+                                                         rotationX: INITIAL_X_ROTATION,
+                                                         rotationY: INITIAL_Y_ROTATION,
+                                                       },
                                                        initialTargetZPosition,
-                                                       INITIAL_Y_ROTATION,
-                                                       INITIAL_Y_POSITION,
-                                                       INITIAL_X_ROTATION,
                                                        swoopDescentDelta,
                                                        CityTour.Coordinates.mapXToSceneX(centerX));
 
@@ -120,7 +122,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 };
 
 
-CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, initialZPosition, initialTargetZPosition, initialYRotation, initialYPosition, initialXRotation, initialYPositionDelta, initialTargetXPosition) {
+CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTargetZPosition, initialYPositionDelta, initialTargetXPosition) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -133,11 +135,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
 
   var MINIMUM_HEIGHT_OFF_GROUND = 0.5;
 
-  var xPosition = initialXPosition;
-  var yPosition = initialYPosition;
-  var zPosition = initialZPosition;
-  var xRotation = initialXRotation;
-  var yRotation = initialYRotation;
+  var xPosition = initial.positionX;
+  var yPosition = initial.positionY;
+  var zPosition = initial.positionZ;
+  var xRotation = initial.rotationX;
+  var yRotation = initial.rotationY;
 
   var targetSceneX = initialTargetXPosition;
   var targetSceneZ = initialTargetZPosition;
