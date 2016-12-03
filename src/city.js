@@ -100,7 +100,6 @@ CityTour.City = function(container) {
     scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
     poleCamera = new CityTour.PoleCamera(scene.position);
-
     scene.add(poleCamera.pole());
 
     // Build renderer
