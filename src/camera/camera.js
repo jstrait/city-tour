@@ -142,14 +142,14 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var yRotation = initial.rotationY;
 
   var targetSceneX = initialTargetXPosition;
+  var targetYPosition = Number.NEGATIVE_INFINITY;
   var targetSceneZ = initialTargetZPosition;
-  var xPositionDelta = 0.0;
-  var zPositionDelta = HORIZONTAL_MOTION_DELTA;
+  var targetXRotation = 0.0;
   var targetYRotation = 0.0;
 
-  var targetYPosition = Number.NEGATIVE_INFINITY;
+  var xPositionDelta = 0.0;
   var yPositionDelta = initialYPositionDelta;
-  var targetXRotation = 0.0;
+  var zPositionDelta = HORIZONTAL_MOTION_DELTA;
   var xRotationDelta = 0.0155140377955;
 
   var framesInCurrentVerticalMode = 0;
