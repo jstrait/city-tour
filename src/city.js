@@ -89,11 +89,18 @@ CityTour.City = function(container) {
 
   var generateWorldData = function() {
     var GENERATE_BUILDINGS = true;
+    var PROBABILITY_OF_RIVER = 2 / 3;
 
     var combinedStartTime = new Date();
 
+    var terrainConfig = {
+      heightJitter: 20,
+      heightJitterDecay: 0.65,
+      river: (Math.random() < PROBABILITY_OF_RIVER),
+    };
+
     var terrainStartTime = new Date();
-    var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
+    var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS, terrainConfig);
     var terrainEndTime = new Date();
 
     var centerX = 0, centerZ = 0;

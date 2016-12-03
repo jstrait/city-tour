@@ -5,10 +5,6 @@ var CityTour = CityTour || {};
 CityTour.TerrainGenerator = (function() {
   var SUB_DIVISIONS = 1;
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
-  var HEIGHT_JITTER_PER_ITERATION = 20;
-  var HEIGHT_JITTER_DECAY_PER_ITERATION = 0.65;
-
-  var PROBABILITY_OF_RIVER = 2 / 3;
 
   var emptyTerrain = function(columns, rows) {
     var x, z;
@@ -59,7 +55,7 @@ CityTour.TerrainGenerator = (function() {
   };
 
 
-  var buildTerrainCoordinates = function(columns, rows) {
+  var buildTerrainCoordinates = function(columns, rows, config) {
     var columnsToGenerate = nextPowerOfTwo(columns * SUB_DIVISIONS);
     var rowsToGenerate = nextPowerOfTwo(rows * SUB_DIVISIONS);
 
@@ -73,14 +69,14 @@ CityTour.TerrainGenerator = (function() {
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     diamondSquare(terrainCoordinates,
-                  HEIGHT_JITTER_PER_ITERATION,
-                  HEIGHT_JITTER_DECAY_PER_ITERATION,
+                  config.heightJitter,
+                  config.heightJitterDecay,
                   0,
                   rowsToGenerate,
                   columnsToGenerate,
                   0);
 
-    if (Math.random() < PROBABILITY_OF_RIVER) {
+    if (config.river) {
       addRiver(terrainCoordinates, rowsToGenerate * (68 / 128), columnsToGenerate);
     }
 
@@ -337,8 +333,8 @@ CityTour.TerrainGenerator = (function() {
 
   var terrainGenerator = {};
 
-  terrainGenerator.generate = function(columns, rows) {
-    var terrainCoordinates = buildTerrainCoordinates(columns, rows);
+  terrainGenerator.generate = function(columns, rows, config) {
+    var terrainCoordinates = buildTerrainCoordinates(columns, rows, config);
     return new CityTour.Terrain(terrainCoordinates, SUB_DIVISIONS);
   };
 
