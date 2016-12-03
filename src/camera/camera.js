@@ -9,28 +9,14 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var scheduleDebugChange = false;
 
   var vehicleController, debugAnimationController;
+  var currentController;
 
   var syncCamera = function() {
-    if (debugAnimationController) {
-      debugAnimationController.animate();
-
-      cameraPole.position.x = debugAnimationController.xPosition();
-      cameraPole.position.y = debugAnimationController.yPosition();
-      cameraPole.position.z = debugAnimationController.zPosition();
-      cameraPole.rotation.y = debugAnimationController.yRotation();
-      camera.rotation.x = debugAnimationController.xRotation();
-
-      if (!debug && debugAnimationController.finished()) {
-        debugAnimationController = null;
-      }
-    }
-    else {
-      cameraPole.position.x = vehicleController.xPosition();
-      cameraPole.position.y = vehicleController.yPosition();
-      cameraPole.position.z = vehicleController.zPosition();
-      cameraPole.rotation.y = vehicleController.yRotation();
-      camera.rotation.x = vehicleController.xRotation();
-    }
+    cameraPole.position.x = currentController.xPosition();
+    cameraPole.position.y = currentController.yPosition();
+    cameraPole.position.z = currentController.zPosition();
+    cameraPole.rotation.y = currentController.yRotation();
+    camera.rotation.x = currentController.xRotation();
   }
 
   animationManager.init = function(centerX, centerZ) {
@@ -62,6 +48,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
                                                        swoopDescentDelta,
                                                        CityTour.Coordinates.mapXToSceneX(centerX));
 
+    currentController = vehicleController;
+    
     syncCamera();
   };
 
@@ -70,14 +58,18 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 
     for (i = 0; i < frameCount; i++) {
       vehicleController.animate();
-    }
 
-    if (!debug && debugAnimationController) {
-      debugAnimationController.setTargetXPosition(vehicleController.xPosition());
-      debugAnimationController.setTargetYPosition(vehicleController.yPosition());
-      debugAnimationController.setTargetZPosition(vehicleController.zPosition());
-      debugAnimationController.setTargetXRotation(vehicleController.xRotation());
-      debugAnimationController.setTargetYRotation(vehicleController.yRotation());
+      if (debugAnimationController) {
+        if (!debug) {
+          debugAnimationController.setTargetXPosition(vehicleController.xPosition());
+          debugAnimationController.setTargetYPosition(vehicleController.yPosition());
+          debugAnimationController.setTargetZPosition(vehicleController.zPosition());
+          debugAnimationController.setTargetXRotation(vehicleController.xRotation());
+          debugAnimationController.setTargetYRotation(vehicleController.yRotation());
+        }
+
+        debugAnimationController.animate();
+      }
     }
 
     if (scheduleDebugChange) {
@@ -97,9 +89,16 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
                                                                vehicleController.yRotation(),
                                                                false);
       }
+
+      currentController = debugAnimationController;
     }
 
     syncCamera();
+
+    if (!debug && debugAnimationController && debugAnimationController.finished()) {
+      debugAnimationController = null;
+      currentController = vehicleController;
+    }
   };
 
   animationManager.toggleDebug = function() {
