@@ -25,7 +25,7 @@ CityTour.Coordinates = (function() {
 })();
 
 CityTour.City = function(container) {
-  var renderer, scene, camera, timer, animationManager;
+  var renderer, scene, poleCamera, timer, animationManager;
 
   var detectWebGL = function() {
     if (!window.WebGLRenderingContext) {
@@ -101,17 +101,9 @@ CityTour.City = function(container) {
     var sceneBuilder = new CityTour.Scene.Builder();
     scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
-    var cameraPoleGeometry = new THREE.BoxGeometry(1, 1, 1);
-    var cameraPoleMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color(1.0, 0.0, 1.0), });
-    var cameraPole = new THREE.Mesh(cameraPoleGeometry, cameraPoleMaterial);
+    poleCamera = new CityTour.PoleCamera(scene.position);
 
-    // Build camera
-    var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
-    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
-    camera.lookAt(scene.position);
-
-    cameraPole.add(camera);
-    scene.add(cameraPole);
+    scene.add(poleCamera.pole());
 
     // Build renderer
     renderer = new THREE.WebGLRenderer({antialias: true});
@@ -119,17 +111,17 @@ CityTour.City = function(container) {
     renderer.setClearColor(SKY_COLOR, 1); 
 
     timer = new CityTour.Timer();
-    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, cameraPole, camera);
+    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera);
     timer.onTick = function(frameCount) {
       animationManager.tick(frameCount);
-      renderer.render(scene, camera);
+      renderer.render(scene, poleCamera.camera());
     }
     animationManager.init(worldData.centerX, worldData.centerZ);
 
     resize();
 
     animationManager.tick(1);
-    renderer.render(scene, camera);
+    renderer.render(scene, poleCamera.camera());
     container.appendChild(renderer.domElement);
 
     timer.start();
@@ -143,6 +135,7 @@ CityTour.City = function(container) {
     var width = container.clientWidth;
     var height = container.clientHeight;
 
+    var camera = poleCamera.camera();
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);

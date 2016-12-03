@@ -2,7 +2,40 @@
 
 var CityTour = CityTour || {};
 
-CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
+CityTour.PoleCamera = function(initialScenePosition) {
+  var cameraPoleGeometry = new THREE.BoxGeometry(1, 1, 1);
+  var cameraPoleMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color(1.0, 0.0, 1.0), });
+  var cameraPole = new THREE.Mesh(cameraPoleGeometry, cameraPoleMaterial);
+
+  var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
+  var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
+  camera.lookAt(initialScenePosition);
+
+  cameraPole.add(camera);
+
+
+  var poleCamera = {};
+
+  poleCamera.camera = function() { return camera; };
+  poleCamera.pole = function() { return cameraPole; };
+
+  poleCamera.positionX = function() { return cameraPole.position.x; };
+  poleCamera.positionY = function() { return cameraPole.position.y; };
+  poleCamera.positionZ = function() { return cameraPole.position.z; };
+  poleCamera.rotationX = function() { return camera.rotation.x; };
+  poleCamera.rotationY = function() { return cameraPole.rotation.y; };
+
+  poleCamera.setPositionX = function(newPositionX) { cameraPole.position.x = newPositionX; };
+  poleCamera.setPositionY = function(newPositionY) { cameraPole.position.y = newPositionY; };
+  poleCamera.setPositionZ = function(newPositionZ) { cameraPole.position.z = newPositionZ; };
+  poleCamera.setRotationX = function(newRotationX) { camera.rotation.x = newRotationX; };
+  poleCamera.setRotationY = function(newRotationY) { cameraPole.rotation.y = newRotationY; };
+
+  return poleCamera;
+};
+
+
+CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
   var animationManager = {};
 
   var debug = false;
@@ -12,11 +45,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
   var currentController;
 
   var syncCamera = function() {
-    cameraPole.position.x = currentController.xPosition();
-    cameraPole.position.y = currentController.yPosition();
-    cameraPole.position.z = currentController.zPosition();
-    cameraPole.rotation.y = currentController.yRotation();
-    camera.rotation.x = currentController.xRotation();
+    poleCamera.setPositionX(currentController.xPosition());
+    poleCamera.setPositionY(currentController.yPosition());
+    poleCamera.setPositionZ(currentController.zPosition());
+    poleCamera.setRotationX(currentController.xRotation());
+    poleCamera.setRotationY(currentController.yRotation());
   }
 
   animationManager.init = function(centerX, centerZ) {
@@ -85,21 +118,21 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
 
       if (debug) {
         debugAnimationController =
-          new CityTour.DebugAnimation({positionX: cameraPole.position.x,
-                                       positionY: cameraPole.position.y,
-                                       positionZ: cameraPole.position.z,
-                                       rotationX: camera.rotation.x,
-                                       rotationY: cameraPole.rotation.y},
+          new CityTour.DebugAnimation({positionX: poleCamera.positionX(),
+                                       positionY: poleCamera.positionY(),
+                                       positionZ: poleCamera.positionZ(),
+                                       rotationX: poleCamera.rotationX(),
+                                       rotationY: poleCamera.rotationY()},
                                       {positionX: 0.0, positionY: 900, positionZ: 0.0, rotationX: -(Math.PI / 2), rotationY: 0.0},
                                       true);
       }
       else {
         debugAnimationController =
-          new CityTour.DebugAnimation({positionX: cameraPole.position.x,
-                                       positionY: cameraPole.position.y,
-                                       positionZ: cameraPole.position.z,
-                                       rotationX: camera.rotation.x,
-                                       rotationY: cameraPole.rotation.y},
+          new CityTour.DebugAnimation({positionX: poleCamera.positionX(),
+                                       positionY: poleCamera.positionY(),
+                                       positionZ: poleCamera.positionZ(),
+                                       rotationX: poleCamera.rotationX(),
+                                       rotationY: poleCamera.rotationY()},
                                       {positionX: vehicleController.xPosition(),
                                        positionY: vehicleController.yPosition(),
                                        positionZ: vehicleController.zPosition(),
