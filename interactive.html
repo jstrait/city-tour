@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>City Tour Interactive</title>
+    <style>
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Helvetica", arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5rem;
+  color: #2a2b2b;
+}
+
+.full-width { width: 100%; }
+.full-height { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.block { display: block; }
+    </style>
+</head>
+<body>
+  <div id="container" class="full-width full-height">
+    <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
+      <span class="block">
+        <label>Position X:</label>
+        <input id="positionX" type="range" value="-600.0" min="-900.0" max="-300.0" />
+      </span>
+      <span class="block">
+        <label>Position Y:</label>
+        <input id="positionY" type="range" value="1000.0" min="500.0" max="1500.0"/>
+      </span>
+      <span class="block">
+        <label>Position Z:</label>
+        <input id="positionZ" type="range" value="1000.0" min="500.0" max="1500.0"/>
+      </span>
+      <span class="block">
+        <label>Rotation X:</label>
+        <input id="rotationX" type="range" value="-0.78539816339745" min="-1.0" max="-0.5" step="0.1" />
+      </span>
+      <span class="block">
+        <label>Rotation Y:</label>
+        <input id="rotationY" type="range" value="-0.5235987755983" min="-0.75" max="-0.25" step="0.1" />
+      </span>
+    </div>
+  </div>
+</body>
+<script src="lib/three-v81.min.js" type="text/javascript"></script>
+<script src="lib/analytics.js" type="text/javascript"></script>
+<script src="city_tour.js" type="text/javascript"></script>
+<script type="text/javascript">
+var generateWorldData = function() {
+  var GENERATE_BUILDINGS = true;
+
+  var combinedStartTime = new Date();
+
+  var terrainStartTime = new Date();
+  var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS);
+  var terrainEndTime = new Date();
+
+  var centerX = 0, centerZ = 0;
+  while(terrain.materialAtCoordinates(centerX, centerZ) != CityTour.Terrain.LAND) {
+    centerZ -= 1;
+  }
+
+  var roadStartTime = new Date();
+  var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, centerX, centerZ);
+  var roadEndTime = new Date();
+
+  var zonedBlocksStartTime = new Date();
+  var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ) : false;
+  var zonedBlocksEndTime = new Date();
+  var buildingsStartTime = new Date();
+  var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
+  var buildingsEndTime = new Date();
+
+  var combinedEndTime = new Date();
+
+  console.log("Time to generate world data: " + (combinedEndTime - combinedStartTime) + "ms");
+  console.log("  Terrain:      " + (terrainEndTime - terrainStartTime) + "ms");
+  console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
+  console.log("  Lots:         " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
+  console.log("  Buildings:    " + (buildingsEndTime - buildingsStartTime) + "ms");
+
+  return {
+    terrain: terrain,
+    roadNetwork: roadNetwork,
+    buildings: buildings,
+    centerX: centerX,
+    centerZ: centerZ,
+  };
+};
+
+var init = function() {
+  var container = document.getElementById("container");
+  var worldData = generateWorldData();
+
+  var sceneBuilder = new CityTour.Scene.Builder();
+  scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
+
+  renderView = new CityTour.RenderView(container, scene);
+
+  var poleCamera = renderView.poleCamera();
+  poleCamera.setPositionX(-600.0);
+  poleCamera.setPositionY(1000.0);
+  poleCamera.setPositionZ(1000.0);
+  poleCamera.setRotationX(-Math.PI / 4);
+  poleCamera.setRotationY(-Math.PI / 6);
+
+  renderView.resize();
+  renderView.render();
+  container.appendChild(renderView.domElement());
+
+  window.addEventListener('resize', renderView.resize, false);
+
+  var positionXControl = document.getElementById("positionX");
+  positionXControl.addEventListener('change', function() { poleCamera.setPositionX(parseFloat(positionXControl.value)); renderView.render(); }, false);
+
+  var positionYControl = document.getElementById("positionY");
+  positionYControl.addEventListener('change', function() { poleCamera.setPositionY(parseFloat(positionYControl.value)); renderView.render(); }, false);
+
+  var positionZControl = document.getElementById("positionZ");
+  positionZControl.addEventListener('change', function() { poleCamera.setPositionZ(parseFloat(positionZControl.value)); renderView.render(); }, false);
+
+  var rotationXControl = document.getElementById("rotationX");
+  rotationXControl.addEventListener('change', function() { poleCamera.setRotationX(parseFloat(rotationXControl.value)); renderView.render(); }, false);
+
+  var rotationYControl = document.getElementById("rotationY");
+  rotationYControl.addEventListener('change', function() { poleCamera.setRotationY(parseFloat(rotationYControl.value)); renderView.render(); }, false);
+};
+
+init();
+</script>
+</html>
