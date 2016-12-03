@@ -104,7 +104,7 @@ CityTour.City = function(container) {
 
     // Build renderer
     renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1)
+    renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 
     timer = new CityTour.Timer();
     animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera);
