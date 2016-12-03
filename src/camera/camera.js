@@ -77,17 +77,28 @@ CityTour.AnimationManager = function(terrain, roadNetwork, cameraPole, camera) {
       scheduleDebugChange = false;
 
       if (debug) {
-        debugAnimationController = new CityTour.DebugAnimation(cameraPole, camera, 0.0, 900, 0.0, -(Math.PI / 2), 0.0, true);
+        debugAnimationController =
+          new CityTour.DebugAnimation({positionX: cameraPole.position.x,
+                                       positionY: cameraPole.position.y,
+                                       positionZ: cameraPole.position.z,
+                                       rotationX: camera.rotation.x,
+                                       rotationY: cameraPole.rotation.y},
+                                      {positionX: 0.0, positionY: 900, positionZ: 0.0, rotationX: -(Math.PI / 2), rotationY: 0.0},
+                                      true);
       }
       else {
-        debugAnimationController = new CityTour.DebugAnimation(cameraPole,
-                                                               camera,
-                                                               vehicleController.xPosition(),
-                                                               vehicleController.yPosition(),
-                                                               vehicleController.zPosition(),
-                                                               vehicleController.xRotation(),
-                                                               vehicleController.yRotation(),
-                                                               false);
+        debugAnimationController =
+          new CityTour.DebugAnimation({positionX: cameraPole.position.x,
+                                       positionY: cameraPole.position.y,
+                                       positionZ: cameraPole.position.z,
+                                       rotationX: camera.rotation.x,
+                                       rotationY: cameraPole.rotation.y},
+                                      {positionX: vehicleController.xPosition(),
+                                       positionY: vehicleController.yPosition(),
+                                       positionZ: vehicleController.zPosition(),
+                                       rotationX: vehicleController.xRotation(),
+                                       rotationY: vehicleController.yRotation()},
+                                      false);
       }
 
       currentController = debugAnimationController;
@@ -304,37 +315,37 @@ CityTour.VehicleController = function(terrain, roadNetwork, initialXPosition, in
 };
 
 
-CityTour.DebugAnimation = function(cameraPole, camera, targetXPosition, targetYPosition, targetZPosition, targetXRotation, targetYRotation, up) {
+CityTour.DebugAnimation = function(initial, target, up) {
   var ANIMATION_DURATION_IN_FRAMES = 50.0;
   var MOTION_DELTA = 1.0 / ANIMATION_DURATION_IN_FRAMES;
 
-  var xPosition = cameraPole.position.x;
-  var yPosition = cameraPole.position.y;
-  var zPosition = cameraPole.position.z;
-  var xRotation = camera.rotation.x;
-  var yRotation = cameraPole.rotation.y;
+  var xPosition = initial.positionX;
+  var yPosition = initial.positionY;
+  var zPosition = initial.positionZ;
+  var xRotation = initial.rotationX;
+  var yRotation = initial.rotationY;
 
   // Prevent turns more than 180 degrees
-  if ((yRotation - targetYRotation) > Math.PI) {
+  if ((yRotation - target.rotationY) > Math.PI) {
     yRotation -= Math.PI * 2;
   }
-  else if ((yRotation - targetYRotation) < -Math.PI) {
+  else if ((yRotation - target.rotationY) < -Math.PI) {
     yRotation += Math.PI * 2;
   }
 
   if (up) {
-    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, MOTION_DELTA, 'forward');
-    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, MOTION_DELTA, 'backward');
-    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, MOTION_DELTA, 'forward');
-    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, MOTION_DELTA, 'forward');
-    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, MOTION_DELTA, 'forward');
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, target.positionX, MOTION_DELTA, 'forward');
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, target.positionY, MOTION_DELTA, 'backward');
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, target.positionZ, MOTION_DELTA, 'forward');
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, target.rotationX, MOTION_DELTA, 'forward');
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, target.rotationY, MOTION_DELTA, 'forward');
   }
   else {
-    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, targetXPosition, MOTION_DELTA, 'forward');
-    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, targetYPosition, MOTION_DELTA, 'forward');
-    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, targetZPosition, MOTION_DELTA, 'forward');
-    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, targetXRotation, MOTION_DELTA, 'backward');
-    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, targetYRotation, MOTION_DELTA, 'forward');
+    var xPositionMotionGenerator = new CityTour.SineMotionGenerator(xPosition, target.positionX, MOTION_DELTA, 'forward');
+    var yPositionMotionGenerator = new CityTour.SineMotionGenerator(yPosition, target.positionY, MOTION_DELTA, 'forward');
+    var zPositionMotionGenerator = new CityTour.SineMotionGenerator(zPosition, target.positionZ, MOTION_DELTA, 'forward');
+    var xRotationMotionGenerator = new CityTour.SineMotionGenerator(xRotation, target.rotationX, MOTION_DELTA, 'backward');
+    var yRotationMotionGenerator = new CityTour.SineMotionGenerator(yRotation, target.rotationY, MOTION_DELTA, 'forward');
   }
 
   var debugAnimation = {};
