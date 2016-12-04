@@ -55,12 +55,8 @@ h3 {
           <input id="rotationX" type="range" value="-0.78539816339745" min="-1.5707963267949" max="0.0" step="0.001" />
         </span>
         <span class="block">
-          <label>Zoom X/Z:</label>
-          <input id="zoomXZ" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
-        </span>
-        <span class="block">
-          <label>Zoom Y:</label>
-          <input id="zoomY" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
+          <label>Zoom:</label>
+          <input id="zoom" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
         </span>
       </div>
 
@@ -174,17 +170,35 @@ var init = function() {
   var renderView = null, poleCamera;
 
   var updateCamera = function() {
+    /*    C
+         /|
+        / |
+       /  |
+      X----
+
+    X == Map center point
+    C == Camera position
+    rotationX == angle X == angle between camera and center point
+    Hypotenuse == Zoom == Distance of camera from center point
+    Opposite == Height of camera off the ground
+    Adjacent == X/Z distance of camera from center point
+    rotationY == rotation of this triangle around y-axis of center point
+    */
+
     var rotationY = parseFloat(rotationYControl.value);
     var rotationX = parseFloat(rotationXControl.value);
-    var zoomXZ = parseFloat(zoomXZControl.value);
-    var zoomY = parseFloat(zoomYControl.value);
+    var zoom = parseFloat(zoomControl.value);
 
-    var xFromOrigin = -zoomXZ * Math.sin(-rotationY);
-    var zFromOrigin = zoomXZ * Math.cos(-rotationY);
+    var hypotenuse = zoom;
+    var adjacent = Math.cos(rotationX) * hypotenuse;
+    var opposite = -(Math.sin(rotationX) * hypotenuse);
 
-    poleCamera.setPositionX(xFromOrigin);
-    poleCamera.setPositionY(zoomY);
-    poleCamera.setPositionZ(zFromOrigin);
+    var xPosition = adjacent * Math.sin(rotationY);
+    var zPosition = adjacent * Math.cos(-rotationY);
+
+    poleCamera.setPositionX(xPosition);
+    poleCamera.setPositionY(opposite);
+    poleCamera.setPositionZ(zPosition);
     poleCamera.setRotationX(rotationX);
     poleCamera.setRotationY(rotationY);
 
@@ -193,13 +207,11 @@ var init = function() {
 
   var rotationYControl = document.getElementById("rotationY");
   var rotationXControl = document.getElementById("rotationX");
-  var zoomXZControl = document.getElementById("zoomXZ");
-  var zoomYControl = document.getElementById("zoomY");
+  var zoomControl = document.getElementById("zoom");
 
   rotationYControl.addEventListener('input', updateCamera, false);
   rotationXControl.addEventListener('input', updateCamera, false);
-  zoomXZControl.addEventListener('input', updateCamera, false);
-  zoomYControl.addEventListener('input', updateCamera, false);
+  zoomControl.addEventListener('input', updateCamera, false);
 
   var reset = function() {
     var worldData = generateWorldData();
