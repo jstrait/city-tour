@@ -33,6 +33,12 @@ h3 {
   margin-bottom: 1.5rem;
 }
 
+.control-legend {
+  display: inline-block;
+  width: 1.5rem;
+  text-align: center;
+}
+
 .full-width { width: 100%; }
 .full-height { height: 100%; }
 .relative { position: relative; }
@@ -56,15 +62,21 @@ h3 {
         </span>
         <span class="block">
           <label>Rotation:</label>
+          <span class="control-legend">&olarr;</span>
           <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
+          <span class="control-legend">&orarr;</span>
         </span>
         <span class="block">
           <label>Tilt:</label>
+          <span class="control-legend">&darr;</span>
           <input id="rotationX" type="range" value="-0.78539816339745" min="-1.5707963267949" max="-0.1" step="0.001" />
+          <span class="control-legend">&rarr;</span>
         </span>
         <span class="block">
           <label>Zoom:</label>
+          <span class="control-legend">-</span>
           <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
+          <span class="control-legend">+</span>
         </span>
       </div>
 
