@@ -64,7 +64,7 @@ h3 {
         </span>
         <span class="block">
           <label>Zoom:</label>
-          <input id="zoom" type="range" value="1000.0" min="20.0" max="1000.0" step="1" />
+          <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
         </span>
       </div>
 
@@ -193,11 +193,15 @@ var init = function() {
     rotationY == rotation of this triangle around y-axis of center point
     */
 
+    var MIN_ZOOM_DISTANCE = 20.0;
+    var MAX_ZOOM_DISTANCE = 1000.0;
+
     var centerX = parseFloat(centerXControl.value);
     var centerZ = parseFloat(centerZControl.value);
     var rotationY = parseFloat(rotationYControl.value);
     var rotationX = parseFloat(rotationXControl.value);
-    var zoom = parseFloat(zoomControl.value);
+    var zoomPercentage = parseFloat(zoomControl.value);
+    var zoom = MAX_ZOOM_DISTANCE - ((MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE) * zoomPercentage);
 
     var hypotenuse = zoom;
     var adjacent = Math.cos(rotationX) * hypotenuse;
