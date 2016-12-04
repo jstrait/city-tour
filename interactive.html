@@ -71,6 +71,16 @@ label {
         <input id="roads-decay-distance-percentage" type="range" value="0.4" min="0.0" max="0.99" step="0.01" />
       </span>
 
+      <h3>Buildings</h3>
+      <span class="block">
+      <label>Max Stories:</label>
+        <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
+      </span>
+      <span class="block">
+      <label>Decay:</label>
+        <input id="buildings-decay-distance-percentage" type="range" value="0.4" min="0.0" max="1.0" step="0.01" />
+      </span>
+
       <button id="reset">Reset</button>
     </div>
   </div>
@@ -110,8 +120,8 @@ var generateWorldData = function() {
   var roadEndTime = new Date();
 
   var zonedBlockConfig = {
-    percentageDistanceDecayBegins: 0.4,
-    maxBuildingStories: 40,
+    percentageDistanceDecayBegins: parseFloat(document.getElementById("buildings-decay-distance-percentage").value),
+    maxBuildingStories: parseInt(document.getElementById("buildings-max-stories").value),
   };
 
   var zonedBlocksStartTime = new Date();
