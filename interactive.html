@@ -24,64 +24,85 @@ label {
   display: inline-block;
 }
 
+h3 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
 .full-width { width: 100%; }
 .full-height { height: 100%; }
 .relative { position: relative; }
 .absolute { position: absolute; }
 .block { display: block; }
+.center { text-align: center; }
     </style>
 </head>
 <body>
   <div id="container" class="full-width full-height">
     <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
-      <span class="block">
-        <label>Left/Right:</label>
-        <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
-      </span>
-      <span class="block">
-        <label>Up/Down:</label>
-        <input id="rotationX" type="range" value="-0.78539816339745" min="-1.5707963267949" max="0.0" step="0.001" />
-      </span>
-      <span class="block">
-        <label>Zoom X/Z:</label>
-        <input id="zoomXZ" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
-      </span>
-      <span class="block">
-        <label>Zoom Y:</label>
-        <input id="zoomY" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
-      </span>
+      <div class="section">
+        <h3>Camera</h3>
+        <span class="block">
+          <label>Left/Right:</label>
+          <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
+        </span>
+        <span class="block">
+          <label>Up/Down:</label>
+          <input id="rotationX" type="range" value="-0.78539816339745" min="-1.5707963267949" max="0.0" step="0.001" />
+        </span>
+        <span class="block">
+          <label>Zoom X/Z:</label>
+          <input id="zoomXZ" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
+        </span>
+        <span class="block">
+          <label>Zoom Y:</label>
+          <input id="zoomY" type="range" value="1000.0" min="1.0" max="1000.0" step="1" />
+        </span>
+      </div>
 
-      <h3>Terrain</h3>
-      <span class="block">
-        <label>Jitter:</label>
-        <input id="terrain-jitter" type="range" value="20" min="0" max="100" step="1" />
-      </span>
-      <span class="block">
+      <div class="section">
+        <h3>Terrain</h3>
+        <span class="block">
+          <label>Jitter:</label>
+          <input id="terrain-jitter" type="range" value="20" min="0" max="100" step="1" />
+        </span>
+        <span class="block">
+          <label>Decay:</label>
+          <input id="terrain-decay" type="range" value="0.65" min="0.0" max="1.0" step="0.01" />
+        </span>
+        <span class="block">
+          <label>River:</label>
+          <input id="terrain-river" type="checkbox" checked />
+        </span>
+      </div>
+
+      <div class="section">
+        <h3>Roads</h3>
+        <span class="block">
         <label>Decay:</label>
-        <input id="terrain-decay" type="range" value="0.65" min="0.0" max="1.0" step="0.01" />
-      </span>
-      <span class="block">
-        <label>River:</label>
-        <input id="terrain-river" type="checkbox" checked />
-      </span>
+          <input id="roads-decay-distance-percentage" type="range" value="0.4" min="0.0" max="0.99" step="0.01" />
+        </span>
+      </div>
 
-      <h3>Roads</h3>
-      <span class="block">
-      <label>Decay:</label>
-        <input id="roads-decay-distance-percentage" type="range" value="0.4" min="0.0" max="0.99" step="0.01" />
-      </span>
+      <div class="section">
+        <h3>Buildings</h3>
+        <span class="block">
+        <label>Max Stories:</label>
+          <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
+        </span>
+        <span class="block">
+        <label>Decay:</label>
+          <input id="buildings-decay-distance-percentage" type="range" value="0.4" min="0.0" max="1.0" step="0.01" />
+        </span>
+      </div>
 
-      <h3>Buildings</h3>
-      <span class="block">
-      <label>Max Stories:</label>
-        <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
+      <span class="block center">
+        <button id="reset" style="margin-left: auto; margin-right: auto;">Create New City</button>
       </span>
-      <span class="block">
-      <label>Decay:</label>
-        <input id="buildings-decay-distance-percentage" type="range" value="0.4" min="0.0" max="1.0" step="0.01" />
-      </span>
-
-      <button id="reset">Reset</button>
     </div>
   </div>
 </body>
