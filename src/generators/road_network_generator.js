@@ -3,17 +3,20 @@
 var CityTour = CityTour || {};
 
 CityTour.RoadNetworkGenerator = (function() {
-  var PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS = 0.4;
   var DISTANCE_TO_CITY_EDGE = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
-  var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * PERCENTAGE_DISTANCE_THAT_DECAY_BEGINS;
   var MAX_STEEPNESS = Math.PI / 6;
   var MAX_BRIDGE_LENGTH = 10;
 
-  var buildRoadNetwork = function(terrain, centerMapX, centerMapZ) {
+  var buildRoadNetwork = function(terrain, config) {
+    var centerMapX = config.centerMapX;
+    var centerMapZ = config.centerMapZ;
+
     var MIN_MAP_X = -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX;
     var MAX_MAP_X = CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX;
     var MIN_MAP_Z = -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ;
     var MAX_MAP_Z = CityTour.Config.HALF_BLOCK_ROWS + centerMapZ;
+
+    var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * config.safeFromDecayPercentage;
 
     var probabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
       // Guarantee roads along x and z axes
@@ -171,8 +174,8 @@ CityTour.RoadNetworkGenerator = (function() {
 
   var roadNetworkGenerator = {};
 
-  roadNetworkGenerator.generate = function(terrain, centerMapX, centerMapZ) {
-    return buildRoadNetwork(terrain, centerMapX, centerMapZ);
+  roadNetworkGenerator.generate = function(terrain, config) {
+    return buildRoadNetwork(terrain, config);
   };
 
   return roadNetworkGenerator;

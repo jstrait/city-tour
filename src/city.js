@@ -108,8 +108,14 @@ CityTour.City = function(container) {
       centerZ -= 1;
     }
 
+    var roadConfig = {
+      centerMapX: centerX,
+      centerMapZ: centerZ,
+      safeFromDecayPercentage: 0.4,
+    };
+
     var roadStartTime = new Date();
-    var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, centerX, centerZ);
+    var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, roadConfig);
     var roadEndTime = new Date();
 
     var zonedBlocksStartTime = new Date();
