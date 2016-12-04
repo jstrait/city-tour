@@ -30,24 +30,20 @@ body {
   <div id="container" class="full-width full-height">
     <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
       <span class="block">
-        <label>Position X:</label>
-        <input id="positionX" type="range" value="-600.0" min="-900.0" max="-300.0" />
+        <label>Left/Right:</label>
+        <input id="rotationY" type="range" value="0.0" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
       </span>
       <span class="block">
-        <label>Position Y:</label>
-        <input id="positionY" type="range" value="1000.0" min="500.0" max="1500.0"/>
+        <label>Up/Down:</label>
+        <input id="rotationX" type="range" value="0.0" min="-1.5707963267949" max="0.0" step="0.001" />
       </span>
       <span class="block">
-        <label>Position Z:</label>
-        <input id="positionZ" type="range" value="1000.0" min="500.0" max="1500.0"/>
+        <label>Zoom X/Z:</label>
+        <input id="zoomXZ" type="range" value="1.0" min="1.0" max="1000.0" step="1" />
       </span>
       <span class="block">
-        <label>Rotation X:</label>
-        <input id="rotationX" type="range" value="-0.78539816339745" min="-1.0" max="-0.5" step="0.1" />
-      </span>
-      <span class="block">
-        <label>Rotation Y:</label>
-        <input id="rotationY" type="range" value="-0.5235987755983" min="-0.75" max="-0.25" step="0.1" />
+        <label>Zoom Y:</label>
+        <input id="zoomY" type="range" value="40.0" min="1.0" max="1000.0" step="1" />
       </span>
 
       <h3>Terrain</h3>
@@ -124,20 +120,33 @@ var init = function() {
   var container = document.getElementById("container");
   var renderView = null, poleCamera;
 
-  var positionXControl = document.getElementById("positionX");
-  positionXControl.addEventListener('change', function() { poleCamera.setPositionX(parseFloat(positionXControl.value)); renderView.render(); }, false);
+  var updateCamera = function() {
+    var rotationY = parseFloat(rotationYControl.value);
+    var rotationX = parseFloat(rotationXControl.value);
+    var zoomXZ = parseFloat(zoomXZControl.value);
+    var zoomY = parseFloat(zoomYControl.value);
 
-  var positionYControl = document.getElementById("positionY");
-  positionYControl.addEventListener('change', function() { poleCamera.setPositionY(parseFloat(positionYControl.value)); renderView.render(); }, false);
+    var xFromOrigin = -zoomXZ * Math.sin(-rotationY);
+    var zFromOrigin = zoomXZ * Math.cos(-rotationY);
 
-  var positionZControl = document.getElementById("positionZ");
-  positionZControl.addEventListener('change', function() { poleCamera.setPositionZ(parseFloat(positionZControl.value)); renderView.render(); }, false);
+    poleCamera.setPositionX(xFromOrigin);
+    poleCamera.setPositionY(zoomY);
+    poleCamera.setPositionZ(zFromOrigin);
+    poleCamera.setRotationX(rotationX);
+    poleCamera.setRotationY(rotationY);
 
-  var rotationXControl = document.getElementById("rotationX");
-  rotationXControl.addEventListener('change', function() { poleCamera.setRotationX(parseFloat(rotationXControl.value)); renderView.render(); }, false);
+    renderView.render();
+  };
 
   var rotationYControl = document.getElementById("rotationY");
-  rotationYControl.addEventListener('change', function() { poleCamera.setRotationY(parseFloat(rotationYControl.value)); renderView.render(); }, false);
+  var rotationXControl = document.getElementById("rotationX");
+  var zoomXZControl = document.getElementById("zoomXZ");
+  var zoomYControl = document.getElementById("zoomY");
+
+  rotationYControl.addEventListener('input', updateCamera, false);
+  rotationXControl.addEventListener('input', updateCamera, false);
+  zoomXZControl.addEventListener('input', updateCamera, false);
+  zoomYControl.addEventListener('input', updateCamera, false);
 
   var reset = function() {
     var worldData = generateWorldData();
@@ -153,11 +162,8 @@ var init = function() {
     }
 
     poleCamera = renderView.poleCamera();
-    poleCamera.setPositionX(parseFloat(positionXControl.value));
-    poleCamera.setPositionY(parseFloat(positionYControl.value));
-    poleCamera.setPositionZ(parseFloat(positionZControl.value));
-    poleCamera.setRotationX(parseFloat(rotationXControl.value));
-    poleCamera.setRotationY(parseFloat(rotationYControl.value));
+
+    updateCamera();
 
     renderView.resize();
     renderView.render();
