@@ -46,6 +46,14 @@ h3 {
     <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
       <div class="section">
         <h3>Camera</h3>
+        <span class="block" style="display: none;">
+          <label>X:</label>
+          <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
+        </span>
+        <span class="block" style="display: none;">
+          <label>Z:</label>
+          <input id="centerZ" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
+        </span>
         <span class="block">
           <label>Left/Right:</label>
           <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
@@ -185,6 +193,8 @@ var init = function() {
     rotationY == rotation of this triangle around y-axis of center point
     */
 
+    var centerX = parseFloat(centerXControl.value);
+    var centerZ = parseFloat(centerZControl.value);
     var rotationY = parseFloat(rotationYControl.value);
     var rotationX = parseFloat(rotationXControl.value);
     var zoom = parseFloat(zoomControl.value);
@@ -193,8 +203,8 @@ var init = function() {
     var adjacent = Math.cos(rotationX) * hypotenuse;
     var opposite = -(Math.sin(rotationX) * hypotenuse);
 
-    var xPosition = adjacent * Math.sin(rotationY);
-    var zPosition = adjacent * Math.cos(-rotationY);
+    var xPosition = centerX + (adjacent * Math.sin(rotationY));
+    var zPosition = centerZ + (adjacent * Math.cos(-rotationY));
 
     poleCamera.setPositionX(xPosition);
     poleCamera.setPositionY(opposite);
@@ -205,10 +215,14 @@ var init = function() {
     renderView.render();
   };
 
+  var centerXControl = document.getElementById("centerX");
+  var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");
   var rotationXControl = document.getElementById("rotationX");
   var zoomControl = document.getElementById("zoom");
 
+  centerXControl.addEventListener('input', updateCamera, false);
+  centerZControl.addEventListener('input', updateCamera, false);
   rotationYControl.addEventListener('input', updateCamera, false);
   rotationXControl.addEventListener('input', updateCamera, false);
   zoomControl.addEventListener('input', updateCamera, false);
@@ -238,6 +252,51 @@ var init = function() {
   container.appendChild(renderView.domElement());
 
   window.addEventListener('resize', renderView.resize, false);
+
+  var startDrag = function(e) {
+    dragInProgress = true;
+    previousDragX = e.clientX;
+    previousDragZ = e.clientY;
+  };
+
+  var drag = function(e) {
+    if (dragInProgress) {
+      var currentDragX = e.clientX;
+      var currentDragZ = e.clientY;
+
+      var rotationY = parseFloat(rotationYControl.value);
+      var dragXDistanceInPixels = currentDragX - previousDragX;
+      var dragZDistanceInPixels = currentDragZ - previousDragZ;
+      var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
+      var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
+
+      var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
+      var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
+
+      centerXControl.value = parseFloat(centerXControl.value) + rotatedDragXDistance;
+      centerZControl.value = parseFloat(centerZControl.value) + rotatedDragZDistance;
+
+      previousDragX = currentDragX;
+      previousDragZ = currentDragZ;
+
+      updateCamera();
+    };
+  };
+
+  var stopDrag = function(e) {
+    dragInProgress = false;
+    previousX = null;
+    previousZ = null;
+  };
+
+  var dragInProgress;
+  var previousDragX;
+  var previousDragZ;
+  stopDrag();
+
+  renderView.domElement().addEventListener('mousedown', startDrag, false);
+  renderView.domElement().addEventListener('mousemove', drag, false);
+  renderView.domElement().addEventListener('mouseup', stopDrag, false);
 
   var resetButton = document.getElementById("reset");
   resetButton.addEventListener('click', reset, false);
