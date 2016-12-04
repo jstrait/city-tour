@@ -109,8 +109,13 @@ var generateWorldData = function() {
   var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, roadConfig);
   var roadEndTime = new Date();
 
+  var zonedBlockConfig = {
+    percentageDistanceDecayBegins: 0.4,
+    maxBuildingStories: 40,
+  };
+
   var zonedBlocksStartTime = new Date();
-  var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ) : false;
+  var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig) : false;
   var zonedBlocksEndTime = new Date();
   var buildingsStartTime = new Date();
   var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
