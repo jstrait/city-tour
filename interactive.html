@@ -289,34 +289,60 @@ var init = function() {
 
   window.addEventListener('resize', renderView.resize, false);
 
-  var startDrag = function(e) {
+  var startMouseDrag = function(e) {
     dragInProgress = true;
     previousDragX = e.clientX;
     previousDragZ = e.clientY;
   };
 
-  var drag = function(e) {
-    if (dragInProgress) {
-      var currentDragX = e.clientX;
-      var currentDragZ = e.clientY;
+  var startTouchDrag = function(e) {
+    dragInProgress = true;
 
-      var rotationY = parseFloat(rotationYControl.value);
-      var dragXDistanceInPixels = currentDragX - previousDragX;
-      var dragZDistanceInPixels = currentDragZ - previousDragZ;
-      var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
-      var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
+    var touch = e.changedTouches.item(0);
+    previousDragX = touch.clientX;
+    previousDragZ = touch.clientY;
+  };
 
-      var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
-      var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
+  var mouseDrag = function(e) {
+    if (!dragInProgress) {
+      return;
+    }
 
-      centerXControl.value = parseFloat(centerXControl.value) + rotatedDragXDistance;
-      centerZControl.value = parseFloat(centerZControl.value) + rotatedDragZDistance;
+    var currentDragX = e.clientX;
+    var currentDragZ = e.clientY;
 
-      previousDragX = currentDragX;
-      previousDragZ = currentDragZ;
+    drag(currentDragX, currentDragZ);
+  };
 
-      updateCamera();
-    };
+  var touchDrag = function(e) {
+    if (!dragInProgress) {
+      return;
+    }
+
+    var touch = e.changedTouches.item(0);
+    var currentDragX = touch.clientX;
+    var currentDragZ = touch.clientY;
+
+    drag(currentDragX, currentDragZ);
+  };
+
+  var drag = function(currentDragX, currentDragZ) {
+    var rotationY = parseFloat(rotationYControl.value);
+    var dragXDistanceInPixels = currentDragX - previousDragX;
+    var dragZDistanceInPixels = currentDragZ - previousDragZ;
+    var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
+    var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
+
+    var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
+    var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
+
+    centerXControl.value = parseFloat(centerXControl.value) + rotatedDragXDistance;
+    centerZControl.value = parseFloat(centerZControl.value) + rotatedDragZDistance;
+
+    previousDragX = currentDragX;
+    previousDragZ = currentDragZ;
+
+    updateCamera();
   };
 
   var stopDrag = function(e) {
@@ -330,9 +356,12 @@ var init = function() {
   var previousDragZ;
   stopDrag();
 
-  renderView.domElement().addEventListener('mousedown', startDrag, false);
-  renderView.domElement().addEventListener('mousemove', drag, false);
+  renderView.domElement().addEventListener('mousedown', startMouseDrag, false);
+  renderView.domElement().addEventListener('touchstart', startTouchDrag, false);
+  renderView.domElement().addEventListener('mousemove', mouseDrag, false);
+  renderView.domElement().addEventListener('touchmove', touchDrag, false);
   renderView.domElement().addEventListener('mouseup', stopDrag, false);
+  renderView.domElement().addEventListener('touchend', stopDrag, false);
 
   var resetButton = document.getElementById("reset");
   resetButton.addEventListener('click', reset, false);
