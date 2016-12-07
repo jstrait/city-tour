@@ -55,36 +55,6 @@ input[type="range"] {
   <div id="container" class="full-width full-height">
     <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
       <div class="section">
-        <h3>Camera</h3>
-        <span class="block" style="display: none;">
-          <label>X:</label>
-          <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
-        </span>
-        <span class="block" style="display: none;">
-          <label>Z:</label>
-          <input id="centerZ" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
-        </span>
-        <span class="block">
-          <label>Rotation</label>
-          <span class="control-legend">&olarr;</span>
-          <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
-          <span class="control-legend">&orarr;</span>
-        </span>
-        <span class="block">
-          <label>Tilt</label>
-          <span class="control-legend">&rarr;</span>
-          <input id="rotationX" type="range" value="0.2" min="0.0" max="1.0" step="0.001" />
-          <span class="control-legend">&darr;</span>
-        </span>
-        <span class="block">
-          <label>Zoom</label>
-          <span class="control-legend">&minus;</span>
-          <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
-          <span class="control-legend">+</span>
-        </span>
-      </div>
-
-      <div class="section">
         <h3>Terrain</h3>
         <span class="block">
           <label>Jitter</label>
@@ -132,6 +102,36 @@ input[type="range"] {
 
       <span class="block center">
         <button id="reset" style="margin-left: auto; margin-right: auto;">Create New City</button>
+      </span>
+    </div>
+
+
+    <div class="absolute" style="bottom: 0; right: 0; background: #fff; padding: 1.5rem;">
+      <span class="block" style="display: none;">
+        <label>X:</label>
+        <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
+      </span>
+      <span class="block" style="display: none;">
+        <label>Z:</label>
+        <input id="centerZ" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
+      </span>
+      <span class="block">
+        <label>Rotation</label>
+        <span class="control-legend">&olarr;</span>
+        <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
+        <span class="control-legend">&orarr;</span>
+      </span>
+      <span class="block">
+        <label>Tilt</label>
+        <span class="control-legend">&rarr;</span>
+        <input id="rotationX" type="range" value="0.2" min="0.0" max="1.0" step="0.001" />
+        <span class="control-legend">&darr;</span>
+      </span>
+      <span class="block">
+        <label>Zoom</label>
+        <span class="control-legend">&minus;</span>
+        <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
+        <span class="control-legend">+</span>
       </span>
     </div>
   </div>
