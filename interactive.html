@@ -48,61 +48,67 @@ input[type="range"] {
 .relative { position: relative; }
 .absolute { position: absolute; }
 .block { display: block; }
+.display-none { display: none; }
 .center { text-align: center; }
     </style>
 </head>
 <body>
   <div id="container" class="full-width full-height">
     <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
-      <div class="section">
-        <h3>Terrain</h3>
-        <span class="block">
-          <label>Jitter</label>
-          <span class="control-legend">&minus;</span>
-          <input id="terrain-jitter" type="range" value="20" min="0" max="100" step="1" />
-          <span class="control-legend">+</span>
-        </span>
-        <span class="block">
-          <label>Decay</label>
-          <span class="control-legend">&minus;</span>
-          <input id="terrain-decay" type="range" value="0.65" min="0.0" max="1.0" step="0.01" />
-          <span class="control-legend">+</span>
-        </span>
-        <span class="block">
-          <label>River</label>
-          <input id="terrain-river" type="checkbox" checked />
+      <div style="overflow: auto;">
+        <a id="city-editor-toggle" href="#" style="float: right; text-decoration: none; color: #000;">☰</a>
+      </div>
+      <div id="city-editor" class="display-none">
+        <div class="section">
+          <h3>Terrain</h3>
+          <span class="block">
+            <label>Jitter</label>
+            <span class="control-legend">&minus;</span>
+            <input id="terrain-jitter" type="range" value="20" min="0" max="100" step="1" />
+            <span class="control-legend">+</span>
+          </span>
+          <span class="block">
+            <label>Decay</label>
+            <span class="control-legend">&minus;</span>
+            <input id="terrain-decay" type="range" value="0.65" min="0.0" max="1.0" step="0.01" />
+            <span class="control-legend">+</span>
+          </span>
+          <span class="block">
+            <label>River</label>
+            <input id="terrain-river" type="checkbox" checked />
+          </span>
+        </div>
+
+        <div class="section">
+          <h3>Roads</h3>
+          <span class="block">
+            <label>Decay</label>
+            <span class="control-legend">&minus;</span>
+            <input id="roads-decay-distance-percentage" type="range" value="0.4" min="0.0" max="0.99" step="0.01" />
+            <span class="control-legend">+</span>
+          </span>
+        </div>
+
+        <div class="section">
+          <h3>Buildings</h3>
+          <span class="block">
+            <label>Max Stories</label>
+            <span class="control-legend">&minus;</span>
+            <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
+            <span class="control-legend">+</span>
+          </span>
+          <span class="block">
+            <label>Density</label>
+            <span class="control-legend">&minus;</span>
+            <input id="buildings-decay-distance-percentage" type="range" value="0.4" min="0.0" max="1.0" step="0.01" />
+            <span class="control-legend">+</span>
+          </span>
+        </div>
+
+        <span class="block center">
+          <button id="reset" style="margin-left: auto; margin-right: auto;">Create New City</button>
         </span>
       </div>
-
-      <div class="section">
-        <h3>Roads</h3>
-        <span class="block">
-          <label>Decay</label>
-          <span class="control-legend">&minus;</span>
-          <input id="roads-decay-distance-percentage" type="range" value="0.4" min="0.0" max="0.99" step="0.01" />
-          <span class="control-legend">+</span>
-        </span>
-      </div>
-
-      <div class="section">
-        <h3>Buildings</h3>
-        <span class="block">
-          <label>Max Stories</label>
-          <span class="control-legend">&minus;</span>
-          <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
-          <span class="control-legend">+</span>
-        </span>
-        <span class="block">
-          <label>Density</label>
-          <span class="control-legend">&minus;</span>
-          <input id="buildings-decay-distance-percentage" type="range" value="0.4" min="0.0" max="1.0" step="0.01" />
-          <span class="control-legend">+</span>
-        </span>
-      </div>
-
-      <span class="block center">
-        <button id="reset" style="margin-left: auto; margin-right: auto;">Create New City</button>
-      </span>
     </div>
 
 
@@ -365,6 +371,12 @@ var init = function() {
 
   var resetButton = document.getElementById("reset");
   resetButton.addEventListener('click', reset, false);
+
+  var toggleCityEditor = function(e) {
+    document.getElementById("city-editor").classList.toggle("display-none");
+  };
+
+  document.getElementById("city-editor-toggle").addEventListener('click', toggleCityEditor, false);
 };
 
 init();
