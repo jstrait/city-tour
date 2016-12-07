@@ -50,13 +50,14 @@ input[type="range"] {
 .block { display: block; }
 .display-none { display: none; }
 .center { text-align: center; }
+.no-underline { text-decoration: none; }
     </style>
 </head>
 <body>
   <div id="container" class="full-width full-height">
     <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
       <div style="overflow: auto;">
-        <a id="city-editor-toggle" href="#" style="float: right; text-decoration: none; color: #000;">☰</a>
+        <a id="city-editor-toggle" href="#" class="no-underline" style="float: right; color: #000;">☰</a>
       </div>
       <div id="city-editor" class="display-none">
         <div class="section">
@@ -204,6 +205,7 @@ var generateWorldData = function() {
     centerZ: centerZ,
   };
 };
+
 
 var init = function() {
   var container = document.getElementById("container");
