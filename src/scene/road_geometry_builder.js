@@ -15,7 +15,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
   var calculateRoadSegment = function(heightAtPoint1, heightAtPoint2, mapLength) {
     var midpointHeight = (heightAtPoint1 + heightAtPoint2) / 2;
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), mapLength);
-    var length = Math.sqrt(Math.pow((heightAtPoint2 - heightAtPoint1), 2) + Math.pow(mapLength, 2));
+    var length = CityTour.Math.distanceBetweenPoints(heightAtPoint1, 0, heightAtPoint2, mapLength);
   
     return {
       angle: angle,

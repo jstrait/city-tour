@@ -137,9 +137,7 @@ CityTour.ZonedBlockGenerator = (function() {
 
   var calculateBlockProbabilityOfBuilding = function(centerMapX, centerMapZ, mapX, mapZ, percentageDistanceDecayBegins) {    
     var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
-    var xDistance = mapX - centerMapX;
-    var zDistance = mapZ - centerMapZ;
-    var distanceFromCenter = Math.sqrt((xDistance * xDistance) + (zDistance * zDistance));
+    var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX, mapZ);
     var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
     var normalizedPercentageFromCenter;
 
