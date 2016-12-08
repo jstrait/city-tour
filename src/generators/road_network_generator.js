@@ -67,9 +67,9 @@ CityTour.RoadNetworkGenerator = (function() {
     };
 
     var calculateBridgeAttributes = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
-      var xDistance = mapX - centerMapX;
-      var zDistance = mapZ - centerMapZ; 
-      var distanceFromCenter = Math.sqrt((xDistance * xDistance) + (zDistance * zDistance));
+      var xDistanceFromCenter = mapX - centerMapX;
+      var zDistanceFromCenter = mapZ - centerMapZ; 
+      var distanceFromCenter = Math.sqrt((xDistanceFromCenter * xDistanceFromCenter) + (zDistanceFromCenter * zDistanceFromCenter));
       if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
         return null;
       }
