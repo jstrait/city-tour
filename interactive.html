@@ -282,10 +282,10 @@ var init = function() {
     mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
     
     var rotationXPercentage = parseFloat(rotationXControl.value);
-    mapCamera.setTiltAngle(MAX_X_ROTATION - ((MAX_X_ROTATION - MIN_X_ROTATION) * rotationXPercentage));
+    mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationXPercentage));
 
     var zoomPercentage = parseFloat(zoomControl.value);
-    mapCamera.setZoom(MAX_ZOOM_DISTANCE - ((MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE) * zoomPercentage));
+    mapCamera.setZoom(CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage));
 
     mapCamera.syncCamera(poleCamera);
 

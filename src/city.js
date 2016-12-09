@@ -34,6 +34,11 @@ CityTour.Math = (function() {
     return Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
   };
 
+  // Linearly interpolate between min and max
+  math.lerp = function(min, max, percentage) {
+    return min + ((max - min) * percentage);
+  };
+
   return math;
 })();
 
