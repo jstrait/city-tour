@@ -207,54 +207,87 @@ var generateWorldData = function() {
 };
 
 
+var MapCamera = function() {
+  var centerX = 0.0;
+  var centerZ = 0.0;
+  var zoom = 20.0;
+  var tiltAngle = -0.4;
+  var rotationAngle = 0.0;
+  
+  var positionX;
+  var positionY;
+  var positionZ;
+  var rotationX;
+  var rotationY;
+
+  var mapCamera = {};
+
+  mapCamera.setCenterX = function(newCenterX) { centerX = newCenterX };
+
+  mapCamera.setCenterZ = function(newCenterZ) { centerZ = newCenterZ };
+
+  mapCamera.zoom = function() { return zoom; };
+  mapCamera.setZoom = function(newZoom) { zoom = newZoom; };
+
+  mapCamera.tiltAngle = function() { return tileAngle; };
+  mapCamera.setTiltAngle = function(newTiltAngle) { tiltAngle = newTiltAngle; };
+
+  mapCamera.rotationAngle = function() { return rotationAngle; };
+  mapCamera.setRotationAngle = function(newRotationAngle) { rotationAngle = newRotationAngle; };
+
+
+  /*    C
+       /|
+      / |
+     /  |
+    X----
+
+  X == Map center point
+  C == Camera position
+  rotationX == angle X == angle between camera and center point
+  Hypotenuse == Zoom == Distance of camera from center point
+  Opposite == Height of camera off the ground
+  Adjacent == X/Z distance of camera from center point
+  rotationY == rotation of this triangle around y-axis of center point
+  */
+  mapCamera.syncCamera = function(poleCamera) {
+    var hypotenuse = zoom;
+    var adjacent = Math.cos(tiltAngle) * hypotenuse;
+    var opposite = -(Math.sin(tiltAngle) * hypotenuse);
+
+    poleCamera.setPositionX(centerX + (adjacent * Math.sin(rotationAngle)));
+    poleCamera.setPositionY(opposite);
+    poleCamera.setPositionZ(centerZ + (adjacent * Math.cos(-rotationAngle)));
+    poleCamera.setRotationX(tiltAngle);
+    poleCamera.setRotationY(rotationAngle);
+  };
+
+  return mapCamera;
+};
+var mapCamera = new MapCamera();
+
 var init = function() {
   var container = document.getElementById("container");
   var renderView = null, poleCamera;
 
   var updateCamera = function() {
-    /*    C
-         /|
-        / |
-       /  |
-      X----
-
-    X == Map center point
-    C == Camera position
-    rotationX == angle X == angle between camera and center point
-    Hypotenuse == Zoom == Distance of camera from center point
-    Opposite == Height of camera off the ground
-    Adjacent == X/Z distance of camera from center point
-    rotationY == rotation of this triangle around y-axis of center point
-    */
-
     var MIN_X_ROTATION = -1.5707963267949;
     var MAX_X_ROTATION = -0.1;
 
     var MIN_ZOOM_DISTANCE = 20.0;
     var MAX_ZOOM_DISTANCE = 1000.0;
 
-    var centerX = parseFloat(centerXControl.value);
-    var centerZ = parseFloat(centerZControl.value);
-    var rotationY = parseFloat(rotationYControl.value);
+    mapCamera.setCenterX(parseFloat(centerXControl.value));
+    mapCamera.setCenterZ(parseFloat(centerZControl.value));
+    mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
     
     var rotationXPercentage = parseFloat(rotationXControl.value);
-    var rotationX = MAX_X_ROTATION - ((MAX_X_ROTATION - MIN_X_ROTATION) * rotationXPercentage);
+    mapCamera.setTiltAngle(MAX_X_ROTATION - ((MAX_X_ROTATION - MIN_X_ROTATION) * rotationXPercentage));
 
     var zoomPercentage = parseFloat(zoomControl.value);
-    var zoom = MAX_ZOOM_DISTANCE - ((MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE) * zoomPercentage);
+    mapCamera.setZoom(MAX_ZOOM_DISTANCE - ((MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE) * zoomPercentage));
 
-    var hypotenuse = zoom;
-    var adjacent = Math.cos(rotationX) * hypotenuse;
-    var opposite = -(Math.sin(rotationX) * hypotenuse);
-
-    var xPosition = centerX + (adjacent * Math.sin(rotationY));
-    var zPosition = centerZ + (adjacent * Math.cos(-rotationY));
-
-    poleCamera.setPositionX(xPosition);
-    poleCamera.setPositionY(opposite);
-    poleCamera.setPositionZ(zPosition);
-    poleCamera.setRotationX(rotationX);
-    poleCamera.setRotationY(rotationY);
+    mapCamera.syncCamera(poleCamera);
 
     renderView.render();
   };
