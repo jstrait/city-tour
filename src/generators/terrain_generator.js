@@ -262,8 +262,8 @@ CityTour.TerrainGenerator = (function() {
 
     while(width >= 2) {
       // Square step
-      for (i = 0; i < right; i += width) {
-        for (j = 0; j < bottom; j += height) {
+      for (i = left; i < right; i += width) {
+        for (j = top; j < bottom; j += height) {
           jitter = (Math.random() * jitterAmount) - halfJitterAmount;
           terrainCoordinates[i + halfWidth][j + halfHeight].height = ((terrainCoordinates[i][j].height +
                                                                       terrainCoordinates[i + width][j].height +
@@ -273,7 +273,7 @@ CityTour.TerrainGenerator = (function() {
       }
 
       // Diamond step
-      for (j = 0; j <= bottom; j += height) {
+      for (j = top; j <= bottom; j += height) {
         if (startI === 0) {
           startI = halfWidth;
         }
