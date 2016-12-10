@@ -253,7 +253,7 @@ CityTour.TerrainGenerator = (function() {
     var halfJitterAmount = jitterAmount / 2;
     var terms;
 
-    var middleHeight, leftDiamondHeight, topDiamondHeight, rightDiamondHeight, bottomDiamondHeight;
+    var leftDiamondHeight, topDiamondHeight, rightDiamondHeight, bottomDiamondHeight;
 
     var width = right - left;
     var height = bottom - top;
