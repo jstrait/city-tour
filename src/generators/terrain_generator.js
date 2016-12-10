@@ -284,7 +284,7 @@ CityTour.TerrainGenerator = (function() {
         for (x = startX; x <= right; x += width) { 
           terms = 4;
 
-          if (x === 0) {
+          if (x === left) {
             leftDiamondHeight = 0;
             terms -= 1;
           }
@@ -292,7 +292,7 @@ CityTour.TerrainGenerator = (function() {
             leftDiamondHeight = terrainCoordinates[x - halfWidth][y].height;
           }
           
-          if (y === 0) {
+          if (y === top) {
             topDiamondHeight = 0;
             terms -= 1;
           }
