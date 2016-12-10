@@ -248,7 +248,7 @@ CityTour.TerrainGenerator = (function() {
 
   // As described at https://en.wikipedia.org/wiki/Diamond-square_algorithm and http://stevelosh.com/blog/2016/06/diamond-square/
   var diamondSquare = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
-    var i, j, startI = 0;
+    var x, y, startX = 0;
     var jitter;
     var halfJitterAmount = jitterAmount / 2;
     var terms;
@@ -262,62 +262,62 @@ CityTour.TerrainGenerator = (function() {
 
     while(width >= 2) {
       // Square step
-      for (i = left; i < right; i += width) {
-        for (j = top; j < bottom; j += height) {
+      for (x = left; x < right; x += width) {
+        for (y = top; y < bottom; y += height) {
           jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-          terrainCoordinates[i + halfWidth][j + halfHeight].height = ((terrainCoordinates[i][j].height +
-                                                                      terrainCoordinates[i + width][j].height +
-                                                                      terrainCoordinates[i][j + height].height +
-                                                                      terrainCoordinates[i + width][j + height].height) / 4) + jitter;
+          terrainCoordinates[x + halfWidth][y + halfHeight].height = ((terrainCoordinates[x][y].height +
+                                                                      terrainCoordinates[x + width][y].height +
+                                                                      terrainCoordinates[x][y + height].height +
+                                                                      terrainCoordinates[x + width][y + height].height) / 4) + jitter;
         }
       }
 
       // Diamond step
-      for (j = top; j <= bottom; j += height) {
-        if (startI === 0) {
-          startI = halfWidth;
+      for (y = top; y <= bottom; y += height) {
+        if (startX === 0) {
+          startX = halfWidth;
         }
         else {
-          startI = 0;
+          startX = 0;
         }
 
-        for (i = startI; i <= right; i += width) { 
+        for (x = startX; x <= right; x += width) { 
           terms = 4;
 
-          if (i === 0) {
+          if (x === 0) {
             leftDiamondHeight = 0;
             terms -= 1;
           }
           else {
-            leftDiamondHeight = terrainCoordinates[i - halfWidth][j].height;
+            leftDiamondHeight = terrainCoordinates[x - halfWidth][y].height;
           }
           
-          if (j === 0) {
+          if (y === 0) {
             topDiamondHeight = 0;
             terms -= 1;
           }
           else {
-            topDiamondHeight = terrainCoordinates[i][j - halfHeight].height;
+            topDiamondHeight = terrainCoordinates[x][y - halfHeight].height;
           }
 
-          if (i === right) {
+          if (x === right) {
             rightDiamondHeight = 0;
             terms -= 1;
           }
           else {
-            rightDiamondHeight = terrainCoordinates[i + halfWidth][j].height;
+            rightDiamondHeight = terrainCoordinates[x + halfWidth][y].height;
           }
           
-          if (j === bottom) {
+          if (y === bottom) {
             bottomDiamondHeight = 0;
             terms -= 1;
           }
           else {
-            bottomDiamondHeight = terrainCoordinates[i][j + halfHeight].height;
+            bottomDiamondHeight = terrainCoordinates[x][y + halfHeight].height;
           }
 
           jitter = (Math.random() * jitterAmount) - halfJitterAmount;
-          terrainCoordinates[i][j].height = ((leftDiamondHeight + topDiamondHeight + rightDiamondHeight + bottomDiamondHeight) / terms) + jitter;
+          terrainCoordinates[x][y].height = ((leftDiamondHeight + topDiamondHeight + rightDiamondHeight + bottomDiamondHeight) / terms) + jitter;
         }
       }
 
