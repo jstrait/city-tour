@@ -273,7 +273,7 @@ CityTour.TerrainGenerator = (function() {
       }
 
       // Diamond step
-      for (y = top; y <= bottom; y += height) {
+      for (y = top; y <= bottom; y += halfHeight) {
         if (startX === 0) {
           startX = halfWidth;
         }
