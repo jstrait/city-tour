@@ -110,7 +110,7 @@ CityTour.RoadNetworkGenerator = (function() {
 
       var heightAtTerminal1 = terrain.heightAtCoordinates(mapX, mapZ);
       var heightAtTerminal2 = terrain.heightAtCoordinates(finalX, finalZ);
-      if (heightAtTerminal1 !== heightAtTerminal2) {
+      if (Math.abs(heightAtTerminal1 - heightAtTerminal2) > 5.0) {
         return null;
       }
       var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2);
