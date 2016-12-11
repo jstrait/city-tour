@@ -174,26 +174,30 @@ CityTour.TerrainGenerator = (function() {
 
     var i;
     var baseHeight;
-    var depth
+    var newHeight;
+    var depth;
     var heightIncreaseAmount;
     var previousX = -1;
-    for (x = 0.0; x <= 1.0; x += xStep / 2) {  
-      vector = topCurve.getPointAt(x);
-      xCoordinate = Math.round(vector.x);
 
-      if (xCoordinate > previousX) {
-        baseHeight = minimumRiverBankHeight;
+    baseHeight = minimumRiverBankHeight;
+    depth = Math.round(CityTour.Math.lerp(16, 20, Math.random()));
+    for (i = 1; i < depth; i++) {
+      heightIncreaseAmount = CityTour.Math.lerp(0.0, 2.0, Math.random());
+      baseHeight += heightIncreaseAmount;
+      previousX = -1;
 
-        depth = Math.round(CityTour.Math.lerp(25, 30, Math.random()));
-        for (i = 1; i < depth; i++) {
+      for (x = 0.0; x <= 1.0; x += xStep / 2) {  
+        vector = topCurve.getPointAt(x);
+        xCoordinate = Math.round(vector.x);
+
+        if (xCoordinate > previousX) {          
           zCoordinate = Math.ceil(vector.y) - i;
 
-          heightIncreaseAmount = CityTour.Math.lerp(0.0, 2.0, Math.random());
-          if (baseHeight + heightIncreaseAmount < terrainCoordinates[xCoordinate][zCoordinate].height) {
-            terrainCoordinates[xCoordinate][zCoordinate].height = baseHeight + heightIncreaseAmount;
-          }
+          newHeight = baseHeight + heightIncreaseAmount + CityTour.Math.lerp(-2.0, 2.0, Math.random());
 
-          baseHeight += heightIncreaseAmount;
+          if (newHeight < terrainCoordinates[xCoordinate][zCoordinate].height) {
+            terrainCoordinates[xCoordinate][zCoordinate].height = newHeight;
+          }
         }
       }
 
