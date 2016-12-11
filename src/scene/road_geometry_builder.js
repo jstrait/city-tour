@@ -134,6 +134,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
             if (northRoad && southRoad) {
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.scale.y = CityTour.Config.STREET_WIDTH;
+              guardrailSegmentMesh.position.y = selfSurfaceHeight;
               guardrailSegmentMesh.rotation.x = 0.0;
               guardrailSegmentMesh.rotation.y = HALF_PI;
               guardrailSegmentMesh.rotation.z = HALF_PI;
@@ -154,7 +155,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
               guardrailSegmentMesh.position.x = sceneX;
               guardrailSegmentMesh.rotation.x = 0.0;
               guardrailSegmentMesh.scale.y = CityTour.Config.STREET_DEPTH;
-              guardrailSegmentMesh.position.y = -0.25;
+              guardrailSegmentMesh.position.y = selfSurfaceHeight;
               guardrailSegmentMesh.rotation.y = 0.0;
               guardrailSegmentMesh.rotation.z = HALF_PI;
 
@@ -266,7 +267,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.rotation.x = 0.0;
               guardrailSegmentMesh.scale.y = roadSegment.length;
-              guardrailSegmentMesh.position.y = -0.25;
+              guardrailSegmentMesh.position.y = roadSegment.midpointHeight;
               guardrailSegmentMesh.rotation.y = HALF_PI;
               guardrailSegmentMesh.rotation.z = HALF_PI;
               guardrailSegmentMesh.position.z = sceneZ + HALF_BLOCK_AND_STREET_DEPTH;
@@ -324,7 +325,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
               guardrailSegmentMesh.position.x = sceneX + HALF_BLOCK_AND_STREET_DEPTH;
               guardrailSegmentMesh.rotation.x = 0.0;
               guardrailSegmentMesh.scale.y = roadSegment.length;
-              guardrailSegmentMesh.position.y = -0.25;
+              guardrailSegmentMesh.position.y = roadSegment.midpointHeight;
               guardrailSegmentMesh.rotation.y = 0.0;
               guardrailSegmentMesh.rotation.z = HALF_PI;
 
