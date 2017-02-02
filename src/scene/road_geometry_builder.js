@@ -265,7 +265,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
             if (roadNetwork.edgeBetween(mapX, mapZ, mapX, mapZ + 1) === CityTour.RoadNetwork.BRIDGE_SURFACE) {
               // Guardrail
               guardrailSegmentMesh = reusableGuardrailMesh;
-              guardrailSegmentMesh.rotation.x = 0.0;
+              guardrailSegmentMesh.rotation.x = roadSegment.angle;
               guardrailSegmentMesh.scale.y = roadSegment.length;
               guardrailSegmentMesh.position.y = roadSegment.midpointHeight;
               guardrailSegmentMesh.rotation.y = HALF_PI;
@@ -327,7 +327,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
               guardrailSegmentMesh.scale.y = roadSegment.length;
               guardrailSegmentMesh.position.y = roadSegment.midpointHeight;
               guardrailSegmentMesh.rotation.y = 0.0;
-              guardrailSegmentMesh.rotation.z = HALF_PI;
+              guardrailSegmentMesh.rotation.z = -roadSegment.angle - HALF_PI;
 
               // Left guardrail
               guardrailSegmentMesh.position.z = sceneZ - (CityTour.Config.STREET_DEPTH / 2);
