@@ -213,7 +213,7 @@ var MapCamera = function() {
   var zoom = 20.0;
   var tiltAngle = -0.4;
   var rotationAngle = 0.0;
-  
+
   var positionX;
   var positionY;
   var positionZ;
@@ -280,7 +280,7 @@ var init = function() {
     mapCamera.setCenterX(parseFloat(centerXControl.value));
     mapCamera.setCenterZ(parseFloat(centerZControl.value));
     mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
-    
+
     var rotationXPercentage = parseFloat(rotationXControl.value);
     mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationXPercentage));
 
@@ -342,6 +342,8 @@ var init = function() {
     var touch = e.changedTouches.item(0);
     previousDragX = touch.clientX;
     previousDragZ = touch.clientY;
+
+    e.preventDefault();
   };
 
   var mouseDrag = function(e) {
