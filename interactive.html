@@ -403,6 +403,7 @@ var init = function() {
       return;
     }
 
+    // Zoom
     var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousDragsX[0], previousDragsZ[0], previousDragsX[1], previousDragsZ[1]);
     var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentDragsX[0], currentDragsZ[0], currentDragsX[1], currentDragsZ[1]);
     var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
@@ -410,6 +411,16 @@ var init = function() {
     var zoomPercentage = parseFloat(zoomControl.value);
     zoomPercentage += (distanceDelta / 200);
     zoomControl.value = zoomPercentage;
+
+
+    // Y Rotation
+    var previousAngleBetweenTouches = Math.atan2(-(previousDragsX[1] - previousDragsX[0]), -(previousDragsZ[1] - previousDragsZ[0]));
+    var currentAngleBetweenTouches = Math.atan2(-(currentDragsX[1] - currentDragsX[0]), -(currentDragsZ[1] - currentDragsZ[0]));
+    var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
+
+    var rotationY = parseFloat(rotationYControl.value);
+    rotationY += angleDelta;
+    rotationYControl.value = rotationY;
   };
 
   var drag = function(currentDragsX, currentDragsZ) {
