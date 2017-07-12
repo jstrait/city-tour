@@ -413,14 +413,26 @@ var init = function() {
     zoomControl.value = zoomPercentage;
 
 
-    // Y Rotation
+
     var previousAngleBetweenTouches = Math.atan2(-(previousDragsX[1] - previousDragsX[0]), -(previousDragsZ[1] - previousDragsZ[0]));
     var currentAngleBetweenTouches = Math.atan2(-(currentDragsX[1] - currentDragsX[0]), -(currentDragsZ[1] - currentDragsZ[0]));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
-    var rotationY = parseFloat(rotationYControl.value);
-    rotationY += angleDelta;
-    rotationYControl.value = rotationY;
+    var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
+    var HALF_PI = Math.PI / 2;
+    if (Math.abs(currentAngleBetweenTouches) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
+        Math.abs(currentAngleBetweenTouches) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION)) {
+      var yDistanceDelta = currentDragsZ[0] - previousDragsZ[0];
+      var rotationX = parseFloat(rotationXControl.value);
+      rotationX += yDistanceDelta / 100;
+      rotationXControl.value = rotationX;
+    }
+    else {
+      // Y Rotation
+      var rotationY = parseFloat(rotationYControl.value);
+      rotationY += angleDelta;
+      rotationYControl.value = rotationY;
+    }
   };
 
   var drag = function(currentDragsX, currentDragsZ) {
