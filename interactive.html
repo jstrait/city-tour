@@ -384,7 +384,7 @@ var init = function() {
     drag(currentDragsX, currentDragsZ);
   };
 
-  var drag = function(currentDragsX, currentDragsZ) {
+  var syncPan = function(currentDragsX, currentDragsZ) {
     var rotationY = parseFloat(rotationYControl.value);
     var dragXDistanceInPixels = currentDragsX[0] - previousDragsX[0];
     var dragZDistanceInPixels = currentDragsZ[0] - previousDragsZ[0];
@@ -396,6 +396,29 @@ var init = function() {
 
     centerXControl.value = parseFloat(centerXControl.value) + rotatedDragXDistance;
     centerZControl.value = parseFloat(centerZControl.value) + rotatedDragZDistance;
+  };
+
+  var syncZoom = function(currentDragsX, currentDragsZ) {
+    if (previousDragsX.length !== 2) {
+      return;
+    }
+
+    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousDragsX[0], previousDragsZ[0], previousDragsX[1], previousDragsZ[1]);
+    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentDragsX[0], currentDragsZ[0], currentDragsX[1], currentDragsZ[1]);
+    var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
+
+    var zoomPercentage = parseFloat(zoomControl.value);
+    zoomPercentage += (distanceDelta / 200);
+    zoomControl.value = zoomPercentage;
+  };
+
+  var drag = function(currentDragsX, currentDragsZ) {
+    if (currentDragsX.length === 1) {
+      syncPan(currentDragsX, currentDragsZ);
+    }
+    else if (currentDragsX.length === 2) {
+      syncZoom(currentDragsX, currentDragsZ);
+    }
 
     previousDragsX = currentDragsX;
     previousDragsZ = currentDragsZ;
