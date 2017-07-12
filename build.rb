@@ -3,7 +3,8 @@
 require 'rb-fsevent'
 
 def build
-  `uglifyjs src/*.js src/**/*.js --compress --mangle --source-map city_tour.js.map > city_tour.js`
+  # uglifyjs v3.0.15
+  `uglifyjs src/*.js src/**/*.js --compress --mangle --source-map filename=city_tour.js.map -o city_tour.js`
 end
 
 option = (ARGV[0] || '').downcase
