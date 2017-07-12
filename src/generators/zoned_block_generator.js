@@ -77,7 +77,7 @@ CityTour.ZonedBlockGenerator = (function() {
               { left:     0.0,  right: 0.5,    top: 0.5,    bottom:  (2/3), },
               { left:     0.0,  right: (1/3),  top: (2/3),  bottom:  0.8333, },
               { left:     0.0,  right: (1/3),  top: 0.8333, bottom:  1.0, },
-              
+
               { left:     0.5,  right: 1.0,    top: 0.0,    bottom:  0.1667, },
               { left:     0.5,  right: 1.0,    top: 0.1677, bottom:  (1/3), },
               { left:     0.5,  right: 1.0,    top: (1/3),  bottom:  0.5, },
@@ -104,7 +104,7 @@ CityTour.ZonedBlockGenerator = (function() {
               { left:     0.75,  right: 1.0,  top: 0.5,     bottom:  (2/3), },
               { left:     0.75,  right: 1.0,  top: (2/3),   bottom:  0.8333, },
               { left:     0.75,  right: 1.0,  top: 0.8333,  bottom:  1.0, },
-            
+
               { left:     0.25,    right: 0.4167,  top: 0.0,     bottom:  0.5, },
               { left:     0.4167,  right: 0.5833,  top: 0.0,     bottom:  0.5, },
               { left:     0.5833,  right: 0.75,    top: 0.0,     bottom:  0.5, },
@@ -124,7 +124,7 @@ CityTour.ZonedBlockGenerator = (function() {
       lot.midpointZ = lot.top + (lot.depth / 2);
 
       if (lot.width < 0.25 || lot.depth < 0.25) {
-        lot.maxStories = 4; 
+        lot.maxStories = 4;
       }
       else if (lot.width < 0.5 || lot.depth < 0.5) {
         lot.maxStories = 10;
@@ -135,7 +135,7 @@ CityTour.ZonedBlockGenerator = (function() {
     });
   });
 
-  var calculateBlockProbabilityOfBuilding = function(centerMapX, centerMapZ, mapX, mapZ, percentageDistanceDecayBegins) {    
+  var calculateBlockProbabilityOfBuilding = function(centerMapX, centerMapZ, mapX, mapZ, percentageDistanceDecayBegins) {
     var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
     var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX, mapZ);
     var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);

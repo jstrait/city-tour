@@ -16,7 +16,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     var midpointHeight = (heightAtPoint1 + heightAtPoint2) / 2;
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), mapLength);
     var length = CityTour.Math.distanceBetweenPoints(heightAtPoint1, 0, heightAtPoint2, mapLength);
-  
+
     return {
       angle: angle,
       midpointHeight: midpointHeight,
@@ -104,7 +104,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
       sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
 
-      for (mapZ = roadNetwork.minRow(); mapZ <= roadNetwork.maxRow(); mapZ++) { 
+      for (mapZ = roadNetwork.minRow(); mapZ <= roadNetwork.maxRow(); mapZ++) {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
         if (roadNetwork.hasIntersection(mapX, mapZ)) {
@@ -129,7 +129,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
             reusableBridgeSupportMesh.position.z = sceneZ;
             reusableBridgeSupportMesh.updateMatrix();
             sidewalkGeometry.merge(reusableBridgeSupportMesh.geometry, reusableBridgeSupportMesh.matrix);
-          
+
             // Guardrail
             if (northRoad && southRoad) {
               guardrailSegmentMesh = reusableGuardrailMesh;
@@ -189,7 +189,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);    
+            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
 
           // Bottom sidewalk "filler"
@@ -200,7 +200,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
             roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
           else {
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);    
+            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
 
           sidewalkSegmentMesh = reusableIntersectionFillerNorthSouthMesh;

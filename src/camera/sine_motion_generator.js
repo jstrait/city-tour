@@ -11,7 +11,7 @@ CityTour.SineMotionGenerator = function(start, target, delta, direction) {
   if (direction === undefined) {
     direction = 'forward';
   }
-  
+
   var x, xTarget, distancePercentage;
   if (direction === 'forward') {
     x = 0.0;

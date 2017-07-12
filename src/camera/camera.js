@@ -89,7 +89,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
                                                        swoopDescentDelta);
 
     currentController = vehicleController;
-    
+
     syncCamera();
   };
 
@@ -227,7 +227,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target, ini
 
     targetYRotation = rightHandedAngle;
 
-    // Prevent turns wider than 180 degrees 
+    // Prevent turns wider than 180 degrees
     if ((oldTargetYRotation - targetYRotation) > Math.PI) {
       yRotation -= TWO_PI;
     }

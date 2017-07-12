@@ -6,13 +6,13 @@ var CityTour = CityTour || {};
 /*
    Generates target points for the camera to move to, simulating the camera
    flying in the air over the city.
-   
+
    Since the movement is assumed to happen in the air, points are selected without
    worrying about whether it requires moving over roads or terrain. However, the
    target point will always be over a road intersection, to prevent choosing a
    target point that is outside of the city or over an area of land with no
    roads or buildings.
-   
+
    Target points are chosen to alternate between either a point north or south of
    the previous target, or east or west of the previous target.
 */

@@ -39,7 +39,7 @@ CityTour.PathFinder = function(roadNetwork) {
 
     var evaluateAdjacentNode = function(adjacentX, adjacentZ) {
       var adjacentNode, candidateDistance;
-    
+
       if (roadNetwork.hasEdgeBetween(x, z, adjacentX, adjacentZ)) {
         adjacentNode = nodes[adjacentX][adjacentZ];
 
@@ -96,7 +96,7 @@ CityTour.PathFinder = function(roadNetwork) {
     currentNode.distance = 0;
 
     while(currentNode.x != endX || currentNode.z != endZ) {
-      evaluateNodeConnections(currentNode, nodes, unvisitedSet); 
+      evaluateNodeConnections(currentNode, nodes, unvisitedSet);
       unvisitedSet.delete(currentNode);
 
       currentNode = unvisitedNodeWithShortestLength(unvisitedSet);

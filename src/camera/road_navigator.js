@@ -6,7 +6,7 @@ var CityTour = CityTour || {};
 /*
    Generates target points for the camera to move to, simulating the camera
    driving on the road network.
-   
+
    A target road intersection is chosen at random, and the injected path finder
    then finds a path to that intersection. A path is a sequence of intersections
    to travel to that will ultimately end up at the target intersection.

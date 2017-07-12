@@ -186,11 +186,11 @@ CityTour.TerrainGenerator = (function() {
       baseHeight += heightIncreaseAmount;
       previousX = -1;
 
-      for (x = 0.0; x <= 1.0; x += xStep / 2) {  
+      for (x = 0.0; x <= 1.0; x += xStep / 2) {
         vector = topCurve.getPointAt(x);
         xCoordinate = Math.round(vector.x);
 
-        if (xCoordinate > previousX) {          
+        if (xCoordinate > previousX) {
           zCoordinate = Math.ceil(vector.y) - i;
 
           newHeight = baseHeight + heightIncreaseAmount + CityTour.Math.lerp(-2.0, 2.0, Math.random());
@@ -213,25 +213,25 @@ CityTour.TerrainGenerator = (function() {
     if (terrainCoordinates[x - 1] &&
         terrainCoordinates[x - 1][z] &&
         terrainCoordinates[x - 1][z].height <= height &&
-        terrainCoordinates[x - 1][z].material != material) { 
+        terrainCoordinates[x - 1][z].material != material) {
       floodFill(terrainCoordinates, x - 1, z, height, material);
     }
     if (terrainCoordinates[x + 1] &&
         terrainCoordinates[x + 1][z] &&
         terrainCoordinates[x + 1][z].height <= height &&
-        terrainCoordinates[x + 1][z].material != material) { 
+        terrainCoordinates[x + 1][z].material != material) {
       floodFill(terrainCoordinates, x + 1, z, height, material);
     }
     if (terrainCoordinates[x] &&
         terrainCoordinates[x][z - 1] &&
         terrainCoordinates[x][z - 1].height <= height &&
-        terrainCoordinates[x][z - 1].material != material) { 
+        terrainCoordinates[x][z - 1].material != material) {
       floodFill(terrainCoordinates, x, z - 1, height, material);
     }
     if (terrainCoordinates[x] &&
         terrainCoordinates[x][z + 1] &&
         terrainCoordinates[x][z + 1].height <= height &&
-        terrainCoordinates[x][z + 1].material != material) { 
+        terrainCoordinates[x][z + 1].material != material) {
       floodFill(terrainCoordinates, x, z + 1, height, material);
     }
   };
@@ -315,7 +315,7 @@ CityTour.TerrainGenerator = (function() {
           startX = 0;
         }
 
-        for (x = startX; x <= right; x += width) { 
+        for (x = startX; x <= right; x += width) {
           terms = 4;
 
           if (x === left) {
@@ -325,7 +325,7 @@ CityTour.TerrainGenerator = (function() {
           else {
             leftDiamondHeight = terrainCoordinates[x - halfWidth][y].height;
           }
-          
+
           if (y === top) {
             topDiamondHeight = 0;
             terms -= 1;
@@ -341,7 +341,7 @@ CityTour.TerrainGenerator = (function() {
           else {
             rightDiamondHeight = terrainCoordinates[x + halfWidth][y].height;
           }
-          
+
           if (y === bottom) {
             bottomDiamondHeight = 0;
             terms -= 1;

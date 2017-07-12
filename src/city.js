@@ -189,7 +189,7 @@ CityTour.City = function(container) {
       animationManager.tick(frameCount);
       renderView.render();
     }
-    animationManager.init(worldData.centerX, worldData.centerZ); 
+    animationManager.init(worldData.centerX, worldData.centerZ);
 
     timer.onTick(1);
     container.appendChild(renderView.domElement());
