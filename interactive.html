@@ -334,16 +334,22 @@ var init = function() {
 
   var startMouseDrag = function(e) {
     dragInProgress = true;
-    previousDragX = e.clientX;
-    previousDragZ = e.clientY;
+    previousDragsX = [e.clientX];
+    previousDragsZ = [e.clientY];
   };
 
   var startTouchDrag = function(e) {
+    var i, touch;
+
     dragInProgress = true;
 
-    var touch = e.changedTouches.item(0);
-    previousDragX = touch.clientX;
-    previousDragZ = touch.clientY;
+    previousDragsX = [];
+    previousDragsZ = [];
+    for (i = 0; i < e.touches.length; i++) {
+      touch = e.touches.item(i);
+      previousDragsX.push(touch.clientX);
+      previousDragsZ.push(touch.clientY);
+    }
 
     e.preventDefault();
   };
@@ -353,28 +359,35 @@ var init = function() {
       return;
     }
 
-    var currentDragX = e.clientX;
-    var currentDragZ = e.clientY;
+    var currentDragsX = [e.clientX];
+    var currentDragsZ = [e.clientY];
 
-    drag(currentDragX, currentDragZ);
+    drag(currentDragsX, currentDragsZ);
   };
 
   var touchDrag = function(e) {
+    var i, touch;
+    var currentDragsX, currentDragsZ;
+
     if (!dragInProgress) {
       return;
     }
 
-    var touch = e.changedTouches.item(0);
-    var currentDragX = touch.clientX;
-    var currentDragZ = touch.clientY;
+    currentDragsX = [];
+    currentDragsZ = [];
+    for (i = 0; i < e.touches.length; i++) {
+      touch = e.touches.item(i);
+      currentDragsX.push(touch.clientX);
+      currentDragsZ.push(touch.clientY);
+    }
 
-    drag(currentDragX, currentDragZ);
+    drag(currentDragsX, currentDragsZ);
   };
 
-  var drag = function(currentDragX, currentDragZ) {
+  var drag = function(currentDragsX, currentDragsZ) {
     var rotationY = parseFloat(rotationYControl.value);
-    var dragXDistanceInPixels = currentDragX - previousDragX;
-    var dragZDistanceInPixels = currentDragZ - previousDragZ;
+    var dragXDistanceInPixels = currentDragsX[0] - previousDragsX[0];
+    var dragZDistanceInPixels = currentDragsZ[0] - previousDragsZ[0];
     var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
     var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
 
@@ -384,21 +397,21 @@ var init = function() {
     centerXControl.value = parseFloat(centerXControl.value) + rotatedDragXDistance;
     centerZControl.value = parseFloat(centerZControl.value) + rotatedDragZDistance;
 
-    previousDragX = currentDragX;
-    previousDragZ = currentDragZ;
+    previousDragsX = currentDragsX;
+    previousDragsZ = currentDragsZ;
 
     updateCamera();
   };
 
   var stopDrag = function(e) {
     dragInProgress = false;
-    previousDragX = null;
-    previousDragZ = null;
+    previousDragsX = [];
+    previousDragsZ = [];
   };
 
   var dragInProgress;
-  var previousDragX;
-  var previousDragZ;
+  var previousDragsX;
+  var previousDragsZ;
   stopDrag();
 
   renderView.domElement().addEventListener('mousedown', startMouseDrag, false);
