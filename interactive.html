@@ -209,10 +209,60 @@ var generateWorldData = function() {
 };
 
 
-var MapCamera = function() {
+var MessageBroker = function() {
+  var uniqueID = -1;
+  var subscribers = {};
+
+  var addSubscriber = function(topic, func) {
+    if (!subscribers[topic]) {
+      subscribers[topic] = [];
+    }
+
+    uniqueID += 1;
+
+    subscribers[topic].push({ id: uniqueID, func: func });
+    return uniqueID;
+  };
+
+  var removeSubscriber = function(topic, id) {
+    if (subscribers[topic]) {
+      subscribers[topic].forEach(function(item, index) {
+        if (item.id === id) {
+          subscribers[topic].splice(index, 1);
+          return true;
+        }
+      });
+    }
+
+    return false;
+  };
+
+  var publish = function(topic, data) {
+    if (!subscribers[topic] || subscribers[topic] === []) {
+      console.log("Warning: No listeners for topic " + topic);
+    }
+    else {
+      subscribers[topic].forEach(function(entry) {
+        entry.func(data);
+      });
+    }
+  };
+
+
+  return {
+    addSubscriber:    addSubscriber,
+    removeSubscriber: removeSubscriber,
+    publish:          publish,
+  };
+};
+
+var messageBroker = new MessageBroker();
+
+
+var MapCamera = function(messageBroker) {
   var centerX = 0.0;
   var centerZ = 0.0;
-  var zoom = 20.0;
+  var zoom = 1000.0;
   var tiltAngle = -0.4;
   var rotationAngle = 0.0;
 
@@ -224,18 +274,35 @@ var MapCamera = function() {
 
   var mapCamera = {};
 
-  mapCamera.setCenterX = function(newCenterX) { centerX = newCenterX };
+  mapCamera.centerX = function() { return centerX; };
+  mapCamera.setCenterX = function(newCenterX) {
+    centerX = newCenterX;
+    messageBroker.publish("camera.updated", {});
+  };
 
-  mapCamera.setCenterZ = function(newCenterZ) { centerZ = newCenterZ };
+  mapCamera.centerZ = function() { return centerZ; };
+  mapCamera.setCenterZ = function(newCenterZ) {
+    centerZ = newCenterZ
+    messageBroker.publish("camera.updated", {});
+  };
 
   mapCamera.zoom = function() { return zoom; };
-  mapCamera.setZoom = function(newZoom) { zoom = newZoom; };
+  mapCamera.setZoom = function(newZoom) {
+    zoom = newZoom;
+    messageBroker.publish("camera.updated", {});
+  };
 
-  mapCamera.tiltAngle = function() { return tileAngle; };
-  mapCamera.setTiltAngle = function(newTiltAngle) { tiltAngle = newTiltAngle; };
+  mapCamera.tiltAngle = function() { return tiltAngle; };
+  mapCamera.setTiltAngle = function(newTiltAngle) {
+    tiltAngle = newTiltAngle;
+    messageBroker.publish("camera.updated", {});
+  };
 
   mapCamera.rotationAngle = function() { return rotationAngle; };
-  mapCamera.setRotationAngle = function(newRotationAngle) { rotationAngle = newRotationAngle; };
+  mapCamera.setRotationAngle = function(newRotationAngle) {
+    rotationAngle = newRotationAngle;
+    messageBroker.publish("camera.updated", {});
+  };
 
 
   /*    C
@@ -266,33 +333,69 @@ var MapCamera = function() {
 
   return mapCamera;
 };
-var mapCamera = new MapCamera();
+var mapCamera = new MapCamera(messageBroker);
+
+
+var MIN_X_ROTATION = -1.5707963267949;
+var MAX_X_ROTATION = -0.1;
+
+var MIN_ZOOM_DISTANCE = 20.0;
+var MAX_ZOOM_DISTANCE = 1000.0;
+
+var NavigationController = function(messageBroker) {
+  var centerXControl = document.getElementById("centerX");
+  var centerZControl = document.getElementById("centerZ");
+  var rotationYControl = document.getElementById("rotationY");
+  var rotationXControl = document.getElementById("rotationX");
+  var zoomControl = document.getElementById("zoom");
+
+  var render = function(data) {
+    centerXControl.value = mapCamera.centerX();
+    centerZControl.value = mapCamera.centerZ();
+    rotationYControl.value = mapCamera.rotationAngle();
+    rotationXControl.value = (mapCamera.tiltAngle() - MAX_X_ROTATION) / (MIN_X_ROTATION - MAX_X_ROTATION);
+    zoomControl.value = 1 - ((mapCamera.zoom() - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
+  };
+
+  var setCenterX = function(e) {
+    mapCamera.setCenterX(parseFloat(centerXControl.value));
+  };
+  var setCenterZ = function(e) {
+    mapCamera.setCenterZ(parseFloat(centerZControl.value));
+  };
+  var setRotationAngle = function(e) {
+    mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
+  };
+  var setTiltAngle = function(e) {
+    var rotationXPercentage = parseFloat(rotationXControl.value);
+    mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationXPercentage));
+  };
+  var setZoom = function(e) {
+    var zoomPercentage = parseFloat(zoomControl.value);
+    mapCamera.setZoom(CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage));
+  };
+
+  centerXControl.addEventListener('input', setCenterX, false);
+  centerZControl.addEventListener('input', setCenterZ, false);
+  rotationYControl.addEventListener('input', setRotationAngle, false);
+  rotationXControl.addEventListener('input', setTiltAngle, false);
+  zoomControl.addEventListener('input', setZoom, false);
+
+  render({});
+
+  var id1 = messageBroker.addSubscriber("camera.updated", render);
+};
 
 var init = function() {
   var container = document.getElementById("container");
   var renderView = null, poleCamera;
 
-  var updateCamera = function() {
-    var MIN_X_ROTATION = -1.5707963267949;
-    var MAX_X_ROTATION = -0.1;
-
-    var MIN_ZOOM_DISTANCE = 20.0;
-    var MAX_ZOOM_DISTANCE = 1000.0;
-
-    mapCamera.setCenterX(parseFloat(centerXControl.value));
-    mapCamera.setCenterZ(parseFloat(centerZControl.value));
-    mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
-
-    var rotationXPercentage = parseFloat(rotationXControl.value);
-    mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationXPercentage));
-
-    var zoomPercentage = parseFloat(zoomControl.value);
-    mapCamera.setZoom(CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage));
-
+  var updateCamera = function(data) {
     mapCamera.syncCamera(poleCamera);
-
     renderView.render();
   };
+
+  var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
 
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
@@ -300,11 +403,7 @@ var init = function() {
   var rotationXControl = document.getElementById("rotationX");
   var zoomControl = document.getElementById("zoom");
 
-  centerXControl.addEventListener('input', updateCamera, false);
-  centerZControl.addEventListener('input', updateCamera, false);
-  rotationYControl.addEventListener('input', updateCamera, false);
-  rotationXControl.addEventListener('input', updateCamera, false);
-  zoomControl.addEventListener('input', updateCamera, false);
+  new NavigationController(messageBroker);
 
   var reset = function() {
     var worldData = generateWorldData();
@@ -394,8 +493,8 @@ var init = function() {
     var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
     var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
 
-    centerXControl.value = parseFloat(centerXControl.value) + rotatedDragXDistance;
-    centerZControl.value = parseFloat(centerZControl.value) + rotatedDragZDistance;
+    mapCamera.setCenterX(parseFloat(centerXControl.value) + rotatedDragXDistance);
+    mapCamera.setCenterZ(parseFloat(centerZControl.value) + rotatedDragZDistance);
   };
 
   var syncZoom = function(currentDragsX, currentDragsZ) {
@@ -410,8 +509,7 @@ var init = function() {
 
     var zoomPercentage = parseFloat(zoomControl.value);
     zoomPercentage += (distanceDelta / 200);
-    zoomControl.value = zoomPercentage;
-
+    mapCamera.setZoom(CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage));
 
 
     var previousAngleBetweenTouches = Math.atan2(-(previousDragsX[1] - previousDragsX[0]), -(previousDragsZ[1] - previousDragsZ[0]));
@@ -425,13 +523,13 @@ var init = function() {
       var yDistanceDelta = currentDragsZ[0] - previousDragsZ[0];
       var rotationX = parseFloat(rotationXControl.value);
       rotationX += yDistanceDelta / 100;
-      rotationXControl.value = rotationX;
+      mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationX));
     }
     else {
       // Y Rotation
       var rotationY = parseFloat(rotationYControl.value);
       rotationY += angleDelta;
-      rotationYControl.value = rotationY;
+      mapCamera.setRotationAngle(rotationY);
     }
   };
 
