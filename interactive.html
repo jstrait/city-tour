@@ -467,19 +467,18 @@ var NavigationTouchController = function(el) {
            Math.abs(angleBetweenTouchPoints) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION);
   };
 
+  var rotationYActive = function(rotationYDelta) {
+    return Math.abs(rotationYDelta) >= 0.01;
+  };
+
   var syncZoom = function(currentTouchPoints) {
     if (previousTouchPoints.length !== 2) {
       return;
     }
 
-    // Zoom
     var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPoints[0].x, previousTouchPoints[0].z, previousTouchPoints[1].x, previousTouchPoints[1].z);
     var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPoints[0].x, currentTouchPoints[0].z, currentTouchPoints[1].x, currentTouchPoints[1].z);
     var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
-
-    var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
-    mapCamera.setZoomPercentage(newZoomPercentage);
-
 
     var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
     var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
@@ -490,10 +489,13 @@ var NavigationTouchController = function(el) {
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
     }
-    else {
-      // Y Rotation
+    else if (rotationYActive(angleDelta)) {
       var newRotationAngle = mapCamera.rotationAngle() + angleDelta;
       mapCamera.setRotationAngle(newRotationAngle);
+    }
+    else {
+      var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
+      mapCamera.setZoomPercentage(newZoomPercentage);
     }
   };
 
