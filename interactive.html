@@ -354,19 +354,19 @@ var NavigationController = function(mapCamera, messageBroker) {
 
 
 var NavigationTouchController = function(el, mapCamera) {
-  var dragInProgress;
+  var gestureInProgress;
   var twoTouchPointMode;
   var previousTouchPoints;
 
   var startMouseDrag = function(e) {
-    dragInProgress = true;
+    gestureInProgress = true;
     previousTouchPoints = [{x: e.clientX, z: e.clientY}];
   };
 
   var startTouchDrag = function(e) {
     var i, touch;
 
-    dragInProgress = true;
+    gestureInProgress = true;
 
     previousTouchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
@@ -378,18 +378,18 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
   var mouseDrag = function(e) {
-    if (!dragInProgress) {
+    if (!gestureInProgress) {
       return;
     }
 
-    drag([{x: e.clientX, z: e.clientY}]);
+    processGesture([{x: e.clientX, z: e.clientY}]);
   };
 
-  var touchDrag = function(e) {
+  var touchGesture = function(e) {
     var i, touch;
     var currentTouchPoints;
 
-    if (!dragInProgress) {
+    if (!gestureInProgress) {
       return;
     }
 
@@ -399,16 +399,16 @@ var NavigationTouchController = function(el, mapCamera) {
       currentTouchPoints.push({x: touch.clientX, z: touch.clientY});
     }
 
-    drag(currentTouchPoints);
+    processGesture(currentTouchPoints);
   };
 
-  var stopDrag = function(e) {
-    dragInProgress = false;
+  var stopGesture = function(e) {
+    gestureInProgress = false;
     twoTouchPointMode = undefined;
     previousTouchPoints = [];
   };
 
-  var syncPan = function(currentTouchPoints) {
+  var panCamera = function(currentTouchPoints) {
     var rotationY = mapCamera.rotationAngle();
     var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
     var dragZDistanceInPixels = currentTouchPoints[0].z - previousTouchPoints[0].z;
@@ -444,7 +444,7 @@ var NavigationTouchController = function(el, mapCamera) {
     return Math.abs(rotationYDelta) >= 0.01;
   };
 
-  var syncZoom = function(currentTouchPoints) {
+  var processMultiTouchGestures = function(currentTouchPoints) {
     var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
 
     if (previousTouchPoints.length !== 2) {
@@ -479,26 +479,26 @@ var NavigationTouchController = function(el, mapCamera) {
     }
   };
 
-  var drag = function(currentTouchPoints) {
+  var processGesture = function(currentTouchPoints) {
     if (currentTouchPoints.length === 1) {
-      syncPan(currentTouchPoints);
+      panCamera(currentTouchPoints);
     }
     else if (currentTouchPoints.length === 2) {
-      syncZoom(currentTouchPoints);
+      processMultiTouchGestures(currentTouchPoints);
     }
 
     previousTouchPoints = currentTouchPoints;
   };
 
 
-  stopDrag();
+  stopGesture();
 
   el.addEventListener('mousedown', startMouseDrag, false);
   el.addEventListener('touchstart', startTouchDrag, false);
   el.addEventListener('mousemove', mouseDrag, false);
-  el.addEventListener('touchmove', touchDrag, false);
-  el.addEventListener('mouseup', stopDrag, false);
-  el.addEventListener('touchend', stopDrag, false);
+  el.addEventListener('touchmove', touchGesture, false);
+  el.addEventListener('mouseup', stopGesture, false);
+  el.addEventListener('touchend', stopGesture, false);
 };
 
 
