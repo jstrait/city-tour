@@ -260,10 +260,16 @@ var messageBroker = new MessageBroker();
 
 
 var MapCamera = function(messageBroker) {
+  var MIN_TILT_ANGLE = -1.5707963267949;
+  var MAX_TILT_ANGLE = -0.1;
+
+  var MIN_ZOOM_DISTANCE = 20.0;
+  var MAX_ZOOM_DISTANCE = 1000.0;
+
   var centerX = 0.0;
   var centerZ = 0.0;
-  var zoom = 1000.0;
-  var tiltAngle = -0.4;
+  var zoomPercentage = 0.0;
+  var tiltPercentage = 0.2;
   var rotationAngle = 0.0;
 
   var positionX;
@@ -286,15 +292,15 @@ var MapCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  mapCamera.zoom = function() { return zoom; };
-  mapCamera.setZoom = function(newZoom) {
-    zoom = newZoom;
+  mapCamera.zoomPercentage = function() { return zoomPercentage; };
+  mapCamera.setZoomPercentage = function(newZoomPercentage) {
+    zoomPercentage = Math.max(0.0, Math.min(1.0, newZoomPercentage));
     messageBroker.publish("camera.updated", {});
   };
 
-  mapCamera.tiltAngle = function() { return tiltAngle; };
-  mapCamera.setTiltAngle = function(newTiltAngle) {
-    tiltAngle = newTiltAngle;
+  mapCamera.tiltPercentage = function() { return tiltPercentage; };
+  mapCamera.setTiltPercentage = function(newTiltPercentage) {
+    tiltPercentage = Math.max(0.0, Math.min(1.0, newTiltPercentage));
     messageBroker.publish("camera.updated", {});
   };
 
@@ -320,6 +326,9 @@ var MapCamera = function(messageBroker) {
   rotationY == rotation of this triangle around y-axis of center point
   */
   mapCamera.syncCamera = function(poleCamera) {
+    var tiltAngle = CityTour.Math.lerp(MAX_TILT_ANGLE, MIN_TILT_ANGLE, tiltPercentage);
+    var zoom = CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage);
+
     var hypotenuse = zoom;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
     var opposite = -(Math.sin(tiltAngle) * hypotenuse);
@@ -335,13 +344,6 @@ var MapCamera = function(messageBroker) {
 };
 var mapCamera = new MapCamera(messageBroker);
 
-
-var MIN_X_ROTATION = -1.5707963267949;
-var MAX_X_ROTATION = -0.1;
-
-var MIN_ZOOM_DISTANCE = 20.0;
-var MAX_ZOOM_DISTANCE = 1000.0;
-
 var NavigationController = function(messageBroker) {
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
@@ -353,8 +355,8 @@ var NavigationController = function(messageBroker) {
     centerXControl.value = mapCamera.centerX();
     centerZControl.value = mapCamera.centerZ();
     rotationYControl.value = mapCamera.rotationAngle();
-    rotationXControl.value = (mapCamera.tiltAngle() - MAX_X_ROTATION) / (MIN_X_ROTATION - MAX_X_ROTATION);
-    zoomControl.value = 1 - ((mapCamera.zoom() - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
+    rotationXControl.value = mapCamera.tiltPercentage();
+    zoomControl.value = mapCamera.zoomPercentage();
   };
 
   var setCenterX = function(e) {
@@ -367,19 +369,17 @@ var NavigationController = function(messageBroker) {
     mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
   };
   var setTiltAngle = function(e) {
-    var rotationXPercentage = parseFloat(rotationXControl.value);
-    mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationXPercentage));
+    mapCamera.setTiltPercentage(parseFloat(rotationXControl.value));
   };
-  var setZoom = function(e) {
-    var zoomPercentage = parseFloat(zoomControl.value);
-    mapCamera.setZoom(CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage));
+  var setZoomPercentage = function(e) {
+    mapCamera.setZoomPercentage(parseFloat(zoomControl.value));
   };
 
   centerXControl.addEventListener('input', setCenterX, false);
   centerZControl.addEventListener('input', setCenterZ, false);
   rotationYControl.addEventListener('input', setRotationAngle, false);
   rotationXControl.addEventListener('input', setTiltAngle, false);
-  zoomControl.addEventListener('input', setZoom, false);
+  zoomControl.addEventListener('input', setZoomPercentage, false);
 
   render({});
 
@@ -507,9 +507,8 @@ var init = function() {
     var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentDragsX[0], currentDragsZ[0], currentDragsX[1], currentDragsZ[1]);
     var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
 
-    var zoomPercentage = parseFloat(zoomControl.value);
-    zoomPercentage += (distanceDelta / 200);
-    mapCamera.setZoom(CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage));
+    var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
+    mapCamera.setZoomPercentage(newZoomPercentage);
 
 
     var previousAngleBetweenTouches = Math.atan2(-(previousDragsX[1] - previousDragsX[0]), -(previousDragsZ[1] - previousDragsZ[0]));
@@ -521,9 +520,8 @@ var init = function() {
     if (Math.abs(currentAngleBetweenTouches) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
         Math.abs(currentAngleBetweenTouches) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION)) {
       var yDistanceDelta = currentDragsZ[0] - previousDragsZ[0];
-      var rotationX = parseFloat(rotationXControl.value);
-      rotationX += yDistanceDelta / 100;
-      mapCamera.setTiltAngle(CityTour.Math.lerp(MAX_X_ROTATION, MIN_X_ROTATION, rotationX));
+      var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
+      mapCamera.setTiltPercentage(newTiltPercentage);
     }
     else {
       // Y Rotation
