@@ -410,11 +410,16 @@ var NavigationTouchController = function(el, mapCamera) {
     var rotationY = mapCamera.rotationAngle();
     var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
     var dragZDistanceInPixels = currentTouchPoints[0].z - previousTouchPoints[0].z;
-    var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
     var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
 
-    var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
-    var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
+    // Scale the drag distance based on the camera zoom. If zoomed in, dragging should
+    // move the camera less than if the camera is zoomed out.
+    var zoomMultiplier = (((1 - mapCamera.zoomPercentage()) * 0.92)) + 0.08;
+    var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
+    var scaledDragDistanceInPixels = totalDragDistanceInPixels * zoomMultiplier;
+
+    var rotatedDragXDistance = scaledDragDistanceInPixels * Math.cos(dragAngle - rotationY);
+    var rotatedDragZDistance = scaledDragDistanceInPixels * Math.sin(dragAngle - rotationY);
     mapCamera.setCenterCoordinates(mapCamera.centerX() + rotatedDragXDistance, mapCamera.centerZ() + rotatedDragZDistance);
   };
 
