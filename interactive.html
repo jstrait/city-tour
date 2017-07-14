@@ -260,6 +260,8 @@ var messageBroker = new MessageBroker();
 
 
 var MapCamera = function(messageBroker) {
+  var TWO_PI = Math.PI * 2;
+
   var MIN_CENTER_X = -1000.0;
   var MAX_CENTER_X = 1000.0;
 
@@ -307,6 +309,14 @@ var MapCamera = function(messageBroker) {
   mapCamera.rotationAngle = function() { return rotationAngle; };
   mapCamera.setRotationAngle = function(newRotationAngle) {
     rotationAngle = newRotationAngle;
+
+    if (rotationAngle < -Math.PI) {
+      rotationAngle += TWO_PI;
+    }
+    else if (rotationAngle > Math.PI) {
+      rotationAngle -= TWO_PI;
+    }
+
     messageBroker.publish("camera.updated", {});
   };
 
