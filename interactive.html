@@ -393,13 +393,11 @@ var NavigationController = function(messageBroker) {
 
 var NavigationTouchController = function(el) {
   var dragInProgress;
-  var previousTouchPointsX;
-  var previousTouchPointsZ;
+  var previousTouchPoints;
 
   var startMouseDrag = function(e) {
     dragInProgress = true;
-    previousTouchPointsX = [e.clientX];
-    previousTouchPointsZ = [e.clientY];
+    previousTouchPoints = [{x: e.clientX, z: e.clientY}];
   };
 
   var startTouchDrag = function(e) {
@@ -407,12 +405,10 @@ var NavigationTouchController = function(el) {
 
     dragInProgress = true;
 
-    previousTouchPointsX = [];
-    previousTouchPointsZ = [];
+    previousTouchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      previousTouchPointsX.push(touch.clientX);
-      previousTouchPointsZ.push(touch.clientY);
+      previousTouchPoints.push({x: touch.clientX, z: touch.clientY});
     }
 
     e.preventDefault();
@@ -423,35 +419,30 @@ var NavigationTouchController = function(el) {
       return;
     }
 
-    var currentTouchPointsX = [e.clientX];
-    var currentTouchPointsZ = [e.clientY];
-
-    drag(currentTouchPointsX, currentTouchPointsZ);
+    drag([{x: e.clientX, z: e.clientY}]);
   };
 
   var touchDrag = function(e) {
     var i, touch;
-    var currentTouchPointsX, currentTouchPointsZ;
+    var currentTouchPoints;
 
     if (!dragInProgress) {
       return;
     }
 
-    currentTouchPointsX = [];
-    currentTouchPointsZ = [];
+    currentTouchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      currentTouchPointsX.push(touch.clientX);
-      currentTouchPointsZ.push(touch.clientY);
+      currentTouchPoints.push({x: touch.clientX, z: touch.clientY});
     }
 
-    drag(currentTouchPointsX, currentTouchPointsZ);
+    drag(currentTouchPoints);
   };
 
-  var syncPan = function(currentTouchPointsX, currentTouchPointsZ) {
+  var syncPan = function(currentTouchPoints) {
     var rotationY = mapCamera.rotationAngle();
-    var dragXDistanceInPixels = currentTouchPointsX[0] - previousTouchPointsX[0];
-    var dragZDistanceInPixels = currentTouchPointsZ[0] - previousTouchPointsZ[0];
+    var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
+    var dragZDistanceInPixels = currentTouchPoints[0].z - previousTouchPoints[0].z;
     var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
     var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
 
@@ -462,29 +453,29 @@ var NavigationTouchController = function(el) {
     mapCamera.setCenterZ(mapCamera.centerZ() + rotatedDragZDistance);
   };
 
-  var syncZoom = function(currentTouchPointsX, currentTouchPointsZ) {
-    if (previousTouchPointsX.length !== 2) {
+  var syncZoom = function(currentTouchPoints) {
+    if (previousTouchPoints.length !== 2) {
       return;
     }
 
     // Zoom
-    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPointsX[0], previousTouchPointsZ[0], previousTouchPointsX[1], previousTouchPointsZ[1]);
-    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPointsX[0], currentTouchPointsZ[0], currentTouchPointsX[1], currentTouchPointsZ[1]);
+    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPoints[0].x, previousTouchPoints[0].z, previousTouchPoints[1].x, previousTouchPoints[1].z);
+    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPoints[0].x, currentTouchPoints[0].z, currentTouchPoints[1].x, currentTouchPoints[1].z);
     var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
 
     var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
     mapCamera.setZoomPercentage(newZoomPercentage);
 
 
-    var previousAngleBetweenTouches = Math.atan2(-(previousTouchPointsX[1] - previousTouchPointsX[0]), -(previousTouchPointsZ[1] - previousTouchPointsZ[0]));
-    var currentAngleBetweenTouches = Math.atan2(-(currentTouchPointsX[1] - currentTouchPointsX[0]), -(currentTouchPointsZ[1] - currentTouchPointsZ[0]));
+    var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
+    var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
     var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
     var HALF_PI = Math.PI / 2;
     if (Math.abs(currentAngleBetweenTouches) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
         Math.abs(currentAngleBetweenTouches) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION)) {
-      var yDistanceDelta = currentTouchPointsZ[0] - previousTouchPointsZ[0];
+      var yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
     }
@@ -495,22 +486,20 @@ var NavigationTouchController = function(el) {
     }
   };
 
-  var drag = function(currentTouchPointsX, currentTouchPointsZ) {
-    if (currentTouchPointsX.length === 1) {
-      syncPan(currentTouchPointsX, currentTouchPointsZ);
+  var drag = function(currentTouchPoints) {
+    if (currentTouchPoints.length === 1) {
+      syncPan(currentTouchPoints);
     }
-    else if (currentTouchPointsX.length === 2) {
-      syncZoom(currentTouchPointsX, currentTouchPointsZ);
+    else if (currentTouchPoints.length === 2) {
+      syncZoom(currentTouchPoints);
     }
 
-    previousTouchPointsX = currentTouchPointsX;
-    previousTouchPointsZ = currentTouchPointsZ;
+    previousTouchPoints = currentTouchPoints;
   };
 
   var stopDrag = function(e) {
     dragInProgress = false;
-    previousTouchPointsX = [];
-    previousTouchPointsZ = [];
+    previousTouchPoints = [];
   };
 
 
