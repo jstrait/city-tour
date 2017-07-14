@@ -458,6 +458,15 @@ var NavigationTouchController = function(el) {
     mapCamera.setCenterZ(mapCamera.centerZ() + rotatedDragZDistance);
   };
 
+
+  var touchPointsAreHorizontal = function(angleBetweenTouchPoints) {
+    var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
+    var HALF_PI = Math.PI / 2;
+
+    return Math.abs(angleBetweenTouchPoints) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
+           Math.abs(angleBetweenTouchPoints) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION);
+  };
+
   var syncZoom = function(currentTouchPoints) {
     if (previousTouchPoints.length !== 2) {
       return;
@@ -476,10 +485,7 @@ var NavigationTouchController = function(el) {
     var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
-    var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
-    var HALF_PI = Math.PI / 2;
-    if (Math.abs(currentAngleBetweenTouches) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
-        Math.abs(currentAngleBetweenTouches) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION)) {
+    if (touchPointsAreHorizontal(currentAngleBetweenTouches)) {
       var yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
