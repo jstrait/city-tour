@@ -278,29 +278,33 @@ var MapCamera = function(messageBroker) {
   var tiltPercentage = 0.2;
   var rotationAngle = 0.0;
 
+  var clamp = function(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  };
+
   var mapCamera = {};
 
   mapCamera.centerX = function() { return centerX; };
   mapCamera.setCenterX = function(newCenterX) {
-    centerX = Math.max(MIN_CENTER_X, Math.min(MAX_CENTER_X, newCenterX));
+    centerX = clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
     messageBroker.publish("camera.updated", {});
   };
 
   mapCamera.centerZ = function() { return centerZ; };
   mapCamera.setCenterZ = function(newCenterZ) {
-    centerZ = Math.max(MIN_CENTER_Z, Math.min(MAX_CENTER_Z, newCenterZ));
+    centerZ = clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
     messageBroker.publish("camera.updated", {});
   };
 
   mapCamera.zoomPercentage = function() { return zoomPercentage; };
   mapCamera.setZoomPercentage = function(newZoomPercentage) {
-    zoomPercentage = Math.max(0.0, Math.min(1.0, newZoomPercentage));
+    zoomPercentage = clamp(newZoomPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
   mapCamera.tiltPercentage = function() { return tiltPercentage; };
   mapCamera.setTiltPercentage = function(newTiltPercentage) {
-    tiltPercentage = Math.max(0.0, Math.min(1.0, newTiltPercentage));
+    tiltPercentage = clamp(newTiltPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
