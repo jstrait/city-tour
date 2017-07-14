@@ -260,6 +260,12 @@ var messageBroker = new MessageBroker();
 
 
 var MapCamera = function(messageBroker) {
+  var MIN_CENTER_X = -1000.0;
+  var MAX_CENTER_X = 1000.0;
+
+  var MIN_CENTER_Z = -1000.0;
+  var MAX_CENTER_Z = 1000.0;
+
   var MIN_TILT_ANGLE = -1.5707963267949;
   var MAX_TILT_ANGLE = -0.1;
 
@@ -282,13 +288,13 @@ var MapCamera = function(messageBroker) {
 
   mapCamera.centerX = function() { return centerX; };
   mapCamera.setCenterX = function(newCenterX) {
-    centerX = newCenterX;
+    centerX = Math.max(MIN_CENTER_X, Math.min(MAX_CENTER_X, newCenterX));
     messageBroker.publish("camera.updated", {});
   };
 
   mapCamera.centerZ = function() { return centerZ; };
   mapCamera.setCenterZ = function(newCenterZ) {
-    centerZ = newCenterZ
+    centerZ = Math.max(MIN_CENTER_Z, Math.min(MAX_CENTER_Z, newCenterZ));
     messageBroker.publish("camera.updated", {});
   };
 
@@ -397,12 +403,6 @@ var init = function() {
 
   var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
 
-  var centerXControl = document.getElementById("centerX");
-  var centerZControl = document.getElementById("centerZ");
-  var rotationYControl = document.getElementById("rotationY");
-  var rotationXControl = document.getElementById("rotationX");
-  var zoomControl = document.getElementById("zoom");
-
   new NavigationController(messageBroker);
 
   var reset = function() {
@@ -484,7 +484,7 @@ var init = function() {
   };
 
   var syncPan = function(currentDragsX, currentDragsZ) {
-    var rotationY = parseFloat(rotationYControl.value);
+    var rotationY = mapCamera.rotationAngle();
     var dragXDistanceInPixels = currentDragsX[0] - previousDragsX[0];
     var dragZDistanceInPixels = currentDragsZ[0] - previousDragsZ[0];
     var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
@@ -493,8 +493,8 @@ var init = function() {
     var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
     var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
 
-    mapCamera.setCenterX(parseFloat(centerXControl.value) + rotatedDragXDistance);
-    mapCamera.setCenterZ(parseFloat(centerZControl.value) + rotatedDragZDistance);
+    mapCamera.setCenterX(mapCamera.centerX() + rotatedDragXDistance);
+    mapCamera.setCenterZ(mapCamera.centerZ() + rotatedDragZDistance);
   };
 
   var syncZoom = function(currentDragsX, currentDragsZ) {
@@ -525,9 +525,8 @@ var init = function() {
     }
     else {
       // Y Rotation
-      var rotationY = parseFloat(rotationYControl.value);
-      rotationY += angleDelta;
-      mapCamera.setRotationAngle(rotationY);
+      var newRotationAngle = mapCamera.rotationAngle() + angleDelta;
+      mapCamera.setRotationAngle(newRotationAngle);
     }
   };
 
