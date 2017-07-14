@@ -285,13 +285,9 @@ var MapCamera = function(messageBroker) {
   var mapCamera = {};
 
   mapCamera.centerX = function() { return centerX; };
-  mapCamera.setCenterX = function(newCenterX) {
-    centerX = clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
-    messageBroker.publish("camera.updated", {});
-  };
-
   mapCamera.centerZ = function() { return centerZ; };
-  mapCamera.setCenterZ = function(newCenterZ) {
+  mapCamera.setCenterCoordinates = function(newCenterX, newCenterZ) {
+    centerX = clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
     centerZ = clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
     messageBroker.publish("camera.updated", {});
   };
@@ -363,11 +359,8 @@ var NavigationController = function(messageBroker) {
     zoomControl.value = mapCamera.zoomPercentage();
   };
 
-  var setCenterX = function(e) {
-    mapCamera.setCenterX(parseFloat(centerXControl.value));
-  };
-  var setCenterZ = function(e) {
-    mapCamera.setCenterZ(parseFloat(centerZControl.value));
+  var setCenterCoordinates = function(e) {
+    mapCamera.setCenterCoordinates(parseFloat(centerXControl.value), parseFloat(centerZControl.value));
   };
   var setRotationAngle = function(e) {
     mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
@@ -379,8 +372,8 @@ var NavigationController = function(messageBroker) {
     mapCamera.setZoomPercentage(parseFloat(zoomControl.value));
   };
 
-  centerXControl.addEventListener('input', setCenterX, false);
-  centerZControl.addEventListener('input', setCenterZ, false);
+  centerXControl.addEventListener('input', setCenterCoordinates, false);
+  centerZControl.addEventListener('input', setCenterCoordinates, false);
   rotationYControl.addEventListener('input', setRotationAngle, false);
   rotationXControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomPercentage, false);
@@ -453,9 +446,7 @@ var NavigationTouchController = function(el) {
 
     var rotatedDragXDistance = totalDragDistanceInPixels * Math.cos(dragAngle - rotationY);
     var rotatedDragZDistance = totalDragDistanceInPixels * Math.sin(dragAngle - rotationY);
-
-    mapCamera.setCenterX(mapCamera.centerX() + rotatedDragXDistance);
-    mapCamera.setCenterZ(mapCamera.centerZ() + rotatedDragZDistance);
+    mapCamera.setCenterCoordinates(mapCamera.centerX() + rotatedDragXDistance, mapCamera.centerZ() + rotatedDragZDistance);
   };
 
 
