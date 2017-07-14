@@ -355,6 +355,7 @@ var NavigationController = function(mapCamera, messageBroker) {
 
 var NavigationTouchController = function(el, mapCamera) {
   var dragInProgress;
+  var twoTouchPointMode;
   var previousTouchPoints;
 
   var startMouseDrag = function(e) {
@@ -403,6 +404,7 @@ var NavigationTouchController = function(el, mapCamera) {
 
   var stopDrag = function(e) {
     dragInProgress = false;
+    twoTouchPointMode = undefined;
     previousTouchPoints = [];
   };
 
@@ -443,17 +445,26 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
   var syncZoom = function(currentTouchPoints) {
+    var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
+
     if (previousTouchPoints.length !== 2) {
       return;
     }
 
-    var distanceDelta = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
+    if (twoTouchPointMode === undefined) {
+      if (touchPointsAreHorizontal(currentAngleBetweenTouches)) {
+        twoTouchPointMode = 'tilt';
+      }
+      else {
+        twoTouchPointMode = 'non_tilt';
+      }
+    }
 
+    var distanceDelta = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
     var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
-    var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
-    if (touchPointsAreHorizontal(currentAngleBetweenTouches)) {
+    if (twoTouchPointMode === 'tilt') {
       var yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
