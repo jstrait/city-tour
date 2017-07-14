@@ -527,8 +527,7 @@ var NavigationTouchController = function(el) {
 };
 
 
-var init = function() {
-  var container = document.getElementById("container");
+var SceneView = function(containerEl) {
   var renderView = null, poleCamera;
 
   var updateCamera = function(data) {
@@ -536,16 +535,12 @@ var init = function() {
     renderView.render();
   };
 
-  var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
-
-  var reset = function() {
-    var worldData = generateWorldData();
-
+  var reset = function(worldData) {
     var sceneBuilder = new CityTour.Scene.Builder();
     var scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
     if (renderView === null) {
-      renderView = new CityTour.RenderView(container, scene);
+      renderView = new CityTour.RenderView(containerEl, scene);
     }
     else {
       renderView.setScene(scene);
@@ -559,24 +554,44 @@ var init = function() {
     renderView.render();
   };
 
-  reset();
-  container.appendChild(renderView.domElement());
-
-  new NavigationController(messageBroker);
-  new NavigationTouchController(renderView.domElement());
+  reset(generateWorldData());
+  containerEl.appendChild(renderView.domElement());
 
   window.addEventListener('resize', renderView.resize, false);
+  var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
 
+
+  return {
+    reset: reset,
+    domElement: function() { return renderView.domElement(); },
+  };
+};
+
+
+var CityEditorController = function(sceneView) {
+  var editorToggleButton = document.getElementById("city-editor-toggle");
   var resetButton = document.getElementById("reset");
-  resetButton.addEventListener('click', reset, false);
 
   var toggleCityEditor = function(e) {
     document.getElementById("city-editor").classList.toggle("display-none");
   };
 
-  document.getElementById("city-editor-toggle").addEventListener('click', toggleCityEditor, false);
+  var reset = function(e) {
+    sceneView.reset(generateWorldData());
+  };
+
+  editorToggleButton.addEventListener('click', toggleCityEditor, false);
+  resetButton.addEventListener('click', reset, false);
 };
 
+
+var init = function() {
+  var sceneView = new SceneView(document.getElementById("container"));
+
+  new CityEditorController(sceneView);
+  new NavigationController(messageBroker);
+  new NavigationTouchController(sceneView.domElement());
+};
 init();
 </script>
 </html>
