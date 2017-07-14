@@ -439,6 +439,11 @@ var NavigationTouchController = function(el) {
     drag(currentTouchPoints);
   };
 
+  var stopDrag = function(e) {
+    dragInProgress = false;
+    previousTouchPoints = [];
+  };
+
   var syncPan = function(currentTouchPoints) {
     var rotationY = mapCamera.rotationAngle();
     var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
@@ -495,11 +500,6 @@ var NavigationTouchController = function(el) {
     }
 
     previousTouchPoints = currentTouchPoints;
-  };
-
-  var stopDrag = function(e) {
-    dragInProgress = false;
-    previousTouchPoints = [];
   };
 
 
