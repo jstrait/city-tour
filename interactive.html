@@ -217,8 +217,6 @@ var MessageBroker = function() {
   };
 };
 
-var messageBroker = new MessageBroker();
-
 
 var MapCamera = function(messageBroker) {
   var TWO_PI = Math.PI * 2;
@@ -313,9 +311,9 @@ var MapCamera = function(messageBroker) {
 
   return mapCamera;
 };
-var mapCamera = new MapCamera(messageBroker);
 
-var NavigationController = function(messageBroker) {
+
+var NavigationController = function(mapCamera, messageBroker) {
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");
@@ -355,7 +353,7 @@ var NavigationController = function(messageBroker) {
 };
 
 
-var NavigationTouchController = function(el) {
+var NavigationTouchController = function(el, mapCamera) {
   var dragInProgress;
   var previousTouchPoints;
 
@@ -488,7 +486,7 @@ var NavigationTouchController = function(el) {
 };
 
 
-var SceneView = function(containerEl) {
+var SceneView = function(containerEl, mapCamera, messageBroker) {
   var renderView = null, poleCamera;
 
   var updateCamera = function(data) {
@@ -547,11 +545,13 @@ var CityEditorController = function(sceneView) {
 
 
 var init = function() {
-  var sceneView = new SceneView(document.getElementById("container"));
+  var messageBroker = new MessageBroker();
+  var mapCamera = new MapCamera(messageBroker);
+  var sceneView = new SceneView(document.getElementById("container"), mapCamera, messageBroker);
 
   new CityEditorController(sceneView);
-  new NavigationController(messageBroker);
-  new NavigationTouchController(sceneView.domElement());
+  new NavigationController(mapCamera, messageBroker);
+  new NavigationTouchController(sceneView.domElement(), mapCamera);
 };
 init();
 </script>
