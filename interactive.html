@@ -114,6 +114,7 @@ input[type="range"] {
 
 
     <div class="absolute" style="bottom: 0; right: 0; background: #fff; padding: 1.5rem;">
+      <button id="flythrough-toggle">Take a Tour</button>
       <span class="block" style="display: none;">
         <label>X:</label>
         <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
@@ -503,14 +504,41 @@ var NavigationTouchController = function(el, mapCamera) {
 
 
 var SceneView = function(containerEl, mapCamera, messageBroker) {
+  var worldData;
   var renderView = null, poleCamera;
+  var timer;
+  var animationManager;
+  var mode = 'interactive';
 
   var updateCamera = function(data) {
     mapCamera.syncCamera(poleCamera);
     renderView.render();
   };
 
-  var reset = function(worldData) {
+  var startFlythrough = function() {
+    animationManager.init(worldData.centerX, worldData.centerZ);
+    timer.onTick(1);
+    timer.start();
+    mode = 'flythrough';
+  };
+
+  var stopFlythrough = function() {
+    timer.togglePause();
+    updateCamera();
+    mode = 'interactive';
+  };
+
+  var toggleFlythrough = function() {
+    if (mode === 'interactive') {
+      startFlythrough();
+    }
+    else {
+      stopFlythrough();
+    }
+  };
+
+  var reset = function(newWorldData) {
+    worldData = newWorldData;
     var sceneBuilder = new CityTour.Scene.Builder();
     var scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
@@ -522,6 +550,13 @@ var SceneView = function(containerEl, mapCamera, messageBroker) {
     }
 
     poleCamera = renderView.poleCamera();
+
+    timer = new CityTour.Timer();
+    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera);
+    timer.onTick = function(frameCount) {
+      animationManager.tick(frameCount);
+      renderView.render();
+    };
 
     updateCamera();
 
@@ -538,6 +573,7 @@ var SceneView = function(containerEl, mapCamera, messageBroker) {
 
   return {
     reset: reset,
+    toggleFlythrough: toggleFlythrough,
     domElement: function() { return renderView.domElement(); },
   };
 };
@@ -546,6 +582,7 @@ var SceneView = function(containerEl, mapCamera, messageBroker) {
 var CityEditorController = function(sceneView) {
   var editorToggleButton = document.getElementById("city-editor-toggle");
   var resetButton = document.getElementById("reset");
+  var flythroughToggle = document.getElementById("flythrough-toggle");
 
   var toggleCityEditor = function(e) {
     document.getElementById("city-editor").classList.toggle("display-none");
@@ -555,8 +592,15 @@ var CityEditorController = function(sceneView) {
     sceneView.reset(generateWorldData());
   };
 
+  var toggleFlythrough = function(e) {
+    flythroughToggle.innerText = (flythroughToggle.innerText === "Take a Tour") ? "Stop Tour" : "Take a Tour";
+
+    sceneView.toggleFlythrough();
+  };
+
   editorToggleButton.addEventListener('click', toggleCityEditor, false);
   resetButton.addEventListener('click', reset, false);
+  flythroughToggle.addEventListener('click', toggleFlythrough, false);
 };
 
 
