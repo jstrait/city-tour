@@ -459,6 +459,12 @@ var NavigationTouchController = function(el) {
   };
 
 
+  var calculateZoomDelta = function(previousTouchPoints, currentTouchPoints) {
+    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPoints[0].x, previousTouchPoints[0].z, previousTouchPoints[1].x, previousTouchPoints[1].z);
+    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPoints[0].x, currentTouchPoints[0].z, currentTouchPoints[1].x, currentTouchPoints[1].z);
+    return currentDistanceBetweenTouches - previousDistanceBetweenTouches;
+  };
+
   var touchPointsAreHorizontal = function(angleBetweenTouchPoints) {
     var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
     var HALF_PI = Math.PI / 2;
@@ -476,9 +482,7 @@ var NavigationTouchController = function(el) {
       return;
     }
 
-    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPoints[0].x, previousTouchPoints[0].z, previousTouchPoints[1].x, previousTouchPoints[1].z);
-    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPoints[0].x, currentTouchPoints[0].z, currentTouchPoints[1].x, currentTouchPoints[1].z);
-    var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
+    var distanceDelta = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
 
     var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
     var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
