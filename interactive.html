@@ -390,45 +390,8 @@ var NavigationController = function(messageBroker) {
   var id1 = messageBroker.addSubscriber("camera.updated", render);
 };
 
-var init = function() {
-  var container = document.getElementById("container");
-  var renderView = null, poleCamera;
 
-  var updateCamera = function(data) {
-    mapCamera.syncCamera(poleCamera);
-    renderView.render();
-  };
-
-  var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
-
-  new NavigationController(messageBroker);
-
-  var reset = function() {
-    var worldData = generateWorldData();
-
-    var sceneBuilder = new CityTour.Scene.Builder();
-    var scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
-
-    if (renderView === null) {
-      renderView = new CityTour.RenderView(container, scene);
-    }
-    else {
-      renderView.setScene(scene);
-    }
-
-    poleCamera = renderView.poleCamera();
-
-    updateCamera();
-
-    renderView.resize();
-    renderView.render();
-  };
-
-  reset();
-  container.appendChild(renderView.domElement());
-
-  window.addEventListener('resize', renderView.resize, false);
-
+var NavigationTouchController = function(el) {
   var startMouseDrag = function(e) {
     dragInProgress = true;
     previousDragsX = [e.clientX];
@@ -538,8 +501,6 @@ var init = function() {
 
     previousDragsX = currentDragsX;
     previousDragsZ = currentDragsZ;
-
-    updateCamera();
   };
 
   var stopDrag = function(e) {
@@ -553,12 +514,54 @@ var init = function() {
   var previousDragsZ;
   stopDrag();
 
-  renderView.domElement().addEventListener('mousedown', startMouseDrag, false);
-  renderView.domElement().addEventListener('touchstart', startTouchDrag, false);
-  renderView.domElement().addEventListener('mousemove', mouseDrag, false);
-  renderView.domElement().addEventListener('touchmove', touchDrag, false);
-  renderView.domElement().addEventListener('mouseup', stopDrag, false);
-  renderView.domElement().addEventListener('touchend', stopDrag, false);
+  el.addEventListener('mousedown', startMouseDrag, false);
+  el.addEventListener('touchstart', startTouchDrag, false);
+  el.addEventListener('mousemove', mouseDrag, false);
+  el.addEventListener('touchmove', touchDrag, false);
+  el.addEventListener('mouseup', stopDrag, false);
+  el.addEventListener('touchend', stopDrag, false);
+};
+
+
+var init = function() {
+  var container = document.getElementById("container");
+  var renderView = null, poleCamera;
+
+  var updateCamera = function(data) {
+    mapCamera.syncCamera(poleCamera);
+    renderView.render();
+  };
+
+  var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
+
+  var reset = function() {
+    var worldData = generateWorldData();
+
+    var sceneBuilder = new CityTour.Scene.Builder();
+    var scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
+
+    if (renderView === null) {
+      renderView = new CityTour.RenderView(container, scene);
+    }
+    else {
+      renderView.setScene(scene);
+    }
+
+    poleCamera = renderView.poleCamera();
+
+    updateCamera();
+
+    renderView.resize();
+    renderView.render();
+  };
+
+  reset();
+  container.appendChild(renderView.domElement());
+
+  new NavigationController(messageBroker);
+  new NavigationTouchController(renderView.domElement());
+
+  window.addEventListener('resize', renderView.resize, false);
 
   var resetButton = document.getElementById("reset");
   resetButton.addEventListener('click', reset, false);
