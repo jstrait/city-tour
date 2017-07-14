@@ -86,35 +86,16 @@ CityTour.RenderView = function(container, scene) {
 };
 
 
-CityTour.City = function(container) {
-  var scene, timer, animationManager;
-  var renderView;
-
-  var detectWebGL = function() {
-    if (!window.WebGLRenderingContext) {
-      return false;
-    }
-
-    // Adapted from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/webgl-extensions.js
-    var canvas = document.createElement('canvas');
-    var webgl_context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (webgl_context === null) {
-      return false;
-    }
-
-    return true;
-  };
-
-  var generateWorldData = function() {
+CityTour.WorldGenerator = function() {
+  var generate = function(config) {
     var GENERATE_BUILDINGS = true;
-    var PROBABILITY_OF_RIVER = 2 / 3;
 
     var combinedStartTime = new Date();
 
     var terrainConfig = {
-      heightJitter: 20,
-      heightJitterDecay: 0.65,
-      river: (Math.random() < PROBABILITY_OF_RIVER),
+      heightJitter: config.terrain.heightJitter,
+      heightJitterDecay: config.terrain.heightJitterDecay,
+      river: (Math.random() < config.terrain.probabilityOfRiver),
     };
 
     var terrainStartTime = new Date();
@@ -129,7 +110,7 @@ CityTour.City = function(container) {
     var roadConfig = {
       centerMapX: centerX,
       centerMapZ: centerZ,
-      safeFromDecayPercentage: 0.4,
+      safeFromDecayPercentage: config.roadNetwork.safeFromDecayPercentage,
     };
 
     var roadStartTime = new Date();
@@ -137,8 +118,8 @@ CityTour.City = function(container) {
     var roadEndTime = new Date();
 
     var zonedBlockConfig = {
-      percentageDistanceDecayBegins: 0.4,
-      maxBuildingStories: 40,
+      percentageDistanceDecayBegins: config.zonedBlocks.percentageDistanceDecayBegins,
+      maxBuildingStories: config.zonedBlocks.maxBuildingStories,
     };
 
     var zonedBlocksStartTime = new Date();
@@ -163,6 +144,51 @@ CityTour.City = function(container) {
       centerX: centerX,
       centerZ: centerZ,
     };
+  };
+
+  return {
+    generate: generate,
+  };
+};
+
+
+CityTour.City = function(container) {
+  var scene, timer, animationManager;
+  var renderView;
+  var worldGenerator = new CityTour.WorldGenerator();
+
+  var detectWebGL = function() {
+    if (!window.WebGLRenderingContext) {
+      return false;
+    }
+
+    // Adapted from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/webgl-extensions.js
+    var canvas = document.createElement('canvas');
+    var webgl_context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (webgl_context === null) {
+      return false;
+    }
+
+    return true;
+  };
+
+  var generateWorldData = function() {
+    var config = {
+      terrain: {
+        heightJitter: 20,
+        heightJitterDecay: 0.65,
+        probabilityOfRiver: (2 / 3),
+      },
+      roadNetwork: {
+        safeFromDecayPercentage: 0.4,
+      },
+      zonedBlocks: {
+        percentageDistanceDecayBegins: 0.4,
+        maxBuildingStories: 40,
+      },
+    };
+
+    return worldGenerator.generate(config);
   };
 
   var init = function(onComplete) {

@@ -150,62 +150,23 @@ input[type="range"] {
 "use strict";
 
 var generateWorldData = function() {
-  var GENERATE_BUILDINGS = true;
-
-  var combinedStartTime = new Date();
-
-  var terrainConfig = {
-    heightJitter: parseInt(document.getElementById("terrain-jitter").value),
-    heightJitterDecay: parseFloat(document.getElementById("terrain-decay").value),
-    river: document.getElementById("terrain-river").checked,
+  var config = {
+      terrain: {
+      heightJitter: parseInt(document.getElementById("terrain-jitter").value),
+      heightJitterDecay: parseFloat(document.getElementById("terrain-decay").value),
+      probabilityOfRiver: document.getElementById("terrain-river").checked ? 1.0 : 0.0,
+    },
+    roadNetwork: {
+      safeFromDecayPercentage: parseFloat(document.getElementById("roads-decay-distance-percentage").value),
+    },
+    zonedBlocks: {
+      percentageDistanceDecayBegins: parseFloat(document.getElementById("buildings-decay-distance-percentage").value),
+      maxBuildingStories: parseInt(document.getElementById("buildings-max-stories").value),
+    },
   };
 
-  var terrainStartTime = new Date();
-  var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS, terrainConfig);
-  var terrainEndTime = new Date();
-
-  var centerX = 0, centerZ = 0;
-  while(terrain.materialAtCoordinates(centerX, centerZ) != CityTour.Terrain.LAND) {
-    centerZ -= 1;
-  }
-
-  var roadConfig = {
-    centerMapX: centerX,
-    centerMapZ: centerZ,
-    safeFromDecayPercentage: parseFloat(document.getElementById("roads-decay-distance-percentage").value),
-  };
-
-  var roadStartTime = new Date();
-  var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, roadConfig);
-  var roadEndTime = new Date();
-
-  var zonedBlockConfig = {
-    percentageDistanceDecayBegins: parseFloat(document.getElementById("buildings-decay-distance-percentage").value),
-    maxBuildingStories: parseInt(document.getElementById("buildings-max-stories").value),
-  };
-
-  var zonedBlocksStartTime = new Date();
-  var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig) : false;
-  var zonedBlocksEndTime = new Date();
-  var buildingsStartTime = new Date();
-  var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
-  var buildingsEndTime = new Date();
-
-  var combinedEndTime = new Date();
-
-  console.log("Time to generate world data: " + (combinedEndTime - combinedStartTime) + "ms");
-  console.log("  Terrain:      " + (terrainEndTime - terrainStartTime) + "ms");
-  console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
-  console.log("  Lots:         " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
-  console.log("  Buildings:    " + (buildingsEndTime - buildingsStartTime) + "ms");
-
-  return {
-    terrain: terrain,
-    roadNetwork: roadNetwork,
-    buildings: buildings,
-    centerX: centerX,
-    centerZ: centerZ,
-  };
+  var worldGenerator = new CityTour.WorldGenerator();
+  return new worldGenerator.generate(config);
 };
 
 
