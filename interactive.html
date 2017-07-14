@@ -392,10 +392,14 @@ var NavigationController = function(messageBroker) {
 
 
 var NavigationTouchController = function(el) {
+  var dragInProgress;
+  var previousTouchPointsX;
+  var previousTouchPointsZ;
+
   var startMouseDrag = function(e) {
     dragInProgress = true;
-    previousDragsX = [e.clientX];
-    previousDragsZ = [e.clientY];
+    previousTouchPointsX = [e.clientX];
+    previousTouchPointsZ = [e.clientY];
   };
 
   var startTouchDrag = function(e) {
@@ -403,12 +407,12 @@ var NavigationTouchController = function(el) {
 
     dragInProgress = true;
 
-    previousDragsX = [];
-    previousDragsZ = [];
+    previousTouchPointsX = [];
+    previousTouchPointsZ = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      previousDragsX.push(touch.clientX);
-      previousDragsZ.push(touch.clientY);
+      previousTouchPointsX.push(touch.clientX);
+      previousTouchPointsZ.push(touch.clientY);
     }
 
     e.preventDefault();
@@ -419,35 +423,35 @@ var NavigationTouchController = function(el) {
       return;
     }
 
-    var currentDragsX = [e.clientX];
-    var currentDragsZ = [e.clientY];
+    var currentTouchPointsX = [e.clientX];
+    var currentTouchPointsZ = [e.clientY];
 
-    drag(currentDragsX, currentDragsZ);
+    drag(currentTouchPointsX, currentTouchPointsZ);
   };
 
   var touchDrag = function(e) {
     var i, touch;
-    var currentDragsX, currentDragsZ;
+    var currentTouchPointsX, currentTouchPointsZ;
 
     if (!dragInProgress) {
       return;
     }
 
-    currentDragsX = [];
-    currentDragsZ = [];
+    currentTouchPointsX = [];
+    currentTouchPointsZ = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      currentDragsX.push(touch.clientX);
-      currentDragsZ.push(touch.clientY);
+      currentTouchPointsX.push(touch.clientX);
+      currentTouchPointsZ.push(touch.clientY);
     }
 
-    drag(currentDragsX, currentDragsZ);
+    drag(currentTouchPointsX, currentTouchPointsZ);
   };
 
-  var syncPan = function(currentDragsX, currentDragsZ) {
+  var syncPan = function(currentTouchPointsX, currentTouchPointsZ) {
     var rotationY = mapCamera.rotationAngle();
-    var dragXDistanceInPixels = currentDragsX[0] - previousDragsX[0];
-    var dragZDistanceInPixels = currentDragsZ[0] - previousDragsZ[0];
+    var dragXDistanceInPixels = currentTouchPointsX[0] - previousTouchPointsX[0];
+    var dragZDistanceInPixels = currentTouchPointsZ[0] - previousTouchPointsZ[0];
     var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
     var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
 
@@ -458,29 +462,29 @@ var NavigationTouchController = function(el) {
     mapCamera.setCenterZ(mapCamera.centerZ() + rotatedDragZDistance);
   };
 
-  var syncZoom = function(currentDragsX, currentDragsZ) {
-    if (previousDragsX.length !== 2) {
+  var syncZoom = function(currentTouchPointsX, currentTouchPointsZ) {
+    if (previousTouchPointsX.length !== 2) {
       return;
     }
 
     // Zoom
-    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousDragsX[0], previousDragsZ[0], previousDragsX[1], previousDragsZ[1]);
-    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentDragsX[0], currentDragsZ[0], currentDragsX[1], currentDragsZ[1]);
+    var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPointsX[0], previousTouchPointsZ[0], previousTouchPointsX[1], previousTouchPointsZ[1]);
+    var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPointsX[0], currentTouchPointsZ[0], currentTouchPointsX[1], currentTouchPointsZ[1]);
     var distanceDelta = currentDistanceBetweenTouches - previousDistanceBetweenTouches;
 
     var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
     mapCamera.setZoomPercentage(newZoomPercentage);
 
 
-    var previousAngleBetweenTouches = Math.atan2(-(previousDragsX[1] - previousDragsX[0]), -(previousDragsZ[1] - previousDragsZ[0]));
-    var currentAngleBetweenTouches = Math.atan2(-(currentDragsX[1] - currentDragsX[0]), -(currentDragsZ[1] - currentDragsZ[0]));
+    var previousAngleBetweenTouches = Math.atan2(-(previousTouchPointsX[1] - previousTouchPointsX[0]), -(previousTouchPointsZ[1] - previousTouchPointsZ[0]));
+    var currentAngleBetweenTouches = Math.atan2(-(currentTouchPointsX[1] - currentTouchPointsX[0]), -(currentTouchPointsZ[1] - currentTouchPointsZ[0]));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
     var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
     var HALF_PI = Math.PI / 2;
     if (Math.abs(currentAngleBetweenTouches) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
         Math.abs(currentAngleBetweenTouches) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION)) {
-      var yDistanceDelta = currentDragsZ[0] - previousDragsZ[0];
+      var yDistanceDelta = currentTouchPointsZ[0] - previousTouchPointsZ[0];
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
     }
@@ -491,27 +495,25 @@ var NavigationTouchController = function(el) {
     }
   };
 
-  var drag = function(currentDragsX, currentDragsZ) {
-    if (currentDragsX.length === 1) {
-      syncPan(currentDragsX, currentDragsZ);
+  var drag = function(currentTouchPointsX, currentTouchPointsZ) {
+    if (currentTouchPointsX.length === 1) {
+      syncPan(currentTouchPointsX, currentTouchPointsZ);
     }
-    else if (currentDragsX.length === 2) {
-      syncZoom(currentDragsX, currentDragsZ);
+    else if (currentTouchPointsX.length === 2) {
+      syncZoom(currentTouchPointsX, currentTouchPointsZ);
     }
 
-    previousDragsX = currentDragsX;
-    previousDragsZ = currentDragsZ;
+    previousTouchPointsX = currentTouchPointsX;
+    previousTouchPointsZ = currentTouchPointsZ;
   };
 
   var stopDrag = function(e) {
     dragInProgress = false;
-    previousDragsX = [];
-    previousDragsZ = [];
+    previousTouchPointsX = [];
+    previousTouchPointsZ = [];
   };
 
-  var dragInProgress;
-  var previousDragsX;
-  var previousDragsZ;
+
   stopDrag();
 
   el.addEventListener('mousedown', startMouseDrag, false);
