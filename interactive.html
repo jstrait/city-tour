@@ -166,8 +166,7 @@ var generateWorldData = function() {
     },
   };
 
-  var worldGenerator = new CityTour.WorldGenerator();
-  return new worldGenerator.generate(config);
+  return CityTour.WorldGenerator.generate(config);
 };
 
 
