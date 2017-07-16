@@ -364,12 +364,12 @@ var NavigationTouchController = function(el, mapCamera) {
   var currentGesture;
   var previousTouchPoints;
 
-  var startMouseDrag = function(e) {
+  var onMouseDown = function(e) {
     gestureInProgress = true;
     previousTouchPoints = [{x: e.clientX, z: e.clientY}];
   };
 
-  var startTouchDrag = function(e) {
+  var onTouchStart = function(e) {
     var i, touch;
 
     gestureInProgress = true;
@@ -383,7 +383,7 @@ var NavigationTouchController = function(el, mapCamera) {
     e.preventDefault();
   };
 
-  var mouseDrag = function(e) {
+  var onMouseMove = function(e) {
     if (!gestureInProgress) {
       return;
     }
@@ -391,7 +391,7 @@ var NavigationTouchController = function(el, mapCamera) {
     processGesture([{x: e.clientX, z: e.clientY}]);
   };
 
-  var touchGesture = function(e) {
+  var onTouchMove = function(e) {
     var i, touch;
     var currentTouchPoints;
 
@@ -408,7 +408,13 @@ var NavigationTouchController = function(el, mapCamera) {
     processGesture(currentTouchPoints);
   };
 
-  var stopGesture = function(e) {
+  var onMouseUp = function(e) {
+    gestureInProgress = false;
+    currentGesture = undefined;
+    previousTouchPoints = [];
+  };
+
+  var onTouchEnd = function(e) {
     gestureInProgress = false;
     currentGesture = undefined;
     previousTouchPoints = [];
@@ -499,14 +505,14 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
 
-  stopGesture();
+  onMouseUp();
 
-  el.addEventListener('mousedown', startMouseDrag, false);
-  el.addEventListener('touchstart', startTouchDrag, false);
-  el.addEventListener('mousemove', mouseDrag, false);
-  el.addEventListener('touchmove', touchGesture, false);
-  el.addEventListener('mouseup', stopGesture, false);
-  el.addEventListener('touchend', stopGesture, false);
+  el.addEventListener('mousedown', onMouseDown, false);
+  el.addEventListener('touchstart', onTouchStart, false);
+  el.addEventListener('mousemove', onMouseMove, false);
+  el.addEventListener('touchmove', onTouchMove, false);
+  el.addEventListener('mouseup', onMouseUp, false);
+  el.addEventListener('touchend', onTouchEnd, false);
 };
 
 
