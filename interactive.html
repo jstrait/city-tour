@@ -356,7 +356,7 @@ var NavigationController = function(mapCamera, messageBroker) {
 
 var NavigationTouchController = function(el, mapCamera) {
   var gestureInProgress;
-  var twoTouchPointMode;
+  var currentGesture;
   var previousTouchPoints;
 
   var startMouseDrag = function(e) {
@@ -405,7 +405,7 @@ var NavigationTouchController = function(el, mapCamera) {
 
   var stopGesture = function(e) {
     gestureInProgress = false;
-    twoTouchPointMode = undefined;
+    currentGesture = undefined;
     previousTouchPoints = [];
   };
 
@@ -452,12 +452,9 @@ var NavigationTouchController = function(el, mapCamera) {
       return;
     }
 
-    if (twoTouchPointMode === undefined) {
+    if (currentGesture === undefined) {
       if (touchPointsAreHorizontal(currentAngleBetweenTouches)) {
-        twoTouchPointMode = 'tilt';
-      }
-      else {
-        twoTouchPointMode = 'non_tilt';
+        currentGesture = 'tilt';
       }
     }
 
@@ -465,16 +462,18 @@ var NavigationTouchController = function(el, mapCamera) {
     var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
-    if (twoTouchPointMode === 'tilt') {
+    if (currentGesture === 'tilt') {
       var yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
     }
     else if (rotationYActive(angleDelta)) {
+      currentGesture = 'rotation';
       var newRotationAngle = mapCamera.rotationAngle() + angleDelta;
       mapCamera.setRotationAngle(newRotationAngle);
     }
     else {
+      currentGesture = 'pinch-zoom';
       var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
       mapCamera.setZoomPercentage(newZoomPercentage);
     }
@@ -482,6 +481,7 @@ var NavigationTouchController = function(el, mapCamera) {
 
   var processGesture = function(currentTouchPoints) {
     if (currentTouchPoints.length === 1) {
+      currentGesture = 'pan';
       panCamera(currentTouchPoints);
     }
     else if (currentTouchPoints.length === 2) {
