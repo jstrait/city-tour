@@ -150,26 +150,6 @@ input[type="range"] {
 <script type="text/javascript">
 "use strict";
 
-var generateWorldData = function() {
-  var config = {
-      terrain: {
-      heightJitter: parseInt(document.getElementById("terrain-jitter").value),
-      heightJitterDecay: parseFloat(document.getElementById("terrain-decay").value),
-      probabilityOfRiver: document.getElementById("terrain-river").checked ? 1.0 : 0.0,
-    },
-    roadNetwork: {
-      safeFromDecayPercentage: parseFloat(document.getElementById("roads-decay-distance-percentage").value),
-    },
-    zonedBlocks: {
-      percentageDistanceDecayBegins: parseFloat(document.getElementById("buildings-decay-distance-percentage").value),
-      maxBuildingStories: parseInt(document.getElementById("buildings-max-stories").value),
-    },
-  };
-
-  return CityTour.WorldGenerator.generate(config);
-};
-
-
 var MapCamera = function(messageBroker) {
   var TWO_PI = Math.PI * 2;
 
@@ -473,7 +453,7 @@ var NavigationTouchController = function(el, mapCamera) {
 };
 
 
-var SceneView = function(containerEl, mapCamera, messageBroker) {
+var SceneView = function(containerEl, initialWorldConfig, mapCamera, messageBroker) {
   var worldData;
   var renderView = null, poleCamera;
   var timer;
@@ -508,8 +488,8 @@ var SceneView = function(containerEl, mapCamera, messageBroker) {
     }
   };
 
-  var reset = function(newWorldData) {
-    worldData = newWorldData;
+  var reset = function(newWorldConfig) {
+    worldData = CityTour.WorldGenerator.generate(newWorldConfig);
     var sceneBuilder = new CityTour.Scene.Builder();
     var scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
@@ -535,7 +515,7 @@ var SceneView = function(containerEl, mapCamera, messageBroker) {
     renderView.render();
   };
 
-  reset(generateWorldData());
+  reset(initialWorldConfig);
   containerEl.appendChild(renderView.domElement());
 
   window.addEventListener('resize', renderView.resize, false);
@@ -550,8 +530,60 @@ var SceneView = function(containerEl, mapCamera, messageBroker) {
 };
 
 
-var CityEditorController = function(sceneView) {
+var CityConfigService = function() {
+  var heightJitter = 20;
+  var heightJitterDecay = 0.65;
+  var includeRiver = true;
+  var safeFromDecayPercentage = 0.4;
+  var percentageDistanceDecayBegins = 0.4;
+  var maxBuildingStories = 40;
+
+  var toWorldConfig = function() {
+    return {
+      terrain: {
+        heightJitter: heightJitter,
+        heightJitterDecay: heightJitterDecay,
+        probabilityOfRiver: includeRiver ? 1.0 : 0.0,
+      },
+      roadNetwork: {
+        safeFromDecayPercentage: safeFromDecayPercentage,
+      },
+      zonedBlocks: {
+        percentageDistanceDecayBegins: percentageDistanceDecayBegins,
+        maxBuildingStories: maxBuildingStories,
+      },
+    };
+  };
+
+
+  return {
+    heightJitter: function() { return heightJitter; },
+    setHeightJitter: function(newHeightJitter) { heightJitter = newHeightJitter; },
+    heightJitterDecay: function() { return heightJitterDecay; },
+    setHeightJitterDecay: function(newHeightJitterDecay) { heightJitterDecay = newHeightJitterDecay; },
+    includeRiver: function() { return includeRiver; },
+    setIncludeRiver: function(newIncludeRiver) { includeRiver = newIncludeRiver; },
+    safeFromDecayPercentage: function() { return safeFromDecayPercentage; },
+    setSafeFromDecayPercentage: function(newSafeFromDecayPercentage) { safeFromDecayPercentage = newSafeFromDecayPercentage; },
+    percentageDistanceDecayBegins: function() { return percentageDistanceDecayBegins; },
+    setPercentageDistanceDecayBegins: function(newPercentageDistanceDecayBegins) { percentageDistanceDecayBegins = newPercentageDistanceDecayBegins; },
+    maxBuildingStories: function() { return maxBuildingStories; },
+    setMaxBuildingStories: function(newMaxBuildingStories) { maxBuildingStories = newMaxBuildingStories; },
+    toWorldConfig: toWorldConfig,
+  };
+};
+
+
+var CityEditorController = function(cityConfigService, sceneView) {
   var editorToggleButton = document.getElementById("city-editor-toggle");
+
+  var terrainJitter = document.getElementById("terrain-jitter");
+  var heightJitterDecay = document.getElementById("terrain-decay");
+  var includeRiver = document.getElementById("terrain-river");
+  var safeFromDecayPercentage = document.getElementById("roads-decay-distance-percentage");
+  var percentageDistanceDecayBegins = document.getElementById("buildings-decay-distance-percentage");
+  var maxBuildingStories = document.getElementById("buildings-max-stories");
+
   var resetButton = document.getElementById("reset");
   var flythroughToggle = document.getElementById("flythrough-toggle");
 
@@ -560,7 +592,7 @@ var CityEditorController = function(sceneView) {
   };
 
   var reset = function(e) {
-    sceneView.reset(generateWorldData());
+    sceneView.reset(cityConfigService.toWorldConfig());
   };
 
   var toggleFlythrough = function(e) {
@@ -568,6 +600,13 @@ var CityEditorController = function(sceneView) {
 
     sceneView.toggleFlythrough();
   };
+
+  terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
+  heightJitterDecay.addEventListener('change', function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
+  includeRiver.addEventListener('change', function(e) { cityConfigService.setIncludeRiver(e.target.value === "on"); }, false);
+  safeFromDecayPercentage.addEventListener('change', function(e) { cityConfigService.setSafeFromDecayPercentage(parseFloat(e.target.value)); }, false);
+  percentageDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setPercentageDistanceDecayBegins(parseFloat(e.target.value)); }, false);
+  maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
 
   editorToggleButton.addEventListener('click', toggleCityEditor, false);
   resetButton.addEventListener('click', reset, false);
@@ -578,9 +617,10 @@ var CityEditorController = function(sceneView) {
 var init = function() {
   var messageBroker = new CityTour.MessageBroker();
   var mapCamera = new MapCamera(messageBroker);
-  var sceneView = new SceneView(document.getElementById("container"), mapCamera, messageBroker);
+  var cityConfigService = new CityConfigService();
+  var sceneView = new SceneView(document.getElementById("container"), cityConfigService.toWorldConfig(), mapCamera, messageBroker);
 
-  new CityEditorController(sceneView);
+  new CityEditorController(cityConfigService, sceneView);
   new NavigationController(mapCamera, messageBroker);
   new NavigationTouchController(sceneView.domElement(), mapCamera);
 };
