@@ -451,36 +451,38 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
   var processMultiTouchGestures = function(currentTouchPoints) {
-    var currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
+    var previousAngleBetweenTouches, currentAngleBetweenTouches;
+    var yDistanceDelta;
+    var rotationAngleDelta;
+    var distanceBetweenTouches;
 
     if (previousTouchPoints.length !== 2) {
       return;
     }
 
-    if (currentGesture === undefined) {
-      if (touchPointsAreHorizontal(currentAngleBetweenTouches)) {
-        currentGesture = TILT;
-      }
-    }
+    currentAngleBetweenTouches = Math.atan2(-(currentTouchPoints[1].x - currentTouchPoints[0].x), -(currentTouchPoints[1].z - currentTouchPoints[0].z));
 
-    var distanceDelta = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
-    var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
-    var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
+    if (currentGesture === undefined && touchPointsAreHorizontal(currentAngleBetweenTouches)) {
+      currentGesture = TILT;
+    }
 
     if (currentGesture === TILT) {
-      var yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
-      var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
-      mapCamera.setTiltPercentage(newTiltPercentage);
-    }
-    else if (rotationYActive(angleDelta)) {
-      currentGesture = ROTATE;
-      var newRotationAngle = mapCamera.rotationAngle() + angleDelta;
-      mapCamera.setRotationAngle(newRotationAngle);
+      yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
+      mapCamera.setTiltPercentage(mapCamera.tiltPercentage() + (yDistanceDelta / 100));
     }
     else {
-      currentGesture = PINCH_ZOOM;
-      var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
-      mapCamera.setZoomPercentage(newZoomPercentage);
+      previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
+      rotationAngleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
+
+      if (rotationYActive(rotationAngleDelta)) {
+        currentGesture = ROTATE;
+        mapCamera.setRotationAngle(mapCamera.rotationAngle() + rotationAngleDelta);
+      }
+      else {
+        currentGesture = PINCH_ZOOM;
+        distanceBetweenTouches = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
+        mapCamera.setZoomPercentage(mapCamera.zoomPercentage() + (distanceBetweenTouches / 200));
+      }
     }
   };
 
