@@ -355,6 +355,11 @@ var NavigationController = function(mapCamera, messageBroker) {
 
 
 var NavigationTouchController = function(el, mapCamera) {
+  var PAN = 1;
+  var TILT = 2;
+  var ROTATE = 3;
+  var PINCH_ZOOM = 4;
+
   var gestureInProgress;
   var currentGesture;
   var previousTouchPoints;
@@ -454,7 +459,7 @@ var NavigationTouchController = function(el, mapCamera) {
 
     if (currentGesture === undefined) {
       if (touchPointsAreHorizontal(currentAngleBetweenTouches)) {
-        currentGesture = 'tilt';
+        currentGesture = TILT;
       }
     }
 
@@ -462,18 +467,18 @@ var NavigationTouchController = function(el, mapCamera) {
     var previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
     var angleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
-    if (currentGesture === 'tilt') {
+    if (currentGesture === TILT) {
       var yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       var newTiltPercentage = mapCamera.tiltPercentage() + (yDistanceDelta / 100);
       mapCamera.setTiltPercentage(newTiltPercentage);
     }
     else if (rotationYActive(angleDelta)) {
-      currentGesture = 'rotation';
+      currentGesture = ROTATE;
       var newRotationAngle = mapCamera.rotationAngle() + angleDelta;
       mapCamera.setRotationAngle(newRotationAngle);
     }
     else {
-      currentGesture = 'pinch-zoom';
+      currentGesture = PINCH_ZOOM;
       var newZoomPercentage = mapCamera.zoomPercentage() + (distanceDelta / 200);
       mapCamera.setZoomPercentage(newZoomPercentage);
     }
@@ -481,7 +486,7 @@ var NavigationTouchController = function(el, mapCamera) {
 
   var processGesture = function(currentTouchPoints) {
     if (currentTouchPoints.length === 1) {
-      currentGesture = 'pan';
+      currentGesture = PAN;
       panCamera(currentTouchPoints);
     }
     else if (currentTouchPoints.length === 2) {
