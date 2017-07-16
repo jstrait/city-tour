@@ -360,19 +360,15 @@ var NavigationTouchController = function(el, mapCamera) {
   var ROTATE = 3;
   var PINCH_ZOOM = 4;
 
-  var gestureInProgress;
   var currentGesture;
   var previousTouchPoints;
 
   var onMouseDown = function(e) {
-    gestureInProgress = true;
     previousTouchPoints = [{x: e.clientX, z: e.clientY}];
   };
 
   var onTouchStart = function(e) {
     var i, touch;
-
-    gestureInProgress = true;
 
     previousTouchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
@@ -384,7 +380,7 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
   var onMouseMove = function(e) {
-    if (!gestureInProgress) {
+    if (previousTouchPoints < 1) {
       return;
     }
 
@@ -394,10 +390,6 @@ var NavigationTouchController = function(el, mapCamera) {
   var onTouchMove = function(e) {
     var i, touch;
     var currentTouchPoints;
-
-    if (!gestureInProgress) {
-      return;
-    }
 
     currentTouchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
@@ -409,13 +401,11 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
   var onMouseUp = function(e) {
-    gestureInProgress = false;
     currentGesture = undefined;
     previousTouchPoints = [];
   };
 
   var onTouchEnd = function(e) {
-    gestureInProgress = false;
     currentGesture = undefined;
     previousTouchPoints = [];
   };
