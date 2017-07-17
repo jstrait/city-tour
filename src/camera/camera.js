@@ -152,6 +152,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
 
   var HORIZONTAL_MOTION_DELTA = 0.2;
   var Y_ROTATION_DELTA = 0.03;
+  var BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
 
   var MINIMUM_HEIGHT_OFF_GROUND = 0.5;
 
@@ -170,7 +171,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var angleBetweenStartAndTarget = Math.atan2(zPosition - targetSceneZ, targetSceneX - xPosition);
   var xPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.cos(angleBetweenStartAndTarget));
   var zPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.sin(angleBetweenStartAndTarget));
-  var xRotationDelta = 0.0155140377955;
+  var xRotationDelta = BIRDSEYE_X_ROTATION_DELTA;
   targetYRotation = angleBetweenStartAndTarget - HALF_PI;
 
   var distanceToTarget = CityTour.Math.distanceBetweenPoints(xPosition, zPosition, targetSceneX, targetSceneZ);
@@ -178,6 +179,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var terrainHeightAtTouchdown = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(targetSceneX),
                                                              CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
   var yPositionDelta = (yPosition - terrainHeightAtTouchdown) / framesUntilCityEdge;
+  var xRotationDelta = Math.abs(initial.rotationX - target.rotationX) / framesUntilCityEdge;
 
   var framesInCurrentVerticalMode = 0;
   var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
@@ -270,7 +272,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
         }
 
         yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-        xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+        xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, BIRDSEYE_X_ROTATION_DELTA);
 
         framesInCurrentVerticalMode = 0;
       }
