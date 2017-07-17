@@ -182,6 +182,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target, ini
   var yPositionDelta = initialYPositionDelta;
   var zPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.sin(angleBetweenStartAndTarget));
   var xRotationDelta = 0.0155140377955;
+  targetYRotation = angleBetweenStartAndTarget - HALF_PI;
 
   var framesInCurrentVerticalMode = 0;
   var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
@@ -239,7 +240,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target, ini
   var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
   var zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
   var xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-  var yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, 0.0, Y_ROTATION_DELTA);
+  var yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
 
   var vehicleController = {};
 
