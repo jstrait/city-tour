@@ -150,7 +150,7 @@ input[type="range"] {
 <script type="text/javascript">
 "use strict";
 
-var MapCamera = function(messageBroker) {
+var InteractiveCamera = function(messageBroker) {
   var TWO_PI = Math.PI * 2;
 
   var MIN_CENTER_X = -1000.0;
@@ -175,30 +175,30 @@ var MapCamera = function(messageBroker) {
     return Math.max(min, Math.min(max, value));
   };
 
-  var mapCamera = {};
+  var interactiveCamera = {};
 
-  mapCamera.centerX = function() { return centerX; };
-  mapCamera.centerZ = function() { return centerZ; };
-  mapCamera.setCenterCoordinates = function(newCenterX, newCenterZ) {
+  interactiveCamera.centerX = function() { return centerX; };
+  interactiveCamera.centerZ = function() { return centerZ; };
+  interactiveCamera.setCenterCoordinates = function(newCenterX, newCenterZ) {
     centerX = clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
     centerZ = clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
     messageBroker.publish("camera.updated", {});
   };
 
-  mapCamera.zoomPercentage = function() { return zoomPercentage; };
-  mapCamera.setZoomPercentage = function(newZoomPercentage) {
+  interactiveCamera.zoomPercentage = function() { return zoomPercentage; };
+  interactiveCamera.setZoomPercentage = function(newZoomPercentage) {
     zoomPercentage = clamp(newZoomPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
-  mapCamera.tiltPercentage = function() { return tiltPercentage; };
-  mapCamera.setTiltPercentage = function(newTiltPercentage) {
+  interactiveCamera.tiltPercentage = function() { return tiltPercentage; };
+  interactiveCamera.setTiltPercentage = function(newTiltPercentage) {
     tiltPercentage = clamp(newTiltPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
-  mapCamera.rotationAngle = function() { return rotationAngle; };
-  mapCamera.setRotationAngle = function(newRotationAngle) {
+  interactiveCamera.rotationAngle = function() { return rotationAngle; };
+  interactiveCamera.setRotationAngle = function(newRotationAngle) {
     rotationAngle = newRotationAngle;
 
     if (rotationAngle < -Math.PI) {
@@ -226,7 +226,7 @@ var MapCamera = function(messageBroker) {
   Adjacent == X/Z distance of camera from center point
   rotationY == rotation of this triangle around y-axis of center point
   */
-  mapCamera.syncCamera = function(poleCamera) {
+  interactiveCamera.syncCamera = function(poleCamera) {
     var tiltAngle = CityTour.Math.lerp(MAX_TILT_ANGLE, MIN_TILT_ANGLE, tiltPercentage);
     var zoom = CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage);
 
@@ -241,7 +241,7 @@ var MapCamera = function(messageBroker) {
     poleCamera.setRotationY(rotationAngle);
   };
 
-  mapCamera.syncFromPoleCamera = function(poleCamera) {
+  interactiveCamera.syncFromPoleCamera = function(poleCamera) {
     rotationAngle = poleCamera.rotationY();
     var tiltAngle = Math.min(MAX_TILT_ANGLE, poleCamera.rotationX());
     tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
@@ -257,11 +257,11 @@ var MapCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  return mapCamera;
+  return interactiveCamera;
 };
 
 
-var NavigationController = function(mapCamera, messageBroker) {
+var NavigationController = function(interactiveCamera, messageBroker) {
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");
@@ -269,24 +269,24 @@ var NavigationController = function(mapCamera, messageBroker) {
   var zoomControl = document.getElementById("zoom");
 
   var render = function(data) {
-    centerXControl.value = mapCamera.centerX();
-    centerZControl.value = mapCamera.centerZ();
-    rotationYControl.value = mapCamera.rotationAngle();
-    rotationXControl.value = mapCamera.tiltPercentage();
-    zoomControl.value = mapCamera.zoomPercentage();
+    centerXControl.value = interactiveCamera.centerX();
+    centerZControl.value = interactiveCamera.centerZ();
+    rotationYControl.value = interactiveCamera.rotationAngle();
+    rotationXControl.value = interactiveCamera.tiltPercentage();
+    zoomControl.value = interactiveCamera.zoomPercentage();
   };
 
   var setCenterCoordinates = function(e) {
-    mapCamera.setCenterCoordinates(parseFloat(centerXControl.value), parseFloat(centerZControl.value));
+    interactiveCamera.setCenterCoordinates(parseFloat(centerXControl.value), parseFloat(centerZControl.value));
   };
   var setRotationAngle = function(e) {
-    mapCamera.setRotationAngle(parseFloat(rotationYControl.value));
+    interactiveCamera.setRotationAngle(parseFloat(rotationYControl.value));
   };
   var setTiltAngle = function(e) {
-    mapCamera.setTiltPercentage(parseFloat(rotationXControl.value));
+    interactiveCamera.setTiltPercentage(parseFloat(rotationXControl.value));
   };
   var setZoomPercentage = function(e) {
-    mapCamera.setZoomPercentage(parseFloat(zoomControl.value));
+    interactiveCamera.setZoomPercentage(parseFloat(zoomControl.value));
   };
 
   centerXControl.addEventListener('input', setCenterCoordinates, false);
@@ -301,7 +301,7 @@ var NavigationController = function(mapCamera, messageBroker) {
 };
 
 
-var NavigationTouchController = function(el, mapCamera) {
+var NavigationTouchController = function(el, interactiveCamera) {
   var PAN = 1;
   var TILT = 2;
   var ROTATE = 3;
@@ -358,20 +358,20 @@ var NavigationTouchController = function(el, mapCamera) {
   };
 
   var panCamera = function(currentTouchPoints) {
-    var rotationY = mapCamera.rotationAngle();
+    var rotationY = interactiveCamera.rotationAngle();
     var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
     var dragZDistanceInPixels = currentTouchPoints[0].z - previousTouchPoints[0].z;
     var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
 
     // Scale the drag distance based on the camera zoom. If zoomed in, dragging should
     // move the camera less than if the camera is zoomed out.
-    var zoomMultiplier = (((1 - mapCamera.zoomPercentage()) * 0.92)) + 0.08;
+    var zoomMultiplier = (((1 - interactiveCamera.zoomPercentage()) * 0.92)) + 0.08;
     var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
     var scaledDragDistanceInPixels = totalDragDistanceInPixels * zoomMultiplier;
 
     var rotatedDragXDistance = scaledDragDistanceInPixels * Math.cos(dragAngle - rotationY);
     var rotatedDragZDistance = scaledDragDistanceInPixels * Math.sin(dragAngle - rotationY);
-    mapCamera.setCenterCoordinates(mapCamera.centerX() + rotatedDragXDistance, mapCamera.centerZ() + rotatedDragZDistance);
+    interactiveCamera.setCenterCoordinates(interactiveCamera.centerX() + rotatedDragXDistance, interactiveCamera.centerZ() + rotatedDragZDistance);
   };
 
 
@@ -411,7 +411,7 @@ var NavigationTouchController = function(el, mapCamera) {
 
     if (currentGesture === TILT) {
       yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
-      mapCamera.setTiltPercentage(mapCamera.tiltPercentage() + (yDistanceDelta / 100));
+      interactiveCamera.setTiltPercentage(interactiveCamera.tiltPercentage() + (yDistanceDelta / 100));
     }
     else {
       previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
@@ -419,12 +419,12 @@ var NavigationTouchController = function(el, mapCamera) {
 
       if (rotationYActive(rotationAngleDelta)) {
         currentGesture = ROTATE;
-        mapCamera.setRotationAngle(mapCamera.rotationAngle() + rotationAngleDelta);
+        interactiveCamera.setRotationAngle(interactiveCamera.rotationAngle() + rotationAngleDelta);
       }
       else {
         currentGesture = PINCH_ZOOM;
         distanceBetweenTouches = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
-        mapCamera.setZoomPercentage(mapCamera.zoomPercentage() + (distanceBetweenTouches / 200));
+        interactiveCamera.setZoomPercentage(interactiveCamera.zoomPercentage() + (distanceBetweenTouches / 200));
       }
     }
   };
@@ -453,7 +453,7 @@ var NavigationTouchController = function(el, mapCamera) {
 };
 
 
-var SceneView = function(containerEl, initialWorldConfig, mapCamera, messageBroker) {
+var SceneView = function(containerEl, initialWorldConfig, interactiveCamera, messageBroker) {
   var worldData;
   var renderView = null, poleCamera;
   var timer;
@@ -461,7 +461,7 @@ var SceneView = function(containerEl, initialWorldConfig, mapCamera, messageBrok
   var mode = 'interactive';
 
   var updateCamera = function(data) {
-    mapCamera.syncCamera(poleCamera);
+    interactiveCamera.syncCamera(poleCamera);
     renderView.render();
   };
 
@@ -474,7 +474,7 @@ var SceneView = function(containerEl, initialWorldConfig, mapCamera, messageBrok
 
   var stopFlythrough = function() {
     timer.togglePause();
-    mapCamera.syncFromPoleCamera(poleCamera);
+    interactiveCamera.syncFromPoleCamera(poleCamera);
     updateCamera();
     mode = 'interactive';
   };
@@ -616,13 +616,13 @@ var CityEditorController = function(cityConfigService, sceneView) {
 
 var init = function() {
   var messageBroker = new CityTour.MessageBroker();
-  var mapCamera = new MapCamera(messageBroker);
+  var interactiveCamera = new InteractiveCamera(messageBroker);
   var cityConfigService = new CityConfigService();
-  var sceneView = new SceneView(document.getElementById("container"), cityConfigService.toWorldConfig(), mapCamera, messageBroker);
+  var sceneView = new SceneView(document.getElementById("container"), cityConfigService.toWorldConfig(), interactiveCamera, messageBroker);
 
   new CityEditorController(cityConfigService, sceneView);
-  new NavigationController(mapCamera, messageBroker);
-  new NavigationTouchController(sceneView.domElement(), mapCamera);
+  new NavigationController(interactiveCamera, messageBroker);
+  new NavigationTouchController(sceneView.domElement(), interactiveCamera);
 };
 init();
 </script>
