@@ -52,11 +52,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     poleCamera.setRotationY(currentController.yRotation());
   }
 
-  animationManager.init = function(centerX, centerZ) {
-    var INITIAL_X_POSITION = centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH;
-    var INITIAL_Y_POSITION = 40;
-    var INITIAL_X_ROTATION = 0.0;
-    var INITIAL_Y_ROTATION = 0.0;
+  animationManager.init = function(centerX, centerZ, initialXPosition, initialYPosition, initialXRotation, initialYRotation) {
     var SWOOP_DISTANCE_IN_BLOCKS = 20;
     var DISTANCE_TO_CITY_EDGE = SWOOP_DISTANCE_IN_BLOCKS * CityTour.Config.BLOCK_AND_STREET_DEPTH;
 
@@ -68,23 +64,23 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     var initialZPosition = (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH;
     var framesUntilCityEdge = Math.abs(DISTANCE_TO_CITY_EDGE / 0.2);
     var terrainHeightAtTouchdown = terrain.heightAtCoordinates(centerX, furthestOutIntersection);
-    var swoopDescentDelta = (INITIAL_Y_POSITION - terrainHeightAtTouchdown) / framesUntilCityEdge;
+    var swoopDescentDelta = (initialYPosition - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     vehicleController = new CityTour.VehicleController(terrain,
                                                        roadNetwork,
                                                        {
-                                                         positionX: INITIAL_X_POSITION,
-                                                         positionY: INITIAL_Y_POSITION,
+                                                         positionX: initialXPosition,
+                                                         positionY: initialYPosition,
                                                          positionZ: initialZPosition,
-                                                         rotationX: INITIAL_X_ROTATION,
-                                                         rotationY: INITIAL_Y_ROTATION,
+                                                         rotationX: initialXRotation,
+                                                         rotationY: initialYRotation,
                                                        },
                                                        {
                                                          positionX: CityTour.Coordinates.mapXToSceneX(centerX),
                                                          positionY: Number.NEGATIVE_INFINITY,
                                                          positionZ: initialTargetZPosition,
-                                                         rotationX: INITIAL_X_ROTATION,
-                                                         rotationY: INITIAL_Y_ROTATION,
+                                                         rotationX: 0.0,
+                                                         rotationY: initialYRotation,
                                                        },
                                                        swoopDescentDelta);
 

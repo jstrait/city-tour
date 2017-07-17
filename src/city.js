@@ -130,7 +130,11 @@ CityTour.City = function(container) {
       animationManager.tick(frameCount);
       renderView.render();
     }
-    animationManager.init(worldData.centerX, worldData.centerZ);
+    var initialXPosition = worldData.centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH;
+    var initialYPosition = 40;
+    var initialXRotation = 0.0;
+    var initialYRotation = 0.0;
+    animationManager.init(worldData.centerX, worldData.centerZ, initialXPosition, initialYPosition, initialXRotation, initialYRotation);
 
     timer.onTick(1);
     container.appendChild(renderView.domElement());
