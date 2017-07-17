@@ -177,9 +177,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target, ini
   var targetXRotation = target.rotationX;
   var targetYRotation = target.rotationY;
 
-  var xPositionDelta = 0.0;
+  var angleBetweenStartAndTarget = Math.atan2(zPosition - targetSceneZ, targetSceneX - xPosition);
+  var xPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.cos(angleBetweenStartAndTarget));
   var yPositionDelta = initialYPositionDelta;
-  var zPositionDelta = HORIZONTAL_MOTION_DELTA;
+  var zPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.sin(angleBetweenStartAndTarget));
   var xRotationDelta = 0.0155140377955;
 
   var framesInCurrentVerticalMode = 0;
