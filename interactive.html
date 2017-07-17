@@ -466,7 +466,7 @@ var SceneView = function(containerEl, initialWorldConfig, interactiveCamera, mes
   };
 
   var startFlythrough = function() {
-    animationManager.init(worldData.centerX, worldData.centerZ, poleCamera.positionX(), poleCamera.positionY(), poleCamera.rotationX(), poleCamera.rotationY());
+    animationManager.init(worldData.centerX, worldData.centerZ, poleCamera.positionX(), poleCamera.positionY(), poleCamera.positionZ(), poleCamera.rotationX(), poleCamera.rotationY());
     timer.onTick(1);
     timer.start();
     mode = 'flythrough';

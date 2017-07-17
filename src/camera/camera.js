@@ -52,18 +52,14 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     poleCamera.setRotationY(currentController.yRotation());
   }
 
-  animationManager.init = function(centerX, centerZ, initialXPosition, initialYPosition, initialXRotation, initialYRotation) {
-    var SWOOP_DISTANCE_IN_BLOCKS = 20;
-    var DISTANCE_TO_CITY_EDGE = SWOOP_DISTANCE_IN_BLOCKS * CityTour.Config.BLOCK_AND_STREET_DEPTH;
+  animationManager.init = function(targetMapX, targetMapZ, initialXPosition, initialYPosition, initialZPosition, initialXRotation, initialYRotation) {
+    var targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
+    var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
 
-    var furthestOutIntersection = centerZ + CityTour.Config.HALF_BLOCK_ROWS;
-    while (!roadNetwork.hasIntersection(centerX, furthestOutIntersection)) {
-      furthestOutIntersection -= 1;
-    }
-    var initialTargetZPosition = CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection);
-    var initialZPosition = (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH;
-    var framesUntilCityEdge = Math.abs(DISTANCE_TO_CITY_EDGE / 0.2);
-    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(centerX, furthestOutIntersection);
+    var DISTANCE_TO_TARGET = CityTour.Math.distanceBetweenPoints(initialXPosition, initialZPosition, targetSceneX, targetSceneZ);
+
+    var framesUntilCityEdge = Math.abs(DISTANCE_TO_TARGET / 0.2);
+    var terrainHeightAtTouchdown = terrain.heightAtCoordinates(targetMapX, targetMapZ);
     var swoopDescentDelta = (initialYPosition - terrainHeightAtTouchdown) / framesUntilCityEdge;
 
     vehicleController = new CityTour.VehicleController(terrain,
@@ -76,9 +72,9 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
                                                          rotationY: initialYRotation,
                                                        },
                                                        {
-                                                         positionX: CityTour.Coordinates.mapXToSceneX(centerX),
+                                                         positionX: targetSceneX,
                                                          positionY: Number.NEGATIVE_INFINITY,
-                                                         positionZ: initialTargetZPosition,
+                                                         positionZ: targetSceneZ,
                                                          rotationX: 0.0,
                                                          rotationY: initialYRotation,
                                                        },
@@ -238,7 +234,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target, ini
            zPosition === targetSceneZ;
   };
 
-  var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, 0.0, xPositionDelta);
+  var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
   var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
   var zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
   var xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
