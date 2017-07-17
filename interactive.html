@@ -55,7 +55,7 @@ input[type="range"] {
 </head>
 <body>
   <div id="container" class="full-width full-height">
-    <div class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
+    <div id="city-editor-container" class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
       <div style="overflow: auto;">
         <a id="city-editor-toggle" href="#" class="no-underline" style="float: right; color: #000;">☰</a>
       </div>
@@ -115,32 +115,34 @@ input[type="range"] {
 
     <div class="absolute" style="bottom: 0; right: 0; background: #fff; padding: 1.5rem;">
       <button id="flythrough-toggle">Take a Tour</button>
-      <span class="block" style="display: none;">
-        <label>X:</label>
-        <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
-      </span>
-      <span class="block" style="display: none;">
-        <label>Z:</label>
-        <input id="centerZ" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
-      </span>
-      <span class="block">
-        <label>Rotation</label>
-        <span class="control-legend">&olarr;</span>
-        <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
-        <span class="control-legend">&orarr;</span>
-      </span>
-      <span class="block">
-        <label>Tilt</label>
-        <span class="control-legend">&rarr;</span>
-        <input id="rotationX" type="range" value="0.2" min="0.0" max="1.0" step="0.001" />
-        <span class="control-legend">&darr;</span>
-      </span>
-      <span class="block">
-        <label>Zoom</label>
-        <span class="control-legend">&minus;</span>
-        <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
-        <span class="control-legend">+</span>
-      </span>
+      <div id="navigation-controls-container">
+        <span class="block" style="display: none;">
+          <label>X:</label>
+          <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
+        </span>
+        <span class="block" style="display: none;">
+          <label>Z:</label>
+          <input id="centerZ" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
+        </span>
+        <span class="block">
+          <label>Rotation</label>
+          <span class="control-legend">&olarr;</span>
+          <input id="rotationY" type="range" value="-0.5235987755983" min="-3.141592653589793" max="3.141592653589793" step="0.001" />
+          <span class="control-legend">&orarr;</span>
+        </span>
+        <span class="block">
+          <label>Tilt</label>
+          <span class="control-legend">&rarr;</span>
+          <input id="rotationX" type="range" value="0.2" min="0.0" max="1.0" step="0.001" />
+          <span class="control-legend">&darr;</span>
+        </span>
+        <span class="block">
+          <label>Zoom</label>
+          <span class="control-legend">&minus;</span>
+          <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
+          <span class="control-legend">+</span>
+        </span>
+      </div>
     </div>
   </div>
 </body>
@@ -262,6 +264,7 @@ var InteractiveCamera = function(messageBroker) {
 
 
 var NavigationController = function(interactiveCamera, messageBroker) {
+  var container = document.getElementById("navigation-controls-container");
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");
@@ -289,6 +292,14 @@ var NavigationController = function(interactiveCamera, messageBroker) {
     interactiveCamera.setZoomPercentage(parseFloat(zoomControl.value));
   };
 
+  var onFlythroughStarted = function(e) {
+    container.classList.add("display-none");
+  };
+
+  var onFlythroughStopped = function(e) {
+    container.classList.remove("display-none");
+  };
+
   centerXControl.addEventListener('input', setCenterCoordinates, false);
   centerZControl.addEventListener('input', setCenterCoordinates, false);
   rotationYControl.addEventListener('input', setRotationAngle, false);
@@ -298,6 +309,8 @@ var NavigationController = function(interactiveCamera, messageBroker) {
   render({});
 
   var id1 = messageBroker.addSubscriber("camera.updated", render);
+  var id2 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
+  var id3 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
 };
 
 
@@ -470,6 +483,7 @@ var SceneView = function(containerEl, initialWorldConfig, interactiveCamera, mes
     timer.onTick(1);
     timer.start();
     mode = 'flythrough';
+    messageBroker.publish("flythrough.started", {});
   };
 
   var stopFlythrough = function() {
@@ -477,6 +491,7 @@ var SceneView = function(containerEl, initialWorldConfig, interactiveCamera, mes
     interactiveCamera.syncFromPoleCamera(poleCamera);
     updateCamera();
     mode = 'interactive';
+    messageBroker.publish("flythrough.stopped", {});
   };
 
   var toggleFlythrough = function() {
@@ -574,7 +589,8 @@ var CityConfigService = function() {
 };
 
 
-var CityEditorController = function(cityConfigService, sceneView) {
+var CityEditorController = function(cityConfigService, sceneView, messageBroker) {
+  var container = document.getElementById("city-editor-container");
   var editorToggleButton = document.getElementById("city-editor-toggle");
 
   var terrainJitter = document.getElementById("terrain-jitter");
@@ -601,6 +617,14 @@ var CityEditorController = function(cityConfigService, sceneView) {
     sceneView.toggleFlythrough();
   };
 
+  var onFlythroughStarted = function(e) {
+    container.classList.add("display-none");
+  };
+
+  var onFlythroughStopped = function(e) {
+    container.classList.remove("display-none");
+  };
+
   terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
   heightJitterDecay.addEventListener('change', function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
   includeRiver.addEventListener('change', function(e) { cityConfigService.setIncludeRiver(e.target.value === "on"); }, false);
@@ -611,6 +635,9 @@ var CityEditorController = function(cityConfigService, sceneView) {
   editorToggleButton.addEventListener('click', toggleCityEditor, false);
   resetButton.addEventListener('click', reset, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
+
+  var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
+  var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
 };
 
 
@@ -620,7 +647,7 @@ var init = function() {
   var cityConfigService = new CityConfigService();
   var sceneView = new SceneView(document.getElementById("container"), cityConfigService.toWorldConfig(), interactiveCamera, messageBroker);
 
-  new CityEditorController(cityConfigService, sceneView);
+  new CityEditorController(cityConfigService, sceneView, messageBroker);
   new NavigationController(interactiveCamera, messageBroker);
   new NavigationTouchController(sceneView.domElement(), interactiveCamera);
 };
