@@ -140,15 +140,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var xPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.cos(angleBetweenStartAndTarget));
   var zPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.sin(angleBetweenStartAndTarget));
   var xRotationDelta = BIRDSEYE_X_ROTATION_DELTA;
-  targetYRotation = angleBetweenStartAndTarget - HALF_PI;
-
-  if ((yRotation - targetYRotation) > Math.PI) {
-    targetYRotation += TWO_PI;
-  }
-  else if ((yRotation - targetYRotation) < -Math.PI) {
-    targetYRotation -= TWO_PI;
-  }
-
 
   var distanceToTarget = CityTour.Math.distanceBetweenPoints(xPosition, zPosition, targetSceneX, targetSceneZ);
   var framesUntilCityEdge = Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA);
@@ -208,6 +199,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
            xPosition === targetSceneX &&
            zPosition === targetSceneZ;
   };
+
+  determineRotationAngle(xPosition, zPosition, targetSceneX, targetSceneZ);
 
   var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
   var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
