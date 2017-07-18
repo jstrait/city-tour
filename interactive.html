@@ -152,7 +152,7 @@ input[type="range"] {
 <script type="text/javascript">
 "use strict";
 
-var init = function() {
+(function() {
   var messageBroker = new CityTour.MessageBroker();
   var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
   var cityConfigService = new CityTour.CityConfigService();
@@ -161,7 +161,6 @@ var init = function() {
   new CityTour.CityEditorController(cityConfigService, sceneView, messageBroker);
   new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
   new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
-};
-init();
+})();
 </script>
 </html>
