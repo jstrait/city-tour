@@ -258,15 +258,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
   var yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
 
-  var vehicleController = {};
-
-  vehicleController.xPosition = function() { return xPosition; };
-  vehicleController.yPosition = function() { return yPosition; };
-  vehicleController.zPosition = function() { return zPosition; };
-  vehicleController.yRotation = function() { return yRotation; };
-  vehicleController.xRotation = function() { return xRotation; };
-
-  vehicleController.tick = function() {
+  var tick = function() {
     if (isAtTargetPoint()) {
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
         if (verticalMode === DRIVING_MODE) {
@@ -317,7 +309,15 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
     framesInCurrentVerticalMode += 1;
   };
 
-  return vehicleController;
+
+  return {
+    xPosition: function() { return xPosition; },
+    yPosition: function() { return yPosition; },
+    zPosition: function() { return zPosition; },
+    yRotation: function() { return yRotation; },
+    xRotation: function() { return xRotation; },
+    tick: tick,
+  };
 };
 
 
