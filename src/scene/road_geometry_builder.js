@@ -21,7 +21,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
       angle: angle,
       midpointHeight: midpointHeight,
       length: length,
-    }
+    };
   };
 
   var buildReusableIntersectionCornerMesh = function(sidewalkMaterial) {

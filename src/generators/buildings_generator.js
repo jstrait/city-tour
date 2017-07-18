@@ -93,7 +93,7 @@ CityTour.BuildingsGenerator = (function() {
     };
 
     return buildings;
-  }
+  };
 
   return buildingsGenerator;
 })();

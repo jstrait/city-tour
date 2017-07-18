@@ -18,7 +18,7 @@ CityTour.Terrain = function(coordinates, subDivisions) {
 
   terrain.materialAtCoordinates = function(x, z) {
     return coordinates[x][z].material;
-  }
+  };
 
   terrain.heightAtCoordinates = function(x, z) {
     var leftHeight, rightHeight, topHeight, bottomHeight;

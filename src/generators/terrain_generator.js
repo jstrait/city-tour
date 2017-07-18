@@ -42,7 +42,7 @@ CityTour.TerrainGenerator = (function() {
         normalizedTerrainCoordinates[x][z] = {
           material: terrainCoordinates[oldXIndex][oldZIndex].material,
           height: terrainCoordinates[oldXIndex][oldZIndex].height,
-        }
+        };
       }
     }
 

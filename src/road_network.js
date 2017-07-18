@@ -114,10 +114,10 @@ CityTour.RoadNetwork = function(terrain) {
     return intersection1.getEdge(mapX2, mapZ2);
   };
 
-  roadNetwork.minColumn = function() { return minColumn; }
-  roadNetwork.maxColumn = function() { return maxColumn; }
-  roadNetwork.minRow = function() { return minRow; }
-  roadNetwork.maxRow = function() { return maxRow; }
+  roadNetwork.minColumn = function() { return minColumn; };
+  roadNetwork.maxColumn = function() { return maxColumn; };
+  roadNetwork.minRow = function() { return minRow; };
+  roadNetwork.maxRow = function() { return maxRow; };
 
   return roadNetwork;
 };

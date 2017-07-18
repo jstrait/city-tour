@@ -64,7 +64,7 @@ CityTour.City = function(container) {
     timer.onTick = function(frameCount) {
       animationManager.tick(frameCount);
       renderView.render();
-    }
+    };
 
     var SWOOP_DISTANCE_IN_BLOCKS = 20;
     var furthestOutIntersection = worldData.centerZ + CityTour.Config.HALF_BLOCK_ROWS;
@@ -99,7 +99,7 @@ CityTour.City = function(container) {
 
   var toggleDebug = function() {
     animationManager.toggleDebug();
-  }
+  };
 
   var city = {};
 

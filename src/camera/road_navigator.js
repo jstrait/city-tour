@@ -66,7 +66,7 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
 
       previousX = x;
       previousZ = z;
-    };
+    }
 
     simplifiedPath.push([x, z]);
 
