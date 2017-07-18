@@ -200,6 +200,55 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
            zPosition === targetSceneZ;
   };
 
+  var calculateRoadHeight = function() {
+    var roadHeight;
+    var mapX = CityTour.Coordinates.sceneXToMapX(xPosition);
+    var mapZ = CityTour.Coordinates.sceneZToMapZ(zPosition);
+    var xIsExact = Math.floor(mapX) === mapX;
+    var zIsExact = Math.floor(mapZ) === mapZ;
+    var floor, ceil;
+    var heightDifferential, percentage;
+
+    if (xIsExact && zIsExact) {
+      roadHeight = roadNetwork.getIntersectionHeight(mapX, mapZ);
+    }
+    else if (xIsExact) {
+      ceil = roadNetwork.getIntersectionHeight(mapX, Math.ceil(mapZ));
+      floor = roadNetwork.getIntersectionHeight(mapX, Math.floor(mapZ));
+
+      if (ceil !== false && floor !== false) {
+        heightDifferential = ceil - floor;
+        percentage = mapZ - Math.floor(mapZ);
+        roadHeight = floor + (heightDifferential * percentage);
+      }
+      else {
+        roadHeight = false;
+      }
+    }
+    else if (zIsExact) {
+      ceil = roadNetwork.getIntersectionHeight(Math.ceil(mapX), mapZ);
+      floor = roadNetwork.getIntersectionHeight(Math.floor(mapX), mapZ);
+
+      if (ceil !== false && floor !== false) {
+        heightDifferential = ceil - floor;
+        percentage = mapX - Math.floor(mapX);
+        roadHeight = floor + (heightDifferential * percentage);
+      }
+      else {
+        roadHeight = false;
+      }
+    }
+    else {
+      roadHeight = false;
+    }
+
+    if (roadHeight === false) {
+      roadHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(xPosition), CityTour.Coordinates.sceneZToMapZ(zPosition));
+    }
+
+    return roadHeight;
+  };
+
   determinePositionDelta(xPosition, zPosition, targetSceneX, targetSceneZ);
   determineRotationAngle(xPosition, zPosition, targetSceneX, targetSceneZ);
 
@@ -262,51 +311,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
       zPosition = zMotionGenerator.next();
     }
 
-    // Calculate Road height
-    var roadHeight;
-    var mapX = CityTour.Coordinates.sceneXToMapX(xPosition);
-    var mapZ = CityTour.Coordinates.sceneZToMapZ(zPosition);
-    var xIsExact = Math.floor(mapX) === mapX;
-    var zIsExact = Math.floor(mapZ) === mapZ;
-    if (xIsExact && zIsExact) {
-      roadHeight = roadNetwork.getIntersectionHeight(mapX, mapZ);
-    }
-    else if (xIsExact) {
-      var ceil = roadNetwork.getIntersectionHeight(mapX, Math.ceil(mapZ));
-      var floor = roadNetwork.getIntersectionHeight(mapX, Math.floor(mapZ));
-
-      if (ceil !== false && floor !== false) {
-        var heightDifferential = ceil - floor;
-        var percentage = mapZ - Math.floor(mapZ);
-        roadHeight = floor + (heightDifferential * percentage);
-      }
-      else {
-        roadHeight = false;
-      }
-    }
-    else if (zIsExact) {
-      var ceil = roadNetwork.getIntersectionHeight(Math.ceil(mapX), mapZ);
-      var floor = roadNetwork.getIntersectionHeight(Math.floor(mapX), mapZ);
-
-      if (ceil !== false && floor !== false) {
-        var heightDifferential = ceil - floor;
-        var percentage = mapX - Math.floor(mapX);
-        roadHeight = floor + (heightDifferential * percentage);
-      }
-      else {
-        roadHeight = false;
-      }
-    }
-    else {
-      roadHeight = false;
-    }
-
-    if (roadHeight === false) {
-      roadHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(xPosition), CityTour.Coordinates.sceneZToMapZ(zPosition));
-    }
-
-    yPosition = Math.max(yMotionGenerator.next(), roadHeight + MINIMUM_HEIGHT_OFF_GROUND);
-
+    yPosition = Math.max(yMotionGenerator.next(), calculateRoadHeight() + MINIMUM_HEIGHT_OFF_GROUND);
     xRotation = xRotationGenerator.next();
 
     framesInCurrentVerticalMode += 1;
