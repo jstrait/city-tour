@@ -156,13 +156,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var determineNextTargetPoint = function() {
     var oldTargetSceneX = targetSceneX;
     var oldTargetSceneZ = targetSceneZ;
-    var targetMapX, targetMapZ;
 
     navigator.nextTarget();
-    targetMapX = navigator.targetMapX();
-    targetMapZ = navigator.targetMapZ();
-    targetSceneX = CityTour.Coordinates.mapXToSceneX(targetMapX);
-    targetSceneZ = CityTour.Coordinates.mapZToSceneZ(targetMapZ);
+    targetSceneX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
+    targetSceneZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
 
     determinePositionDelta(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
     determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
