@@ -142,6 +142,14 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var xRotationDelta = BIRDSEYE_X_ROTATION_DELTA;
   targetYRotation = angleBetweenStartAndTarget - HALF_PI;
 
+  if ((yRotation - targetYRotation) > Math.PI) {
+    targetYRotation += TWO_PI;
+  }
+  else if ((yRotation - targetYRotation) < -Math.PI) {
+    targetYRotation -= TWO_PI;
+  }
+
+
   var distanceToTarget = CityTour.Math.distanceBetweenPoints(xPosition, zPosition, targetSceneX, targetSceneZ);
   var framesUntilCityEdge = Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA);
   var terrainHeightAtTouchdown = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(targetSceneX),
