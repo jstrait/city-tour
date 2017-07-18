@@ -5,6 +5,7 @@ var CityTour = CityTour || {};
 CityTour.CityEditorController = function(cityConfigService, sceneView, messageBroker) {
   var container = document.getElementById("city-editor-container");
   var editorToggleButton = document.getElementById("city-editor-toggle");
+  var resetButton = document.getElementById("reset");
 
   var terrainJitter = document.getElementById("terrain-jitter");
   var heightJitterDecay = document.getElementById("terrain-decay");
@@ -13,21 +14,12 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   var percentageDistanceDecayBegins = document.getElementById("buildings-decay-distance-percentage");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
 
-  var resetButton = document.getElementById("reset");
-  var flythroughToggle = document.getElementById("flythrough-toggle");
-
   var toggleCityEditor = function(e) {
     document.getElementById("city-editor").classList.toggle("display-none");
   };
 
   var reset = function(e) {
     sceneView.reset(cityConfigService.toWorldConfig());
-  };
-
-  var toggleFlythrough = function(e) {
-    flythroughToggle.innerText = (flythroughToggle.innerText === "Take a Tour") ? "Stop Tour" : "Take a Tour";
-
-    sceneView.toggleFlythrough();
   };
 
   var onFlythroughStarted = function(e) {
@@ -47,7 +39,6 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
 
   editorToggleButton.addEventListener('click', toggleCityEditor, false);
   resetButton.addEventListener('click', reset, false);
-  flythroughToggle.addEventListener('click', toggleFlythrough, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);

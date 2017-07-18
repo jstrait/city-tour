@@ -2,13 +2,14 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationController = function(interactiveCamera, messageBroker) {
+CityTour.NavigationController = function(interactiveCamera, sceneView, messageBroker) {
   var container = document.getElementById("navigation-controls-container");
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");
   var rotationXControl = document.getElementById("rotationX");
   var zoomControl = document.getElementById("zoom");
+  var flythroughToggle = document.getElementById("flythrough-toggle");
 
   var render = function(data) {
     centerXControl.value = interactiveCamera.centerX();
@@ -31,6 +32,12 @@ CityTour.NavigationController = function(interactiveCamera, messageBroker) {
     interactiveCamera.setZoomPercentage(parseFloat(zoomControl.value));
   };
 
+  var toggleFlythrough = function(e) {
+    flythroughToggle.innerText = (flythroughToggle.innerText === "Take a Tour") ? "Stop Tour" : "Take a Tour";
+
+    sceneView.toggleFlythrough();
+  };
+
   var onFlythroughStarted = function(e) {
     container.classList.add("display-none");
   };
@@ -44,6 +51,7 @@ CityTour.NavigationController = function(interactiveCamera, messageBroker) {
   rotationYControl.addEventListener('input', setRotationAngle, false);
   rotationXControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomPercentage, false);
+  flythroughToggle.addEventListener('click', toggleFlythrough, false);
 
   render({});
 

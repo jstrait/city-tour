@@ -159,7 +159,7 @@ var init = function() {
   var sceneView = new CityTour.SceneView(document.getElementById("container"), cityConfigService.toWorldConfig(), interactiveCamera, messageBroker);
 
   new CityTour.CityEditorController(cityConfigService, sceneView, messageBroker);
-  new CityTour.NavigationController(interactiveCamera, messageBroker);
+  new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
   new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 };
 init();
