@@ -314,7 +314,7 @@ var NavigationController = function(interactiveCamera, messageBroker) {
 };
 
 
-var NavigationTouchController = function(el, interactiveCamera) {
+var NavigationTouchController = function(el, interactiveCamera, messageBroker) {
   var PAN = 1;
   var TILT = 2;
   var ROTATE = 3;
@@ -336,6 +336,10 @@ var NavigationTouchController = function(el, interactiveCamera) {
       previousTouchPoints.push({x: touch.clientX, z: touch.clientY});
     }
 
+    e.preventDefault();
+  };
+
+  var onTouchStartStub = function(e) {
     e.preventDefault();
   };
 
@@ -454,15 +458,34 @@ var NavigationTouchController = function(el, interactiveCamera) {
     previousTouchPoints = currentTouchPoints;
   };
 
+  var enableEventHandlers = function() {
+    el.addEventListener('mousedown', onMouseDown, false);
+    el.addEventListener('touchstart', onTouchStart, false);
+    el.addEventListener('mousemove', onMouseMove, false);
+    el.addEventListener('touchmove', onTouchMove, false);
+    el.addEventListener('mouseup', onMouseUp, false);
+    el.addEventListener('touchend', onTouchEnd, false);
+
+    el.removeEventListener('touchstart', onTouchStartStub, false);
+  };
+
+  var disableEventHandlers = function() {
+    el.removeEventListener('mousedown', onMouseDown, false);
+    el.removeEventListener('touchstart', onTouchStart, false);
+    el.removeEventListener('mousemove', onMouseMove, false);
+    el.removeEventListener('touchmove', onTouchMove, false);
+    el.removeEventListener('mouseup', onMouseUp, false);
+    el.removeEventListener('touchend', onTouchEnd, false);
+
+    el.addEventListener('touchstart', onTouchStartStub, false);
+  };
+
+
+  var id1 = messageBroker.addSubscriber("flythrough.started", disableEventHandlers);
+  var id2 = messageBroker.addSubscriber("flythrough.stopped", enableEventHandlers);
 
   onMouseUp();
-
-  el.addEventListener('mousedown', onMouseDown, false);
-  el.addEventListener('touchstart', onTouchStart, false);
-  el.addEventListener('mousemove', onMouseMove, false);
-  el.addEventListener('touchmove', onTouchMove, false);
-  el.addEventListener('mouseup', onMouseUp, false);
-  el.addEventListener('touchend', onTouchEnd, false);
+  enableEventHandlers();
 };
 
 
@@ -649,7 +672,7 @@ var init = function() {
 
   new CityEditorController(cityConfigService, sceneView, messageBroker);
   new NavigationController(interactiveCamera, messageBroker);
-  new NavigationTouchController(sceneView.domElement(), interactiveCamera);
+  new NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 };
 init();
 </script>
