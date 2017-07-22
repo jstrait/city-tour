@@ -243,7 +243,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
     }
 
     if (roadHeight === false) {
-      roadHeight = terrain.heightAtCoordinates(mapX, mapZ);
+      roadHeight = terrain.heightAtCoordinates(mapX, mapZ) || 0.0;
     }
 
     return roadHeight;

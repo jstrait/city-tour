@@ -51,5 +51,20 @@ describe("CityTour.Terrain", function() {
       expect(terrain.heightAtCoordinates(1.4, 2)).toBe(5.14);
       expect(terrain.heightAtCoordinates(1.4, 2.0)).toBe(5.14);
     });
+
+    it("returns `undefined` for coordinates outside the bounds of the terrain", function() {
+      // Way out of bounds
+      expect(terrain.heightAtCoordinates(10000, 0)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(-10000, 0)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(0, 10000)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(0, -10000)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(10000, 10000)).toBeUndefined();
+
+      // Almost in bounds
+      expect(terrain.heightAtCoordinates(3.01, 0)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(-0.01, 0)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(0, 3.01)).toBeUndefined();
+      expect(terrain.heightAtCoordinates(0, -0.01)).toBeUndefined();
+    });
   });
 });

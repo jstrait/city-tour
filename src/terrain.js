@@ -29,6 +29,11 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     var xIsExact = Math.floor(xIntegerCoordinate) === xIntegerCoordinate;
     var zIsExact = Math.floor(zIntegerCoordinate) === zIntegerCoordinate;
 
+    if((coordinates[Math.ceil(x)] === undefined) || (coordinates[Math.ceil(x)][Math.ceil(z)] === undefined) ||
+       (coordinates[Math.floor(x)] === undefined) || (coordinates[Math.floor(x)][Math.floor(z)] === undefined)) {
+      return undefined;
+    }
+
     if (xIsExact && zIsExact) {
       return coordinates[x][z].height;
     }
