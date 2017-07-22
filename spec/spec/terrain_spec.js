@@ -1,7 +1,7 @@
 "use strict";
 
 describe("CityTour.Terrain", function() {
-  var LAND = 'land';
+  var LAND = CityTour.Terrain.LAND;
 
   var terrainMesh = {
     0: {
