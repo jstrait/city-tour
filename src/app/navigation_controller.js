@@ -3,6 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.NavigationController = function(interactiveCamera, sceneView, messageBroker) {
+  var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-container");
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
@@ -11,12 +12,23 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   var zoomControl = document.getElementById("zoom");
   var flythroughToggle = document.getElementById("flythrough-toggle");
 
+  var navigationControlsEnabled = true;
+
   var render = function(data) {
     centerXControl.value = interactiveCamera.centerX();
     centerZControl.value = interactiveCamera.centerZ();
     rotationYControl.value = interactiveCamera.rotationAngle();
     rotationXControl.value = interactiveCamera.tiltPercentage();
     zoomControl.value = interactiveCamera.zoomPercentage();
+
+    if (navigationControlsEnabled) {
+      containerToggle.innerHTML = "&#9660;";
+      container.classList.remove("display-none");
+    }
+    else {
+      containerToggle.innerHTML = "&#9650;";
+      container.classList.add("display-none");
+    }
   };
 
   var setCenterCoordinates = function(e) {
@@ -39,13 +51,21 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   };
 
   var onFlythroughStarted = function(e) {
+    containerToggle.classList.add("display-none");
     container.classList.add("display-none");
   };
 
   var onFlythroughStopped = function(e) {
-    container.classList.remove("display-none");
+    containerToggle.classList.remove("display-none");
+    render({});
   };
 
+  var toggleNavigationControls = function(e) {
+    navigationControlsEnabled = !navigationControlsEnabled;
+    render({});
+  };
+
+  containerToggle.addEventListener('click', toggleNavigationControls, false);
   centerXControl.addEventListener('input', setCenterCoordinates, false);
   centerZControl.addEventListener('input', setCenterCoordinates, false);
   rotationYControl.addEventListener('input', setRotationAngle, false);

@@ -53,6 +53,15 @@ input[type="range"] {
   text-align: center;
 }
 
+#navigation-controls-toggle {
+  background: #ebebeb;
+  color: #2a2b2b;
+}
+
+#navigation-controls-toggle:hover {
+  background: #c1c1c1;
+}
+
 .full-width { width: 100%; }
 .full-height { height: 100%; }
 .relative { position: relative; }
@@ -126,9 +135,9 @@ input[type="range"] {
     </div>
 
 
-    <div class="absolute" style="bottom: 0; right: 0; background: #fff; padding: 1.5rem;">
-      <button id="flythrough-toggle">Take a Tour</button>
-      <div id="navigation-controls-container">
+    <div class="absolute" style="bottom: 0; right: 0; background: #fff;">
+      <a id="navigation-controls-toggle" href="javascript:void(0);" class="block full-width center no-underline">&#9650;</a>
+      <div id="navigation-controls-container" class="display-none" style="padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1.0rem; padding-right: 1.0rem;">
         <span class="block" style="display: none;">
           <label>X:</label>
           <input id="centerX" type="range" value="0.0" min="-1000.0" max="1000.0" step="0.1" />
@@ -155,6 +164,9 @@ input[type="range"] {
           <input id="zoom" type="range" value="0.0" min="0.0" max="1.0" step="0.01" />
           <span class="control-legend">+</span>
         </span>
+      </div>
+      <div class="center" style="padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1.0rem; padding-right: 1.0rem;">
+        <button id="flythrough-toggle">Take a Tour</button>
       </div>
     </div>
   </div>
