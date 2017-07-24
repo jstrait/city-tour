@@ -6,6 +6,7 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   var loadingMessage = document.getElementById("loading-message");
   var container = document.getElementById("city-editor-container");
   var editorToggleButton = document.getElementById("city-editor-toggle");
+  var editorMenu = document.getElementById("city-editor");
   var resetButton = document.getElementById("reset");
 
   var terrainJitter = document.getElementById("terrain-jitter");
@@ -15,8 +16,11 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   var percentageDistanceDecayBegins = document.getElementById("buildings-decay-distance-percentage");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
 
+  var editorEnabled = false;
+
   var toggleCityEditor = function(e) {
-    document.getElementById("city-editor").classList.toggle("display-none");
+    editorEnabled = !editorEnabled;
+    render();
   };
 
   var reset = function(e) {
@@ -42,6 +46,15 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
     container.classList.remove("display-none");
   };
 
+  var render = function() {
+    if (editorEnabled) {
+      editorMenu.classList.remove("display-none");
+    }
+    else {
+      editorMenu.classList.add("display-none");
+    }
+  };
+
   terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
   heightJitterDecay.addEventListener('change', function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
   includeRiver.addEventListener('change', function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
@@ -54,4 +67,6 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
+
+  render();
 };
