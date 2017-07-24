@@ -3,11 +3,14 @@
 var CityTour = CityTour || {};
 
 CityTour.SceneView = function(containerEl, initialWorldConfig, interactiveCamera, messageBroker) {
+  var INTERACTIVE = 1;
+  var FLYTHROUGH = 2;
+
   var worldData;
   var renderView = null, poleCamera;
   var timer;
   var animationManager;
-  var mode = 'interactive';
+  var mode = INTERACTIVE;
 
   var updateCamera = function(data) {
     interactiveCamera.syncCamera(poleCamera);
@@ -18,7 +21,7 @@ CityTour.SceneView = function(containerEl, initialWorldConfig, interactiveCamera
     animationManager.init(worldData.centerX, worldData.centerZ, poleCamera.positionX(), poleCamera.positionY(), poleCamera.positionZ(), poleCamera.rotationX(), poleCamera.rotationY());
     timer.onTick(1);
     timer.start();
-    mode = 'flythrough';
+    mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", {});
   };
 
@@ -26,12 +29,12 @@ CityTour.SceneView = function(containerEl, initialWorldConfig, interactiveCamera
     timer.togglePause();
     interactiveCamera.syncFromPoleCamera(poleCamera);
     updateCamera();
-    mode = 'interactive';
+    mode = INTERACTIVE;
     messageBroker.publish("flythrough.stopped", {});
   };
 
   var toggleFlythrough = function() {
-    if (mode === 'interactive') {
+    if (mode === INTERACTIVE) {
       startFlythrough();
     }
     else {
