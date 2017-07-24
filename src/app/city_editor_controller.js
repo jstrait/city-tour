@@ -3,6 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.CityEditorController = function(cityConfigService, sceneView, messageBroker) {
+  var loadingMessage = document.getElementById("loading-message");
   var container = document.getElementById("city-editor-container");
   var editorToggleButton = document.getElementById("city-editor-toggle");
   var resetButton = document.getElementById("reset");
@@ -19,7 +20,18 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   };
 
   var reset = function(e) {
+    loadingMessage.classList.add("flex");
+    loadingMessage.classList.remove("display-none");
+
+    // Allow DOM to update to show the "Loading..." message
+    setTimeout(resetPart2, 1);
+  };
+
+  var resetPart2 = function() {
     sceneView.reset(cityConfigService.toWorldConfig());
+
+    loadingMessage.classList.remove("flex");
+    loadingMessage.classList.add("display-none");
   };
 
   var onFlythroughStarted = function(e) {
