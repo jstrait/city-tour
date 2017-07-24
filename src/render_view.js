@@ -2,14 +2,13 @@
 
 var CityTour = CityTour || {};
 
-CityTour.RenderView = function(container, scene) {
-  var renderer, poleCamera;
+CityTour.RenderView = function(container, initialScene) {
+  var scene;
+  var renderer;
+  var poleCamera;
 
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
-
-  poleCamera = new CityTour.PoleCamera(scene.position);
-  scene.add(poleCamera.pole());
 
   var resize = function() {
     var width = container.clientWidth;
@@ -33,13 +32,14 @@ CityTour.RenderView = function(container, scene) {
     scene.add(poleCamera.pole());
   };
 
-  var renderView = {};
+  setScene(initialScene);
 
-  renderView.render = render;
-  renderView.resize = resize;
-  renderView.setScene = setScene;
-  renderView.domElement = function() { return renderer.domElement; };
-  renderView.poleCamera = function() { return poleCamera; };
 
-  return renderView;
+  return {
+    render: render,
+    resize: resize,
+    setScene: setScene,
+    domElement: function() { return renderer.domElement; },
+    poleCamera: function() { return poleCamera; },
+  };
 };
