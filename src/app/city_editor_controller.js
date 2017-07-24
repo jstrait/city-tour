@@ -3,10 +3,15 @@
 var CityTour = CityTour || {};
 
 CityTour.CityEditorController = function(cityConfigService, sceneView, messageBroker) {
+  var EDITOR_MENU = 1;
+  var ABOUT_MENU = 2;
+
   var loadingMessage = document.getElementById("loading-message");
   var container = document.getElementById("city-editor-container");
-  var editorToggleButton = document.getElementById("city-editor-toggle");
-  var editorMenu = document.getElementById("city-editor");
+  var editorMenuTitle = document.getElementById("menu-editor-title");
+  var aboutMenuTitle = document.getElementById("menu-about-title");
+  var editorMenu = document.getElementById("menu-editor");
+  var aboutMenu = document.getElementById("menu-about");
   var resetButton = document.getElementById("reset");
 
   var terrainJitter = document.getElementById("terrain-jitter");
@@ -16,10 +21,27 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   var percentageDistanceDecayBegins = document.getElementById("buildings-decay-distance-percentage");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
 
-  var editorEnabled = false;
+  var currentMenu;
 
-  var toggleCityEditor = function(e) {
-    editorEnabled = !editorEnabled;
+  var toggleEditMenu = function(e) {
+    if (currentMenu === EDITOR_MENU) {
+      currentMenu = undefined;
+    }
+    else {
+      currentMenu = EDITOR_MENU;
+    }
+
+    render();
+  };
+
+  var toggleAboutMenu = function(e) {
+    if (currentMenu === ABOUT_MENU) {
+      currentMenu = undefined;
+    }
+    else {
+      currentMenu = ABOUT_MENU;
+    }
+
     render();
   };
 
@@ -47,12 +69,11 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   };
 
   var render = function() {
-    if (editorEnabled) {
-      editorMenu.classList.remove("display-none");
-    }
-    else {
-      editorMenu.classList.add("display-none");
-    }
+    editorMenuTitle.classList.toggle("menu-title-active", currentMenu === EDITOR_MENU);
+    editorMenu.classList.toggle("display-none", currentMenu !== EDITOR_MENU);
+
+    aboutMenuTitle.classList.toggle("menu-title-active", currentMenu === ABOUT_MENU);
+    aboutMenu.classList.toggle("display-none", currentMenu !== ABOUT_MENU);
   };
 
   terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
@@ -62,7 +83,8 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   percentageDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setPercentageDistanceDecayBegins(parseFloat(e.target.value)); }, false);
   maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
 
-  editorToggleButton.addEventListener('click', toggleCityEditor, false);
+  editorMenuTitle.addEventListener('click', toggleEditMenu, false);
+  aboutMenuTitle.addEventListener('click', toggleAboutMenu, false);
   resetButton.addEventListener('click', reset, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);

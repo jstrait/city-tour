@@ -39,6 +39,25 @@ h3 {
   opacity: 0.85;
 }
 
+.menu-title {
+  padding: 0.5rem;
+  background: #fff;
+  color: #2a2b2b;
+}
+
+.menu-title:hover {
+  background: #ddd;
+}
+
+.menu-title-active {
+  background: #2a2b2b;
+  color: #fff;
+}
+
+.menu-title-active:hover {
+  background: #2a2b2b;
+}
+
 .section {
   margin-bottom: 1.5rem;
 }
@@ -73,21 +92,26 @@ input[type="range"] {
 .relative { position: relative; }
 .absolute { position: absolute; }
 .block { display: block; }
+.inline-block { display: inline-block; }
 .flex { display: flex; }
 .display-none { display: none; }
 .center { text-align: center; }
 .no-underline { text-decoration: none; }
+
+.mt0 { margin-top: 0; }
+.mb0 { margin-bottom: 0; }
 
 .black { color: #2a2b2b; }
     </style>
 </head>
 <body>
   <div id="container" class="full-width full-height">
-    <div id="city-editor-container" class="absolute" style="top: 0; right: 0; background: #fff; padding: 1.5rem;">
-      <div style="overflow: auto;">
-        <a id="city-editor-toggle" href="javascript:void(0);" class="black no-underline" style="float: right;">☰</a>
+    <div id="city-editor-container" class="absolute" style="top: 0; right: 0;">
+      <div style="display: block; width: 100%; overflow: auto;">
+        <a id="menu-about-title" href="javascript:void(0);" class="menu-title inline-block no-underline" style="float: right;">About</a>
+        <a id="menu-editor-title" href="javascript:void(0);" class="menu-title inline-block no-underline" style="float: right;">Edit</a>
       </div>
-      <div id="city-editor" class="display-none">
+      <div id="menu-editor" class="display-none" style="background: #fff; padding: 1.0rem; border-top: 1px solid #ddd;">
         <div class="section">
           <h3>Terrain</h3>
           <span class="block">
@@ -137,6 +161,13 @@ input[type="range"] {
         <span class="block center">
           <button id="reset" style="margin-left: auto; margin-right: auto;">Create New City</button>
         </span>
+      </div>
+
+      <div id="menu-about" class="center display-none" style="background: #fff; padding: 3.0rem; border-top: 1px solid #ddd;">
+        <h1>City Tour</h1>
+        <p class="mb0">Code available <a href="https://github.com/jstrait/city-tour/">at GitHub</a></p>
+        <p class="mt0 mb0">Made using <a href="http://threejs.org">three.js</a> and WebGL</p>
+        <p>Copyright &copy; 2012-17 <a href="http://www.joelstrait.com/">Joel Strait</a></p>
       </div>
     </div>
 
