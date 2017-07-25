@@ -46,8 +46,10 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   };
 
   var reset = function(e) {
+    currentMenu = undefined;
     loadingMessage.classList.add("flex");
     loadingMessage.classList.remove("display-none");
+    render();
 
     // Allow DOM to update to show the "Loading..." message
     setTimeout(resetPart2, 1);
