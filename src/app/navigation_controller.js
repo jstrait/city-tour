@@ -12,7 +12,13 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   var zoomControl = document.getElementById("zoom");
   var flythroughToggle = document.getElementById("flythrough-toggle");
 
-  var navigationControlsEnabled = true;
+  var navigationControlsEnabled;
+
+  var isTouchDevice = function() {
+    // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
+    return 'ontouchstart' in window        // works on most browsers
+        || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+  };
 
   var render = function(data) {
     centerXControl.value = interactiveCamera.centerX();
@@ -73,6 +79,7 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   zoomControl.addEventListener('input', setZoomPercentage, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
 
+  navigationControlsEnabled = !isTouchDevice();
   render({});
 
   var id1 = messageBroker.addSubscriber("camera.updated", render);
