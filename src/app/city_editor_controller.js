@@ -32,6 +32,7 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
     }
 
     render();
+    e.stopPropagation();
   };
 
   var toggleAboutMenu = function(e) {
@@ -43,6 +44,7 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
     }
 
     render();
+    e.stopPropagation();
   };
 
   var reset = function(e) {
@@ -70,12 +72,26 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
     container.classList.remove("display-none");
   };
 
+  var preventClickThru = function(e) {
+    e.stopPropagation();
+  };
+
+  var hideMenus = function(e) {
+    currentMenu = undefined;
+    render();
+  };
+
   var render = function() {
+    container.classList.toggle("full-width", currentMenu !== undefined);
+    container.classList.toggle("full-height", currentMenu !== undefined);
+
     editorMenuTitle.classList.toggle("menu-title-active", currentMenu === EDITOR_MENU);
     editorMenu.classList.toggle("display-none", currentMenu !== EDITOR_MENU);
+    editorMenu.classList.toggle("inline-block", currentMenu === EDITOR_MENU);
 
     aboutMenuTitle.classList.toggle("menu-title-active", currentMenu === ABOUT_MENU);
     aboutMenu.classList.toggle("display-none", currentMenu !== ABOUT_MENU);
+    aboutMenu.classList.toggle("inline-block", currentMenu === ABOUT_MENU);
   };
 
   terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
@@ -85,8 +101,11 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
   percentageDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setPercentageDistanceDecayBegins(parseFloat(e.target.value)); }, false);
   maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
 
+  container.addEventListener('click', hideMenus);
   editorMenuTitle.addEventListener('click', toggleEditMenu, false);
   aboutMenuTitle.addEventListener('click', toggleAboutMenu, false);
+  editorMenu.addEventListener('click', preventClickThru, false);
+  aboutMenu.addEventListener('click', preventClickThru, false);
   resetButton.addEventListener('click', reset, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
