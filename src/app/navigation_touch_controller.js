@@ -12,6 +12,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   var previousTouchPoints;
 
   var onMouseDown = function(e) {
+    el.classList.add("cursor-grabbing");
     previousTouchPoints = [{x: e.clientX, z: e.clientY}];
   };
 
@@ -53,6 +54,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   };
 
   var onMouseUp = function(e) {
+    el.classList.remove("cursor-grabbing");
     currentGesture = undefined;
     previousTouchPoints = [];
   };
