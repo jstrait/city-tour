@@ -66,6 +66,8 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
 
   var onFlythroughStarted = function(e) {
     container.classList.add("display-none");
+    currentMenu = undefined;
+    render();
   };
 
   var onFlythroughStopped = function(e) {
