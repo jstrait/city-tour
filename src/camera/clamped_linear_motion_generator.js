@@ -2,6 +2,10 @@
 
 var CityTour = CityTour || {};
 
+// Delta should always be positive, regardless of whether the target
+// is larger or smaller than the starting point. If the delta is
+// negative, then motion will occur _away_ from the target, and the
+// target will never be reached.
 CityTour.ClampedLinearMotionGenerator = function(start, target, delta) {
   var current = start;
 
