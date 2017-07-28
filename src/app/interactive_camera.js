@@ -11,7 +11,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
   var MIN_CENTER_Z = -1000.0;
   var MAX_CENTER_Z = 1000.0;
 
-  var MIN_TILT_ANGLE = -1.5707963267949;
+  var MIN_TILT_ANGLE = -Math.PI / 2;
   var MAX_TILT_ANGLE = -0.1;
 
   var MIN_ZOOM_DISTANCE = 20.0;
