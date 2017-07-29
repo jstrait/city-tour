@@ -67,6 +67,7 @@ CityTour.RoadNetworkGenerator = (function() {
 
     var calculateBridgeAttributes = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
       var waterHeight;
+      var bridgeEndX, bridgeEndZ;
 
       var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX, mapZ);
       if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
@@ -86,26 +87,26 @@ CityTour.RoadNetworkGenerator = (function() {
       else {
         zDelta = (targetMapZ < mapZ) ? -1 : 1;
       }
-      var finalX = targetMapX;
-      var finalZ = targetMapZ;
+      bridgeEndX = targetMapX;
+      bridgeEndZ = targetMapZ;
 
       var bridgeLength = 1;
-      while (terrain.materialAtCoordinates(finalX, finalZ) === CityTour.Terrain.WATER) {
+      while (terrain.materialAtCoordinates(bridgeEndX, bridgeEndZ) === CityTour.Terrain.WATER) {
         if (waterHeight === undefined) {
-          waterHeight = terrain.heightAtCoordinates(finalX, finalZ);
+          waterHeight = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
         }
-        if (roadNetwork.hasIntersection(finalX, finalZ)) {
+        if (roadNetwork.hasIntersection(bridgeEndX, bridgeEndZ)) {
           return null;
         }
 
-        finalX += xDelta;
-        finalZ += zDelta;
+        bridgeEndX += xDelta;
+        bridgeEndZ += zDelta;
         bridgeLength += 1;
 
-        if (finalX < -CityTour.Config.HALF_TERRAIN_COLUMNS ||
-            finalX > CityTour.Config.HALF_TERRAIN_COLUMNS  ||
-            finalZ < -CityTour.Config.HALF_TERRAIN_ROWS    ||
-            finalZ > CityTour.Config.HALF_TERRAIN_ROWS) {
+        if (bridgeEndX < -CityTour.Config.HALF_TERRAIN_COLUMNS ||
+            bridgeEndX > CityTour.Config.HALF_TERRAIN_COLUMNS  ||
+            bridgeEndZ < -CityTour.Config.HALF_TERRAIN_ROWS    ||
+            bridgeEndZ > CityTour.Config.HALF_TERRAIN_ROWS) {
           return null;
         }
       }
@@ -115,7 +116,7 @@ CityTour.RoadNetworkGenerator = (function() {
       }
 
       var heightAtTerminal1 = terrain.heightAtCoordinates(mapX, mapZ);
-      var heightAtTerminal2 = terrain.heightAtCoordinates(finalX, finalZ);
+      var heightAtTerminal2 = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
       if (Math.abs(heightAtTerminal1 - heightAtTerminal2) > 5.0) {
         return null;
       }
@@ -127,8 +128,8 @@ CityTour.RoadNetworkGenerator = (function() {
 
       return {
         roadDeckHeight: roadDeckHeight,
-        endX: finalX,
-        endZ: finalZ,
+        endX: bridgeEndX,
+        endZ: bridgeEndZ,
         xDelta: xDelta,
         zDelta: zDelta,
       };
