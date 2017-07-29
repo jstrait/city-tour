@@ -6,19 +6,14 @@ CityTour.RoadNetwork = function(terrain) {
   var Intersection = function(mapX, mapZ, height, surfaceType) {
     var edges = [];
 
-    var intersection = {};
-
-    intersection.getHeight = function() { return height; };
-    intersection.getSurfaceType = function() { return surfaceType; };
-
-    intersection.addEdge = function(mapX, mapZ, surfaceType) {
+    var addEdge = function(mapX, mapZ, surfaceType) {
       if (!edges[mapX]) {
         edges[mapX] = [];
       }
       edges[mapX][mapZ] = surfaceType;
     };
 
-    intersection.hasEdgeTo = function(mapX, mapZ, surfaceType) {
+    var hasEdgeTo = function(mapX, mapZ, surfaceType) {
       var hasEdge = edges[mapX] != undefined && edges[mapX][mapZ] != null;
       if (surfaceType) {
         return hasEdge && edges[mapX][mapZ] === surfaceType;
@@ -28,7 +23,7 @@ CityTour.RoadNetwork = function(terrain) {
       }
     };
 
-    intersection.getEdge = function(mapX, mapZ) {
+    var getEdge = function(mapX, mapZ) {
       var hasEdge = edges[mapX] != undefined && edges[mapX][mapZ] != null;
       if (hasEdge) {
         return edges[mapX][mapZ];
@@ -38,7 +33,13 @@ CityTour.RoadNetwork = function(terrain) {
       }
     };
 
-    return intersection;
+    return {
+      getHeight: function() { return height; },
+      getSurfaceType: function() { return surfaceType; },
+      addEdge: addEdge,
+      hasEdgeTo: hasEdgeTo,
+      getEdge: getEdge,
+    };
   };
 
 
@@ -48,14 +49,13 @@ CityTour.RoadNetwork = function(terrain) {
     intersections[mapX] = [];
   }
 
-  var roadNetwork = {};
 
-  roadNetwork.hasIntersection = function(mapX, mapZ) {
+  var hasIntersection = function(mapX, mapZ) {
     return (intersections[mapX] && intersections[mapX][mapZ] != null) || false;
   };
 
-  roadNetwork.getIntersectionHeight = function(mapX, mapZ) {
-    if (roadNetwork.hasIntersection(mapX, mapZ)) {
+  var getIntersectionHeight = function(mapX, mapZ) {
+    if (hasIntersection(mapX, mapZ)) {
       return intersections[mapX][mapZ].getHeight();
     }
     else {
@@ -63,8 +63,8 @@ CityTour.RoadNetwork = function(terrain) {
     }
   };
 
-  roadNetwork.getIntersectionSurfaceType = function(mapX, mapZ) {
-    if (roadNetwork.hasIntersection(mapX, mapZ)) {
+  var getIntersectionSurfaceType = function(mapX, mapZ) {
+    if (hasIntersection(mapX, mapZ)) {
       return intersections[mapX][mapZ].getSurfaceType();
     }
     else {
@@ -72,7 +72,7 @@ CityTour.RoadNetwork = function(terrain) {
     }
   };
 
-  roadNetwork.addEdge = function(mapX1, mapZ1, mapX2, mapZ2, nonTerrainHeight, surfaceType) {
+  var addEdge = function(mapX1, mapZ1, mapX2, mapZ2, nonTerrainHeight, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1];
     var intersection2 = intersections[mapX2][mapZ2];
     var intersectionHeight, intersectionSurfaceType;
@@ -100,7 +100,7 @@ CityTour.RoadNetwork = function(terrain) {
     maxRow = Math.max(maxRow, mapZ1, mapZ2);
   };
 
-  roadNetwork.hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
+  var hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1] || false;
     var intersection2 = intersections[mapX2][mapZ2] || false;
 
@@ -108,18 +108,25 @@ CityTour.RoadNetwork = function(terrain) {
            intersection1.hasEdgeTo(mapX2, mapZ2, surfaceType) && intersection2.hasEdgeTo(mapX1, mapZ1, surfaceType);
   };
 
-  roadNetwork.edgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
+  var edgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
     var intersection1 = intersections[mapX1][mapZ1] || false;
 
     return intersection1.getEdge(mapX2, mapZ2);
   };
 
-  roadNetwork.minColumn = function() { return minColumn; };
-  roadNetwork.maxColumn = function() { return maxColumn; };
-  roadNetwork.minRow = function() { return minRow; };
-  roadNetwork.maxRow = function() { return maxRow; };
 
-  return roadNetwork;
+  return {
+    hasIntersection: hasIntersection,
+    getIntersectionHeight: getIntersectionHeight,
+    getIntersectionSurfaceType: getIntersectionSurfaceType,
+    addEdge: addEdge,
+    hasEdgeBetween: hasEdgeBetween,
+    edgeBetween: edgeBetween,
+    minColumn: function() { return minColumn; },
+    maxColumn: function() { return maxColumn; },
+    minRow: function() { return minRow; },
+    maxRow: function() { return maxRow; },
+  };
 };
 
 CityTour.RoadNetwork.TERRAIN_SURFACE = 'terrain';
