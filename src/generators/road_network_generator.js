@@ -6,6 +6,7 @@ CityTour.RoadNetworkGenerator = (function() {
   var DISTANCE_TO_CITY_EDGE = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
   var MAX_STEEPNESS = Math.PI / 6;
   var MAX_BRIDGE_LENGTH = 10;
+  var MIN_BRIDGE_HEIGHT_FROM_WATER = 5;
 
   var buildRoadNetwork = function(terrain, config) {
     var centerMapX = config.centerMapX;
@@ -65,6 +66,8 @@ CityTour.RoadNetworkGenerator = (function() {
     };
 
     var calculateBridgeAttributes = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
+      var waterHeight;
+
       var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX, mapZ);
       if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
         return null;
@@ -88,6 +91,9 @@ CityTour.RoadNetworkGenerator = (function() {
 
       var bridgeLength = 1;
       while (terrain.materialAtCoordinates(finalX, finalZ) === CityTour.Terrain.WATER) {
+        if (waterHeight === undefined) {
+          waterHeight = terrain.heightAtCoordinates(finalX, finalZ);
+        }
         if (roadNetwork.hasIntersection(finalX, finalZ)) {
           return null;
         }
@@ -113,7 +119,7 @@ CityTour.RoadNetworkGenerator = (function() {
       if (Math.abs(heightAtTerminal1 - heightAtTerminal2) > 5.0) {
         return null;
       }
-      var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2);
+      var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2, waterHeight + MIN_BRIDGE_HEIGHT_FROM_WATER);
 
       if (Math.random() < 0.5) {
         return null;
