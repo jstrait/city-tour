@@ -59,8 +59,47 @@ CityTour.RoadNetwork = function(terrain) {
       return intersections[mapX][mapZ].getHeight();
     }
     else {
-      return false;
+      return undefined;
     }
+  };
+
+  var getRoadHeight = function(mapX, mapZ) {
+    var xIsExact = Math.floor(mapX) === mapX;
+    var zIsExact = Math.floor(mapZ) === mapZ;
+    var floor, ceil;
+    var heightDifferential, percentage;
+
+    if (xIsExact && zIsExact) {
+      return getIntersectionHeight(mapX, mapZ);
+    }
+    else if (xIsExact) {
+      ceil = getIntersectionHeight(mapX, Math.ceil(mapZ));
+      floor = getIntersectionHeight(mapX, Math.floor(mapZ));
+
+      if (ceil !== undefined && floor !== undefined) {
+        heightDifferential = ceil - floor;
+        percentage = mapZ - Math.floor(mapZ);
+        return floor + (heightDifferential * percentage);
+      }
+      else {
+        return undefined;
+      }
+    }
+    else if (zIsExact) {
+      ceil = getIntersectionHeight(Math.ceil(mapX), mapZ);
+      floor = getIntersectionHeight(Math.floor(mapX), mapZ);
+
+      if (ceil !== undefined && floor !== undefined) {
+        heightDifferential = ceil - floor;
+        percentage = mapX - Math.floor(mapX);
+        return floor + (heightDifferential * percentage);
+      }
+      else {
+        return undefined;
+      }
+    }
+
+    return undefined;
   };
 
   var getIntersectionSurfaceType = function(mapX, mapZ) {
@@ -117,7 +156,7 @@ CityTour.RoadNetwork = function(terrain) {
 
   return {
     hasIntersection: hasIntersection,
-    getIntersectionHeight: getIntersectionHeight,
+    getRoadHeight: getRoadHeight,
     getIntersectionSurfaceType: getIntersectionSurfaceType,
     addEdge: addEdge,
     hasEdgeBetween: hasEdgeBetween,

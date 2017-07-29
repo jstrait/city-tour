@@ -108,7 +108,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
 
         if (roadNetwork.hasIntersection(mapX, mapZ)) {
-          selfSurfaceHeight = roadNetwork.getIntersectionHeight(mapX, mapZ);
+          selfSurfaceHeight = roadNetwork.getRoadHeight(mapX, mapZ);
 
           northRoad = roadNetwork.edgeBetween(mapX, mapZ, mapX, mapZ - 1);
           eastRoad = roadNetwork.edgeBetween(mapX, mapZ, mapX + 1, mapZ);
@@ -231,7 +231,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
           // North/South road segment
           if (southRoad !== false) {
-            southSurfaceHeight = roadNetwork.getIntersectionHeight(mapX, mapZ + 1);
+            southSurfaceHeight = roadNetwork.getRoadHeight(mapX, mapZ + 1);
 
             roadSegment = calculateRoadSegment(selfSurfaceHeight,
                                                southSurfaceHeight,
@@ -286,7 +286,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
           // East/West road segment
           if (eastRoad !== false) {
-            eastSurfaceHeight = roadNetwork.getIntersectionHeight(mapX + 1, mapZ);
+            eastSurfaceHeight = roadNetwork.getRoadHeight(mapX + 1, mapZ);
 
             roadSegment = calculateRoadSegment(selfSurfaceHeight,
                                                eastSurfaceHeight,
