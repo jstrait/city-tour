@@ -36,6 +36,8 @@ h3 {
   font-size: 3.0rem;
   font-weight: bold;
   background: #fff;
+  text-align: center;
+  line-height: 4.5rem;
 }
 
 .menu-title {
@@ -221,6 +223,30 @@ input[type="range"] {
 "use strict";
 
 (function() {
+  var detectWebGL = function() {
+    if (!window.WebGLRenderingContext) {
+      return false;
+    }
+
+    // Adapted from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/webgl-extensions.js
+    var canvas = document.createElement('canvas');
+    var webgl_context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (webgl_context === null) {
+      return false;
+    }
+
+    return true;
+  };
+
+  var loadingMessage;
+  if (!detectWebGL()) {
+    loadingMessage = document.getElementById("loading-message");
+    loadingMessage.innerText = "This site is not compatible with your browser, because it requires WebGL.";
+    loadingMessage.classList.add("flex");
+    loadingMessage.classList.remove("display-none");
+    return;
+  }
+
   var messageBroker = new CityTour.MessageBroker();
   var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
   var cityConfigService = new CityTour.CityConfigService();
