@@ -77,9 +77,7 @@ CityTour.RoadNetwork = function(terrain) {
       floor = getIntersectionHeight(mapX, Math.floor(mapZ));
 
       if (ceil !== undefined && floor !== undefined) {
-        heightDifferential = ceil - floor;
-        percentage = mapZ - Math.floor(mapZ);
-        return floor + (heightDifferential * percentage);
+        return CityTour.Math.lerp(floor, ceil, mapZ - Math.floor(mapZ));
       }
       else {
         return undefined;
@@ -90,9 +88,7 @@ CityTour.RoadNetwork = function(terrain) {
       floor = getIntersectionHeight(Math.floor(mapX), mapZ);
 
       if (ceil !== undefined && floor !== undefined) {
-        heightDifferential = ceil - floor;
-        percentage = mapX - Math.floor(mapX);
-        return floor + (heightDifferential * percentage);
+        return CityTour.Math.lerp(floor, ceil, mapX - Math.floor(mapX));
       }
       else {
         return undefined;
