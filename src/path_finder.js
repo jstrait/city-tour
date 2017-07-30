@@ -106,9 +106,7 @@ CityTour.PathFinder = function(roadNetwork) {
   };
 
 
-  var pathFinder = {};
-
-  pathFinder.shortestPath = shortestPath;
-
-  return pathFinder;
+  return {
+    shortestPath: shortestPath,
+  };
 };

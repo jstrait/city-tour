@@ -12,15 +12,11 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     return floor + (heightDifferential * percentage);
   };
 
-  var terrain = {};
-
-  terrain.subDivisions = function() { return subDivisions; };
-
-  terrain.materialAtCoordinates = function(x, z) {
+  var materialAtCoordinates = function(x, z) {
     return coordinates[x][z].material;
   };
 
-  terrain.heightAtCoordinates = function(x, z) {
+  var heightAtCoordinates = function(x, z) {
     var leftHeight, rightHeight, topHeight, bottomHeight;
     var topRowInterpolatedHeight, bottomRowInterpolatedHeight;
 
@@ -63,7 +59,12 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     }
   };
 
-  return terrain;
+
+  return {
+    subDivisions: function() { return subDivisions; },
+    materialAtCoordinates: materialAtCoordinates,
+    heightAtCoordinates: heightAtCoordinates,
+  };
 };
 
 CityTour.Terrain.LAND = 'land';
