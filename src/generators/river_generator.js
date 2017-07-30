@@ -96,10 +96,10 @@ CityTour.RiverGenerator = (function() {
 
 
   var erodeNorthRiverBank = function(terrainCoordinates, riverBankCurve, riverBankHeight, xStep) {
-    var MAX_HEIGHT_INCREASE = 2.0;
-    var MAX_HEIGHT_DECREASE = -2.0;
+    var MAX_HEIGHT_INCREASE = 1.0;
+    var MAX_HEIGHT_DECREASE = -0.5;
     var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 16;
-    var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 20;
+    var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 25;
 
     var i, x;
     var xCoordinate, zCoordinate;
