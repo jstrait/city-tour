@@ -96,6 +96,11 @@ CityTour.RiverGenerator = (function() {
 
 
   var erodeNorthRiverBank = function(terrainCoordinates, riverBankCurve, riverBankHeight, xStep) {
+    var MAX_HEIGHT_INCREASE = 2.0;
+    var MAX_HEIGHT_DECREASE = -2.0;
+    var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 16;
+    var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 20;
+
     var i, x;
     var xCoordinate, zCoordinate;
     var vector;
@@ -106,9 +111,11 @@ CityTour.RiverGenerator = (function() {
     var previousX = -1;
 
     baseHeight = riverBankHeight;
-    depth = Math.round(CityTour.Math.lerp(16, 20, Math.random()));
+    depth = Math.round(CityTour.Math.lerp(MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK,
+                                          MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK,
+                                          Math.random()));
     for (i = 1; i < depth; i++) {
-      heightIncreaseAmount = CityTour.Math.lerp(0.0, 2.0, Math.random());
+      heightIncreaseAmount = CityTour.Math.lerp(0.0, MAX_HEIGHT_INCREASE, Math.random());
       baseHeight += heightIncreaseAmount;
       previousX = -1;
 
@@ -119,7 +126,7 @@ CityTour.RiverGenerator = (function() {
         if (xCoordinate > previousX) {
           zCoordinate = Math.ceil(vector.y) - i;
 
-          newHeight = baseHeight + heightIncreaseAmount + CityTour.Math.lerp(-2.0, 2.0, Math.random());
+          newHeight = baseHeight + heightIncreaseAmount + CityTour.Math.lerp(MAX_HEIGHT_DECREASE, MAX_HEIGHT_INCREASE, Math.random());
 
           if (newHeight < terrainCoordinates[xCoordinate][zCoordinate].height) {
             terrainCoordinates[xCoordinate][zCoordinate].height = newHeight;
