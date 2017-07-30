@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.SceneView = function(containerEl, initialWorldConfig, interactiveCamera, messageBroker) {
+CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
 
@@ -69,7 +69,7 @@ CityTour.SceneView = function(containerEl, initialWorldConfig, interactiveCamera
     renderView.render();
   };
 
-  reset(initialWorldConfig);
+  renderView = new CityTour.RenderView(containerEl, new THREE.Scene());
   containerEl.appendChild(renderView.domElement());
 
   window.addEventListener('resize', renderView.resize, false);

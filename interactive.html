@@ -35,7 +35,7 @@ h3 {
   justify-content: center;
   font-size: 3.0rem;
   font-weight: bold;
-  background: rgba(255, 255, 255, 0.85);
+  background: #fff;
 }
 
 .menu-title {
@@ -212,7 +212,7 @@ input[type="range"] {
     </div>
   </div>
 
-  <div id="loading-message" class="display-none absolute" style="top: 0; left: 0; right: 0; bottom: 0;">Building new city...</div>
+  <div id="loading-message" class="flex absolute" style="top: 0; left: 0; right: 0; bottom: 0;">Building new city...</div>
 </body>
 <script src="lib/three-v86.min.js" type="text/javascript"></script>
 <script src="lib/analytics.js" type="text/javascript"></script>
@@ -224,11 +224,13 @@ input[type="range"] {
   var messageBroker = new CityTour.MessageBroker();
   var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
   var cityConfigService = new CityTour.CityConfigService();
-  var sceneView = new CityTour.SceneView(document.getElementById("container"), cityConfigService.toWorldConfig(), interactiveCamera, messageBroker);
+  var sceneView = new CityTour.SceneView(document.getElementById("container"), interactiveCamera, messageBroker);
 
   new CityTour.CityEditorController(cityConfigService, sceneView, messageBroker);
   new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
   new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
+
+  document.getElementById("reset").click();
 })();
 </script>
 </html>
