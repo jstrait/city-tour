@@ -91,15 +91,21 @@ CityTour.RiverGenerator = (function() {
     // Fill the river with water
     floodFill(terrainCoordinates, 0, topCurve.getPointAt(0.0).y, minimumRiverBankHeight, CityTour.Terrain.WATER);
 
-    var i;
+    erodeNorthRiverBank(terrainCoordinates, topCurve, minimumRiverBankHeight, xStep);
+  };
+
+
+  var erodeNorthRiverBank = function(terrainCoordinates, riverBankCurve, riverBankHeight, xStep) {
+    var i, x;
+    var xCoordinate, zCoordinate;
+    var vector;
     var baseHeight;
     var newHeight;
     var depth;
     var heightIncreaseAmount;
     var previousX = -1;
 
-    // "Erode" the north river bank
-    baseHeight = minimumRiverBankHeight;
+    baseHeight = riverBankHeight;
     depth = Math.round(CityTour.Math.lerp(16, 20, Math.random()));
     for (i = 1; i < depth; i++) {
       heightIncreaseAmount = CityTour.Math.lerp(0.0, 2.0, Math.random());
@@ -107,7 +113,7 @@ CityTour.RiverGenerator = (function() {
       previousX = -1;
 
       for (x = 0.0; x <= 1.0; x += xStep / 2) {
-        vector = topCurve.getPointAt(x);
+        vector = riverBankCurve.getPointAt(x);
         xCoordinate = Math.round(vector.x);
 
         if (xCoordinate > previousX) {
