@@ -57,6 +57,7 @@ CityTour.RiverGenerator = (function() {
 
     xStep = 1 / columnsToGenerate;
 
+    // Find the lowest point on the north river bank
     minimumRiverBankHeight = Number.POSITIVE_INFINITY;
     for (x = 0.0; x <= 1.0; x += xStep) {
       vector = topCurve.getPointAt(x);
@@ -67,6 +68,7 @@ CityTour.RiverGenerator = (function() {
         minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].height;
       }
     }
+    // Find the lowest point on the south river bank
     for (x = 0.0; x <= 1.0; x += xStep) {
       vector = bottomCurve.getPointAt(x);
       xCoordinate = Math.round(vector.x);
@@ -76,7 +78,7 @@ CityTour.RiverGenerator = (function() {
         minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].height;
       }
     }
-
+    // Set every terrain point between the two river banks to same height as the lowest point
     for (x = 0.0; x <= 1.0; x += xStep / 2) {
       topVector = topCurve.getPointAt(x);
       bottomVector = bottomCurve.getPointAt(x);
@@ -86,7 +88,7 @@ CityTour.RiverGenerator = (function() {
         terrainCoordinates[xCoordinate][z].height = minimumRiverBankHeight;
       }
     }
-
+    // Fill the river with water
     floodFill(terrainCoordinates, 0, topCurve.getPointAt(0.0).y, minimumRiverBankHeight, CityTour.Terrain.WATER);
 
     var i;
@@ -96,6 +98,7 @@ CityTour.RiverGenerator = (function() {
     var heightIncreaseAmount;
     var previousX = -1;
 
+    // "Erode" the north river bank
     baseHeight = minimumRiverBankHeight;
     depth = Math.round(CityTour.Math.lerp(16, 20, Math.random()));
     for (i = 1; i < depth; i++) {
