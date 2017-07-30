@@ -31,13 +31,11 @@ CityTour.RoadNetworkGenerator = (function() {
       var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX1, mapZ1);
       var normalizedPercentageFromCenter;
 
-      if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
-        normalizedPercentageFromCenter = (distanceFromCenter - SAFE_FROM_DECAY_DISTANCE) / (DISTANCE_TO_CITY_EDGE - SAFE_FROM_DECAY_DISTANCE);
-      }
-      else {
-        normalizedPercentageFromCenter = 0.0;
+      if (distanceFromCenter <= SAFE_FROM_DECAY_DISTANCE) {
+        return 1.0;
       }
 
+      normalizedPercentageFromCenter = (distanceFromCenter - SAFE_FROM_DECAY_DISTANCE) / (DISTANCE_TO_CITY_EDGE - SAFE_FROM_DECAY_DISTANCE);
       return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
     };
 
