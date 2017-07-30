@@ -156,11 +156,10 @@ CityTour.RoadNetworkGenerator = (function() {
       }
       else {
         if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
-          if (roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
-            roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-          }
-          else {
-            roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+          var targetIntersectionExists = roadNetwork.hasIntersection(targetMapX, targetMapZ);
+
+          roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+          if (!targetIntersectionExists) {
             branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
           }
         }
