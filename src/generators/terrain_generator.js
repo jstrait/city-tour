@@ -87,6 +87,21 @@ CityTour.TerrainGenerator = (function() {
   };
 
 
+  var flattenLowTerrain = function(terrainCoordinates, minHeightThreshold, top, right, bottom, left) {
+    var x, z;
+
+    for (x = left; x <= right; x++) {
+      for (z = top; z <= bottom; z++) {
+        if (terrainCoordinates[x][z].height < minHeightThreshold) {
+          terrainCoordinates[x][z].height = minHeightThreshold;
+        }
+      }
+    }
+
+    return terrainCoordinates;
+  };
+
+
   // Adapted from http://stevelosh.com/blog/2016/02/midpoint-displacement/
   var midpointDisplace = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
     var topLeftHeight     = terrainCoordinates[top][left].height;
