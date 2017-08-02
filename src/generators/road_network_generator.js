@@ -120,6 +120,10 @@ CityTour.RoadNetworkGenerator = (function() {
       }
       var roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2, waterHeight + MIN_BRIDGE_HEIGHT_FROM_WATER);
 
+      if (parallelBridgeExistsNearby(mapX, mapZ, bridgeEndX, bridgeEndZ)) {
+        return null;
+      }
+
       if (Math.random() < 0.5) {
         return null;
       }
@@ -131,6 +135,35 @@ CityTour.RoadNetworkGenerator = (function() {
         xDelta: xDelta,
         zDelta: zDelta,
       };
+    };
+
+    var parallelBridgeExistsNearby = function(startX, startZ, endX, endZ) {
+      var MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS = 3;
+      var x, z;
+      var xMin, xMax, zMin, zMax;
+
+      if (endZ > startZ) {  // North/south bridge
+        xMin = startX - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+        xMax = endX + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+        zMin = startZ;
+        zMax = endZ;
+      }
+      else {  // East/west bridge
+        xMin = startX;
+        xMax = endX;
+        zMin = startZ - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+        zMax = endZ + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+      }
+
+      for (x = xMin; x <= xMax; x++) {
+        for (z = zMin; z <= zMax; z++) {
+          if (roadNetwork.hasIntersection(x, z) && terrain.materialAtCoordinates(x, z) === CityTour.Terrain.WATER) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     };
 
     var connectIntersections = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
