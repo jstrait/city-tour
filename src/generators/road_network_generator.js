@@ -66,29 +66,29 @@ CityTour.RoadNetworkGenerator = (function() {
       connectIntersections(terrain, roadNetwork, mapX, mapZ, mapX, mapZ + 1);
     };
 
-    var calculateBridgeAttributes = function(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ) {
+    var calculateBridgeAttributes = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetMapX, targetMapZ) {
       var xDelta, zDelta;
       var bridgeEndX, bridgeEndZ;
       var bridgeLength;
       var heightAtTerminal1, heightAtTerminal2;
       var waterHeight, roadDeckHeight;
 
-      var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX, mapZ);
+      var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, bridgeStartX, bridgeStartZ);
       if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
         return null;
       }
 
-      if (targetMapX === mapX) {
+      if (targetMapX === bridgeStartX) {
         xDelta = 0.0;
       }
       else {
-        xDelta = (targetMapX < mapX) ? -1 : 1;
+        xDelta = (targetMapX < bridgeStartX) ? -1 : 1;
       }
-      if (targetMapZ === mapZ) {
+      if (targetMapZ === bridgeStartZ) {
         zDelta = 0.0;
       }
       else {
-        zDelta = (targetMapZ < mapZ) ? -1 : 1;
+        zDelta = (targetMapZ < bridgeStartZ) ? -1 : 1;
       }
       bridgeEndX = targetMapX;
       bridgeEndZ = targetMapZ;
@@ -118,14 +118,14 @@ CityTour.RoadNetworkGenerator = (function() {
         return null;
       }
 
-      heightAtTerminal1 = terrain.heightAtCoordinates(mapX, mapZ);
+      heightAtTerminal1 = terrain.heightAtCoordinates(bridgeStartX, bridgeStartZ);
       heightAtTerminal2 = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
       if (Math.abs(heightAtTerminal1 - heightAtTerminal2) > MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS) {
         return null;
       }
       roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2, waterHeight + MIN_BRIDGE_HEIGHT_FROM_WATER);
 
-      if (parallelBridgeExistsNearby(mapX, mapZ, bridgeEndX, bridgeEndZ)) {
+      if (parallelBridgeExistsNearby(bridgeStartX, bridgeStartZ, bridgeEndX, bridgeEndZ)) {
         return null;
       }
 
