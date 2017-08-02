@@ -161,7 +161,7 @@ CityTour.RoadNetworkGenerator = (function() {
 
       for (x = xMin; x <= xMax; x++) {
         for (z = zMin; z <= zMax; z++) {
-          if (roadNetwork.hasIntersection(x, z) && terrain.materialAtCoordinates(x, z) === CityTour.Terrain.WATER) {
+          if (roadNetwork.hasIntersection(x, z) && roadNetwork.getIntersectionSurfaceType(x, z) === CityTour.RoadNetwork.BRIDGE_SURFACE) {
             return true;
           }
         }
