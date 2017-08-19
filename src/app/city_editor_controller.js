@@ -113,4 +113,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   var id3 = messageBroker.addSubscriber("generation.complete", resetPart2);
 
   render();
+
+
+  return {};
 };

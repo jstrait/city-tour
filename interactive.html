@@ -247,17 +247,34 @@ input[type="range"] {
     return;
   }
 
+  var container = document.getElementById("container");
+
   var messageBroker = new CityTour.MessageBroker();
   var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
   var cityConfigService = new CityTour.CityConfigService();
-  var sceneView = new CityTour.SceneView(document.getElementById("container"), interactiveCamera, messageBroker);
+  var sceneView;
+  var cityEditorController;
+  var navigationController;
+  var navigationTouchController;
 
-  new CityTour.CityEditorController(cityConfigService, messageBroker);
-  new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
-  new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
+  cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
 
   messageBroker.addSubscriber("generation.started", function(data) {
+    if (navigationController) {
+      navigationController.destroy();
+    }
+    if (navigationTouchController) {
+      navigationTouchController.destroy();
+    }
+    if (sceneView) {
+      sceneView.destroy();
+    }
+
+    sceneView = new CityTour.SceneView(container, interactiveCamera, messageBroker);
     sceneView.reset(cityConfigService.toWorldConfig());
+
+    navigationController = new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
+    navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 
     messageBroker.publish("generation.complete", {});
   });

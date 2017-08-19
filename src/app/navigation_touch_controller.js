@@ -174,6 +174,24 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   var id1 = messageBroker.addSubscriber("flythrough.started", disableEventHandlers);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", enableEventHandlers);
 
+  var destroy = function() {
+    el.removeEventListener('mousedown', onMouseDown, false);
+    el.removeEventListener('touchstart', onTouchStart, false);
+    el.removeEventListener('mousemove', onMouseMove, false);
+    el.removeEventListener('touchmove', onTouchMove, false);
+    el.removeEventListener('mouseup', onMouseUp, false);
+    el.removeEventListener('touchend', onTouchEnd, false);
+    el.removeEventListener('touchstart', onTouchStartStub, false);
+
+    messageBroker.removeSubscriber("flythrough.started", id1);
+    messageBroker.removeSubscriber("flythrough.stopped", id2);
+  };
+
   onMouseUp();
   enableEventHandlers();
+
+
+  return {
+    destroy: destroy,
+  };
 };

@@ -75,10 +75,17 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
   window.addEventListener('resize', renderView.resize, false);
   var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
 
+  var destroy = function() {
+    containerEl.removeChild(renderView.domElement());
+    window.removeEventListener('resize', renderView.resize, false);
+    messageBroker.removeSubscriber("camera.updated", id1);
+  };
+
 
   return {
     reset: reset,
     toggleFlythrough: toggleFlythrough,
     domElement: function() { return renderView.domElement(); },
+    destroy: destroy,
   };
 };

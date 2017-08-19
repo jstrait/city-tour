@@ -85,4 +85,23 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   var id1 = messageBroker.addSubscriber("camera.updated", render);
   var id2 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id3 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
+
+  var destroy = function() {
+    containerToggle.removeEventListener('click', toggleNavigationControls, false);
+    centerXControl.removeEventListener('input', setCenterCoordinates, false);
+    centerZControl.removeEventListener('input', setCenterCoordinates, false);
+    rotationYControl.removeEventListener('input', setRotationAngle, false);
+    rotationXControl.removeEventListener('input', setTiltAngle, false);
+    zoomControl.removeEventListener('input', setZoomPercentage, false);
+    flythroughToggle.removeEventListener('click', toggleFlythrough, false);
+
+    messageBroker.removeSubscriber("camera.updated", id1);
+    messageBroker.removeSubscriber("flythrough.started", id2);
+    messageBroker.removeSubscriber("flythrough.stopped", id3);
+  };
+
+
+  return {
+    destroy: destroy,
+  };
 };
