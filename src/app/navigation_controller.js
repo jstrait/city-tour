@@ -3,6 +3,11 @@
 var CityTour = CityTour || {};
 
 CityTour.NavigationController = function(interactiveCamera, sceneView, messageBroker) {
+  var DOWN_ARROW = "&#9660;";
+  var UP_ARROW = "&#9650;";
+  var START_TOUR_MESSAGE = "Take a Tour";
+  var STOP_TOUR_MESSAGE = "Stop Tour";
+
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-container");
   var centerXControl = document.getElementById("centerX");
@@ -28,11 +33,11 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
     zoomControl.value = interactiveCamera.zoomPercentage();
 
     if (navigationControlsEnabled) {
-      containerToggle.innerHTML = "&#9660;";
+      containerToggle.innerHTML = DOWN_ARROW;
       container.classList.remove("display-none");
     }
     else {
-      containerToggle.innerHTML = "&#9650;";
+      containerToggle.innerHTML = UP_ARROW;
       container.classList.add("display-none");
     }
   };
@@ -51,7 +56,7 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   };
 
   var toggleFlythrough = function(e) {
-    flythroughToggle.innerText = (flythroughToggle.innerText === "Take a Tour") ? "Stop Tour" : "Take a Tour";
+    flythroughToggle.innerText = (flythroughToggle.innerText === START_TOUR_MESSAGE) ? STOP_TOUR_MESSAGE : START_TOUR_MESSAGE;
 
     sceneView.toggleFlythrough();
   };
