@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.CityEditorController = function(cityConfigService, sceneView, messageBroker) {
+CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   var EDITOR_MENU = 1;
   var ABOUT_MENU = 2;
 
@@ -54,12 +54,10 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
     render();
 
     // Allow DOM to update to show the "Loading..." message
-    setTimeout(resetPart2, 1);
+    setTimeout(function() { messageBroker.publish("generation.started", {}); }, 1);
   };
 
   var resetPart2 = function() {
-    sceneView.reset(cityConfigService.toWorldConfig());
-
     loadingMessage.classList.remove("flex");
     loadingMessage.classList.add("display-none");
   };
@@ -112,6 +110,7 @@ CityTour.CityEditorController = function(cityConfigService, sceneView, messageBr
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
+  var id3 = messageBroker.addSubscriber("generation.complete", resetPart2);
 
   render();
 };

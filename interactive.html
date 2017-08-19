@@ -252,9 +252,15 @@ input[type="range"] {
   var cityConfigService = new CityTour.CityConfigService();
   var sceneView = new CityTour.SceneView(document.getElementById("container"), interactiveCamera, messageBroker);
 
-  new CityTour.CityEditorController(cityConfigService, sceneView, messageBroker);
+  new CityTour.CityEditorController(cityConfigService, messageBroker);
   new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
   new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
+
+  messageBroker.addSubscriber("generation.started", function(data) {
+    sceneView.reset(cityConfigService.toWorldConfig());
+
+    messageBroker.publish("generation.complete", {});
+  });
 
   document.getElementById("reset").click();
 })();
