@@ -73,6 +73,11 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
 
   // See https://stackoverflow.com/questions/25126352/deallocating-buffergeometry
   var removeChildFromScene = function(obj) {
+    var i;
+    for (i = obj.children.length - 1; i >= 0; i--) {
+      removeChildFromScene(obj.children[i]);
+    }
+
     scene.remove(obj);
     if (obj instanceof THREE.Mesh) {
       obj.geometry.dispose();
@@ -92,11 +97,15 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
   var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
 
   var destroy = function() {
+    var i;
+
     containerEl.removeChild(renderView.domElement());
     window.removeEventListener('resize', renderView.resize, false);
     messageBroker.removeSubscriber("camera.updated", id1);
 
-    scene.children.forEach(removeChildFromScene);
+    for (i = scene.children.length - 1; i >= 0; i--) {
+      removeChildFromScene(scene.children[i]);
+    }
   };
 
 
