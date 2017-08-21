@@ -6,12 +6,14 @@ CityTour.Scene = CityTour.Scene || {};
 CityTour.Scene.Builder = function() {
   var SKY_COLOR = new THREE.Color(0x66ccff);
 
+  var scene;
+
   var sceneBuilder = {};
 
   sceneBuilder.build = function(terrain, roadNetwork, buildings) {
     var masterStartTime = new Date();
 
-    var scene = new THREE.Scene();
+    scene = new THREE.Scene();
     scene.background = SKY_COLOR;
 
     var terrainStartTime = new Date();
@@ -52,6 +54,23 @@ CityTour.Scene.Builder = function() {
     console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
 
     return scene;
+  };
+
+  // See https://stackoverflow.com/questions/25126352/deallocating-buffergeometry
+  var removeChild = function(obj) {
+    scene.remove(obj);
+    if (obj instanceof THREE.Mesh) {
+      obj.geometry.dispose();
+      obj.geometry = null;
+      obj.material.dispose();
+      obj.material = null;
+    }
+
+    obj = null;
+  };
+
+  sceneBuilder.destroy = function() {
+    scene.children.forEach(removeChild);
   };
 
   return sceneBuilder;

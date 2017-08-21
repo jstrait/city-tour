@@ -8,6 +8,8 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
 
   var worldData;
   var renderView = null, poleCamera;
+  var sceneBuilder;
+  var scene;
   var timer;
   var animationManager;
   var mode = INTERACTIVE;
@@ -44,8 +46,8 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
 
   var reset = function(newWorldConfig) {
     worldData = CityTour.WorldGenerator.generate(newWorldConfig);
-    var sceneBuilder = new CityTour.Scene.Builder();
-    var scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
+    sceneBuilder = new CityTour.Scene.Builder();
+    scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
     if (renderView === null) {
       renderView = new CityTour.RenderView(containerEl, scene);
@@ -79,6 +81,8 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     containerEl.removeChild(renderView.domElement());
     window.removeEventListener('resize', renderView.resize, false);
     messageBroker.removeSubscriber("camera.updated", id1);
+
+    sceneBuilder.destroy();
   };
 
 
