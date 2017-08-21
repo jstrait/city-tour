@@ -71,6 +71,20 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     renderView.render();
   };
 
+  // See https://stackoverflow.com/questions/25126352/deallocating-buffergeometry
+  var removeChildFromScene = function(obj) {
+    scene.remove(obj);
+    if (obj instanceof THREE.Mesh) {
+      obj.geometry.dispose();
+      obj.geometry = null;
+      obj.material.dispose();
+      obj.material = null;
+    }
+
+    obj = null;
+  };
+
+
   renderView = new CityTour.RenderView(containerEl, new THREE.Scene());
   containerEl.appendChild(renderView.domElement());
 
@@ -82,7 +96,7 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     window.removeEventListener('resize', renderView.resize, false);
     messageBroker.removeSubscriber("camera.updated", id1);
 
-    sceneBuilder.destroy();
+    scene.children.forEach(removeChildFromScene);
   };
 
 

@@ -56,22 +56,5 @@ CityTour.Scene.Builder = function() {
     return scene;
   };
 
-  // See https://stackoverflow.com/questions/25126352/deallocating-buffergeometry
-  var removeChild = function(obj) {
-    scene.remove(obj);
-    if (obj instanceof THREE.Mesh) {
-      obj.geometry.dispose();
-      obj.geometry = null;
-      obj.material.dispose();
-      obj.material = null;
-    }
-
-    obj = null;
-  };
-
-  sceneBuilder.destroy = function() {
-    scene.children.forEach(removeChild);
-  };
-
   return sceneBuilder;
 };
