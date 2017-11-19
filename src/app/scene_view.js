@@ -49,6 +49,8 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     sceneBuilder = new CityTour.Scene.Builder();
     scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
+    interactiveCamera.setTerrain(worldData.terrain);
+
     if (renderView === null) {
       renderView = new CityTour.RenderView(containerEl, scene);
     }

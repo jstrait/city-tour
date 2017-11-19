@@ -17,17 +17,23 @@ CityTour.InteractiveCamera = function(messageBroker) {
   var MIN_ZOOM_DISTANCE = 20.0;
   var MAX_ZOOM_DISTANCE = 1000.0;
 
+  var MINIMUM_HEIGHT_OFF_GROUND = 5.0;
+
   var centerX = 0.0;
   var centerZ = 0.0;
   var zoomPercentage = 0.0;
   var tiltPercentage = 0.2;
   var rotationAngle = 0.0;
 
+  var terrain;
+
   var clamp = function(value, min, max) {
     return Math.max(min, Math.min(max, value));
   };
 
   var interactiveCamera = {};
+
+  interactiveCamera.setTerrain = function(newTerrain) { terrain = newTerrain; };
 
   interactiveCamera.centerX = function() { return centerX; };
   interactiveCamera.centerZ = function() { return centerZ; };
@@ -84,11 +90,22 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
     var hypotenuse = zoom;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
-    var opposite = -(Math.sin(tiltAngle) * hypotenuse);
 
-    poleCamera.setPositionX(centerX + (adjacent * Math.sin(rotationAngle)));
+    var cameraX = centerX + (adjacent * Math.sin(rotationAngle));
+    var cameraZ = centerZ + (adjacent * Math.cos(-rotationAngle));
+    var terrainHeight = Number.NEGATIVE_INFINITY;
+    if (terrain !== undefined) {
+      terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(cameraX), CityTour.Coordinates.sceneZToMapZ(cameraZ));
+      if (terrainHeight === undefined) {
+        terrainHeight = Number.NEGATIVE_INFINITY;
+      }
+    }
+
+    var opposite = Math.max(terrainHeight + MINIMUM_HEIGHT_OFF_GROUND, -(Math.sin(tiltAngle) * hypotenuse));
+
+    poleCamera.setPositionX(cameraX);
     poleCamera.setPositionY(opposite);
-    poleCamera.setPositionZ(centerZ + (adjacent * Math.cos(-rotationAngle)));
+    poleCamera.setPositionZ(cameraZ);
     poleCamera.setRotationX(tiltAngle);
     poleCamera.setRotationY(rotationAngle);
   };
