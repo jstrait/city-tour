@@ -66,11 +66,11 @@ CityTour.Scene.RoadGeometryBuilder = function() {
 
     var roadSegment;
 
-    var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_ROAD, });
+    var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_ROAD, side: THREE.DoubleSide });
     var roadGeometry = new THREE.Geometry();
     var roadSegmentMesh;
 
-    var sidewalkMaterial = new THREE.MeshBasicMaterial({ color: COLOR_SIDEWALK, });
+    var sidewalkMaterial = new THREE.MeshBasicMaterial({ color: COLOR_SIDEWALK, side: THREE.DoubleSide });
     var sidewalkGeometry = new THREE.Geometry();
     var sidewalkSegmentMesh;
 
