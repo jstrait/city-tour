@@ -46,6 +46,8 @@ CityTour.RiverGenerator = (function() {
 
 
   var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
+    var WATER_HEIGHT = 5.0;
+
     var x, z, xStep;
     var xCoordinate, zCoordinate;
     var minimumRiverBankHeight;
@@ -85,11 +87,10 @@ CityTour.RiverGenerator = (function() {
       xCoordinate = Math.round(topVector.x);
 
       for (z = Math.ceil(topVector.y); z < bottomVector.y; z++) {
-        terrainCoordinates[xCoordinate][z].height = minimumRiverBankHeight;
+        terrainCoordinates[xCoordinate][z].height = minimumRiverBankHeight - WATER_HEIGHT;
+        terrainCoordinates[xCoordinate][z].waterHeight = WATER_HEIGHT;
       }
     }
-    // Fill the river with water
-    floodFill(terrainCoordinates, 0, topCurve.getPointAt(0.0).y, minimumRiverBankHeight, CityTour.Terrain.WATER);
 
     erodeNorthRiverBank(terrainCoordinates, topCurve, minimumRiverBankHeight, xStep);
   };

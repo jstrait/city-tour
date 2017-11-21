@@ -14,7 +14,7 @@ CityTour.TerrainGenerator = (function() {
       terrainCoordinates[x] = [];
 
       for (z = 0; z <= rows; z++) {
-        terrainCoordinates[x][z] = { material: CityTour.Terrain.LAND, height: 0.0 };
+        terrainCoordinates[x][z] = { height: 0.0, waterHeight: 0.0 };
       }
     }
 
@@ -40,8 +40,8 @@ CityTour.TerrainGenerator = (function() {
         oldZIndex = (z * SUB_DIVISIONS) + rowOffset;
 
         normalizedTerrainCoordinates[x][z] = {
-          material: terrainCoordinates[oldXIndex][oldZIndex].material,
           height: terrainCoordinates[oldXIndex][oldZIndex].height,
+          waterHeight: terrainCoordinates[oldXIndex][oldZIndex].waterHeight,
         };
       }
     }
