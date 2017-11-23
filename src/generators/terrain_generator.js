@@ -80,6 +80,10 @@ CityTour.TerrainGenerator = (function() {
       CityTour.RiverGenerator.addRiver(terrainCoordinates, rowsToGenerate * (68 / 128), columnsToGenerate);
     }
 
+    // Blur erosion
+    CityTour.BlurEroder.erode(terrainCoordinates);
+
+
     // Convert to final coordinates
     var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
 
