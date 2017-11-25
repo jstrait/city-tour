@@ -144,19 +144,19 @@ CityTour.RoadNetworkGenerator = (function() {
 
     var parallelBridgeExistsNearby = function(startX, startZ, endX, endZ) {
       var x, z;
-      var xMin, xMax, zMin, zMax;
 
-      if (endZ > startZ) {  // North/south bridge
-        xMin = startX - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-        xMax = endX + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-        zMin = startZ;
-        zMax = endZ;
+      var xMin = Math.min(startX, endX);
+      var xMax = Math.max(startX, endX);
+      var zMin = Math.min(startZ, endZ);
+      var zMax = Math.max(startZ, endZ);
+
+      if (startZ !== endZ) {  // North/south bridge
+        xMin = xMin - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+        xMax = xMax + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
       }
-      else {  // East/west bridge
-        xMin = startX;
-        xMax = endX;
-        zMin = startZ - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-        zMax = endZ + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+      else {  // West/east bridge
+        zMin = zMin - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
+        zMax = zMax + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
       }
 
       for (x = xMin; x <= xMax; x++) {
