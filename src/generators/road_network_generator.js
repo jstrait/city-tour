@@ -181,7 +181,7 @@ CityTour.RoadNetworkGenerator = (function() {
         if (bridgeAttributes !== null) {
           bridgeIntersectionX = mapX;
           bridgeIntersectionZ = mapZ;
-          while (bridgeIntersectionX < bridgeAttributes.endX || bridgeIntersectionZ < bridgeAttributes.endZ) {
+          while (bridgeIntersectionX !== bridgeAttributes.endX || bridgeIntersectionZ !== bridgeAttributes.endZ) {
             roadNetwork.addEdge(bridgeIntersectionX,
                                 bridgeIntersectionZ,
                                 bridgeIntersectionX + bridgeAttributes.xDelta,
