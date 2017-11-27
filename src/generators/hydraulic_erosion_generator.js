@@ -5,7 +5,7 @@ var CityTour = CityTour || {};
 CityTour.HydraulicErosionGenerator = (function() {
   var RAINDROP_COUNT = 10000;
   var WATER_HEIGHT_PER_RAINDROP = 1.0;
-  var EVAPORATION_WATER_HEIGHT = 1.2;
+  var EVAPORATION_WATER_HEIGHT = 2.5;
 
   var addRainfall = function(terrainCoordinates) {
     var i;
@@ -38,7 +38,7 @@ CityTour.HydraulicErosionGenerator = (function() {
   var erode = function(terrainCoordinates, iterationCount) {
     var waterFlowCoordinates;
     var northHeight, southHeight, westHeight, eastHeight, southWestHeight, northEastHeight;
-    var currentHeight, minTargetHeight;
+    var currentLandHeight, currentHeight, minTargetHeight;
     var maxLandDelta, maxWaterDelta;
     var i, x, z;
 
@@ -50,7 +50,8 @@ CityTour.HydraulicErosionGenerator = (function() {
 
       for (x = 0; x < rowCount; x++) {
         for (z = 0; z < columnCount; z++) {
-          currentHeight = terrainCoordinates[x][z].height + terrainCoordinates[x][z].waterHeight;
+          currentLandHeight = terrainCoordinates[x][z].height;
+          currentHeight = currentLandHeight + terrainCoordinates[x][z].waterHeight;
 
           // North
           if (z > 0) {
@@ -106,24 +107,51 @@ CityTour.HydraulicErosionGenerator = (function() {
             maxWaterDelta = (currentHeight - minTargetHeight) / 2;
 
             if (northHeight === minTargetHeight) {
+              maxLandDelta = (currentLandHeight - terrainCoordinates[x][z - 1].height) / 2;
+              if (maxLandDelta > 0.0) {
+                waterFlowCoordinates[x][z - 1].landDelta += Math.min(1.0, maxLandDelta);
+              }
               waterFlowCoordinates[x][z - 1].waterDelta += Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
             }
             else if (southHeight === minTargetHeight) {
+              maxLandDelta = (currentLandHeight - terrainCoordinates[x][z + 1].height) / 2;
+              if (maxLandDelta > 0.0) {
+                waterFlowCoordinates[x][z + 1].landDelta += Math.min(1.0, maxLandDelta);
+              }
               waterFlowCoordinates[x][z + 1].waterDelta += Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
             }
             else if (westHeight === minTargetHeight) {
+              maxLandDelta = (currentLandHeight - terrainCoordinates[x - 1][z].height) / 2;
+              if (maxLandDelta > 0.0) {
+                waterFlowCoordinates[x - 1][z].landDelta += Math.min(1.0, maxLandDelta);
+              }
               waterFlowCoordinates[x - 1][z].waterDelta += Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
             }
             else if (eastHeight === minTargetHeight) {
+              maxLandDelta = (currentLandHeight - terrainCoordinates[x + 1][z].height) / 2;
+              if (maxLandDelta > 0.0) {
+                waterFlowCoordinates[x + 1][z].landDelta += Math.min(1.0, maxLandDelta);
+              }
               waterFlowCoordinates[x + 1][z].waterDelta += Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
             }
             else if (southWestHeight === minTargetHeight) {
+              maxLandDelta = (currentLandHeight - terrainCoordinates[x - 1][z + 1].height) / 2;
+              if (maxLandDelta > 0.0) {
+                waterFlowCoordinates[x - 1][z + 1].landDelta += Math.min(1.0, maxLandDelta);
+              }
               waterFlowCoordinates[x - 1][z + 1].waterDelta += Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
             }
             else if (northEastHeight === minTargetHeight) {
+              maxLandDelta = (currentLandHeight - terrainCoordinates[x + 1][z - 1].height) / 2;
+              if (maxLandDelta > 0.0) {
+                waterFlowCoordinates[x + 1][z - 1].landDelta += Math.min(1.0, maxLandDelta);
+              }
               waterFlowCoordinates[x + 1][z - 1].waterDelta += Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
             }
 
+            if (maxLandDelta > 0.0) {
+              waterFlowCoordinates[x][z].landDelta -= Math.min(1.0, maxLandDelta);
+            }
             waterFlowCoordinates[x][z].waterDelta -= Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
           }
         }
@@ -131,6 +159,7 @@ CityTour.HydraulicErosionGenerator = (function() {
 
       for (x = 0; x < rowCount; x++) {
         for (z = 0; z < columnCount; z++) {
+          terrainCoordinates[x][z].height += waterFlowCoordinates[x][z].landDelta;
           terrainCoordinates[x][z].waterHeight += waterFlowCoordinates[x][z].waterDelta;
         }
       }
