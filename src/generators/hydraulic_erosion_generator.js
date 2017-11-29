@@ -43,14 +43,14 @@ CityTour.HydraulicErosionGenerator = (function() {
     var maxLandDelta, maxWaterDelta;
     var i, x, z;
 
-    var rowCount = terrainCoordinates.length;
-    var columnCount = terrainCoordinates[0].length;
+    var columnCount = terrainCoordinates.length;
+    var rowCount = terrainCoordinates[0].length;
 
     for (i = 0; i < iterationCount; i++) {
       waterFlowCoordinates = emptyWaterFlowCoordinates(terrainCoordinates);
 
-      for (x = 0; x < rowCount; x++) {
-        for (z = 0; z < columnCount; z++) {
+      for (x = 0; x < columnCount; x++) {
+        for (z = 0; z < rowCount; z++) {
           currentLandHeight = terrainCoordinates[x][z].height;
           currentHeight = currentLandHeight + terrainCoordinates[x][z].waterHeight;
 
@@ -158,8 +158,8 @@ CityTour.HydraulicErosionGenerator = (function() {
         }
       }
 
-      for (x = 0; x < rowCount; x++) {
-        for (z = 0; z < columnCount; z++) {
+      for (x = 0; x < columnCount; x++) {
+        for (z = 0; z < rowCount; z++) {
           terrainCoordinates[x][z].height += waterFlowCoordinates[x][z].landDelta;
           terrainCoordinates[x][z].waterHeight += waterFlowCoordinates[x][z].waterDelta;
         }
