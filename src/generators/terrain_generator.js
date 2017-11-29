@@ -85,7 +85,7 @@ CityTour.TerrainGenerator = (function() {
     // Hydraulic erosion
     for (hydraulicErosionIteration = 0; hydraulicErosionIteration < TOTAL_HYDRAULIC_EROSION_ITERATIONS; hydraulicErosionIteration++) {
       CityTour.HydraulicErosionGenerator.addRainfall(terrainCoordinates);
-      CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, 200);
+      CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, 50);
       CityTour.HydraulicErosionGenerator.evaporate(terrainCoordinates);
     }
 

@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.HydraulicErosionGenerator = (function() {
-  var RAINDROP_COUNT = 10000;
+  var RAINDROP_COUNT = 5000;
   var WATER_HEIGHT_PER_RAINDROP = 1.0;
   var EVAPORATION_WATER_HEIGHT = 2.5;
 
