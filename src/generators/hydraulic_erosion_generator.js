@@ -9,14 +9,15 @@ CityTour.HydraulicErosionGenerator = (function() {
 
   var addRainfall = function(terrainCoordinates) {
     var i;
-    var rowCount = terrainCoordinates.length;
-    var columnCount = terrainCoordinates[0].length;
+    var maxColumnIndex = terrainCoordinates.length - 1;
+    var maxRowIndex = terrainCoordinates[0].length - 1;
+    var column, row;
 
     for (i = 0; i < RAINDROP_COUNT; i++) {
-      var row = Math.round((Math.random() * (rowCount - 1)));
-      var column = Math.round(Math.random() * (columnCount - 1));
+      column = Math.round(Math.random() * maxColumnIndex);
+      row = Math.round(Math.random() * maxRowIndex);
 
-      terrainCoordinates[row][column].waterHeight += WATER_HEIGHT_PER_RAINDROP;
+      terrainCoordinates[column][row].waterHeight += WATER_HEIGHT_PER_RAINDROP;
     }
   };
 
