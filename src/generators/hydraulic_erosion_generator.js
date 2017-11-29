@@ -143,9 +143,11 @@ CityTour.HydraulicErosionGenerator = (function() {
 
   var evaporate = function(terrainCoordinates) {
     var x, z;
+    var columnCount = terrainCoordinates.length;
+    var rowCount = terrainCoordinates[0].length;
 
-    for (x = 0; x < terrainCoordinates.length; x++) {
-      for (z = 0; z < terrainCoordinates[0].length; z++) {
+    for (x = 0; x < columnCount; x++) {
+      for (z = 0; z < rowCount; z++) {
         terrainCoordinates[x][z].waterHeight = Math.max(terrainCoordinates[x][z].waterHeight - EVAPORATION_WATER_HEIGHT, 0.0);
       }
     }
