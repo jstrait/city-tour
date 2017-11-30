@@ -38,8 +38,8 @@ CityTour.HydraulicErosionGenerator = (function() {
 
   var erode = function(terrainCoordinates, iterationCount) {
     var waterFlowCoordinates;
-    var northHeight, southHeight, westHeight, eastHeight, southWestHeight, northEastHeight;
-    var currentLandHeight, currentHeight, minTargetHeight;
+    var northTotalHeight, southTotalHeight, westTotalHeight, eastTotalHeight, southWestTotalHeight, northEastTotalHeight;
+    var currentLandHeight, currentTotalHeight, minTargetTotalHeight;
     var minTargetX, minTargetZ;
     var landDelta, waterDelta, maxLandDelta, maxWaterDelta;
     var i, x, z;
@@ -53,14 +53,14 @@ CityTour.HydraulicErosionGenerator = (function() {
       for (x = 0; x < columnCount; x++) {
         for (z = 0; z < rowCount; z++) {
           currentLandHeight = terrainCoordinates[x][z].height;
-          currentHeight = currentLandHeight + terrainCoordinates[x][z].waterHeight;
-          minTargetHeight = Number.POSITIVE_INFINITY;
+          currentTotalHeight = currentLandHeight + terrainCoordinates[x][z].waterHeight;
+          minTargetTotalHeight = Number.POSITIVE_INFINITY;
 
           // North
           if (z > 0) {
-            northHeight = terrainCoordinates[x][z - 1].height + terrainCoordinates[x][z - 1].waterHeight;
-            if (northHeight < minTargetHeight) {
-              minTargetHeight = northHeight;
+            northTotalHeight = terrainCoordinates[x][z - 1].height + terrainCoordinates[x][z - 1].waterHeight;
+            if (northTotalHeight < minTargetTotalHeight) {
+              minTargetTotalHeight = northTotalHeight;
               minTargetX = x;
               minTargetZ = z - 1;
             }
@@ -68,9 +68,9 @@ CityTour.HydraulicErosionGenerator = (function() {
 
           // South
           if (z < terrainCoordinates[0].length - 1) {
-            southHeight = terrainCoordinates[x][z + 1].height + terrainCoordinates[x][z + 1].waterHeight;
-            if (southHeight < minTargetHeight) {
-              minTargetHeight = southHeight;
+            southTotalHeight = terrainCoordinates[x][z + 1].height + terrainCoordinates[x][z + 1].waterHeight;
+            if (southTotalHeight < minTargetTotalHeight) {
+              minTargetTotalHeight = southTotalHeight;
               minTargetX = x;
               minTargetZ = z + 1;
             }
@@ -78,9 +78,9 @@ CityTour.HydraulicErosionGenerator = (function() {
 
           // West
           if (x > 0) {
-            westHeight = terrainCoordinates[x - 1][z].height + terrainCoordinates[x - 1][z].waterHeight;
-            if (westHeight < minTargetHeight) {
-              minTargetHeight = westHeight;
+            westTotalHeight = terrainCoordinates[x - 1][z].height + terrainCoordinates[x - 1][z].waterHeight;
+            if (westTotalHeight < minTargetTotalHeight) {
+              minTargetTotalHeight = westTotalHeight;
               minTargetX = x - 1;
               minTargetZ = z;
             }
@@ -88,9 +88,9 @@ CityTour.HydraulicErosionGenerator = (function() {
 
           // East
           if (x < terrainCoordinates.length - 1) {
-            eastHeight = terrainCoordinates[x + 1][z].height + terrainCoordinates[x + 1][z].waterHeight;
-            if (eastHeight < minTargetHeight) {
-              minTargetHeight = eastHeight;
+            eastTotalHeight = terrainCoordinates[x + 1][z].height + terrainCoordinates[x + 1][z].waterHeight;
+            if (eastTotalHeight < minTargetTotalHeight) {
+              minTargetTotalHeight = eastTotalHeight;
               minTargetX = x + 1;
               minTargetZ = z;
             }
@@ -98,9 +98,9 @@ CityTour.HydraulicErosionGenerator = (function() {
 
           // Southwest
           if (x > 0 && z < (terrainCoordinates[0].length - 1)) {
-            southWestHeight = terrainCoordinates[x - 1][z + 1].height + terrainCoordinates[x - 1][z + 1].waterHeight;
-            if (southWestHeight < minTargetHeight) {
-              minTargetHeight = southWestHeight;
+            southWestTotalHeight = terrainCoordinates[x - 1][z + 1].height + terrainCoordinates[x - 1][z + 1].waterHeight;
+            if (southWestTotalHeight < minTargetTotalHeight) {
+              minTargetTotalHeight = southWestTotalHeight;
               minTargetX = x - 1;
               minTargetZ = z + 1;
             }
@@ -108,19 +108,19 @@ CityTour.HydraulicErosionGenerator = (function() {
 
           // Northeast
           if (x < (terrainCoordinates.length - 1) && z > 0) {
-            northEastHeight = terrainCoordinates[x + 1][z - 1].height + terrainCoordinates[x + 1][z - 1].waterHeight;
-            if (northEastHeight < minTargetHeight) {
-              minTargetHeight = northEastHeight;
+            northEastTotalHeight = terrainCoordinates[x + 1][z - 1].height + terrainCoordinates[x + 1][z - 1].waterHeight;
+            if (northEastTotalHeight < minTargetTotalHeight) {
+              minTargetTotalHeight = northEastTotalHeight;
               minTargetX = x + 1;
               minTargetZ = z - 1;
             }
           }
 
-          if (currentHeight > minTargetHeight && terrainCoordinates[x][z].waterHeight > 0.0) {
+          if (currentTotalHeight > minTargetTotalHeight && terrainCoordinates[x][z].waterHeight > 0.0) {
             maxLandDelta = (currentLandHeight - terrainCoordinates[minTargetX][minTargetZ].height) / 2;
             landDelta = (maxLandDelta > 0.0) ? Math.min(1.0, maxLandDelta) : 0.0;
 
-            maxWaterDelta = (currentHeight - minTargetHeight) / 2;
+            maxWaterDelta = (currentTotalHeight - minTargetTotalHeight) / 2;
             waterDelta = Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
 
             waterFlowCoordinates[x][z].landDelta -= landDelta;
