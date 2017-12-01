@@ -7,7 +7,7 @@ CityTour.HydraulicErosionGenerator = (function() {
   var WATER_HEIGHT_PER_RAINDROP = 1.0;
   var EVAPORATION_WATER_HEIGHT = 2.5;
 
-  var addRainfall = function(terrainCoordinates) {
+  var addRandomRainfall = function(terrainCoordinates) {
     var i;
     var maxColumnIndex = terrainCoordinates.length - 1;
     var maxRowIndex = terrainCoordinates[0].length - 1;
@@ -18,6 +18,18 @@ CityTour.HydraulicErosionGenerator = (function() {
       row = Math.round(Math.random() * maxRowIndex);
 
       terrainCoordinates[column][row].waterHeight += WATER_HEIGHT_PER_RAINDROP;
+    }
+  };
+
+  var addUniformRainfall = function(terrainCoordinates) {
+    var columnCount = terrainCoordinates.length;
+    var rowCount = terrainCoordinates[0].length;
+    var x, z;
+
+    for (x = 0; x < columnCount; x++) {
+      for (z = 0; z < rowCount; z++) {
+        terrainCoordinates[x][z].waterHeight += WATER_HEIGHT_PER_RAINDROP;
+      }
     }
   };
 
@@ -155,7 +167,8 @@ CityTour.HydraulicErosionGenerator = (function() {
 
 
   return {
-    addRainfall: addRainfall,
+    addRandomRainfall: addRandomRainfall,
+    addUniformRainfall: addUniformRainfall,
     evaporate: evaporate,
     erode: erode,
   };
