@@ -39,7 +39,11 @@ CityTour.WorldGenerator = (function() {
     var terrainEndTime = new Date();
 
     var cityCenter = findLandPointNearCenter(terrain);
-    var centerX = cityCenter.x, centerZ = cityCenter.z;
+    var centerX, centerZ;
+    if (cityCenter !== undefined) {
+      centerX = cityCenter.x;
+      centerZ = cityCenter.z;
+    }
 
     var roadConfig = {
       centerMapX: centerX,
@@ -48,7 +52,7 @@ CityTour.WorldGenerator = (function() {
     };
 
     var roadStartTime = new Date();
-    var roadNetwork = (GENERATE_ROAD_NETWORK) ? CityTour.RoadNetworkGenerator.generate(terrain, roadConfig) : new CityTour.RoadNetwork(terrain);
+    var roadNetwork = (!GENERATE_ROAD_NETWORK || cityCenter === undefined) ? new CityTour.RoadNetwork(terrain) : CityTour.RoadNetworkGenerator.generate(terrain, roadConfig);
     var roadEndTime = new Date();
 
     var zonedBlockConfig = {
@@ -57,10 +61,10 @@ CityTour.WorldGenerator = (function() {
     };
 
     var zonedBlocksStartTime = new Date();
-    var zonedBlocks = (GENERATE_BUILDINGS) ? CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig) : false;
+    var zonedBlocks = (!GENERATE_BUILDINGS || cityCenter === undefined) ? false : CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig);
     var zonedBlocksEndTime = new Date();
     var buildingsStartTime = new Date();
-    var buildings = (GENERATE_BUILDINGS) ? CityTour.BuildingsGenerator.generate(terrain, zonedBlocks) : false;
+    var buildings = (!GENERATE_BUILDINGS || cityCenter === undefined) ? false : CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
     var buildingsEndTime = new Date();
 
     var combinedEndTime = new Date();
