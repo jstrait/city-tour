@@ -6,6 +6,25 @@ CityTour.WorldGenerator = (function() {
   var generate = function(config) {
     var GENERATE_BUILDINGS = true;
 
+    var findLandPointNearCenter = function(terrain) {
+      var x, z;
+      var squareSize = 1;
+
+      while (squareSize < CityTour.Config.TERRAIN_ROWS && squareSize < CityTour.Config.TERRAIN_COLUMNS) {
+        for (x = -(squareSize - 1) / 2; x <= (squareSize - 1) / 2; x++) {
+          for (z = -(squareSize - 1) / 2; z <= (squareSize - 1) / 2; z++) {
+            if (terrain.materialAtCoordinates(x, z) === CityTour.Terrain.LAND) {
+              return {x: x, z: z};
+            }
+          }
+        }
+
+        squareSize += 2;
+      }
+
+      return undefined;
+    };
+
     var combinedStartTime = new Date();
 
     var terrainConfig = {
@@ -18,10 +37,8 @@ CityTour.WorldGenerator = (function() {
     var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS, terrainConfig);
     var terrainEndTime = new Date();
 
-    var centerX = 0, centerZ = 0;
-    while(terrain.materialAtCoordinates(centerX, centerZ) != CityTour.Terrain.LAND) {
-      centerZ -= 1;
-    }
+    var cityCenter = findLandPointNearCenter(terrain);
+    var centerX = cityCenter.x, centerZ = cityCenter.z;
 
     var roadConfig = {
       centerMapX: centerX,
