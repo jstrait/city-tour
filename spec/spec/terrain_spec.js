@@ -5,28 +5,28 @@ describe("CityTour.Terrain", function() {
 
   var terrainMesh = {
     0: {
-      0: {material: LAND, height: 0.0 },
-      1: {material: LAND, height: 0.0 },
-      2: {material: LAND, height: 2.0 },
-      3: {material: LAND, height: 3.0 },
+      0: {height: 0.0, waterHeight: 0.0},
+      1: {height: 0.0, waterHeight: 0.0},
+      2: {height: 2.0, waterHeight: 0.0},
+      3: {height: 3.0, waterHeight: 0.0},
     },
     1: {
-      0: {material: LAND, height: 0.0 },
-      1: {material: LAND, height: 0.0 },
-      2: {material: LAND, height: 4.3 },
-      3: {material: LAND, height: 5.2 },
+      0: {height: 0.0, waterHeight: 0.0},
+      1: {height: 0.0, waterHeight: 0.0},
+      2: {height: 4.3, waterHeight: 0.0},
+      3: {height: 5.2, waterHeight: 0.0},
     },
     2: {
-      0: {material: LAND, height: 0.0 },
-      1: {material: LAND, height: 0.0 },
-      2: {material: LAND, height: 6.4 },
-      3: {material: LAND, height: 0.0 },
+      0: {height: 0.0, waterHeight: 0.0},
+      1: {height: 0.0, waterHeight: 0.0},
+      2: {height: 6.4, waterHeight: 0.0},
+      3: {height: 0.0, waterHeight: 0.0},
     },
     3: {
-      0: {material: LAND, height: 0.0 },
-      1: {material: LAND, height: 0.0 },
-      2: {material: LAND, height: 0.0 },
-      3: {material: LAND, height: 0.0 },
+      0: {height: 0.0, waterHeight: 0.0},
+      1: {height: 0.0, waterHeight: 0.0},
+      2: {height: 0.0, waterHeight: 0.0},
+      3: {height: 0.0, waterHeight: 0.0},
     },
   };
 
