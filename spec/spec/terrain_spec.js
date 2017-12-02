@@ -5,28 +5,28 @@ describe("CityTour.Terrain", function() {
 
   var terrainMesh = {
     0: {
-      0: {height: 0.0, waterHeight: 0.0},
-      1: {height: 0.0, waterHeight: 0.0},
-      2: {height: 2.0, waterHeight: 0.0},
-      3: {height: 3.0, waterHeight: 0.0},
+      0: {landHeight: 0.0, waterHeight: 0.0},
+      1: {landHeight: 0.0, waterHeight: 0.0},
+      2: {landHeight: 2.0, waterHeight: 0.0},
+      3: {landHeight: 3.0, waterHeight: 0.0},
     },
     1: {
-      0: {height: 0.0, waterHeight: 0.0},
-      1: {height: 0.0, waterHeight: 0.0},
-      2: {height: 4.3, waterHeight: 0.0},
-      3: {height: 5.2, waterHeight: 0.0},
+      0: {landHeight: 0.0, waterHeight: 0.0},
+      1: {landHeight: 0.0, waterHeight: 0.0},
+      2: {landHeight: 4.3, waterHeight: 0.0},
+      3: {landHeight: 5.2, waterHeight: 0.0},
     },
     2: {
-      0: {height: 0.0, waterHeight: 0.0},
-      1: {height: 0.0, waterHeight: 0.0},
-      2: {height: 6.4, waterHeight: 0.0},
-      3: {height: 0.0, waterHeight: 0.0},
+      0: {landHeight: 0.0, waterHeight: 0.0},
+      1: {landHeight: 0.0, waterHeight: 0.0},
+      2: {landHeight: 6.4, waterHeight: 0.0},
+      3: {landHeight: 0.0, waterHeight: 0.0},
     },
     3: {
-      0: {height: 0.0, waterHeight: 0.0},
-      1: {height: 0.0, waterHeight: 0.0},
-      2: {height: 0.0, waterHeight: 0.0},
-      3: {height: 0.0, waterHeight: 0.0},
+      0: {landHeight: 0.0, waterHeight: 0.0},
+      1: {landHeight: 0.0, waterHeight: 0.0},
+      2: {landHeight: 0.0, waterHeight: 0.0},
+      3: {landHeight: 0.0, waterHeight: 0.0},
     },
   };
 

@@ -60,7 +60,7 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   };
 
   var heightAtCoordinates = function(x, z) {
-    var landHeight = componentHeightAtCoordinates(x, z, "height");
+    var landHeight = componentHeightAtCoordinates(x, z, "landHeight");
     if (landHeight === undefined) {
       return undefined;
     }

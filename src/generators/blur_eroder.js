@@ -13,23 +13,23 @@ CityTour.BlurEroder = (function() {
 
     for (x = 0; x < terrainCoordinates.length; x++) {
       // Top -> Down
-      previous = terrainCoordinates[x][0].height;
+      previous = terrainCoordinates[x][0].landHeight;
       for (z = 1; z < terrainCoordinates[0].length; z++) {
-        current = terrainCoordinates[x][z].height;
+        current = terrainCoordinates[x][z].landHeight;
 
         if (terrainCoordinates[x][z].waterHeight <= 0.0) {
-          terrainCoordinates[x][z].height = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
+          terrainCoordinates[x][z].landHeight = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
         }
         previous = current;
       }
 
       // Down -> Up
-      previous = terrainCoordinates[x][terrainCoordinates[0].length - 1].height;
+      previous = terrainCoordinates[x][terrainCoordinates[0].length - 1].landHeight;
       for (z = terrainCoordinates[0].length - 2; z >= 0; z--) {
-        current = terrainCoordinates[x][z].height;
+        current = terrainCoordinates[x][z].landHeight;
 
         if (terrainCoordinates[x][z].waterHeight <= 0.0) {
-          terrainCoordinates[x][z].height = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
+          terrainCoordinates[x][z].landHeight = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
         }
         previous = current;
       }
@@ -37,23 +37,23 @@ CityTour.BlurEroder = (function() {
 
     for (z = 0; z < terrainCoordinates[0].length; z++) {
       // Left -> Right
-      previous = terrainCoordinates[0][z].height;
+      previous = terrainCoordinates[0][z].landHeight;
       for (x = 1; x < terrainCoordinates.length; x++) {
-        current = terrainCoordinates[x][z].height;
+        current = terrainCoordinates[x][z].landHeight;
 
         if (terrainCoordinates[x][z].waterHeight <= 0.0) {
-          terrainCoordinates[x][z].height = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
+          terrainCoordinates[x][z].landHeight = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
         }
         previous = current;
       }
 
       // Right -> Left
-      previous = terrainCoordinates[terrainCoordinates.length - 1][z].height;
+      previous = terrainCoordinates[terrainCoordinates.length - 1][z].landHeight;
       for (x = terrainCoordinates.length - 2; x >= 0; x--) {
-        current = terrainCoordinates[x][z].height;
+        current = terrainCoordinates[x][z].landHeight;
 
         if (terrainCoordinates[x][z].waterHeight <= 0.0) {
-          terrainCoordinates[x][z].height = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
+          terrainCoordinates[x][z].landHeight = (EROSION_PERCENTAGE_FROM_PREVIOUS * previous) + (EROSION_PERCENTAGE_FOR_CURRENT * current);
         }
         previous = current;
       }

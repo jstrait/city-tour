@@ -66,8 +66,8 @@ CityTour.RiverGenerator = (function() {
       xCoordinate = Math.round(vector.x);
       zCoordinate = Math.round(vector.y);
 
-      if (terrainCoordinates[xCoordinate][zCoordinate].height < minimumRiverBankHeight) {
-        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].height;
+      if (terrainCoordinates[xCoordinate][zCoordinate].landHeight < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].landHeight;
       }
     }
     // Find the lowest point on the south river bank
@@ -76,8 +76,8 @@ CityTour.RiverGenerator = (function() {
       xCoordinate = Math.round(vector.x);
       zCoordinate = Math.round(vector.y);
 
-      if (terrainCoordinates[xCoordinate][zCoordinate].height < minimumRiverBankHeight) {
-        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].height;
+      if (terrainCoordinates[xCoordinate][zCoordinate].landHeight < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].landHeight;
       }
     }
     // Set every terrain point between the two river banks to same height as the lowest point
@@ -87,12 +87,12 @@ CityTour.RiverGenerator = (function() {
       xCoordinate = Math.round(topVector.x);
 
       for (z = Math.ceil(topVector.y); z < bottomVector.y; z++) {
-        terrainCoordinates[xCoordinate][z].height = minimumRiverBankHeight - WATER_HEIGHT;
+        terrainCoordinates[xCoordinate][z].landHeight = minimumRiverBankHeight - WATER_HEIGHT;
         terrainCoordinates[xCoordinate][z].waterHeight = WATER_HEIGHT;
       }
     }
 
-    erodeNorthRiverBank(terrainCoordinates, topCurve, minimumRiverBankHeight, xStep);
+    //erodeNorthRiverBank(terrainCoordinates, topCurve, minimumRiverBankHeight, xStep);
   };
 
 
@@ -129,8 +129,8 @@ CityTour.RiverGenerator = (function() {
 
           newHeight = baseHeight + heightIncreaseAmount + CityTour.Math.lerp(MAX_HEIGHT_DECREASE, MAX_HEIGHT_INCREASE, Math.random());
 
-          if (newHeight < terrainCoordinates[xCoordinate][zCoordinate].height) {
-            terrainCoordinates[xCoordinate][zCoordinate].height = newHeight;
+          if (newHeight < terrainCoordinates[xCoordinate][zCoordinate].landHeight) {
+            terrainCoordinates[xCoordinate][zCoordinate].landHeight = newHeight;
           }
         }
       }
@@ -141,30 +141,30 @@ CityTour.RiverGenerator = (function() {
 
 
   var floodFill = function(terrainCoordinates, x, z, height, material) {
-    terrainCoordinates[x][z].height = height;
+    terrainCoordinates[x][z].landHeight = height;
     terrainCoordinates[x][z].material = material;
 
     if (terrainCoordinates[x - 1] &&
         terrainCoordinates[x - 1][z] &&
-        terrainCoordinates[x - 1][z].height <= height &&
+        terrainCoordinates[x - 1][z].landHeight <= height &&
         terrainCoordinates[x - 1][z].material != material) {
       floodFill(terrainCoordinates, x - 1, z, height, material);
     }
     if (terrainCoordinates[x + 1] &&
         terrainCoordinates[x + 1][z] &&
-        terrainCoordinates[x + 1][z].height <= height &&
+        terrainCoordinates[x + 1][z].landHeight <= height &&
         terrainCoordinates[x + 1][z].material != material) {
       floodFill(terrainCoordinates, x + 1, z, height, material);
     }
     if (terrainCoordinates[x] &&
         terrainCoordinates[x][z - 1] &&
-        terrainCoordinates[x][z - 1].height <= height &&
+        terrainCoordinates[x][z - 1].landHeight <= height &&
         terrainCoordinates[x][z - 1].material != material) {
       floodFill(terrainCoordinates, x, z - 1, height, material);
     }
     if (terrainCoordinates[x] &&
         terrainCoordinates[x][z + 1] &&
-        terrainCoordinates[x][z + 1].height <= height &&
+        terrainCoordinates[x][z + 1].landHeight <= height &&
         terrainCoordinates[x][z + 1].material != material) {
       floodFill(terrainCoordinates, x, z + 1, height, material);
     }
