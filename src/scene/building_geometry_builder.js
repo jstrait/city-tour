@@ -54,7 +54,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
         block = buildings.blockAtCoordinates(mapX, mapZ) || [];
 
         block.forEach(function(lot) {
-          storyHeight = ((CityTour.Config.MAX_STORY_HEIGHT - CityTour.Config.MIN_STORY_HEIGHT) * Math.random()) + CityTour.Config.MIN_STORY_HEIGHT;
+          storyHeight = Math.round(CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT));
           buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor);
 
           reusableBuildingMesh.scale.x = lot.dimensions.width * CityTour.Config.BLOCK_WIDTH;

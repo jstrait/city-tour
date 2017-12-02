@@ -16,6 +16,10 @@ CityTour.Math = (function() {
     return Math.sqrt((xDistance * xDistance) + (yDistance * yDistance) + (zDistance * zDistance));
   };
 
+  var randomInRange = function(min, max) {
+    return (Math.random() * (max - min)) + min;
+  };
+
   // Linearly interpolate between min and max
   var lerp = function(min, max, percentage) {
     return min + ((max - min) * percentage);
@@ -24,6 +28,7 @@ CityTour.Math = (function() {
   return {
     distanceBetweenPoints: distanceBetweenPoints,
     distanceBetweenPoints3D: distanceBetweenPoints3D,
+    randomInRange: randomInRange,
     lerp: lerp,
   };
 })();
