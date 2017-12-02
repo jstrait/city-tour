@@ -4,7 +4,8 @@ var CityTour = CityTour || {};
 
 CityTour.WorldGenerator = (function() {
   var generate = function(config) {
-    var GENERATE_BUILDINGS = true;
+    var GENERATE_ROAD_NETWORK = true;
+    var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
     var findLandPointNearCenter = function(terrain) {
       var x, z;
@@ -47,7 +48,7 @@ CityTour.WorldGenerator = (function() {
     };
 
     var roadStartTime = new Date();
-    var roadNetwork = CityTour.RoadNetworkGenerator.generate(terrain, roadConfig);
+    var roadNetwork = (GENERATE_ROAD_NETWORK) ? CityTour.RoadNetworkGenerator.generate(terrain, roadConfig) : new CityTour.RoadNetwork(terrain);
     var roadEndTime = new Date();
 
     var zonedBlockConfig = {
