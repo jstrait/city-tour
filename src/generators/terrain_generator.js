@@ -21,34 +21,6 @@ CityTour.TerrainGenerator = (function() {
     return terrainCoordinates;
   };
 
-  var normalizeCoordinates = function(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate) {
-    var x, z;
-    var halfColumns = columns / 2;
-    var halfRows = rows / 2;
-    var columnOffset = halfColumns + ((columnsToGenerate - columns) / 2);
-    var rowOffset = halfRows + ((rowsToGenerate - rows) / 2);
-    var stepAmount = 1 / SUB_DIVISIONS;
-    var oldXIndex, oldZIndex;
-
-    var normalizedTerrainCoordinates = [];
-
-    for (x = -halfColumns; x <= halfColumns; x += stepAmount) {
-      normalizedTerrainCoordinates[x] = [];
-      oldXIndex = (x * SUB_DIVISIONS) + columnOffset;
-
-      for (z = -halfRows; z <= halfRows; z += stepAmount) {
-        oldZIndex = (z * SUB_DIVISIONS) + rowOffset;
-
-        normalizedTerrainCoordinates[x][z] = {
-          landHeight: terrainCoordinates[oldXIndex][oldZIndex].landHeight,
-          waterHeight: terrainCoordinates[oldXIndex][oldZIndex].waterHeight,
-        };
-      }
-    }
-
-    return normalizedTerrainCoordinates;
-  };
-
 
   var nextPowerOfTwo = function(n) {
     return Math.pow(2, Math.ceil(Math.log2(n)));
@@ -92,10 +64,7 @@ CityTour.TerrainGenerator = (function() {
     // Blur erosion
     CityTour.BlurEroder.erode(terrainCoordinates);
 
-    // Convert to final coordinates
-    var finalTerrainCoordinates = normalizeCoordinates(terrainCoordinates, columns, columnsToGenerate, rows, rowsToGenerate);
-
-    return finalTerrainCoordinates;
+    return terrainCoordinates;
   };
 
 

@@ -5,6 +5,10 @@ var CityTour = CityTour || {};
 CityTour.Terrain = function(coordinates, subDivisions) {
   var xStep = 1 / subDivisions;
   var zStep = 1 / subDivisions;
+  var columnCount = coordinates.length;
+  var rowCount = coordinates[0].length;
+  var columnIndexOffset = Math.floor(columnCount / 2);
+  var rowIndexOffset = Math.floor(rowCount / 2);
 
   var interpolateHeight = function(point, floor, ceiling) {
     var heightDifferential = ceiling - floor;
@@ -13,7 +17,7 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   };
 
   var materialAtCoordinates = function(x, z) {
-    return (coordinates[x][z].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
+    return (coordinates[x + columnIndexOffset][z + rowIndexOffset].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
   };
 
   var componentHeightAtCoordinates = function(x, z, component) {
@@ -60,12 +64,15 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   };
 
   var heightAtCoordinates = function(x, z) {
-    var landHeight = componentHeightAtCoordinates(x, z, "landHeight");
+    var normalizedX = x + columnIndexOffset;
+    var normalizedZ = z + rowIndexOffset;
+
+    var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
     if (landHeight === undefined) {
       return undefined;
     }
 
-    return landHeight + componentHeightAtCoordinates(x, z, "waterHeight");
+    return landHeight + componentHeightAtCoordinates(normalizedX, normalizedZ, "waterHeight");
   };
 
 
