@@ -136,6 +136,12 @@ CityTour.RoadNetwork = function(terrain) {
   };
 
   var hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
+    var intersection1, intersection2;
+
+    if (mapX1 < terrain.minColumn() || mapX1 > terrain.maxColumn() || mapX2 < terrain.minColumn() || mapX2 > terrain.maxColumn()) {
+      return false;
+    }
+
     var intersection1 = intersections[mapX1][mapZ1] || false;
     var intersection2 = intersections[mapX2][mapZ2] || false;
 

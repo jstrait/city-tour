@@ -90,5 +90,15 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.hasEdgeBetween(1, 2, -2, 1)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-2, 1, 1, 2)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 2, 1)).toBe(false);
+
+    // Out of bounds coordinates
+    expect(roadNetwork.hasEdgeBetween(-3, 0, -2, 0)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(3, 0, 2, 0)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(0, -3, 0, -2)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(0, 3, 0, 2)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(-2, 0, -3, 0)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(0, -2, 0, -3)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(0, 2, 0, 3)).toBe(false);
   });
 });
