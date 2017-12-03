@@ -9,6 +9,10 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var rowCount = coordinates[0].length;
   var columnIndexOffset = Math.floor(columnCount / 2);
   var rowIndexOffset = Math.floor(rowCount / 2);
+  var minColumn = 0 - columnIndexOffset;
+  var maxColumn = columnIndexOffset;
+  var minRow = 0 - rowIndexOffset;
+  var maxRow = rowIndexOffset;
 
   var interpolateHeight = function(point, floor, ceiling) {
     var heightDifferential = ceiling - floor;
@@ -78,6 +82,10 @@ CityTour.Terrain = function(coordinates, subDivisions) {
 
   return {
     subDivisions: function() { return subDivisions; },
+    minColumn: function() { return minColumn; },
+    maxColumn: function() { return maxColumn; },
+    minRow: function() { return minRow; },
+    maxRow: function() { return maxRow; },
     materialAtCoordinates: materialAtCoordinates,
     heightAtCoordinates: heightAtCoordinates,
   };

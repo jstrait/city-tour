@@ -45,7 +45,7 @@ CityTour.RoadNetwork = function(terrain) {
 
   var minColumn = 0, maxColumn = 0, minRow = 0, maxRow = 0;
   var intersections = [];
-  for (var mapX = -CityTour.Config.HALF_TERRAIN_COLUMNS; mapX <= CityTour.Config.HALF_TERRAIN_COLUMNS; mapX++) {
+  for (var mapX = terrain.minColumn(); mapX <= terrain.maxColumn(); mapX++) {
     intersections[mapX] = [];
   }
 

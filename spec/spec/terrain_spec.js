@@ -41,6 +41,15 @@ describe("CityTour.Terrain", function() {
 
   var terrain = new CityTour.Terrain(terrainMesh, 1);
 
+  describe("size bounds", function() {
+    it("returns the correct size bounds", function() {
+      expect(terrain.minColumn()).toBe(-2);
+      expect(terrain.maxColumn()).toBe(2);
+      expect(terrain.minRow()).toBe(-2);
+      expect(terrain.maxRow()).toBe(2);
+    });
+  });
+
   describe(".heightAtCoordinates", function() {
     it("returns the correct height for coordinates on an intersection", function() {
       expect(terrain.heightAtCoordinates(-2, -2)).toBe(0.0);

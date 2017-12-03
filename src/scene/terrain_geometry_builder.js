@@ -47,8 +47,8 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
     var waterMaterial1 = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
     var waterMaterial2 = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
 
-    for (mapX = -CityTour.Config.HALF_TERRAIN_COLUMNS; mapX < CityTour.Config.HALF_TERRAIN_COLUMNS; mapX += triangleWidth) {
-      for (mapZ = -CityTour.Config.HALF_TERRAIN_ROWS; mapZ < CityTour.Config.HALF_TERRAIN_ROWS; mapZ += triangleDepth) {
+    for (mapX = terrain.minColumn(); mapX < terrain.maxColumn(); mapX += triangleWidth) {
+      for (mapZ = terrain.minRow(); mapZ < terrain.maxRow(); mapZ += triangleDepth) {
         topLeftRoad     = roadNetwork.getIntersectionSurfaceType(mapX, mapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
         topRightRoad    = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, mapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
         bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(mapX, mapZ + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;

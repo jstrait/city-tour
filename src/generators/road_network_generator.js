@@ -106,10 +106,10 @@ CityTour.RoadNetworkGenerator = (function() {
         bridgeEndZ += zDelta;
         bridgeLength += 1;
 
-        if (bridgeEndX < -CityTour.Config.HALF_TERRAIN_COLUMNS ||
-            bridgeEndX > CityTour.Config.HALF_TERRAIN_COLUMNS  ||
-            bridgeEndZ < -CityTour.Config.HALF_TERRAIN_ROWS    ||
-            bridgeEndZ > CityTour.Config.HALF_TERRAIN_ROWS) {
+        if (bridgeEndX < terrain.minColumn() ||
+            bridgeEndX > terrain.maxColumn()  ||
+            bridgeEndZ < terrain.minRow()    ||
+            bridgeEndZ > terrain.maxRow()) {
           return null;
         }
       }
