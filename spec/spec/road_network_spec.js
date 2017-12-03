@@ -1,7 +1,6 @@
 "use strict";
 
 describe("CityTour.RoadNetwork", function() {
-  var LAND = CityTour.Terrain.LAND;
   var TERRAIN_MESH = [
     [
       {landHeight: 0.0, waterHeight: 0.0},
