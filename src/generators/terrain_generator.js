@@ -6,14 +6,14 @@ CityTour.TerrainGenerator = (function() {
   var SUB_DIVISIONS = 1;
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
 
-  var emptyTerrain = function(columns, rows) {
+  var emptyTerrain = function(columnCount, rowCount) {
     var x, z;
     var terrainCoordinates = [];
 
-    for (x = 0; x <= columns; x++) {
+    for (x = 0; x < columnCount; x++) {
       terrainCoordinates[x] = [];
 
-      for (z = 0; z <= rows; z++) {
+      for (z = 0; z < rowCount; z++) {
         terrainCoordinates[x][z] = { landHeight: 0.0, waterHeight: 0.0 };
       }
     }
@@ -30,28 +30,28 @@ CityTour.TerrainGenerator = (function() {
   var buildTerrainCoordinates = function(columns, rows, config) {
     var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 10;
     var hydraulicErosionIteration;
-    var columnsToGenerate = nextPowerOfTwo(columns * SUB_DIVISIONS);
-    var rowsToGenerate = nextPowerOfTwo(rows * SUB_DIVISIONS);
+    var columnsToGenerate = nextPowerOfTwo(columns * SUB_DIVISIONS) + 1;
+    var rowsToGenerate = nextPowerOfTwo(rows * SUB_DIVISIONS) + 1;
 
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
     // Initial randomization of corners
     terrainCoordinates[0][0].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[0][rowsToGenerate].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columnsToGenerate][0].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columnsToGenerate][rowsToGenerate].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rowsToGenerate - 1].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate - 1][0].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate - 1][rowsToGenerate - 1].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     diamondSquare(terrainCoordinates,
                   config.heightJitter,
                   config.heightJitterDecay,
                   0,
-                  rowsToGenerate,
-                  columnsToGenerate,
+                  rowsToGenerate - 1,
+                  columnsToGenerate - 1,
                   0);
 
     if (config.river) {
-      CityTour.RiverGenerator.addRiver(terrainCoordinates, rowsToGenerate * (68 / 128), columnsToGenerate);
+      CityTour.RiverGenerator.addRiver(terrainCoordinates, (rowsToGenerate - 1) * (68 / 128), columnsToGenerate - 1);
     }
 
     // Hydraulic erosion
