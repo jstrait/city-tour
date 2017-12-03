@@ -15,10 +15,10 @@ CityTour.RoadNetworkGenerator = (function() {
     var centerMapX = config.centerMapX;
     var centerMapZ = config.centerMapZ;
 
-    var MIN_MAP_X = -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX;
-    var MAX_MAP_X = CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX;
-    var MIN_MAP_Z = -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ;
-    var MAX_MAP_Z = CityTour.Config.HALF_BLOCK_ROWS + centerMapZ;
+    var MIN_MAP_X = Math.max(terrain.minColumn(), -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
+    var MAX_MAP_X = Math.min(terrain.maxColumn(), CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
+    var MIN_MAP_Z = Math.max(terrain.minRow(), -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
+    var MAX_MAP_Z = Math.min(terrain.maxRow(), CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
 
     var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * config.safeFromDecayPercentage;
 
@@ -174,6 +174,10 @@ CityTour.RoadNetworkGenerator = (function() {
       var bridgeAttributes;
       var bridgeIntersectionX, bridgeIntersectionZ;
       var targetIntersectionExists;
+
+      if (targetMapX < MIN_MAP_X || targetMapX > MAX_MAP_X || targetMapZ < MIN_MAP_Z || targetMapZ > MAX_MAP_Z) {
+        return;
+      }
 
       if (terrain.materialAtCoordinates(targetMapX, targetMapZ) === CityTour.Terrain.WATER) {
         bridgeAttributes = calculateBridgeAttributes(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ);

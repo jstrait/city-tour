@@ -186,8 +186,8 @@ CityTour.ZonedBlockGenerator = (function() {
     var hasTopRoad, hasRightRoad, hasBottomRoad, hasLeftRoad;
     var blockLayout, terrainAttributes, blockSteepness, maxBlockSteepness;
 
-    for (mapX = -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX; mapX < CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX; mapX++) {
-      for (mapZ = -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ; mapZ < CityTour.Config.HALF_BLOCK_ROWS + centerMapZ; mapZ++) {
+    for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
+      for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
         hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
         hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
         hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
