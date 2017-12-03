@@ -64,6 +64,16 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     previousTouchPoints = [];
   };
 
+  var onMouseOver = function(e) {
+    // Safari, as of v11, doesn't support buttons, but it does support the non-standard `which`
+    if ((e.buttons !== undefined && e.buttons === 0) ||
+        (e.which !== undefined && e.which === 0)) {
+      el.classList.remove("cursor-grabbing");
+      currentGesture = undefined;
+      previousTouchPoints = []
+    }
+  };
+
   var panCamera = function(currentTouchPoints) {
     var rotationY = interactiveCamera.rotationAngle();
     var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
@@ -155,6 +165,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     el.addEventListener('touchmove', onTouchMove, false);
     el.addEventListener('mouseup', onMouseUp, false);
     el.addEventListener('touchend', onTouchEnd, false);
+    el.addEventListener('mouseover', onMouseOver, false);
 
     el.removeEventListener('touchstart', onTouchStartStub, false);
   };
@@ -166,6 +177,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     el.removeEventListener('touchmove', onTouchMove, false);
     el.removeEventListener('mouseup', onMouseUp, false);
     el.removeEventListener('touchend', onTouchEnd, false);
+    el.removeEventListener('mouseover', onMouseOver, false);
 
     el.addEventListener('touchstart', onTouchStartStub, false);
   };
@@ -182,6 +194,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     el.removeEventListener('mouseup', onMouseUp, false);
     el.removeEventListener('touchend', onTouchEnd, false);
     el.removeEventListener('touchstart', onTouchStartStub, false);
+    el.removeEventListener('mouseover', onMouseOver, false);
 
     messageBroker.removeSubscriber("flythrough.started", id1);
     messageBroker.removeSubscriber("flythrough.stopped", id2);
