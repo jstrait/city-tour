@@ -120,4 +120,43 @@ describe("CityTour.RoadNetwork", function() {
 
     expect(roadNetwork.edgeBetween(1, 0, 2, 0)).toBe(undefined);
   });
+
+
+  describe(".removeEdge", function() {
+    var roadNetwork = new CityTour.RoadNetwork(terrain);
+
+    it("allows removing an existing edge", function() {
+      // Remove an existing edge
+      expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
+      roadNetwork.addEdge(0, 0, 1, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(true);
+      roadNetwork.removeEdge(0, 0, 1, 0);
+      expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
+    });
+
+    it("doesn't blow up when removing a non-existent edge between two intersections inside terrain bounds", function() {
+      expect(roadNetwork.hasEdgeBetween(1, 1, 1, 2)).toBe(false);
+      roadNetwork.removeEdge(1, 1, 1, 2);
+      expect(roadNetwork.hasEdgeBetween(1, 1, 1, 2)).toBe(false);
+    });
+
+    it("doesn't blow up when removing a non-existent edge between two intersections outside terrain bounds", function() {
+      expect(roadNetwork.hasEdgeBetween(10000, 0, 10001, 0)).toBe(false);
+      roadNetwork.removeEdge(10000, 0, 10001, 0);
+      expect(roadNetwork.hasEdgeBetween(10000, 0, 10001, 0)).toBe(false);
+    });
+
+    it("doesn't blow up when removing a non-existent edge between one intersection inside terrain bounds, and one outside", function() {
+      expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
+      roadNetwork.removeEdge(2, 0, 3, 0);
+      expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
+    });
+
+    it("doesn't blow up when removing a non-existent edge between one intersection that exists, and another that doesn't", function() {
+      expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
+      roadNetwork.addEdge(1, 0, 2, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.removeEdge(2, 0, 3, 0);
+      expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
+    });
+  });
 });

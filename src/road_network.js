@@ -13,6 +13,13 @@ CityTour.RoadNetwork = function(terrain) {
       edges[destinationMapX][destinationMapZ] = surfaceType;
     };
 
+    var removeEdge = function(mapX, mapZ) {
+      if (edges[mapX]) {
+        // Splice doesn't work here, since array indices can be negative
+        edges[mapX][mapZ] = undefined;
+      }
+    };
+
     var hasEdgeTo = function(destinationMapX, destinationMapZ, surfaceType) {
       var hasEdge = edges[destinationMapX] !== undefined && edges[destinationMapX][destinationMapZ] !== undefined;
       if (surfaceType) {
@@ -37,6 +44,7 @@ CityTour.RoadNetwork = function(terrain) {
       getHeight: function() { return height; },
       getSurfaceType: function() { return surfaceType; },
       addEdge: addEdge,
+      removeEdge: removeEdge,
       hasEdgeTo: hasEdgeTo,
       getEdge: getEdge,
     };
@@ -135,6 +143,18 @@ CityTour.RoadNetwork = function(terrain) {
     maxRow = Math.max(maxRow, mapZ1, mapZ2);
   };
 
+  var removeEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
+    var intersection1 = (intersections[mapX1] === undefined) ? undefined : intersections[mapX1][mapZ1];
+    var intersection2 = (intersections[mapX2] === undefined) ? undefined : intersections[mapX2][mapZ2];
+
+    if (intersection1) {
+      intersection1.removeEdge(mapX2, mapZ2);
+    }
+    if (intersection2) {
+      intersection2.removeEdge(mapX1, mapZ1);
+    }
+  };
+
   var hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
     var intersection1, intersection2;
 
@@ -165,6 +185,7 @@ CityTour.RoadNetwork = function(terrain) {
     getRoadHeight: getRoadHeight,
     getIntersectionSurfaceType: getIntersectionSurfaceType,
     addEdge: addEdge,
+    removeEdge: removeEdge,
     hasEdgeBetween: hasEdgeBetween,
     edgeBetween: edgeBetween,
     minColumn: function() { return minColumn; },
