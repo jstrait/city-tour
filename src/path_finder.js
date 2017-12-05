@@ -100,6 +100,9 @@ CityTour.PathFinder = function(roadNetwork) {
       unvisitedSet.delete(currentNode);
 
       currentNode = unvisitedNodeWithShortestLength(unvisitedSet);
+      if (currentNode === null) {
+        return undefined;
+      }
     }
 
     return extractShortestPath(nodes, endX, endZ);
