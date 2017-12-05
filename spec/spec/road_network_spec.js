@@ -117,5 +117,7 @@ describe("CityTour.RoadNetwork", function() {
     // Edge exists
     roadNetwork.addEdge(0, 0, 1, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
     expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toBe(CityTour.RoadNetwork.TERRAIN_SURFACE);
+
+    expect(roadNetwork.edgeBetween(1, 0, 2, 0)).toBe(undefined);
   });
 });

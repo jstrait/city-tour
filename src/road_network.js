@@ -24,13 +24,13 @@ CityTour.RoadNetwork = function(terrain) {
     };
 
     var getEdge = function(destinationMapX, destinationMapZ) {
-      var hasEdge = edges[destinationMapX] !== undefined && edges[destinationMapX][destinationMapZ] !== undefined;
-      if (hasEdge) {
-        return edges[destinationMapX][destinationMapZ];
+      var edge = undefined;
+
+      if (edges[destinationMapX] !== undefined) {
+        edge = edges[destinationMapX][destinationMapZ];
       }
-      else {
-        return false;
-      }
+
+      return edge;
     };
 
     return {
