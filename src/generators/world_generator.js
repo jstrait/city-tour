@@ -67,6 +67,10 @@ CityTour.WorldGenerator = (function() {
     var buildings = (!GENERATE_BUILDINGS || cityCenter === undefined) ? false : CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
     var buildingsEndTime = new Date();
 
+    var simplifierStartTime = new Date();
+    CityTour.RoadNetworkSimplifier.simplify(roadNetwork, buildings);
+    var simplifierEndTime = new Date();
+
     var combinedEndTime = new Date();
 
     console.log("Time to generate world data: " + (combinedEndTime - combinedStartTime) + "ms");
@@ -74,6 +78,7 @@ CityTour.WorldGenerator = (function() {
     console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
     console.log("  Lots:         " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
     console.log("  Buildings:    " + (buildingsEndTime - buildingsStartTime) + "ms");
+    console.log("  Road network simplification: " + (simplifierEndTime - simplifierStartTime) + "ms");
 
     return {
       terrain: terrain,
