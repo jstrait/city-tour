@@ -24,6 +24,46 @@ CityTour.BuildingsGenerator = (function() {
              steepness: maximumHeight - minimumHeight };
   };
 
+  var generateBuildingOnLot = function(lot, zonedBlock, terrain) {
+    var lotTerrainAttributes;
+    var maxStories, actualStories;
+    var hasAdjacentRoad;
+    var roofStyle;
+    var mapX = zonedBlock.mapX;
+    var mapZ = zonedBlock.mapZ;
+
+    if (Math.random() < zonedBlock.probabilityOfBuilding) {
+      hasAdjacentRoad = (lot.left === 0.0   && zonedBlock.hasLeftRoad) ||
+                        (lot.top === 0.0    && zonedBlock.hasTopRoad) ||
+                        (lot.right === 1.0  && zonedBlock.hasRightRoad) ||
+                        (lot.bottom === 1.0 && zonedBlock.hasBottomRoad);
+
+      if (hasAdjacentRoad) {
+        lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
+
+        if (lotTerrainAttributes.steepness < CityTour.Config.MIN_STORY_HEIGHT) {
+          maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
+          actualStories = Math.max(1, Math.round(Math.random() * maxStories));
+
+          if (actualStories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
+            roofStyle = ROOF_STYLE_ANTENNA;
+          }
+          else {
+            roofStyle = ROOF_STYLE_FLAT;
+          }
+
+          return {
+            dimensions: lot,
+            roofStyle: roofStyle,
+            yFloor: zonedBlock.minimumHeight,
+            ySurface: lotTerrainAttributes.maximumHeight,
+            stories: actualStories,
+          };
+        }
+      }
+    }
+  };
+
   var generateUnitBlocks = function(terrain, zonedBlocks) {
     var blocks = [];
 
@@ -31,44 +71,15 @@ CityTour.BuildingsGenerator = (function() {
       var mapX = zonedBlock.mapX;
       var mapZ = zonedBlock.mapZ;
       var block = [];
+      var building;
+      var l;
 
-      zonedBlock.layout.lots.forEach(function(lot) {
-        var lotTerrainAttributes;
-        var maxStories, actualStories;
-        var hasAdjacentRoad;
-        var roofStyle;
-
-        if (Math.random() < zonedBlock.probabilityOfBuilding) {
-          hasAdjacentRoad = (lot.left === 0.0   && zonedBlock.hasLeftRoad) ||
-                            (lot.top === 0.0    && zonedBlock.hasTopRoad) ||
-                            (lot.right === 1.0  && zonedBlock.hasRightRoad) ||
-                            (lot.bottom === 1.0 && zonedBlock.hasBottomRoad);
-
-          if (hasAdjacentRoad) {
-            lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
-
-            if (lotTerrainAttributes.steepness < CityTour.Config.MIN_STORY_HEIGHT) {
-              maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
-              actualStories = Math.max(1, Math.round(Math.random() * maxStories));
-
-              if (actualStories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
-                roofStyle = ROOF_STYLE_ANTENNA;
-              }
-              else {
-                roofStyle = ROOF_STYLE_FLAT;
-              }
-
-              block.push({
-                dimensions: lot,
-                roofStyle: roofStyle,
-                yFloor: zonedBlock.minimumHeight,
-                ySurface: lotTerrainAttributes.maximumHeight,
-                stories: actualStories,
-              });
-            }
-          }
+      for (l = 0; l < zonedBlock.layout.lots.length; l++) {
+        building = generateBuildingOnLot(zonedBlock.layout.lots[l], zonedBlock, terrain);
+        if (building !== undefined) {
+          block.push(building);
         }
-      });
+      }
 
       if (!blocks[mapX]) {
         blocks[mapX] = [];
