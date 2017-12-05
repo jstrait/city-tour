@@ -14,7 +14,7 @@ CityTour.RoadNetwork = function(terrain) {
     };
 
     var hasEdgeTo = function(mapX, mapZ, surfaceType) {
-      var hasEdge = edges[mapX] != undefined && edges[mapX][mapZ] != null;
+      var hasEdge = edges[mapX] !== undefined && edges[mapX][mapZ] !== undefined;
       if (surfaceType) {
         return hasEdge && edges[mapX][mapZ] === surfaceType;
       }
@@ -24,7 +24,7 @@ CityTour.RoadNetwork = function(terrain) {
     };
 
     var getEdge = function(mapX, mapZ) {
-      var hasEdge = edges[mapX] != undefined && edges[mapX][mapZ] != null;
+      var hasEdge = edges[mapX] !== undefined && edges[mapX][mapZ] !== undefined;
       if (hasEdge) {
         return edges[mapX][mapZ];
       }
@@ -51,7 +51,7 @@ CityTour.RoadNetwork = function(terrain) {
 
 
   var hasIntersection = function(mapX, mapZ) {
-    return (intersections[mapX] && intersections[mapX][mapZ] != null) || false;
+    return (intersections[mapX] !== undefined && intersections[mapX][mapZ] !== undefined) || false;
   };
 
   var getIntersectionHeight = function(mapX, mapZ) {
