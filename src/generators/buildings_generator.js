@@ -26,19 +26,18 @@ CityTour.BuildingsGenerator = (function() {
 
   var generateUnitBlocks = function(terrain, zonedBlocks) {
     var blocks = [];
-    var block;
-    var mapX, mapZ;
-    var lotTerrainAttributes;
-    var maxStories, actualStories;
-    var hasAdjacentRoad;
-    var roofStyle;
 
     zonedBlocks.forEach(function(zonedBlock) {
-      mapX = zonedBlock.mapX;
-      mapZ = zonedBlock.mapZ;
-      block = [];
+      var mapX = zonedBlock.mapX;
+      var mapZ = zonedBlock.mapZ;
+      var block = [];
 
       zonedBlock.layout.lots.forEach(function(lot) {
+        var lotTerrainAttributes;
+        var maxStories, actualStories;
+        var hasAdjacentRoad;
+        var roofStyle;
+
         if (Math.random() < zonedBlock.probabilityOfBuilding) {
           hasAdjacentRoad = (lot.left === 0.0   && zonedBlock.hasLeftRoad) ||
                             (lot.top === 0.0    && zonedBlock.hasTopRoad) ||
