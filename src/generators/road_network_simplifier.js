@@ -3,60 +3,60 @@
 var CityTour = CityTour || {};
 
 CityTour.RoadNetworkSimplifier = (function() {
+  var blockHasBottomTouchingBuilding = function(block) {
+    var l;
+
+    for (l = 0; l < block.length; l++) {
+      if (block[l].dimensions.bottom === 1.0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  var blockHasTopTouchingBuilding = function(block) {
+    var l;
+
+    for (l = 0; l < block.length; l++) {
+      if (block[l].dimensions.top === 0.0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  var blockHasLeftTouchingBuilding = function(block) {
+    var l;
+
+    for (l = 0; l < block.length; l++) {
+      if (block[l].dimensions.left === 0.0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  var blockHasRightTouchingBuilding = function(block) {
+    var l;
+
+    for (l = 0; l < block.length; l++) {
+      if (block[l].dimensions.right === 1.0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   var simplify = function(roadNetwork, buildings) {
     var mapX, mapZ, targetMapX, targetMapZ;
     var southEastBlock, northEastBlock, southWestBlock;
     var southEastBlockHasBuildings, northEastBlockHasBuildings, southWestBlockHasBuildings;
 
     var pathFinder = new CityTour.PathFinder(roadNetwork);
-
-    var blockHasBottomTouchingBuilding = function(block) {
-      var l;
-
-      for (l = 0; l < block.length; l++) {
-        if (block[l].dimensions.bottom === 1.0) {
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    var blockHasTopTouchingBuilding = function(block) {
-      var l;
-
-      for (l = 0; l < block.length; l++) {
-        if (block[l].dimensions.top === 0.0) {
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    var blockHasLeftTouchingBuilding = function(block) {
-      var l;
-
-      for (l = 0; l < block.length; l++) {
-        if (block[l].dimensions.left === 0.0) {
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    var blockHasRightTouchingBuilding = function(block) {
-      var l;
-
-      for (l = 0; l < block.length; l++) {
-        if (block[l].dimensions.right === 1.0) {
-          return true;
-        }
-      }
-
-      return false;
-    };
 
     for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
       for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
