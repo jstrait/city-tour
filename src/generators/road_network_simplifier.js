@@ -69,8 +69,8 @@ CityTour.RoadNetworkSimplifier = (function() {
           southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
           northEastBlock = buildings.blockAtCoordinates(mapX, mapZ - 1);
 
-          southEastBlockHasBuildings = blockHasTopTouchingBuilding(southEastBlock);
-          northEastBlockHasBuildings = blockHasBottomTouchingBuilding(northEastBlock);
+          southEastBlockHasBuildings = (southEastBlock !== undefined) && blockHasTopTouchingBuilding(southEastBlock);
+          northEastBlockHasBuildings = (northEastBlock !== undefined) && blockHasBottomTouchingBuilding(northEastBlock);
 
           if (southEastBlockHasBuildings === false && northEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
@@ -94,8 +94,8 @@ CityTour.RoadNetworkSimplifier = (function() {
           southWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ);
           southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
 
-          southWestBlockHasBuildings = blockHasRightTouchingBuilding(southWestBlock);
-          southEastBlockHasBuildings = blockHasLeftTouchingBuilding(southEastBlock);
+          southWestBlockHasBuildings = (southWestBlock !== undefined) && blockHasRightTouchingBuilding(southWestBlock);
+          southEastBlockHasBuildings = (southEastBlock !== undefined) && blockHasLeftTouchingBuilding(southEastBlock);
 
           if (southWestBlockHasBuildings === false && southEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);

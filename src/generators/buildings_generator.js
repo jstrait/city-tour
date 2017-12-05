@@ -99,7 +99,7 @@ CityTour.BuildingsGenerator = (function() {
     var buildings = {};
 
     buildings.blockAtCoordinates = function(mapX, mapZ) {
-      return blocks[mapX][mapZ];
+      return (blocks[mapX] === undefined) ? undefined : blocks[mapX][mapZ];
     };
 
     return buildings;
