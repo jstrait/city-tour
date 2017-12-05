@@ -6,27 +6,27 @@ CityTour.RoadNetwork = function(terrain) {
   var Intersection = function(mapX, mapZ, height, surfaceType) {
     var edges = [];
 
-    var addEdge = function(mapX, mapZ, surfaceType) {
-      if (!edges[mapX]) {
-        edges[mapX] = [];
+    var addEdge = function(destinationMapX, destinationMapZ, surfaceType) {
+      if (!edges[destinationMapX]) {
+        edges[destinationMapX] = [];
       }
-      edges[mapX][mapZ] = surfaceType;
+      edges[destinationMapX][destinationMapZ] = surfaceType;
     };
 
-    var hasEdgeTo = function(mapX, mapZ, surfaceType) {
-      var hasEdge = edges[mapX] !== undefined && edges[mapX][mapZ] !== undefined;
+    var hasEdgeTo = function(destinationMapX, destinationMapZ, surfaceType) {
+      var hasEdge = edges[destinationMapX] !== undefined && edges[destinationMapX][destinationMapZ] !== undefined;
       if (surfaceType) {
-        return hasEdge && edges[mapX][mapZ] === surfaceType;
+        return hasEdge && edges[destinationMapX][destinationMapZ] === surfaceType;
       }
       else {
         return hasEdge;
       }
     };
 
-    var getEdge = function(mapX, mapZ) {
-      var hasEdge = edges[mapX] !== undefined && edges[mapX][mapZ] !== undefined;
+    var getEdge = function(destinationMapX, destinationMapZ) {
+      var hasEdge = edges[destinationMapX] !== undefined && edges[destinationMapX][destinationMapZ] !== undefined;
       if (hasEdge) {
-        return edges[mapX][mapZ];
+        return edges[destinationMapX][destinationMapZ];
       }
       else {
         return false;
