@@ -51,7 +51,7 @@ CityTour.RoadNetwork = function(terrain) {
 
 
   var hasIntersection = function(mapX, mapZ) {
-    return (intersections[mapX] !== undefined && intersections[mapX][mapZ] !== undefined) || false;
+    return intersections[mapX] !== undefined && intersections[mapX][mapZ] !== undefined;
   };
 
   var getIntersectionHeight = function(mapX, mapZ) {
