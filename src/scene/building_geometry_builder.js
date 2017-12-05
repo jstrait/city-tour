@@ -51,7 +51,7 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
       for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
         sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ) + HALF_STREET_DEPTH;
 
-        block = buildings.blockAtCoordinates(mapX, mapZ) || [];
+        block = buildings.blockAtCoordinates(mapX, mapZ);
 
         block.forEach(function(lot) {
           storyHeight = Math.round(CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT));

@@ -81,15 +81,19 @@ CityTour.BuildingsGenerator = (function() {
         }
       }
 
-      if (!blocks[mapX]) {
-        blocks[mapX] = [];
+      if (block !== []) {
+        if (!blocks[mapX]) {
+          blocks[mapX] = [];
+        }
+        blocks[mapX][mapZ] = block;
       }
-      blocks[mapX][mapZ] = block;
     });
 
     return blocks;
   };
 
+
+  var EMPTY_ARRAY = Object.freeze([]);
 
   var buildingsGenerator = {};
 
@@ -99,7 +103,7 @@ CityTour.BuildingsGenerator = (function() {
     var buildings = {};
 
     buildings.blockAtCoordinates = function(mapX, mapZ) {
-      return (blocks[mapX] === undefined) ? undefined : blocks[mapX][mapZ];
+      return (blocks[mapX] === undefined || blocks[mapX][mapZ] === undefined) ? EMPTY_ARRAY : blocks[mapX][mapZ];
     };
 
     return buildings;
