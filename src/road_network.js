@@ -142,8 +142,8 @@ CityTour.RoadNetwork = function(terrain) {
       return false;
     }
 
-    var intersection1 = intersections[mapX1][mapZ1] || false;
-    var intersection2 = intersections[mapX2][mapZ2] || false;
+    intersection1 = intersections[mapX1][mapZ1] || false;
+    intersection2 = intersections[mapX2][mapZ2] || false;
 
     return intersection1 && intersection2 &&
            intersection1.hasEdgeTo(mapX2, mapZ2, surfaceType) && intersection2.hasEdgeTo(mapX1, mapZ1, surfaceType);
