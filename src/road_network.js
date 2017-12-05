@@ -168,25 +168,16 @@ CityTour.RoadNetwork = function(terrain) {
   };
 
   var hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
-    var intersection1, intersection2;
+    var intersection1 = (intersections[mapX1] === undefined) ? undefined : intersections[mapX1][mapZ1];
+    var intersection2 = (intersections[mapX2] === undefined) ? undefined : intersections[mapX2][mapZ2];
 
-    if (mapX1 < terrain.minColumn() || mapX1 > terrain.maxColumn() || mapX2 < terrain.minColumn() || mapX2 > terrain.maxColumn()) {
-      return false;
-    }
-
-    intersection1 = intersections[mapX1][mapZ1] || false;
-    intersection2 = intersections[mapX2][mapZ2] || false;
-
-    return intersection1 && intersection2 &&
+    return intersection1 !== undefined &&
+           intersection2 !== undefined &&
            intersection1.hasEdgeTo(mapX2, mapZ2, surfaceType) && intersection2.hasEdgeTo(mapX1, mapZ1, surfaceType);
   };
 
   var edgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var intersection1;
-
-    if (intersections[mapX1] !== undefined) {
-      intersection1 = intersections[mapX1][mapZ1];
-    };
+    var intersection1 = (intersections[mapX1] === undefined) ? undefined : intersections[mapX1][mapZ1];
 
     return (intersection1 === undefined) ? undefined : intersection1.getEdge(mapX2, mapZ2);
   };
