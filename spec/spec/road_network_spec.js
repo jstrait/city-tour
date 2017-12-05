@@ -158,5 +158,40 @@ describe("CityTour.RoadNetwork", function() {
       roadNetwork.removeEdge(2, 0, 3, 0);
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
     });
+
+    it("removes an intersection if it no longer has any connected edges", function() {
+      roadNetwork.addEdge(0, 0, 0, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 1, 1, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+
+      expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(true);
+      expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);
+      expect(roadNetwork.hasIntersection(0, 0)).toBe(true);
+      expect(roadNetwork.hasIntersection(0, 1)).toBe(true);
+      expect(roadNetwork.hasIntersection(1, 1)).toBe(true);
+
+      roadNetwork.removeEdge(0, 0, 0, 1);
+
+      expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(false);
+      expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);
+      expect(roadNetwork.hasIntersection(0, 0)).toBe(false);
+      expect(roadNetwork.hasIntersection(0, 1)).toBe(true);
+      expect(roadNetwork.hasIntersection(1, 1)).toBe(true);
+
+      roadNetwork.removeEdge(0, 1, 1, 1);
+
+      expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(false);
+      expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(false);
+      expect(roadNetwork.hasIntersection(0, 0)).toBe(false);
+      expect(roadNetwork.hasIntersection(0, 1)).toBe(false);
+      expect(roadNetwork.hasIntersection(1, 1)).toBe(false);
+
+      roadNetwork.addEdge(0, 1, 1, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+
+      expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(false);
+      expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);
+      expect(roadNetwork.hasIntersection(0, 0)).toBe(false);
+      expect(roadNetwork.hasIntersection(0, 1)).toBe(true);
+      expect(roadNetwork.hasIntersection(1, 1)).toBe(true);
+    });
   });
 });

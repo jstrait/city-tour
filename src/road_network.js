@@ -5,10 +5,14 @@ var CityTour = CityTour || {};
 CityTour.RoadNetwork = function(terrain) {
   var Intersection = function(mapX, mapZ, height, surfaceType) {
     var edges = [];
+    var edgeCount = 0;
 
     var addEdge = function(destinationMapX, destinationMapZ, surfaceType) {
       if (!edges[destinationMapX]) {
         edges[destinationMapX] = [];
+      }
+      if (edges[destinationMapX][destinationMapZ] === undefined) {
+        edgeCount += 1;
       }
       edges[destinationMapX][destinationMapZ] = surfaceType;
     };
@@ -17,6 +21,7 @@ CityTour.RoadNetwork = function(terrain) {
       if (edges[mapX]) {
         // Splice doesn't work here, since array indices can be negative
         edges[mapX][mapZ] = undefined;
+        edgeCount -= 1;
       }
     };
 
@@ -47,6 +52,7 @@ CityTour.RoadNetwork = function(terrain) {
       removeEdge: removeEdge,
       hasEdgeTo: hasEdgeTo,
       getEdge: getEdge,
+      edgeCount: function() { return edgeCount; },
     };
   };
 
@@ -149,9 +155,15 @@ CityTour.RoadNetwork = function(terrain) {
 
     if (intersection1) {
       intersection1.removeEdge(mapX2, mapZ2);
+      if (intersection1.edgeCount() === 0) {
+        intersections[mapX1][mapZ1] = undefined;
+      }
     }
     if (intersection2) {
       intersection2.removeEdge(mapX1, mapZ1);
+      if (intersection2.edgeCount() === 0) {
+        intersections[mapX2][mapZ2] = undefined;
+      }
     }
   };
 
