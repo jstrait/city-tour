@@ -101,4 +101,21 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.hasEdgeBetween(0, -2, 0, -3)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(0, 2, 0, 3)).toBe(false);
   });
+
+  it(".edgeBetween", function() {
+    var roadNetwork = new CityTour.RoadNetwork(terrain);
+
+    // Edge is in bounds of terrain, but doesn't exist
+    expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toBe(undefined);
+
+    // Both intersections are out of bounds of terrain (and so edge implicitly doesn't exist)
+    expect(roadNetwork.edgeBetween(10000, 0, 10001, 0)).toBe(undefined);
+
+    // One intersection is in bounds of terrain, one intersection is not (so edge implicitly doesn't exist)
+    expect(roadNetwork.edgeBetween(-2, 0, -3, 0)).toBe(undefined);
+
+    // Edge exists
+    roadNetwork.addEdge(0, 0, 1, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toBe(CityTour.RoadNetwork.TERRAIN_SURFACE);
+  });
 });

@@ -150,9 +150,13 @@ CityTour.RoadNetwork = function(terrain) {
   };
 
   var edgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var intersection1 = intersections[mapX1][mapZ1] || false;
+    var intersection1;
 
-    return intersection1.getEdge(mapX2, mapZ2);
+    if (intersections[mapX1] !== undefined) {
+      intersection1 = intersections[mapX1][mapZ1];
+    };
+
+    return (intersection1 === undefined) ? undefined : intersection1.getEdge(mapX2, mapZ2);
   };
 
 
