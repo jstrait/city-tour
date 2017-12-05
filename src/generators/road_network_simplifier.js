@@ -10,6 +10,54 @@ CityTour.RoadNetworkSimplifier = (function() {
 
     var pathFinder = new CityTour.PathFinder(roadNetwork);
 
+    var blockHasBottomTouchingBuilding = function(block) {
+      var l;
+
+      for (l = 0; l < block.length; l++) {
+        if (block[l].dimensions.bottom === 1.0) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    var blockHasTopTouchingBuilding = function(block) {
+      var l;
+
+      for (l = 0; l < block.length; l++) {
+        if (block[l].dimensions.top === 0.0) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    var blockHasLeftTouchingBuilding = function(block) {
+      var l;
+
+      for (l = 0; l < block.length; l++) {
+        if (block[l].dimensions.left === 0.0) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    var blockHasRightTouchingBuilding = function(block) {
+      var l;
+
+      for (l = 0; l < block.length; l++) {
+        if (block[l].dimensions.right === 1.0) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
     for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
       for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
         targetMapX = mapX + 1;
@@ -18,11 +66,11 @@ CityTour.RoadNetworkSimplifier = (function() {
         // Road to the east
         if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
             roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE) {
-          southEastBlock = buildings.blockAtCoordinates(mapX, mapZ) || [];
-          northEastBlock = buildings.blockAtCoordinates(mapX, mapZ - 1) || [];
+          southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
+          northEastBlock = buildings.blockAtCoordinates(mapX, mapZ - 1);
 
-          southEastBlockHasBuildings = southEastBlock && (southEastBlock.length > 0);
-          northEastBlockHasBuildings = northEastBlock && (northEastBlock.length > 0);
+          southEastBlockHasBuildings = blockHasTopTouchingBuilding(southEastBlock);
+          northEastBlockHasBuildings = blockHasBottomTouchingBuilding(northEastBlock);
 
           if (southEastBlockHasBuildings === false && northEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
@@ -43,11 +91,11 @@ CityTour.RoadNetworkSimplifier = (function() {
         // Road the south
         if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
             roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE) {
-          southWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ) || [];
-          southEastBlock = buildings.blockAtCoordinates(mapX, mapZ) || [];
+          southWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ);
+          southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
 
-          southWestBlockHasBuildings = southWestBlock && (southWestBlock.length > 0);
-          southEastBlockHasBuildings = southEastBlock && (southEastBlock.length > 0);
+          southWestBlockHasBuildings = blockHasRightTouchingBuilding(southWestBlock);
+          southEastBlockHasBuildings = blockHasLeftTouchingBuilding(southEastBlock);
 
           if (southWestBlockHasBuildings === false && southEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
