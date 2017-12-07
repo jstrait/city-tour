@@ -79,7 +79,16 @@ CityTour.City = function(container) {
       xRotation: 0.0,
       yRotation: 0.0,
     };
-    animationManager.init(initialCoordinates, CityTour.Coordinates.mapXToSceneX(worldData.centerX), Number.NEGATIVE_INFINITY, CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection), 0.0, 0.0);
+
+    var targetCoordinates = {
+      xPosition: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
+      yPosition: Number.NEGATIVE_INFINITY,
+      zPosition: CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection),
+      xRotation: 0.0,
+      yRotation: 0.0,
+    };
+
+    animationManager.init(initialCoordinates, targetCoordinates);
 
     timer.onTick(1);
     container.appendChild(renderView.domElement());

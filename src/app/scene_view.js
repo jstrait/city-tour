@@ -28,8 +28,15 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
       yRotation: poleCamera.rotationY(),
     };
 
-    animationManager.init(initialCoordinates,
-                          CityTour.Coordinates.mapXToSceneX(worldData.centerX), Number.NEGATIVE_INFINITY, CityTour.Coordinates.mapZToSceneZ(worldData.centerZ), 0.0, poleCamera.rotationY());
+    var targetCoordinates = {
+      xPosition: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
+      yPosition: Number.NEGATIVE_INFINITY,
+      zPosition: CityTour.Coordinates.mapZToSceneZ(worldData.centerZ),
+      xRotation: 0.0,
+      yRotation: poleCamera.rotationY(),
+    };
+
+    animationManager.init(initialCoordinates, targetCoordinates);
     timer.onTick(1);
     timer.start();
     mode = FLYTHROUGH;
