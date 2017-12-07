@@ -19,22 +19,22 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     poleCamera.setRotationY(currentController.yRotation());
   };
 
-  animationManager.init = function(targetMapX, targetMapZ, initialXPosition, initialYPosition, initialZPosition, initialXRotation, initialYRotation) {
+  animationManager.init = function(initialCoordinates, targetMapX, targetMapZ) {
     vehicleController = new CityTour.VehicleController(terrain,
                                                        roadNetwork,
                                                        {
-                                                         positionX: initialXPosition,
-                                                         positionY: initialYPosition,
-                                                         positionZ: initialZPosition,
-                                                         rotationX: initialXRotation,
-                                                         rotationY: initialYRotation,
+                                                         positionX: initialCoordinates.xPosition,
+                                                         positionY: initialCoordinates.yPosition,
+                                                         positionZ: initialCoordinates.zPosition,
+                                                         rotationX: initialCoordinates.xRotation,
+                                                         rotationY: initialCoordinates.yRotation,
                                                        },
                                                        {
                                                          positionX: CityTour.Coordinates.mapXToSceneX(targetMapX),
                                                          positionY: Number.NEGATIVE_INFINITY,
                                                          positionZ: CityTour.Coordinates.mapZToSceneZ(targetMapZ),
                                                          rotationX: 0.0,
-                                                         rotationY: initialYRotation,
+                                                         rotationY: initialCoordinates.yRotation,
                                                        });
 
     currentController = vehicleController;

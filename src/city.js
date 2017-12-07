@@ -72,12 +72,14 @@ CityTour.City = function(container) {
       furthestOutIntersection -= 1;
     }
 
-    var initialXPosition = worldData.centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH;
-    var initialYPosition = 40;
-    var initialZPosition = (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH;
-    var initialXRotation = 0.0;
-    var initialYRotation = 0.0;
-    animationManager.init(worldData.centerX, furthestOutIntersection, initialXPosition, initialYPosition, initialZPosition, initialXRotation, initialYRotation);
+    var initialCoordinates = {
+      xPosition: worldData.centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH,
+      yPosition: 40,
+      zPosition: (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH,
+      xRotation: 0.0,
+      yRotation: 0.0,
+    };
+    animationManager.init(initialCoordinates, worldData.centerX, furthestOutIntersection);
 
     timer.onTick(1);
     container.appendChild(renderView.domElement());

@@ -20,7 +20,15 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
   };
 
   var startFlythrough = function() {
-    animationManager.init(worldData.centerX, worldData.centerZ, poleCamera.positionX(), poleCamera.positionY(), poleCamera.positionZ(), poleCamera.rotationX(), poleCamera.rotationY());
+    var initialCoordinates = {
+      xPosition: poleCamera.positionX(),
+      yPosition: poleCamera.positionY(),
+      zPosition: poleCamera.positionZ(),
+      xRotation: poleCamera.rotationX(),
+      yRotation: poleCamera.rotationY(),
+    };
+
+    animationManager.init(initialCoordinates, worldData.centerX, worldData.centerZ);
     timer.onTick(1);
     timer.start();
     mode = FLYTHROUGH;
