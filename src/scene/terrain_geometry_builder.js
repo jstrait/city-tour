@@ -9,14 +9,30 @@ CityTour.Scene.TerrainGeometryBuilder = function() {
   var WATER_COLOR_1 = new THREE.Color(0.1, 0.2, 1.0);
   var WATER_COLOR_2 = new THREE.Color(0.1, 0.19, 1.0);
 
+  var SOLID_SHADING_MODE = 1;
+  var GRADIENT_SHADING_MODE = 2;
+  var SHADING_MODE = SOLID_SHADING_MODE;
+
   var reusableTriangle = new THREE.Geometry();
   reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];
 
   var buildTriangleGeometry = function(x1, y1, z1, material1, x2, y2, z2, material2, x3, y3, z3, material3) {
     reusableTriangle.vertices = [ new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2), new THREE.Vector3(x3, y3, z3) ];
-    reusableTriangle.faces[0].vertexColors = [(material1 === CityTour.Terrain.WATER) ? WATER_COLOR_1 : TERRAIN_COLOR_1,
-                                              (material2 === CityTour.Terrain.WATER) ? WATER_COLOR_1 : TERRAIN_COLOR_1,
-                                              (material3 === CityTour.Terrain.WATER) ? WATER_COLOR_1 : TERRAIN_COLOR_1,];
+
+    if (SHADING_MODE === SOLID_SHADING_MODE) {
+      if (material1 === CityTour.Terrain.WATER && material2 === CityTour.Terrain.WATER && material3 == CityTour.Terrain.WATER) {
+        reusableTriangle.faces[0].vertexColors = [WATER_COLOR_1, WATER_COLOR_1, WATER_COLOR_1];
+      }
+      else {
+        reusableTriangle.faces[0].vertexColors = [TERRAIN_COLOR_1, TERRAIN_COLOR_1, TERRAIN_COLOR_1];
+      }
+    }
+    else {
+      reusableTriangle.faces[0].vertexColors = [(material1 === CityTour.Terrain.WATER) ? WATER_COLOR_1 : TERRAIN_COLOR_1,
+                                                (material2 === CityTour.Terrain.WATER) ? WATER_COLOR_1 : TERRAIN_COLOR_1,
+                                                (material3 === CityTour.Terrain.WATER) ? WATER_COLOR_1 : TERRAIN_COLOR_1,];
+    }
+
     reusableTriangle.computeFaceNormals();
 
     return reusableTriangle;
