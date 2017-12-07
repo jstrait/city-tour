@@ -19,7 +19,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     poleCamera.setRotationY(currentController.yRotation());
   };
 
-  animationManager.init = function(initialCoordinates, targetMapX, targetSceneY, targetMapZ, targetRotationX, targetRotationY) {
+  animationManager.init = function(initialCoordinates, targetSceneX, targetSceneY, targetSceneZ, targetRotationX, targetRotationY) {
     vehicleController = new CityTour.VehicleController(terrain,
                                                        roadNetwork,
                                                        {
@@ -30,9 +30,9 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
                                                          rotationY: initialCoordinates.yRotation,
                                                        },
                                                        {
-                                                         positionX: CityTour.Coordinates.mapXToSceneX(targetMapX),
+                                                         positionX: targetSceneX,
                                                          positionY: targetSceneY,
-                                                         positionZ: CityTour.Coordinates.mapZToSceneZ(targetMapZ),
+                                                         positionZ: targetSceneZ,
                                                          rotationX: targetRotationX,
                                                          rotationY: targetRotationY,
                                                        });
