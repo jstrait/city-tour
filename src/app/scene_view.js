@@ -28,7 +28,7 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
       yRotation: poleCamera.rotationY(),
     };
 
-    animationManager.init(initialCoordinates, worldData.centerX, worldData.centerZ);
+    animationManager.init(initialCoordinates, worldData.centerX, Number.NEGATIVE_INFINITY, worldData.centerZ, 0.0, poleCamera.rotationY());
     timer.onTick(1);
     timer.start();
     mode = FLYTHROUGH;

@@ -79,7 +79,7 @@ CityTour.City = function(container) {
       xRotation: 0.0,
       yRotation: 0.0,
     };
-    animationManager.init(initialCoordinates, worldData.centerX, furthestOutIntersection);
+    animationManager.init(initialCoordinates, worldData.centerX, Number.NEGATIVE_INFINITY, furthestOutIntersection, 0.0, 0.0);
 
     timer.onTick(1);
     container.appendChild(renderView.domElement());
