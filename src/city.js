@@ -73,19 +73,19 @@ CityTour.City = function(container) {
     }
 
     var initialCoordinates = {
-      xPosition: worldData.centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH,
-      yPosition: 40,
-      zPosition: (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH,
-      xRotation: 0.0,
-      yRotation: 0.0,
+      positionX: worldData.centerX * CityTour.Config.BLOCK_AND_STREET_WIDTH,
+      positionY: 40,
+      positionZ: (furthestOutIntersection + SWOOP_DISTANCE_IN_BLOCKS) * CityTour.Config.BLOCK_AND_STREET_DEPTH,
+      rotationX: 0.0,
+      rotationY: 0.0,
     };
 
     var targetCoordinates = {
-      xPosition: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
-      yPosition: Number.NEGATIVE_INFINITY,
-      zPosition: CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection),
-      xRotation: 0.0,
-      yRotation: 0.0,
+      positionX: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
+      positionY: Number.NEGATIVE_INFINITY,
+      positionZ: CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection),
+      rotationX: 0.0,
+      rotationY: 0.0,
     };
 
     animationManager.init(initialCoordinates, targetCoordinates);

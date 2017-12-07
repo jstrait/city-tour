@@ -21,19 +21,19 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
 
   var startFlythrough = function() {
     var initialCoordinates = {
-      xPosition: poleCamera.positionX(),
-      yPosition: poleCamera.positionY(),
-      zPosition: poleCamera.positionZ(),
-      xRotation: poleCamera.rotationX(),
-      yRotation: poleCamera.rotationY(),
+      positionX: poleCamera.positionX(),
+      positionY: poleCamera.positionY(),
+      positionZ: poleCamera.positionZ(),
+      rotationX: poleCamera.rotationX(),
+      rotationY: poleCamera.rotationY(),
     };
 
     var targetCoordinates = {
-      xPosition: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
-      yPosition: Number.NEGATIVE_INFINITY,
-      zPosition: CityTour.Coordinates.mapZToSceneZ(worldData.centerZ),
-      xRotation: 0.0,
-      yRotation: poleCamera.rotationY(),
+      positionX: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
+      positionY: Number.NEGATIVE_INFINITY,
+      positionZ: CityTour.Coordinates.mapZToSceneZ(worldData.centerZ),
+      rotationX: 0.0,
+      rotationY: poleCamera.rotationY(),
     };
 
     animationManager.init(initialCoordinates, targetCoordinates);
