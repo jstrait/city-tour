@@ -13,6 +13,9 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var HORIZONTAL_MOTION_DELTA = 0.2;
   var Y_ROTATION_DELTA = 0.03;
   var BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
+  var BIRDSEYE_Y = 150;
+  var HOVERING_Y = 15;
+
 
   var MINIMUM_HEIGHT_OFF_GROUND = 0.5;
 
@@ -117,7 +120,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
         if (verticalMode === DRIVING_MODE) {
           verticalMode = BIRDSEYE_MODE;
-          targetYPosition = 150;
+          targetYPosition = BIRDSEYE_Y;
           yPositionDelta = 2;
           targetXRotation = -(Math.PI / 3);
           navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
@@ -131,7 +134,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
         }
         else if (verticalMode === BIRDSEYE_MODE) {
           verticalMode = HOVERING_MODE;
-          targetYPosition = 15;
+          targetYPosition = HOVERING_Y;
           yPositionDelta = 2;
           targetXRotation = 0.0;
         }
