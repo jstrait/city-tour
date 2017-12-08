@@ -82,9 +82,9 @@ CityTour.InteractiveCamera = function(messageBroker) {
   */
   interactiveCamera.syncCamera = function(poleCamera) {
     var tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
-    var zoom = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
+    var zoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
 
-    var hypotenuse = zoom;
+    var hypotenuse = zoomDistance;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
 
     var cameraX = centerX + (adjacent * Math.sin(rotationAngle));
