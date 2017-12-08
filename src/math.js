@@ -25,10 +25,15 @@ CityTour.Math = (function() {
     return min + ((max - min) * percentage);
   };
 
+  var clamp = function(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  };
+
   return {
     distanceBetweenPoints: distanceBetweenPoints,
     distanceBetweenPoints3D: distanceBetweenPoints3D,
     randomInRange: randomInRange,
     lerp: lerp,
+    clamp: clamp,
   };
 })();

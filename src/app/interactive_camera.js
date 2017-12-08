@@ -27,10 +27,6 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var terrain;
 
-  var clamp = function(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-  };
-
   var interactiveCamera = {};
 
   interactiveCamera.setTerrain = function(newTerrain) { terrain = newTerrain; };
@@ -38,20 +34,20 @@ CityTour.InteractiveCamera = function(messageBroker) {
   interactiveCamera.centerX = function() { return centerX; };
   interactiveCamera.centerZ = function() { return centerZ; };
   interactiveCamera.setCenterCoordinates = function(newCenterX, newCenterZ) {
-    centerX = clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
-    centerZ = clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
+    centerX = CityTour.Math.clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
+    centerZ = CityTour.Math.clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
     messageBroker.publish("camera.updated", {});
   };
 
   interactiveCamera.zoomPercentage = function() { return zoomPercentage; };
   interactiveCamera.setZoomPercentage = function(newZoomPercentage) {
-    zoomPercentage = clamp(newZoomPercentage, 0.0, 1.0);
+    zoomPercentage = CityTour.Math.clamp(newZoomPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
   interactiveCamera.tiltPercentage = function() { return tiltPercentage; };
   interactiveCamera.setTiltPercentage = function(newTiltPercentage) {
-    tiltPercentage = clamp(newTiltPercentage, 0.0, 1.0);
+    tiltPercentage = CityTour.Math.clamp(newTiltPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
