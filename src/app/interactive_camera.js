@@ -81,8 +81,8 @@ CityTour.InteractiveCamera = function(messageBroker) {
   rotationY == rotation of this triangle around y-axis of center point
   */
   interactiveCamera.syncCamera = function(poleCamera) {
-    var tiltAngle = CityTour.Math.lerp(MAX_TILT_ANGLE, MIN_TILT_ANGLE, tiltPercentage);
-    var zoom = CityTour.Math.lerp(MAX_ZOOM_DISTANCE, MIN_ZOOM_DISTANCE, zoomPercentage);
+    var tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
+    var zoom = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
 
     var hypotenuse = zoom;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;

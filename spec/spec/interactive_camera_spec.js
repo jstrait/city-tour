@@ -41,9 +41,9 @@ describe("CityTour.InteractiveCamera", function() {
       interactiveCamera.syncCamera(poleCamera);
 
       expect(poleCamera.positionX()).toBe(5);
-      expect(poleCamera.positionY()).toBe(1.996668332936563);
+      expect(poleCamera.positionY()).toBe(1.9966683329365646);
       expect(poleCamera.positionZ()).toBe(25.900083305560514);
-      expect(poleCamera.rotationX()).toBe(-0.1);
+      expect(poleCamera.rotationX()).toBeCloseTo(-0.1);
       expect(poleCamera.rotationY()).toBe(0.0);
     });
 
@@ -60,8 +60,8 @@ describe("CityTour.InteractiveCamera", function() {
 
       expect(poleCamera.positionX()).toBe(334.11075581078666);
       expect(poleCamera.positionY()).toBe(323.97212281345827);
-      expect(poleCamera.positionZ()).toBe(199.94038669083446);
-      expect(poleCamera.rotationX()).toBe(-0.6883185307179586);
+      expect(poleCamera.positionZ()).toBe(199.94038669083443);
+      expect(poleCamera.rotationX()).toBe(-0.6883185307179587);
       expect(poleCamera.rotationY()).toBe(Math.PI / 3);
     });
   });
