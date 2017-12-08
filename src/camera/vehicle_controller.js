@@ -34,12 +34,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var terrainHeightAtTouchdown = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(targetSceneX),
                                                              CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
   var distanceToTarget = CityTour.Math.distanceBetweenPoints3D(xPosition, yPosition, zPosition, targetSceneX, terrainHeightAtTouchdown + MINIMUM_HEIGHT_OFF_GROUND, targetSceneZ);
-  var framesUntilCityEdge = Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA);
+  var framesUntilTarget = Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA);
 
-  var xPositionDelta = Math.abs(targetSceneX - xPosition) / framesUntilCityEdge;
-  var zPositionDelta = Math.abs(zPosition - targetSceneZ) / framesUntilCityEdge;
-  var yPositionDelta = (yPosition - terrainHeightAtTouchdown) / framesUntilCityEdge;
-  var xRotationDelta = Math.abs(initial.rotationX - target.rotationX) / framesUntilCityEdge;
+  var xPositionDelta = Math.abs(targetSceneX - xPosition) / framesUntilTarget;
+  var zPositionDelta = Math.abs(zPosition - targetSceneZ) / framesUntilTarget;
+  var yPositionDelta = (yPosition - terrainHeightAtTouchdown) / framesUntilTarget;
+  var xRotationDelta = Math.abs(initial.rotationX - target.rotationX) / framesUntilTarget;
 
   var framesInCurrentVerticalMode = 0;
   var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
