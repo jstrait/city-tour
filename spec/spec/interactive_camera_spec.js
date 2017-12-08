@@ -110,8 +110,8 @@ describe("CityTour.InteractiveCamera", function() {
       interactiveCamera.syncFromPoleCamera(poleCamera);
 
       expect(interactiveCamera.centerX()).toBe(5);
-      expect(interactiveCamera.centerZ()).toBe(6);
-      expect(interactiveCamera.zoomPercentage()).toBe(1.0204081632653061);
+      expect(interactiveCamera.centerZ()).toBe(-14);
+      expect(interactiveCamera.zoomPercentage()).toBe(1);
       expect(interactiveCamera.tiltPercentage()).toBe(0.0);
       expect(interactiveCamera.rotationAngle()).toBe(0.0);
     });

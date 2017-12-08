@@ -112,7 +112,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
     tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
 
     var opposite = poleCamera.positionY();
-    var hypotenuse = (1 / Math.sin(-tiltAngle)) * opposite;
+    var hypotenuse = Math.max(MIN_ZOOM_DISTANCE, (1 / Math.sin(-tiltAngle)) * opposite);
     var adjacent = Math.sqrt((hypotenuse * hypotenuse) - (opposite * opposite));
 
     centerX = poleCamera.positionX() - (adjacent * Math.sin(rotationAngle));
