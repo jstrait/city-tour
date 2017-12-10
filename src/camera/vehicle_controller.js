@@ -37,6 +37,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var yPositionDelta;
   var xRotationDelta;
 
+  var xMotionGenerator;
+  var yMotionGenerator;
+  var zMotionGenerator;
+  var xRotationGenerator;
+  var yRotationGenerator;
+
   var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
   var framesInCurrentVerticalMode = VERTICAL_MODE_DURATION_IN_FRAMES + 1;
   var verticalMode = INITIAL_DESCENT;
@@ -61,17 +67,20 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
       targetYPosition = BIRDSEYE_Y;
       yPositionDelta = 2;
       targetXRotation = -(Math.PI / 3);
+      xRotationDelta = BIRDSEYE_X_ROTATION_DELTA;
       navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
     }
     else if (verticalMode === DRIVING_MODE) {
       targetYPosition = Number.NEGATIVE_INFINITY;
       yPositionDelta = 0.05;
       targetXRotation = 0.0;
+      xRotationDelta = BIRDSEYE_X_ROTATION_DELTA;
       navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
     }
     else if (verticalMode === HOVERING_MODE) {
       targetYPosition = HOVERING_Y;
       yPositionDelta = 2;
+      xRotationDelta = BIRDSEYE_X_ROTATION_DELTA;
       targetXRotation = 0.0;
     }
     else if (verticalMode === INITIAL_DESCENT) {
@@ -99,6 +108,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
     }
 
     determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
+
+    xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
+    yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
+    xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
+    yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
+    zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
   };
 
   var determinePositionDelta = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
@@ -148,14 +163,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
     return roadHeight;
   };
 
-  determineNextTargetPoint();
-
-  var xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
-  var yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-  var zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
-  var xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, xRotationDelta);
-  var yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
-
   var tick = function() {
     if (isAtTargetPoint()) {
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
@@ -173,12 +180,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
       }
 
       determineNextTargetPoint();
-
-      xRotationGenerator = new CityTour.ClampedLinearMotionGenerator(xRotation, targetXRotation, BIRDSEYE_X_ROTATION_DELTA);
-      yRotationGenerator = new CityTour.ClampedLinearMotionGenerator(yRotation, targetYRotation, Y_ROTATION_DELTA);
-      xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
-      yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
-      zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
     }
 
     if (yRotation != targetYRotation) {
@@ -195,6 +196,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
     framesInCurrentVerticalMode += 1;
   };
 
+
+  determineNextTargetPoint();
 
   return {
     xPosition: function() { return xPosition; },
