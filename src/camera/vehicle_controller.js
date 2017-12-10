@@ -32,9 +32,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var targetXRotation = initial.rotationX;
   var targetYRotation = initial.rotationY;
 
-  var xPositionDelta;
-  var zPositionDelta;
-
   var xMotionGenerator;
   var yMotionGenerator;
   var zMotionGenerator;
@@ -57,11 +54,15 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var determineNextTargetPoint = function() {
+    var xPositionDelta;
     var yPositionDelta;
+    var zPositionDelta;
     var xRotationDelta;
+
     var terrainHeightAtTouchdown, distanceToTarget, framesUntilTarget;
     var oldTargetSceneX = targetSceneX;
     var oldTargetSceneZ = targetSceneZ;
+    var angleBetweenStartAndTarget;
 
     if (verticalMode === BIRDSEYE_MODE) {
       targetYPosition = BIRDSEYE_Y;
@@ -104,7 +105,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       xRotationDelta = Math.abs(initial.rotationX) / framesUntilTarget;
     }
     else {
-      determinePositionDelta(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
+      angleBetweenStartAndTarget = Math.atan2(oldTargetSceneZ - targetSceneZ, targetSceneX - oldTargetSceneX);
+
+      xPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.cos(angleBetweenStartAndTarget));
+      zPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.sin(angleBetweenStartAndTarget));
     }
 
     determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
@@ -114,13 +118,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(xPosition, targetSceneX, xPositionDelta);
     yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(yPosition, targetYPosition, yPositionDelta);
     zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(zPosition, targetSceneZ, zPositionDelta);
-  };
-
-  var determinePositionDelta = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
-    var angleBetweenStartAndTarget = Math.atan2(oldTargetSceneZ - targetSceneZ, targetSceneX - oldTargetSceneX);
-
-    xPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.cos(angleBetweenStartAndTarget));
-    zPositionDelta = Math.abs(HORIZONTAL_MOTION_DELTA * Math.sin(angleBetweenStartAndTarget));
   };
 
   var determineRotationAngle = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
