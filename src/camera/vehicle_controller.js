@@ -34,8 +34,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
 
   var xPositionDelta;
   var zPositionDelta;
-  var yPositionDelta;
-  var xRotationDelta;
 
   var xMotionGenerator;
   var yMotionGenerator;
@@ -59,6 +57,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   };
 
   var determineNextTargetPoint = function() {
+    var yPositionDelta;
+    var xRotationDelta;
     var terrainHeightAtTouchdown, distanceToTarget, framesUntilTarget;
     var oldTargetSceneX = targetSceneX;
     var oldTargetSceneZ = targetSceneZ;
