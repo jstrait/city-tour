@@ -93,7 +93,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
     targetSceneZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
 
     if (verticalMode === INITIAL_DESCENT) {
-      terrainHeightAtTouchdown = terrain.heightAtCoordinates(targetSceneX, targetSceneZ);
+      terrainHeightAtTouchdown = terrain.heightAtCoordinates(navigator.targetMapX(), navigator.targetMapZ());
       distanceToTarget = CityTour.Math.distanceBetweenPoints3D(xPosition, yPosition, zPosition, targetSceneX, terrainHeightAtTouchdown + MINIMUM_HEIGHT_OFF_GROUND, targetSceneZ);
       framesUntilTarget = Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA);
 
