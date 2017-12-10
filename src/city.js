@@ -80,15 +80,10 @@ CityTour.City = function(container) {
       rotationY: 0.0,
     };
 
-    var targetCoordinates = {
-      positionX: CityTour.Coordinates.mapXToSceneX(worldData.centerX),
-      positionY: Number.NEGATIVE_INFINITY,
-      positionZ: CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection),
-      rotationX: 0.0,
-      rotationY: 0.0,
-    };
+    var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
+    var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(furthestOutIntersection);
 
-    animationManager.init(initialCoordinates, targetCoordinates);
+    animationManager.init(initialCoordinates, targetSceneX, targetSceneZ);
 
     timer.onTick(1);
     container.appendChild(renderView.domElement());

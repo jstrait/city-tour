@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
+CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTargetSceneX, initialTargetSceneZ) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -50,8 +50,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
 
   var InitialDescentNavigator = function() {
     return {
-      targetMapX: function() { return CityTour.Coordinates.sceneXToMapX(target.positionX); },
-      targetMapZ: function() { return CityTour.Coordinates.sceneZToMapZ(target.positionZ); },
+      targetMapX: function() { return CityTour.Coordinates.sceneXToMapX(initialTargetSceneX); },
+      targetMapZ: function() { return CityTour.Coordinates.sceneZToMapZ(initialTargetSceneZ); },
       nextTarget: function() { },  //no-op
     };
   };
@@ -101,7 +101,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
       xPositionDelta = Math.abs(targetSceneX - xPosition) / framesUntilTarget;
       zPositionDelta = Math.abs(zPosition - targetSceneZ) / framesUntilTarget;
       yPositionDelta = (yPosition - terrainHeightAtTouchdown) / framesUntilTarget;
-      xRotationDelta = Math.abs(initial.rotationX - target.rotationX) / framesUntilTarget;
+      xRotationDelta = Math.abs(initial.rotationX) / framesUntilTarget;
     }
     else {
       determinePositionDelta(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);

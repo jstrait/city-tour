@@ -19,8 +19,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     poleCamera.setRotationY(currentController.yRotation());
   };
 
-  animationManager.init = function(initialCoordinates, targetCoordinates) {
-    vehicleController = new CityTour.VehicleController(terrain, roadNetwork, initialCoordinates, targetCoordinates);
+  animationManager.init = function(initialCoordinates, targetSceneX, targetSceneZ) {
+    vehicleController = new CityTour.VehicleController(terrain, roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     currentController = vehicleController;
 
     syncCamera();
