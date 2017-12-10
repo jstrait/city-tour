@@ -53,7 +53,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
   var InitialDescentNavigator = function() {
     return {
       targetMapX: function() { return CityTour.Coordinates.sceneXToMapX(target.positionX); },
-      targetMapZ: function() { return CityTour.Coordinates.sceneXToMapX(target.positionZ); },
+      targetMapZ: function() { return CityTour.Coordinates.sceneZToMapZ(target.positionZ); },
       nextTarget: function() { },  //no-op
     };
   };
