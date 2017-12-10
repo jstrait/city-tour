@@ -151,7 +151,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
            zPosition === targetSceneZ;
   };
 
-  var calculateRoadHeight = function() {
+  var roadHeightAtCurrentPosition = function() {
     var mapX = CityTour.Coordinates.sceneXToMapX(xPosition);
     var mapZ = CityTour.Coordinates.sceneZToMapZ(zPosition);
     var roadHeight = roadNetwork.getRoadHeight(mapX, mapZ);
@@ -190,7 +190,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, target) {
       zPosition = zMotionGenerator.next();
     }
 
-    yPosition = Math.max(yMotionGenerator.next(), calculateRoadHeight() + MINIMUM_HEIGHT_OFF_GROUND);
+    yPosition = Math.max(yMotionGenerator.next(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
     xRotation = xRotationGenerator.next();
 
     framesInCurrentVerticalMode += 1;
