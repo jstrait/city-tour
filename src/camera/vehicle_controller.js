@@ -100,10 +100,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       distanceToTarget = CityTour.Math.distanceBetweenPoints3D(xPosition, yPosition, zPosition, targetSceneX, targetYPosition, targetSceneZ);
       framesUntilTarget = Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA);
 
-      xPositionDelta = Math.abs(targetSceneX - xPosition) / framesUntilTarget;
+      xPositionDelta = Math.abs(xPosition - targetSceneX) / framesUntilTarget;
       yPositionDelta = Math.abs(yPosition - targetYPosition) / framesUntilTarget;
       zPositionDelta = Math.abs(zPosition - targetSceneZ) / framesUntilTarget;
-      xRotationDelta = Math.abs(initial.rotationX - targetXRotation) / framesUntilTarget;
+      xRotationDelta = Math.abs(xRotation - targetXRotation) / framesUntilTarget;
     }
     else {
       angleBetweenStartAndTarget = Math.atan2(oldTargetSceneZ - targetSceneZ, targetSceneX - oldTargetSceneX);
