@@ -38,12 +38,26 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     messageBroker.publish("flythrough.started", {});
   };
 
+  var requestStopFlythrough = function() {
+    interactiveCamera.syncFromPoleCamera(poleCamera);
+    interactiveCamera.syncCamera(poleCamera);
+
+    var target = {
+      positionX: poleCamera.positionX(),
+      positionY: poleCamera.positionY(),
+      positionZ: poleCamera.positionZ(),
+      rotationX: poleCamera.rotationX(),
+      rotationY: poleCamera.rotationY(),
+    };
+
+    animationManager.requestStop(target);
+  };
+
   var stopFlythrough = function() {
     timer.togglePause();
     interactiveCamera.syncFromPoleCamera(poleCamera);
     updateCamera();
     mode = INTERACTIVE;
-    messageBroker.publish("flythrough.stopped", {});
   };
 
   var toggleFlythrough = function() {
@@ -51,7 +65,7 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
       startFlythrough();
     }
     else {
-      stopFlythrough();
+      requestStopFlythrough();
     }
   };
 
@@ -72,7 +86,7 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     poleCamera = renderView.poleCamera();
 
     timer = new CityTour.Timer();
-    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera);
+    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera, messageBroker);
     timer.onTick = function(frameCount) {
       animationManager.tick(frameCount);
       renderView.render();
@@ -108,6 +122,7 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
 
   window.addEventListener('resize', renderView.resize, false);
   var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
+  var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
 
   var destroy = function() {
     var i;

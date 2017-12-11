@@ -2,13 +2,13 @@
 
 var CityTour = CityTour || {};
 
-CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
+CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBroker) {
   var animationManager = {};
 
   var debug = false;
   var scheduleDebugChange = false;
 
-  var vehicleController, debugAnimationController;
+  var vehicleController, debugAnimationController, directTargetAnimation;
   var currentController;
 
   var syncCamera = function() {
@@ -26,11 +26,34 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera) {
     syncCamera();
   };
 
+  animationManager.requestStop = function(target) {
+    var initial = {
+      positionX: vehicleController.xPosition(),
+      positionY: vehicleController.yPosition(),
+      positionZ: vehicleController.zPosition(),
+      rotationX: vehicleController.xRotation(),
+      rotationY: vehicleController.yRotation(),
+    };
+
+    directTargetAnimation = new CityTour.DirectTargetAnimation(initial, target);
+
+    currentController = directTargetAnimation;
+  };
+
   animationManager.tick = function(frameCount) {
     var i;
 
     for (i = 0; i < frameCount; i++) {
       vehicleController.tick();
+
+      if (directTargetAnimation) {
+        directTargetAnimation.tick();
+        if (directTargetAnimation.isFinished()) {
+          directTargetAnimation = undefined;
+          messageBroker.publish("flythrough.stopped", {});
+          return;
+        }
+      }
 
       if (debugAnimationController) {
         if (!debug) {
