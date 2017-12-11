@@ -58,7 +58,7 @@ CityTour.Scene.RoadGeometryBuilder = function() {
   roadGeometryBuilder.build = function(terrain, roadNetwork) {
     var HALF_BLOCK_AND_STREET_WIDTH = CityTour.Config.BLOCK_AND_STREET_WIDTH / 2;
     var HALF_BLOCK_AND_STREET_DEPTH = CityTour.Config.BLOCK_AND_STREET_DEPTH / 2;
-    var BRIDGE_SUPPORT_HEIGHT = 10.0;
+    var BRIDGE_SUPPORT_HEIGHT = 100.0;
     var HALF_BRIDGE_SUPPORT_HEIGHT = BRIDGE_SUPPORT_HEIGHT / 2;
     var BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK = 0.25;
 
