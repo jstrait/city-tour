@@ -2,12 +2,12 @@
 
 var CityTour = CityTour || {};
 
-CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
+CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
 
   var worldData;
-  var renderView = null, poleCamera;
+  var poleCamera;
   var sceneBuilder;
   var scene;
   var timer;
@@ -75,14 +75,7 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
 
     interactiveCamera.setTerrain(worldData.terrain);
-
-    if (renderView === null) {
-      renderView = new CityTour.RenderView(containerEl, scene);
-    }
-    else {
-      renderView.setScene(scene);
-    }
-
+    renderView.setScene(scene);
     poleCamera = renderView.poleCamera();
 
     timer = new CityTour.Timer();
@@ -116,10 +109,6 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
     obj = null;
   };
 
-
-  renderView = new CityTour.RenderView(containerEl, new THREE.Scene());
-  containerEl.appendChild(renderView.domElement());
-
   window.addEventListener('resize', renderView.resize, false);
   var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
@@ -127,7 +116,6 @@ CityTour.SceneView = function(containerEl, interactiveCamera, messageBroker) {
   var destroy = function() {
     var i;
 
-    containerEl.removeChild(renderView.domElement());
     window.removeEventListener('resize', renderView.resize, false);
     messageBroker.removeSubscriber("camera.updated", id1);
 
