@@ -7,7 +7,6 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   var DEBUG_DOWN_TO_VEHICLE = 2;
 
   var debugDirection;
-  var scheduleDebugChange = false;
 
   var vehicleController, debugAnimationController, directTargetAnimation;
   var currentController;
@@ -69,39 +68,6 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
       }
     }
 
-    if (scheduleDebugChange) {
-      scheduleDebugChange = false;
-
-      if (debugDirection === undefined) {
-        debugDirection = DEBUG_UP_TO_BIRDS_EYE;
-        debugAnimationController =
-          new CityTour.DebugAnimation({positionX: poleCamera.positionX(),
-                                       positionY: poleCamera.positionY(),
-                                       positionZ: poleCamera.positionZ(),
-                                       rotationX: poleCamera.rotationX(),
-                                       rotationY: poleCamera.rotationY()},
-                                      {positionX: 0.0, positionY: 900, positionZ: 0.0, rotationX: -(Math.PI / 2), rotationY: 0.0},
-                                      true);
-      }
-      else {
-        debugDirection = DEBUG_DOWN_TO_VEHICLE;
-        debugAnimationController =
-          new CityTour.DebugAnimation({positionX: poleCamera.positionX(),
-                                       positionY: poleCamera.positionY(),
-                                       positionZ: poleCamera.positionZ(),
-                                       rotationX: poleCamera.rotationX(),
-                                       rotationY: poleCamera.rotationY()},
-                                      {positionX: vehicleController.positionX(),
-                                       positionY: vehicleController.positionY(),
-                                       positionZ: vehicleController.positionZ(),
-                                       rotationX: vehicleController.rotationX(),
-                                       rotationY: vehicleController.rotationY()},
-                                      false);
-      }
-
-      currentController = debugAnimationController;
-    }
-
     syncCamera();
 
     if (debugDirection === DEBUG_DOWN_TO_VEHICLE && debugAnimationController && debugAnimationController.finished()) {
@@ -112,7 +78,34 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   };
 
   var toggleDebug = function() {
-    scheduleDebugChange = true;
+    var initial = {
+      positionX: poleCamera.positionX(),
+      positionY: poleCamera.positionY(),
+      positionZ: poleCamera.positionZ(),
+      rotationX: poleCamera.rotationX(),
+      rotationY: poleCamera.rotationY(),
+    };
+
+    if (debugDirection === undefined) {
+      debugDirection = DEBUG_UP_TO_BIRDS_EYE;
+      debugAnimationController =
+        new CityTour.DebugAnimation(initial,
+                                    {positionX: 0.0, positionY: 900, positionZ: 0.0, rotationX: -(Math.PI / 2), rotationY: 0.0},
+                                    true);
+    }
+    else {
+      debugDirection = DEBUG_DOWN_TO_VEHICLE;
+      debugAnimationController =
+        new CityTour.DebugAnimation(initial,
+                                    {positionX: vehicleController.positionX(),
+                                     positionY: vehicleController.positionY(),
+                                     positionZ: vehicleController.positionZ(),
+                                     rotationX: vehicleController.rotationX(),
+                                     rotationY: vehicleController.rotationY()},
+                                    false);
+    }
+
+    currentController = debugAnimationController;
   };
 
 
