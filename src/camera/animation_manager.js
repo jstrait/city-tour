@@ -6,8 +6,6 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   var DEBUG_UP_TO_BIRDS_EYE = 1;
   var DEBUG_DOWN_TO_VEHICLE = 2;
 
-  var animationManager = {};
-
   var debugDirection;
   var scheduleDebugChange = false;
 
@@ -22,14 +20,14 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
     poleCamera.setRotationY(currentController.rotationY());
   };
 
-  animationManager.init = function(initialCoordinates, targetSceneX, targetSceneZ) {
+  var init = function(initialCoordinates, targetSceneX, targetSceneZ) {
     vehicleController = new CityTour.VehicleController(terrain, roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     currentController = vehicleController;
 
     syncCamera();
   };
 
-  animationManager.requestStop = function(target) {
+  var requestStop = function(target) {
     var initial = {
       positionX: vehicleController.positionX(),
       positionY: vehicleController.positionY(),
@@ -43,7 +41,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
     currentController = directTargetAnimation;
   };
 
-  animationManager.tick = function(frameCount) {
+  var tick = function(frameCount) {
     var i;
 
     for (i = 0; i < frameCount; i++) {
@@ -113,9 +111,15 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
     }
   };
 
-  animationManager.toggleDebug = function() {
+  var toggleDebug = function() {
     scheduleDebugChange = true;
   };
 
-  return animationManager;
+
+  return {
+    init: init,
+    requestStop: requestStop,
+    tick: tick,
+    toggleDebug: toggleDebug,
+  };
 };
