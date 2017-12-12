@@ -12,11 +12,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   var currentController;
 
   var syncCamera = function() {
-    poleCamera.setPositionX(currentController.xPosition());
-    poleCamera.setPositionY(currentController.yPosition());
-    poleCamera.setPositionZ(currentController.zPosition());
-    poleCamera.setRotationX(currentController.xRotation());
-    poleCamera.setRotationY(currentController.yRotation());
+    poleCamera.setPositionX(currentController.positionX());
+    poleCamera.setPositionY(currentController.positionY());
+    poleCamera.setPositionZ(currentController.positionZ());
+    poleCamera.setRotationX(currentController.rotationX());
+    poleCamera.setRotationY(currentController.rotationY());
   };
 
   animationManager.init = function(initialCoordinates, targetSceneX, targetSceneZ) {
@@ -28,11 +28,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
 
   animationManager.requestStop = function(target) {
     var initial = {
-      positionX: vehicleController.xPosition(),
-      positionY: vehicleController.yPosition(),
-      positionZ: vehicleController.zPosition(),
-      rotationX: vehicleController.xRotation(),
-      rotationY: vehicleController.yRotation(),
+      positionX: vehicleController.positionX(),
+      positionY: vehicleController.positionY(),
+      positionZ: vehicleController.positionZ(),
+      rotationX: vehicleController.rotationX(),
+      rotationY: vehicleController.rotationY(),
     };
 
     directTargetAnimation = new CityTour.DirectTargetAnimation(initial, target);
@@ -57,11 +57,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
 
       if (debugAnimationController) {
         if (!debug) {
-          debugAnimationController.setTargetXPosition(vehicleController.xPosition());
-          debugAnimationController.setTargetYPosition(vehicleController.yPosition());
-          debugAnimationController.setTargetZPosition(vehicleController.zPosition());
-          debugAnimationController.setTargetXRotation(vehicleController.xRotation());
-          debugAnimationController.setTargetYRotation(vehicleController.yRotation());
+          debugAnimationController.setTargetXPosition(vehicleController.positionX());
+          debugAnimationController.setTargetYPosition(vehicleController.positionY());
+          debugAnimationController.setTargetZPosition(vehicleController.positionZ());
+          debugAnimationController.setTargetXRotation(vehicleController.rotationX());
+          debugAnimationController.setTargetYRotation(vehicleController.rotationY());
         }
 
         debugAnimationController.tick();
@@ -89,11 +89,11 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
                                        positionZ: poleCamera.positionZ(),
                                        rotationX: poleCamera.rotationX(),
                                        rotationY: poleCamera.rotationY()},
-                                      {positionX: vehicleController.xPosition(),
-                                       positionY: vehicleController.yPosition(),
-                                       positionZ: vehicleController.zPosition(),
-                                       rotationX: vehicleController.xRotation(),
-                                       rotationY: vehicleController.yRotation()},
+                                      {positionX: vehicleController.positionX(),
+                                       positionY: vehicleController.positionY(),
+                                       positionZ: vehicleController.positionZ(),
+                                       rotationX: vehicleController.rotationX(),
+                                       rotationY: vehicleController.rotationY()},
                                       false);
       }
 
