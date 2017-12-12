@@ -3,9 +3,12 @@
 var CityTour = CityTour || {};
 
 CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBroker) {
+  var DEBUG_UP_TO_BIRDS_EYE = 1;
+  var DEBUG_DOWN_TO_VEHICLE = 2;
+
   var animationManager = {};
 
-  var debug = false;
+  var debugDirection;
   var scheduleDebugChange = false;
 
   var vehicleController, debugAnimationController, directTargetAnimation;
@@ -56,7 +59,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
       }
 
       if (debugAnimationController) {
-        if (!debug) {
+        if (debugDirection === DEBUG_DOWN_TO_VEHICLE) {
           debugAnimationController.setTargetXPosition(vehicleController.positionX());
           debugAnimationController.setTargetYPosition(vehicleController.positionY());
           debugAnimationController.setTargetZPosition(vehicleController.positionZ());
@@ -69,10 +72,10 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
     }
 
     if (scheduleDebugChange) {
-      debug = !debug;
       scheduleDebugChange = false;
 
-      if (debug) {
+      if (debugDirection === undefined) {
+        debugDirection = DEBUG_UP_TO_BIRDS_EYE;
         debugAnimationController =
           new CityTour.DebugAnimation({positionX: poleCamera.positionX(),
                                        positionY: poleCamera.positionY(),
@@ -83,6 +86,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
                                       true);
       }
       else {
+        debugDirection = DEBUG_DOWN_TO_VEHICLE;
         debugAnimationController =
           new CityTour.DebugAnimation({positionX: poleCamera.positionX(),
                                        positionY: poleCamera.positionY(),
@@ -102,7 +106,8 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
 
     syncCamera();
 
-    if (!debug && debugAnimationController && debugAnimationController.finished()) {
+    if (debugDirection === DEBUG_DOWN_TO_VEHICLE && debugAnimationController && debugAnimationController.finished()) {
+      debugDirection = undefined;
       debugAnimationController = null;
       currentController = vehicleController;
     }
