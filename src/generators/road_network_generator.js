@@ -72,6 +72,8 @@ CityTour.RoadNetworkGenerator = (function() {
       var bridgeLength;
       var heightAtTerminal1, heightAtTerminal2;
       var waterHeight, roadDeckHeight;
+      var side1WaterCount = 0;
+      var side2WaterCount = 0;
 
       var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, bridgeStartX, bridgeStartZ);
       if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
@@ -102,6 +104,23 @@ CityTour.RoadNetworkGenerator = (function() {
           return null;
         }
 
+        if (xDelta === 0.0) {  // North/south bridge
+          if (terrain.materialAtCoordinates(bridgeEndX - 1, bridgeEndZ) === CityTour.Terrain.WATER) {
+            side1WaterCount += 1;
+          }
+          if (terrain.materialAtCoordinates(bridgeEndX + 1, bridgeEndZ) === CityTour.Terrain.WATER) {
+            side2WaterCount += 1;
+          }
+        }
+        else if (zDelta === 0.0) {  // West/east bridge
+          if (terrain.materialAtCoordinates(bridgeEndX, bridgeEndZ - 1) === CityTour.Terrain.WATER) {
+            side1WaterCount += 1;
+          }
+          if (terrain.materialAtCoordinates(bridgeEndX, bridgeEndZ + 1) === CityTour.Terrain.WATER) {
+            side2WaterCount += 1;
+          }
+        }
+
         bridgeEndX += xDelta;
         bridgeEndZ += zDelta;
         bridgeLength += 1;
@@ -115,6 +134,11 @@ CityTour.RoadNetworkGenerator = (function() {
       }
 
       if (bridgeLength > MAX_BRIDGE_LENGTH) {
+        return null;
+      }
+
+      // Don't build the bridge if either only borders land
+      if (side1WaterCount === 0 || side2WaterCount === 0) {
         return null;
       }
 
