@@ -28,7 +28,7 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   var render = function(data) {
     centerXControl.value = interactiveCamera.centerX();
     centerZControl.value = interactiveCamera.centerZ();
-    rotationYControl.value = interactiveCamera.rotationAngle();
+    rotationYControl.value = interactiveCamera.rotationAngle() * (180 / Math.PI);
     rotationXControl.value = interactiveCamera.tiltPercentage();
     zoomControl.value = interactiveCamera.zoomPercentage();
 
@@ -46,7 +46,12 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
     interactiveCamera.setCenterCoordinates(parseFloat(centerXControl.value), parseFloat(centerZControl.value));
   };
   var setRotationAngle = function(e) {
-    interactiveCamera.setRotationAngle(parseFloat(rotationYControl.value));
+    // The slider uses degrees instead of radians to avoid Firefox thinking that float values are invalid,
+    // seemingly due to precision issues.
+    var degrees = parseInt(rotationYControl.value, 10);
+    var radians = degrees * (Math.PI / 180);
+
+    interactiveCamera.setRotationAngle(radians);
   };
   var setTiltAngle = function(e) {
     interactiveCamera.setTiltPercentage(parseFloat(rotationXControl.value));
