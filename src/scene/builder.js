@@ -6,37 +6,52 @@ CityTour.Scene = CityTour.Scene || {};
 CityTour.Scene.Builder = function() {
   var SKY_COLOR = new THREE.Color(0x66ccff);
 
-  var scene;
+  var addTerrainMeshes = function(scene, terrain, roadNetwork) {
+    var terrainMeshes = new CityTour.Scene.TerrainGeometryBuilder().build(terrain, roadNetwork);
+
+    terrainMeshes.forEach(function(terrainMesh) {
+      scene.add(terrainMesh);
+    });
+  };
+
+  var addRoadNetworkMeshes = function(scene, terrain, roadNetwork) {
+    var roadMeshes = new CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork);
+
+    roadMeshes.forEach(function(roadMesh) {
+      scene.add(roadMesh);
+    });
+  };
+
+  var addBuildingMeshes = function(scene, buildings, roadNetwork) {
+    var buildingMeshes;
+
+    if (buildings) {
+      buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
+
+      buildingMeshes.forEach(function(buildingMesh) {
+        scene.add(buildingMesh);
+      });
+    }
+  };
 
   var sceneBuilder = {};
 
   sceneBuilder.build = function(terrain, roadNetwork, buildings) {
     var masterStartTime = new Date();
 
-    scene = new THREE.Scene();
+    var scene = new THREE.Scene();
     scene.background = SKY_COLOR;
 
     var terrainStartTime = new Date();
-    var terrainMeshes = new CityTour.Scene.TerrainGeometryBuilder().build(terrain, roadNetwork);
-    terrainMeshes.forEach(function(terrainMesh) {
-      scene.add(terrainMesh);
-    });
+    addTerrainMeshes(scene, terrain, roadNetwork);
     var terrainEndTime = new Date();
 
     var roadStartTime = new Date();
-    var roadMeshes = new CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork);
-    roadMeshes.forEach(function(roadMesh) {
-      scene.add(roadMesh);
-    });
+    addRoadNetworkMeshes(scene, terrain, roadNetwork);
     var roadEndTime = new Date();
 
     var buildingsStartTime = new Date();
-    if (buildings) {
-      var buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
-      buildingMeshes.forEach(function(buildingMesh) {
-        scene.add(buildingMesh);
-      });
-    }
+    addBuildingMeshes(scene, buildings, roadNetwork);
     var buildingsEndTime = new Date();
 
     var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
