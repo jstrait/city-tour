@@ -16,7 +16,6 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
 
   var updateCamera = function(data) {
     interactiveCamera.syncCamera(poleCamera);
-    renderView.render();
   };
 
   var startFlythrough = function() {
@@ -32,8 +31,6 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
     var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
 
     animationManager.init(initialCoordinates, targetSceneX, targetSceneZ);
-    timer.onTick(1);
-    timer.start();
     mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", {});
   };
@@ -54,7 +51,6 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
   };
 
   var stopFlythrough = function() {
-    timer.togglePause();
     interactiveCamera.syncFromPoleCamera(poleCamera);
     updateCamera();
     mode = INTERACTIVE;
@@ -85,10 +81,11 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
       renderView.render();
     };
 
+    timer.start();
+
     updateCamera();
 
     renderView.resize();
-    renderView.render();
   };
 
   // See https://stackoverflow.com/questions/25126352/deallocating-buffergeometry

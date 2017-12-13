@@ -6,6 +6,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   var DEBUG_UP_TO_BIRDS_EYE = 1;
   var DEBUG_DOWN_TO_VEHICLE = 2;
 
+  var enabled = false;
   var debugDirection;
 
   var vehicleController, debugAnimationController, directTargetAnimation;
@@ -22,6 +23,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   var init = function(initialCoordinates, targetSceneX, targetSceneZ) {
     vehicleController = new CityTour.VehicleController(terrain, roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     currentController = vehicleController;
+    enabled = true;
 
     syncCamera();
   };
@@ -43,6 +45,10 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
   var tick = function(frameCount) {
     var i;
 
+    if (!enabled) {
+      return;
+    }
+
     for (i = 0; i < frameCount; i++) {
       vehicleController.tick();
 
@@ -50,6 +56,7 @@ CityTour.AnimationManager = function(terrain, roadNetwork, poleCamera, messageBr
         directTargetAnimation.tick();
         if (directTargetAnimation.isFinished()) {
           directTargetAnimation = undefined;
+          enabled = false;
           messageBroker.publish("flythrough.stopped", {});
           return;
         }
