@@ -12,6 +12,7 @@ CityTour.RenderView = function(container, initialScene) {
   var previousPoleCameraPositionZ;
   var previousPoleCameraRotationX;
   var previousPoleCameraRotationY;
+  var dirtyFromResize = false;
 
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
@@ -25,6 +26,7 @@ CityTour.RenderView = function(container, initialScene) {
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
 
+    dirtyFromResize = true;
     render();
   };
 
@@ -35,7 +37,7 @@ CityTour.RenderView = function(container, initialScene) {
                          previousPoleCameraRotationX !== poleCamera.rotationX() ||
                          previousPoleCameraRotationY !== poleCamera.rotationY();
 
-    if (cameraHasMoved) {
+    if (cameraHasMoved || dirtyFromResize) {
       renderer.render(scene, poleCamera.camera());
 
       previousPoleCameraPositionX = poleCamera.positionX();
@@ -43,6 +45,7 @@ CityTour.RenderView = function(container, initialScene) {
       previousPoleCameraPositionZ = poleCamera.positionZ();
       previousPoleCameraRotationX = poleCamera.rotationX();
       previousPoleCameraRotationY = poleCamera.rotationY();
+      dirtyFromResize = false;
     }
   };
 
