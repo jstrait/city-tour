@@ -37,32 +37,39 @@ CityTour.Scene.Builder = function() {
   var sceneBuilder = {};
 
   sceneBuilder.build = function(terrain, roadNetwork, buildings) {
-    var masterStartTime = new Date();
+    var masterStartTime, masterEndTime;
+    var terrainStartTime, terrainEndTime;
+    var roadStartTime, roadEndTime;
+    var buildingsStartTime, buildingsEndTime;
 
-    var scene = new THREE.Scene();
+    var scene, light, directionalLight;
+
+    masterStartTime = new Date();
+
+    scene = new THREE.Scene();
     scene.background = SKY_COLOR;
 
-    var terrainStartTime = new Date();
+    terrainStartTime = new Date();
     addTerrainMeshes(scene, terrain, roadNetwork);
-    var terrainEndTime = new Date();
+    terrainEndTime = new Date();
 
-    var roadStartTime = new Date();
+    roadStartTime = new Date();
     addRoadNetworkMeshes(scene, terrain, roadNetwork);
-    var roadEndTime = new Date();
+    roadEndTime = new Date();
 
-    var buildingsStartTime = new Date();
+    buildingsStartTime = new Date();
     addBuildingMeshes(scene, buildings, roadNetwork);
-    var buildingsEndTime = new Date();
+    buildingsEndTime = new Date();
 
-    var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+    light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
     light.position.set( 0, 500, 0 );
     scene.add(light);
 
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
     directionalLight.position.set(-1, 0.9, 0.9);
     scene.add(directionalLight);
 
-    var masterEndTime = new Date();
+    masterEndTime = new Date();
     console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
     console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
     console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
