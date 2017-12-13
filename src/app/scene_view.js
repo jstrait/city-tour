@@ -14,7 +14,7 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
   var animationManager;
   var mode = INTERACTIVE;
 
-  var updateCamera = function(data) {
+  var syncInteractiveCameraToPoleCamera = function(data) {
     interactiveCamera.syncCamera(poleCamera);
   };
 
@@ -52,7 +52,7 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
 
   var stopFlythrough = function() {
     interactiveCamera.syncFromPoleCamera(poleCamera);
-    updateCamera();
+    syncInteractiveCameraToPoleCamera();
     mode = INTERACTIVE;
   };
 
@@ -83,7 +83,7 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
 
     timer.start();
 
-    updateCamera();
+    syncInteractiveCameraToPoleCamera();
 
     renderView.resize();
   };
@@ -107,7 +107,7 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
   };
 
   window.addEventListener('resize', renderView.resize, false);
-  var id1 = messageBroker.addSubscriber("camera.updated", updateCamera);
+  var id1 = messageBroker.addSubscriber("camera.updated", syncInteractiveCameraToPoleCamera);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
 
   var destroy = function() {
