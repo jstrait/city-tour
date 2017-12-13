@@ -58,8 +58,13 @@ CityTour.RoadNetworkSimplifier = (function() {
 
     var pathFinder = new CityTour.PathFinder(roadNetwork);
 
-    for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
-      for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
+    var roadNetworkMinColumn = roadNetwork.minColumn();
+    var roadNetworkMaxColumn = roadNetwork.maxColumn();
+    var roadNetworkMinRow = roadNetwork.minRow();
+    var roadNetworkMaxRow = roadNetwork.maxRow();
+
+    for (mapX = roadNetworkMinColumn; mapX < roadNetworkMaxColumn; mapX++) {
+      for (mapZ = roadNetworkMinRow; mapZ < roadNetworkMaxRow; mapZ++) {
         targetMapX = mapX + 1;
         targetMapZ = mapZ;
 
