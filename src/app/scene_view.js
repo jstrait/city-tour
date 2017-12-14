@@ -8,8 +8,8 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
 
   var worldData;
   var poleCamera;
-  var sceneBuilder;
-  var scene;
+  var sceneBuilder = new CityTour.Scene.Builder();
+  var scene = sceneBuilder.buildEmptyScene();
   var timer;
   var animationManager;
   var mode = INTERACTIVE;
@@ -66,12 +66,37 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
   };
 
   var reset = function(newWorldConfig) {
+    var masterStartTime, masterEndTime;
+    var terrainStartTime, terrainEndTime;
+    var roadStartTime, roadEndTime;
+    var buildingsStartTime, buildingsEndTime;
+
     worldData = CityTour.WorldGenerator.generate(newWorldConfig);
-    sceneBuilder = new CityTour.Scene.Builder();
-    scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
+
+    destroyPreviousMeshes();
+
+    masterStartTime = new Date();
+
+    terrainStartTime = new Date();
+    scene.add(sceneBuilder.buildTerrainMeshes(worldData.terrain, worldData.roadNetwork));
+    terrainEndTime = new Date();
+
+    roadStartTime = new Date();
+    scene.add(sceneBuilder.buildRoadNetworkMeshes(worldData.terrain, worldData.roadNetwork));
+    roadEndTime = new Date();
+
+    buildingsStartTime = new Date();
+    scene.add(sceneBuilder.buildBuildingMeshes(worldData.buildings, worldData.roadNetwork));
+    buildingsEndTime = new Date();
+
+    masterEndTime = new Date();
+
+    console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
+    console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
+    console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
+    console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
 
     interactiveCamera.setTerrain(worldData.terrain);
-    renderView.setScene(scene);
     poleCamera = renderView.poleCamera();
 
     timer = new CityTour.Timer();
@@ -86,6 +111,24 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
     syncInteractiveCameraToPoleCamera();
 
     renderView.resize();
+  };
+
+  var destroyPreviousMeshes = function() {
+    var terrainMeshes = scene.getObjectByName("terrainMeshes");
+    var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
+    var buildingMeshes = scene.getObjectByName("buildingMeshes");
+
+    if (terrainMeshes !== undefined) {
+      removeChildFromScene(terrainMeshes);
+    }
+
+    if (roadNetworkMeshes !== undefined) {
+      removeChildFromScene(roadNetworkMeshes);
+    }
+
+    if (buildingMeshes !== undefined) {
+      removeChildFromScene(buildingMeshes);
+    }
   };
 
   // See https://stackoverflow.com/questions/25126352/deallocating-buffergeometry
@@ -110,22 +153,12 @@ CityTour.SceneView = function(renderView, interactiveCamera, messageBroker) {
   var id1 = messageBroker.addSubscriber("camera.updated", syncInteractiveCameraToPoleCamera);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
 
-  var destroy = function() {
-    var i;
-
-    window.removeEventListener('resize', renderView.resize, false);
-    messageBroker.removeSubscriber("camera.updated", id1);
-
-    for (i = scene.children.length - 1; i >= 0; i--) {
-      removeChildFromScene(scene.children[i]);
-    }
-  };
+  renderView.setScene(scene);
 
 
   return {
     reset: reset,
     toggleFlythrough: toggleFlythrough,
     domElement: function() { return renderView.domElement(); },
-    destroy: destroy,
   };
 };

@@ -49,12 +49,33 @@ CityTour.City = function(container) {
 
     var masterStartTime = new Date();
     var masterEndTime;
+    var terrainStartTime, terrainEndTime;
+    var roadStartTime, roadEndTime;
+    var buildingsStartTime, buildingsEndTime;
 
     // Generate abstract terrain, road network, building representations
     var worldData = generateWorldData();
 
     var sceneBuilder = new CityTour.Scene.Builder();
-    scene = sceneBuilder.build(worldData.terrain, worldData.roadNetwork, worldData.buildings);
+    scene = sceneBuilder.buildEmptyScene();
+    terrainStartTime = new Date();
+    scene.add(sceneBuilder.buildTerrainMeshes(worldData.terrain, worldData.roadNetwork));
+    terrainEndTime = new Date();
+
+    roadStartTime = new Date();
+    scene.add(sceneBuilder.buildRoadNetworkMeshes(worldData.terrain, worldData.roadNetwork));
+    roadEndTime = new Date();
+
+    buildingsStartTime = new Date();
+    scene.add(sceneBuilder.buildBuildingMeshes(worldData.buildings, worldData.roadNetwork));
+    buildingsEndTime = new Date();
+
+    masterEndTime = new Date();
+
+    console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
+    console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
+    console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
+    console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
 
     renderView = new CityTour.RenderView(container, scene);
     renderView.resize();

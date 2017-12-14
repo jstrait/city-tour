@@ -23,69 +23,51 @@ CityTour.Scene.Builder = function() {
     return scene;
   };
 
-  var addTerrainMeshes = function(scene, terrain, roadNetwork) {
-    var terrainMeshes = new CityTour.Scene.TerrainGeometryBuilder().build(terrain, roadNetwork);
+  var buildTerrainMeshes = function(terrain, roadNetwork) {
+    var terrainMeshes = CityTour.Scene.TerrainGeometryBuilder().build(terrain, roadNetwork);
+    var terrainGroup = new THREE.Group();
+    terrainGroup.name = "terrainMeshes";
 
-    terrainMeshes.forEach(function(terrainMesh) {
-      scene.add(terrainMesh);
+    terrainMeshes.forEach(function(mesh) {
+      terrainGroup.add(mesh);
     });
+
+    return terrainGroup;
   };
 
-  var addRoadNetworkMeshes = function(scene, terrain, roadNetwork) {
-    var roadMeshes = new CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork);
+  var buildRoadNetworkMeshes = function(terrain, roadNetwork) {
+    var roadNetworkMeshes = CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork);
+    var roadNetworkGroup = new THREE.Group();
+    roadNetworkGroup.name = "roadNetworkMeshes";
 
-    roadMeshes.forEach(function(roadMesh) {
-      scene.add(roadMesh);
+    roadNetworkMeshes.forEach(function(mesh) {
+      roadNetworkGroup.add(mesh);
     });
+
+    return roadNetworkGroup;
   };
 
-  var addBuildingMeshes = function(scene, buildings, roadNetwork) {
+  var buildBuildingMeshes = function(buildings, roadNetwork) {
     var buildingMeshes;
+    var buildingsGroup = new THREE.Group();
+    buildingsGroup.name = "buildingMeshes";
 
     if (buildings) {
       buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
 
-      buildingMeshes.forEach(function(buildingMesh) {
-        scene.add(buildingMesh);
+      buildingMeshes.forEach(function(mesh) {
+        buildingsGroup.add(mesh);
       });
     }
+
+    return buildingsGroup;
   };
 
-  var sceneBuilder = {};
 
-  sceneBuilder.build = function(terrain, roadNetwork, buildings) {
-    var masterStartTime, masterEndTime;
-    var terrainStartTime, terrainEndTime;
-    var roadStartTime, roadEndTime;
-    var buildingsStartTime, buildingsEndTime;
-
-    var scene;
-
-    masterStartTime = new Date();
-
-    scene = buildEmptyScene();
-
-    terrainStartTime = new Date();
-    addTerrainMeshes(scene, terrain, roadNetwork);
-    terrainEndTime = new Date();
-
-    roadStartTime = new Date();
-    addRoadNetworkMeshes(scene, terrain, roadNetwork);
-    roadEndTime = new Date();
-
-    buildingsStartTime = new Date();
-    addBuildingMeshes(scene, buildings, roadNetwork);
-    buildingsEndTime = new Date();
-
-    masterEndTime = new Date();
-
-    console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
-    console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
-    console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
-    console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
-
-    return scene;
+  return {
+    buildEmptyScene: buildEmptyScene,
+    buildTerrainMeshes: buildTerrainMeshes,
+    buildRoadNetworkMeshes: buildRoadNetworkMeshes,
+    buildBuildingMeshes: buildBuildingMeshes,
   };
-
-  return sceneBuilder;
 };
