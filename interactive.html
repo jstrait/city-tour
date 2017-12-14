@@ -253,7 +253,7 @@ input[type="range"] {
   var renderView = new CityTour.RenderView(container, new THREE.Scene());
   var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
   var cityConfigService = new CityTour.CityConfigService();
-  var sceneView = new CityTour.SceneView(renderView, interactiveCamera, messageBroker);
+  var sceneView = new CityTour.SceneView(renderView, interactiveCamera, cityConfigService.toWorldConfig(), messageBroker);
   var cityEditorController;
   var navigationController;
   var navigationTouchController;
@@ -264,12 +264,12 @@ input[type="range"] {
   navigationController = new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
   navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 
+  messageBroker.publish("generation.complete", {});
+
   messageBroker.addSubscriber("generation.started", function(data) {
     sceneView.reset(cityConfigService.toWorldConfig());
     messageBroker.publish("generation.complete", {});
   });
-
-  document.getElementById("reset").click();
 })();
 </script>
 </html>
