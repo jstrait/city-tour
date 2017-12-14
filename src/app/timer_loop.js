@@ -107,20 +107,23 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   timer = new CityTour.Timer();
   timer.onTick = function(frameCount) {
-    if (vehicleController) {
-      vehicleController.tick();
-    }
+    var i;
 
-    if (directTargetAnimation) {
-      directTargetAnimation.tick();
-      if (directTargetAnimation.isFinished()) {
-        directTargetAnimation = undefined;
-        messageBroker.publish("flythrough.stopped", {});
+    for (i = 0; i < frameCount; i++) {
+      if (vehicleController) {
+        vehicleController.tick();
+      }
+
+      if (directTargetAnimation) {
+        directTargetAnimation.tick();
+        if (directTargetAnimation.isFinished()) {
+          directTargetAnimation = undefined;
+          messageBroker.publish("flythrough.stopped", {});
+        }
       }
     }
 
     syncToPoleCamera();
-
     sceneView.render();
   };
   timer.start();
