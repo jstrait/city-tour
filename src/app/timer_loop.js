@@ -6,15 +6,37 @@ var CityTour = CityTour || {};
 CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
+  var FLYTHROUGH_STOP = 3;
 
   var worldData;
   var timer;
-  var animationManager;
+  var vehicleController;
+  var directTargetAnimation;
   var poleCamera = sceneView.poleCamera();
   var mode = INTERACTIVE;
 
+  var syncToPoleCamera = function() {
+    if (mode === INTERACTIVE) {
+      interactiveCamera.syncCamera(poleCamera);
+    }
+    else if (mode === FLYTHROUGH) {
+      poleCamera.setPositionX(vehicleController.positionX());
+      poleCamera.setPositionY(vehicleController.positionY());
+      poleCamera.setPositionZ(vehicleController.positionZ());
+      poleCamera.setRotationX(vehicleController.rotationX());
+      poleCamera.setRotationY(vehicleController.rotationY());
+    }
+    else if (mode === FLYTHROUGH_STOP) {
+      poleCamera.setPositionX(directTargetAnimation.positionX());
+      poleCamera.setPositionY(directTargetAnimation.positionY());
+      poleCamera.setPositionZ(directTargetAnimation.positionZ());
+      poleCamera.setRotationX(directTargetAnimation.rotationX());
+      poleCamera.setRotationY(directTargetAnimation.rotationY());
+    }
+  };
+
   var syncInteractiveCameraToPoleCamera = function(data) {
-    interactiveCamera.syncCamera(poleCamera);
+    syncToPoleCamera();
   };
 
   var startFlythrough = function() {
@@ -29,7 +51,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
     var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
 
-    animationManager.init(initialCoordinates, targetSceneX, targetSceneZ);
+    vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", {});
   };
@@ -37,6 +59,14 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   var requestStopFlythrough = function() {
     interactiveCamera.syncFromPoleCamera(poleCamera);
     interactiveCamera.syncCamera(poleCamera);
+
+    var initial = {
+      positionX: vehicleController.positionX(),
+      positionY: vehicleController.positionY(),
+      positionZ: vehicleController.positionZ(),
+      rotationX: vehicleController.rotationX(),
+      rotationY: vehicleController.rotationY(),
+    };
 
     var target = {
       positionX: poleCamera.positionX(),
@@ -46,12 +76,12 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       rotationY: poleCamera.rotationY(),
     };
 
-    animationManager.requestStop(target);
+    directTargetAnimation = new CityTour.DirectTargetAnimation(initial, target);
+
+    mode = FLYTHROUGH_STOP;
   };
 
   var stopFlythrough = function() {
-    interactiveCamera.syncFromPoleCamera(poleCamera);
-    syncInteractiveCameraToPoleCamera();
     mode = INTERACTIVE;
   };
 
@@ -66,7 +96,6 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   var reset = function(newWorldData) {
     worldData = newWorldData;
-    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera, messageBroker);
     interactiveCamera.setTerrain(worldData.terrain);
     syncInteractiveCameraToPoleCamera();
   };
@@ -78,7 +107,20 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   timer = new CityTour.Timer();
   timer.onTick = function(frameCount) {
-    animationManager.tick(frameCount);
+    if (vehicleController) {
+      vehicleController.tick();
+    }
+
+    if (directTargetAnimation) {
+      directTargetAnimation.tick();
+      if (directTargetAnimation.isFinished()) {
+        directTargetAnimation = undefined;
+        messageBroker.publish("flythrough.stopped", {});
+      }
+    }
+
+    syncToPoleCamera();
+
     sceneView.render();
   };
   timer.start();
