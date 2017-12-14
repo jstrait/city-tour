@@ -55,14 +55,14 @@ CityTour.TerrainGenerator = (function() {
     }
 
     // Hydraulic erosion
-    for (hydraulicErosionIteration = 0; hydraulicErosionIteration < TOTAL_HYDRAULIC_EROSION_ITERATIONS; hydraulicErosionIteration++) {
+    /*for (hydraulicErosionIteration = 0; hydraulicErosionIteration < TOTAL_HYDRAULIC_EROSION_ITERATIONS; hydraulicErosionIteration++) {
       CityTour.HydraulicErosionGenerator.addRandomRainfall(terrainCoordinates);
       CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, 50);
       CityTour.HydraulicErosionGenerator.evaporate(terrainCoordinates);
-    }
+    }*/
 
     // Blur erosion
-    CityTour.BlurEroder.erode(terrainCoordinates);
+    //CityTour.BlurEroder.erode(terrainCoordinates);
 
     return terrainCoordinates;
   };
