@@ -261,20 +261,11 @@ input[type="range"] {
   container.appendChild(renderView.domElement());
 
   cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
+  navigationController = new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
+  navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 
   messageBroker.addSubscriber("generation.started", function(data) {
-    if (navigationController) {
-      navigationController.destroy();
-    }
-    if (navigationTouchController) {
-      navigationTouchController.destroy();
-    }
-
     sceneView.reset(cityConfigService.toWorldConfig());
-
-    navigationController = new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
-    navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
-
     messageBroker.publish("generation.complete", {});
   });
 
