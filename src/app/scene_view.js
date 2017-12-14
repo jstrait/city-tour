@@ -2,14 +2,15 @@
 
 var CityTour = CityTour || {};
 
-CityTour.SceneView = function(renderView, interactiveCamera, initialWorldConfig, messageBroker) {
+CityTour.SceneView = function(containerEl, interactiveCamera, initialWorldConfig, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
 
   var worldData;
-  var poleCamera;
   var sceneBuilder = new CityTour.Scene.Builder();
   var scene = sceneBuilder.buildEmptyScene();
+  var renderView = new CityTour.RenderView(containerEl, scene);
+  var poleCamera = renderView.poleCamera();
   var timer;
   var animationManager;
   var mode = INTERACTIVE;
@@ -97,8 +98,6 @@ CityTour.SceneView = function(renderView, interactiveCamera, initialWorldConfig,
     console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
 
     interactiveCamera.setTerrain(worldData.terrain);
-    poleCamera = renderView.poleCamera();
-
     animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera, messageBroker);
 
     syncInteractiveCameraToPoleCamera();
@@ -146,7 +145,6 @@ CityTour.SceneView = function(renderView, interactiveCamera, initialWorldConfig,
   var id1 = messageBroker.addSubscriber("camera.updated", syncInteractiveCameraToPoleCamera);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
 
-  renderView.setScene(scene);
   reset(initialWorldConfig);
 
   timer = new CityTour.Timer();

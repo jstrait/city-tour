@@ -61,7 +61,6 @@ CityTour.RenderView = function(container, initialScene) {
   return {
     render: render,
     resize: resize,
-    setScene: setScene,
     domElement: function() { return renderer.domElement; },
     poleCamera: function() { return poleCamera; },
   };

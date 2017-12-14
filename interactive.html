@@ -250,15 +250,14 @@ input[type="range"] {
   var container = document.getElementById("container");
 
   var messageBroker = new CityTour.MessageBroker();
-  var renderView = new CityTour.RenderView(container, new THREE.Scene());
   var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
   var cityConfigService = new CityTour.CityConfigService();
-  var sceneView = new CityTour.SceneView(renderView, interactiveCamera, cityConfigService.toWorldConfig(), messageBroker);
+  var sceneView = new CityTour.SceneView(container, interactiveCamera, cityConfigService.toWorldConfig(), messageBroker);
   var cityEditorController;
   var navigationController;
   var navigationTouchController;
 
-  container.appendChild(renderView.domElement());
+  container.appendChild(sceneView.domElement());
 
   cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
   navigationController = new CityTour.NavigationController(interactiveCamera, sceneView, messageBroker);
