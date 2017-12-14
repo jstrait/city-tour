@@ -255,15 +255,11 @@ input[type="range"] {
   var initialWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
   var sceneView = new CityTour.SceneView(container, initialWorldData, messageBroker);
   var timerLoop = new CityTour.TimerLoop(initialWorldData, sceneView, interactiveCamera, messageBroker);
-  var cityEditorController;
-  var navigationController;
-  var navigationTouchController;
+  var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
+  var navigationController = new CityTour.NavigationController(interactiveCamera, timerLoop, messageBroker);
+  var navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 
   container.appendChild(sceneView.domElement());
-
-  cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
-  navigationController = new CityTour.NavigationController(interactiveCamera, timerLoop, messageBroker);
-  navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
 
   messageBroker.publish("generation.complete", {});
 
