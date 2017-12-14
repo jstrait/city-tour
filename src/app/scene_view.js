@@ -2,69 +2,12 @@
 
 var CityTour = CityTour || {};
 
-CityTour.SceneView = function(containerEl, interactiveCamera, initialWorldData, messageBroker) {
-  var INTERACTIVE = 1;
-  var FLYTHROUGH = 2;
 
-  var worldData;
+CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   var sceneBuilder = new CityTour.Scene.Builder();
   var scene = sceneBuilder.buildEmptyScene();
   var renderView = new CityTour.RenderView(containerEl, scene);
   var poleCamera = renderView.poleCamera();
-  var timer;
-  var animationManager;
-  var mode = INTERACTIVE;
-
-  var syncInteractiveCameraToPoleCamera = function(data) {
-    interactiveCamera.syncCamera(poleCamera);
-  };
-
-  var startFlythrough = function() {
-    var initialCoordinates = {
-      positionX: poleCamera.positionX(),
-      positionY: poleCamera.positionY(),
-      positionZ: poleCamera.positionZ(),
-      rotationX: poleCamera.rotationX(),
-      rotationY: poleCamera.rotationY(),
-    };
-
-    var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
-    var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
-
-    animationManager.init(initialCoordinates, targetSceneX, targetSceneZ);
-    mode = FLYTHROUGH;
-    messageBroker.publish("flythrough.started", {});
-  };
-
-  var requestStopFlythrough = function() {
-    interactiveCamera.syncFromPoleCamera(poleCamera);
-    interactiveCamera.syncCamera(poleCamera);
-
-    var target = {
-      positionX: poleCamera.positionX(),
-      positionY: poleCamera.positionY(),
-      positionZ: poleCamera.positionZ(),
-      rotationX: poleCamera.rotationX(),
-      rotationY: poleCamera.rotationY(),
-    };
-
-    animationManager.requestStop(target);
-  };
-
-  var stopFlythrough = function() {
-    interactiveCamera.syncFromPoleCamera(poleCamera);
-    syncInteractiveCameraToPoleCamera();
-    mode = INTERACTIVE;
-  };
-
-  var toggleFlythrough = function() {
-    if (mode === INTERACTIVE) {
-      startFlythrough();
-    }
-    else {
-      requestStopFlythrough();
-    }
-  };
 
   var reset = function(newWorldData) {
     var masterStartTime, masterEndTime;
@@ -72,22 +15,20 @@ CityTour.SceneView = function(containerEl, interactiveCamera, initialWorldData, 
     var roadStartTime, roadEndTime;
     var buildingsStartTime, buildingsEndTime;
 
-    worldData = newWorldData;
-
     destroyPreviousMeshes();
 
     masterStartTime = new Date();
 
     terrainStartTime = new Date();
-    scene.add(sceneBuilder.buildTerrainMeshes(worldData.terrain, worldData.roadNetwork));
+    scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
     terrainEndTime = new Date();
 
     roadStartTime = new Date();
-    scene.add(sceneBuilder.buildRoadNetworkMeshes(worldData.terrain, worldData.roadNetwork));
+    scene.add(sceneBuilder.buildRoadNetworkMeshes(newWorldData.terrain, newWorldData.roadNetwork));
     roadEndTime = new Date();
 
     buildingsStartTime = new Date();
-    scene.add(sceneBuilder.buildBuildingMeshes(worldData.buildings, worldData.roadNetwork));
+    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.roadNetwork));
     buildingsEndTime = new Date();
 
     masterEndTime = new Date();
@@ -96,11 +37,6 @@ CityTour.SceneView = function(containerEl, interactiveCamera, initialWorldData, 
     console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
     console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
     console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
-
-    interactiveCamera.setTerrain(worldData.terrain);
-    animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera, messageBroker);
-
-    syncInteractiveCameraToPoleCamera();
 
     renderView.resize();
   };
@@ -141,24 +77,18 @@ CityTour.SceneView = function(containerEl, interactiveCamera, initialWorldData, 
     obj = null;
   };
 
-  window.addEventListener('resize', renderView.resize, false);
-  var id1 = messageBroker.addSubscriber("camera.updated", syncInteractiveCameraToPoleCamera);
-  var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
-
-  reset(initialWorldData);
-
-  timer = new CityTour.Timer();
-  animationManager = new CityTour.AnimationManager(worldData.terrain, worldData.roadNetwork, poleCamera, messageBroker);
-  timer.onTick = function(frameCount) {
-    animationManager.tick(frameCount);
+  var render = function() {
     renderView.render();
   };
 
-  timer.start();
+  window.addEventListener('resize', renderView.resize, false);
+
+  reset(initialWorldData);
 
   return {
     reset: reset,
-    toggleFlythrough: toggleFlythrough,
+    render: render,
+    poleCamera: function() { return poleCamera; },
     domElement: function() { return renderView.domElement(); },
   };
 };

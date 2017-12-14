@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationController = function(interactiveCamera, sceneView, messageBroker) {
+CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBroker) {
   var DOWN_ARROW = "&#9660;";
   var UP_ARROW = "&#9650;";
   var START_TOUR_MESSAGE = "Take a Tour";
@@ -63,7 +63,7 @@ CityTour.NavigationController = function(interactiveCamera, sceneView, messageBr
   var toggleFlythrough = function(e) {
     flythroughToggle.innerText = (flythroughToggle.innerText === START_TOUR_MESSAGE) ? STOP_TOUR_MESSAGE : START_TOUR_MESSAGE;
 
-    sceneView.toggleFlythrough();
+    timerLoop.toggleFlythrough();
   };
 
   var onFlythroughStarted = function(e) {
