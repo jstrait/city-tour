@@ -9,7 +9,7 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
-  var container = document.getElementById("navigation-controls-container");
+  var container = document.getElementById("navigation-controls-inner-container");
   var centerXControl = document.getElementById("centerX");
   var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");

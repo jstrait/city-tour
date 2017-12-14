@@ -7,6 +7,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   var ABOUT_MENU = 2;
 
   var loadingMessage = document.getElementById("loading-message");
+  var navigationControlsContainer = document.getElementById("navigation-controls-container");
   var container = document.getElementById("city-editor-container");
   var editorMenuTitle = document.getElementById("menu-editor-title");
   var aboutMenuTitle = document.getElementById("menu-about-title");
@@ -84,6 +85,8 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   var render = function() {
     container.classList.toggle("full-width", currentMenu !== undefined);
     container.classList.toggle("full-height", currentMenu !== undefined);
+
+    navigationControlsContainer.classList.toggle("display-none", currentMenu !== undefined);
 
     editorMenuTitle.classList.toggle("menu-title-active", currentMenu === EDITOR_MENU);
     editorMenu.classList.toggle("display-none", currentMenu !== EDITOR_MENU);
