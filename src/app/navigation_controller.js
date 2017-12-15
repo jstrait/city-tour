@@ -10,8 +10,6 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
-  var centerXControl = document.getElementById("centerX");
-  var centerZControl = document.getElementById("centerZ");
   var rotationYControl = document.getElementById("rotationY");
   var rotationXControl = document.getElementById("rotationX");
   var zoomControl = document.getElementById("zoom");
@@ -26,8 +24,6 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
   };
 
   var render = function(data) {
-    centerXControl.value = interactiveCamera.centerX();
-    centerZControl.value = interactiveCamera.centerZ();
     rotationYControl.value = interactiveCamera.rotationAngle() * (180 / Math.PI);
     rotationXControl.value = interactiveCamera.tiltPercentage();
     zoomControl.value = interactiveCamera.zoomPercentage();
@@ -42,9 +38,6 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
     }
   };
 
-  var setCenterCoordinates = function(e) {
-    interactiveCamera.setCenterCoordinates(parseFloat(centerXControl.value), parseFloat(centerZControl.value));
-  };
   var setRotationAngle = function(e) {
     // The slider uses degrees instead of radians to avoid Firefox thinking that float values are invalid,
     // seemingly due to precision issues.
@@ -53,9 +46,11 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
 
     interactiveCamera.setRotationAngle(radians);
   };
+
   var setTiltAngle = function(e) {
     interactiveCamera.setTiltPercentage(parseFloat(rotationXControl.value));
   };
+
   var setZoomPercentage = function(e) {
     interactiveCamera.setZoomPercentage(parseFloat(zoomControl.value));
   };
@@ -82,8 +77,6 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
   };
 
   containerToggle.addEventListener('click', toggleNavigationControls, false);
-  centerXControl.addEventListener('input', setCenterCoordinates, false);
-  centerZControl.addEventListener('input', setCenterCoordinates, false);
   rotationYControl.addEventListener('input', setRotationAngle, false);
   rotationXControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomPercentage, false);
