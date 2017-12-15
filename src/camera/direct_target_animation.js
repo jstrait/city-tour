@@ -3,8 +3,10 @@
 var CityTour = CityTour || {};
 
 CityTour.DirectTargetAnimation = function(initial, target) {
-  var ANIMATION_DURATION_IN_FRAMES = 3.0;
-  var MOTION_DELTA = 1.0 / ANIMATION_DURATION_IN_FRAMES;
+  var ANIMATION_DURATION_IN_FRAMES = 10;
+  var MOTION_PER_FRAME_PERCENTAGE = 1.0 / ANIMATION_DURATION_IN_FRAMES;
+
+  var tickCount = 0;
 
   var positionX = initial.positionX;
   var positionY = initial.positionY;
@@ -20,11 +22,17 @@ CityTour.DirectTargetAnimation = function(initial, target) {
     rotationY += Math.PI * 2;
   }
 
-  var positionXMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionX, target.positionX, MOTION_DELTA);
-  var positionYMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionY, target.positionY, MOTION_DELTA);
-  var positionZMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionZ, target.positionZ, MOTION_DELTA);
-  var rotationXMotionGenerator = new CityTour.ClampedLinearMotionGenerator(rotationX, target.rotationX, MOTION_DELTA);
-  var rotationYMotionGenerator = new CityTour.ClampedLinearMotionGenerator(rotationY, target.rotationY, MOTION_DELTA);
+  var positionXDelta = Math.abs((target.positionX - positionX) * MOTION_PER_FRAME_PERCENTAGE);
+  var positionYDelta = Math.abs((target.positionY - positionY) * MOTION_PER_FRAME_PERCENTAGE);
+  var positionZDelta = Math.abs((target.positionZ - positionZ) * MOTION_PER_FRAME_PERCENTAGE);
+  var rotationXDelta = Math.abs((target.rotationX - rotationX) * MOTION_PER_FRAME_PERCENTAGE);
+  var rotationYDelta = Math.abs((target.rotationY - rotationY) * MOTION_PER_FRAME_PERCENTAGE);
+
+  var positionXMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionX, target.positionX, positionXDelta);
+  var positionYMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionY, target.positionY, positionYDelta);
+  var positionZMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionZ, target.positionZ, positionZDelta);
+  var rotationXMotionGenerator = new CityTour.ClampedLinearMotionGenerator(rotationX, target.rotationX, rotationXDelta);
+  var rotationYMotionGenerator = new CityTour.ClampedLinearMotionGenerator(rotationY, target.rotationY, rotationYDelta);
 
   var tick = function() {
     positionX = positionXMotionGenerator.next();
@@ -32,14 +40,12 @@ CityTour.DirectTargetAnimation = function(initial, target) {
     positionZ = positionZMotionGenerator.next();
     rotationX = rotationXMotionGenerator.next();
     rotationY = rotationYMotionGenerator.next();
+
+    tickCount += 1;
   };
 
   var isFinished = function() {
-    return positionXMotionGenerator.finished() &&
-           positionYMotionGenerator.finished() &&
-           positionZMotionGenerator.finished() &&
-           rotationXMotionGenerator.finished() &&
-           rotationYMotionGenerator.finished();
+    return tickCount >= ANIMATION_DURATION_IN_FRAMES;
   };
 
 
@@ -53,4 +59,3 @@ CityTour.DirectTargetAnimation = function(initial, target) {
     isFinished: isFinished,
   };
 };
-
