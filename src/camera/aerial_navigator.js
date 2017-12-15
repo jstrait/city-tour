@@ -17,26 +17,27 @@ var CityTour = CityTour || {};
    the previous target, or east or west of the previous target.
 */
 CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
+  var X_AXIS = 1;
+  var Z_AXIS = 2;
+
   var targetMapX = initialTargetMapX;
   var targetMapZ = initialTargetMapZ;
-  var deltaX = 0.0;
-  var deltaZ = 1.0;
+  var movementAxis = X_AXIS;
 
   var determineNextTargetPoint = function() {
     var oldTargetMapX = targetMapX;
     var oldTargetMapZ = targetMapZ;
 
     while ((oldTargetMapX === targetMapX && oldTargetMapZ === targetMapZ) || !roadNetwork.hasIntersection(targetMapX, targetMapZ)) {
-      if (deltaX === 0.0) {
+      if (movementAxis === X_AXIS) {
         targetMapX = Math.floor(Math.random() * CityTour.Config.BLOCK_COLUMNS) - CityTour.Config.HALF_BLOCK_COLUMNS;
       }
-      else if (deltaZ === 0.0) {
+      else if (movementAxis === Z_AXIS) {
         targetMapZ = Math.floor(Math.random() * CityTour.Config.BLOCK_ROWS) - CityTour.Config.HALF_BLOCK_ROWS;
       }
     }
 
-    deltaX = (deltaX === 0.0) ? 1.0 : 0.0;
-    deltaZ = (deltaZ === 0.0) ? 1.0 : 0.0;
+    movementAxis = (movementAxis === X_AXIS) ? Z_AXIS : X_AXIS;
   };
 
   var aerialNavigator = {};
