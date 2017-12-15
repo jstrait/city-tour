@@ -20,6 +20,10 @@ CityTour.Math = (function() {
     return (Math.random() * (max - min)) + min;
   };
 
+  var randomInteger = function(min, max) {
+    return THREE.Math.randInt(min, max);
+  };
+
   // Linearly interpolate between min and max
   var lerp = function(min, max, percentage) {
     return min + ((max - min) * percentage);
@@ -33,6 +37,7 @@ CityTour.Math = (function() {
     distanceBetweenPoints: distanceBetweenPoints,
     distanceBetweenPoints3D: distanceBetweenPoints3D,
     randomInRange: randomInRange,
+    randomInteger: randomInteger,
     lerp: lerp,
     clamp: clamp,
   };
