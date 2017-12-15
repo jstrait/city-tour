@@ -126,6 +126,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     syncToPoleCamera();
     sceneView.render();
   };
+  timer.onTick(1);
   timer.start();
 
 
