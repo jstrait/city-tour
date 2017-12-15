@@ -37,14 +37,13 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTarge
         targetMapZ = oldTargetMapZ;
         movementAxis = (movementAxis === X_AXIS) ? Z_AXIS : X_AXIS;
         iterationCount = 0;
-        console.log("Swapping!");
       }
 
       if (movementAxis === X_AXIS) {
-        targetMapX = Math.floor(Math.random() * CityTour.Config.BLOCK_COLUMNS) - CityTour.Config.HALF_BLOCK_COLUMNS;
+        targetMapX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
       }
       else if (movementAxis === Z_AXIS) {
-        targetMapZ = Math.floor(Math.random() * CityTour.Config.BLOCK_ROWS) - CityTour.Config.HALF_BLOCK_ROWS;
+        targetMapZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
       }
 
       iterationCount += 1;
