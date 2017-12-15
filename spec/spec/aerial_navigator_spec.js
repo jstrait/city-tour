@@ -41,6 +41,26 @@ describe("CityTour.AerialNavigator", function() {
 
   var terrain = new CityTour.Terrain(TERRAIN_MESH, 1);
 
+
+  describe("road network is empty", function() {
+    var roadNetwork, aerialNavigator;
+
+    roadNetwork = new CityTour.RoadNetwork(terrain);
+    aerialNavigator = new CityTour.AerialNavigator(roadNetwork, 1, 2);
+
+    it("is a no-op if road network is empty", function() {
+      expect(aerialNavigator.targetMapX()).toBe(1);
+      expect(aerialNavigator.targetMapZ()).toBe(2);
+
+      // This should not result in an infinite loop,
+      aerialNavigator.nextTarget();
+
+      expect(aerialNavigator.targetMapX()).toBe(1);
+      expect(aerialNavigator.targetMapZ()).toBe(2);
+    });
+  });
+
+
   describe("road network doesn't fully cover terrain", function() {
     var roadNetwork, aerialNavigator;
 
