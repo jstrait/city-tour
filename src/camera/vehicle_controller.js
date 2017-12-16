@@ -52,18 +52,18 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
 
   var determineNextTargetPoint = function() {
-    var targetSceneX, targetYPosition, targetSceneZ, targetXRotation, targetYRotation;
+    var targetPositionX, targetYPosition, targetPositionZ, targetXRotation, targetYRotation;
     var xPositionFrameCount, yPositionFrameCount, zPositionFrameCount, xRotationFrameCount, yRotationFrameCount;
     var positionYDelta;
 
     navigator.nextTarget();
-    targetSceneX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
-    targetSceneZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
+    targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
+    targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
 
-    xPositionFrameCount = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetSceneX, targetSceneZ) / HORIZONTAL_MOTION_DELTA);
+    xPositionFrameCount = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
     zPositionFrameCount = xPositionFrameCount;
 
-    targetYRotation = determineRotationAngle(positionX, positionZ, targetSceneX, targetSceneZ);
+    targetYRotation = determineRotationAngle(positionX, positionZ, targetPositionX, targetPositionZ);
     yRotationFrameCount = Math.ceil(Math.abs(targetYRotation - rotationY) / Y_ROTATION_DELTA);
 
     if (verticalMode === INITIAL_DESCENT) {
@@ -79,7 +79,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
       yPositionFrameCount = Math.ceil(Math.abs(targetYPosition - positionY) / POSITION_Y_DELTA);
       xRotationFrameCount = Math.ceil(Math.abs(targetXRotation - rotationX) / BIRDSEYE_X_ROTATION_DELTA);
-      navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+      navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
     }
     else if (verticalMode === DRIVING_MODE) {
       targetYPosition = positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * xPositionFrameCount);
@@ -87,7 +87,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
       yPositionFrameCount = Math.ceil(Math.abs(targetYPosition - positionY) / HOVER_TO_DRIVING_POSITION_Y_DELTA);
       xRotationFrameCount = Math.ceil(Math.abs(targetXRotation - rotationX) / BIRDSEYE_X_ROTATION_DELTA);
-      navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
+      navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
     }
     else if (verticalMode === HOVERING_MODE) {
       targetYPosition = HOVERING_Y;
@@ -97,19 +97,19 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       xRotationFrameCount = Math.ceil(Math.abs(targetXRotation - rotationX) / BIRDSEYE_X_ROTATION_DELTA);
     }
 
-    positionXGenerator = new CityTour.MotionGenerator(positionX, targetSceneX, new CityTour.LinearEasing(xPositionFrameCount));
+    positionXGenerator = new CityTour.MotionGenerator(positionX, targetPositionX, new CityTour.LinearEasing(xPositionFrameCount));
     positionYGenerator = new CityTour.MotionGenerator(positionY, targetYPosition, new CityTour.LinearEasing(yPositionFrameCount));
-    positionZGenerator = new CityTour.MotionGenerator(positionZ, targetSceneZ, new CityTour.LinearEasing(zPositionFrameCount));
+    positionZGenerator = new CityTour.MotionGenerator(positionZ, targetPositionZ, new CityTour.LinearEasing(zPositionFrameCount));
     rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetXRotation, new CityTour.LinearEasing(xRotationFrameCount));
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetYRotation, new CityTour.LinearEasing(yRotationFrameCount));
   };
 
-  var determineRotationAngle = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
+  var determineRotationAngle = function(oldTargetPositionX, oldTargetPositionZ, targetPositionX, targetPositionZ) {
     var oldYRotation = rotationY;
     var newTargetYRotation;
 
-    var x = targetSceneX - oldTargetSceneX;
-    var z = -(targetSceneZ - oldTargetSceneZ);
+    var x = targetPositionX - oldTargetPositionX;
+    var z = -(targetPositionZ - oldTargetPositionZ);
     var angle = Math.atan2(z, x);
     if (angle < HALF_PI) {
       angle += TWO_PI;
