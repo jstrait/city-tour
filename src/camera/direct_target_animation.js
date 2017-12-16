@@ -20,26 +20,23 @@ CityTour.DirectTargetAnimation = function(initial, target) {
     rotationY += Math.PI * 2;
   }
 
-  var positionXMotionGenerator = new CityTour.MotionGenerator(positionX, target.positionX, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI));
-  var positionYMotionGenerator = new CityTour.MotionGenerator(positionY, target.positionY, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI));
-  var positionZMotionGenerator = new CityTour.MotionGenerator(positionZ, target.positionZ, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI));
-  var rotationXMotionGenerator = new CityTour.MotionGenerator(rotationX, target.rotationX, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI));
-  var rotationYMotionGenerator = new CityTour.MotionGenerator(rotationY, target.rotationY, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI));
+  var animation = new CityTour.Animation(new CityTour.MotionGenerator(positionX, target.positionX, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI)),
+                                         new CityTour.MotionGenerator(positionY, target.positionY, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI)),
+                                         new CityTour.MotionGenerator(positionZ, target.positionZ, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI)),
+                                         new CityTour.MotionGenerator(rotationX, target.rotationX, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI)),
+                                         new CityTour.MotionGenerator(rotationY, target.rotationY, new CityTour.SineEasing(ANIMATION_DURATION_IN_FRAMES, 0, HALF_PI)));
 
   var tick = function() {
-    positionX = positionXMotionGenerator.next();
-    positionY = positionYMotionGenerator.next();
-    positionZ = positionZMotionGenerator.next();
-    rotationX = rotationXMotionGenerator.next();
-    rotationY = rotationYMotionGenerator.next();
+    animation.tick();
+    positionX = animation.positionX();
+    positionY = animation.positionY();
+    positionZ = animation.positionZ();
+    rotationX = animation.rotationX();
+    rotationY = animation.rotationY();
   };
 
   var isFinished = function() {
-    return positionXMotionGenerator.finished() &&
-           positionYMotionGenerator.finished() &&
-           positionZMotionGenerator.finished() &&
-           rotationXMotionGenerator.finished() &&
-           rotationYMotionGenerator.finished();
+    return animation.finished();
   };
 
 
