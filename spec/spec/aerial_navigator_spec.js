@@ -78,7 +78,7 @@ describe("CityTour.AerialNavigator", function() {
 
     aerialNavigator = new CityTour.AerialNavigator(roadNetwork, 0, 0);
 
-    it("avoids an infinite loop when no road intersection on the movement axis is available", function() {
+    it("chooses intersection on opposing axis when no road intersection on the movement axis is available", function() {
       var previousTargetMapX;
 
       expect(aerialNavigator.targetMapX()).toBe(0);
