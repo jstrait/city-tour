@@ -34,7 +34,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var rotationX = initial.rotationX;
   var rotationY = initial.rotationY;
 
-  var animations = [];
+  var animations;
 
   var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
   var framesInCurrentVerticalMode = VERTICAL_MODE_DURATION_IN_FRAMES + 1;
@@ -52,11 +52,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var pathFinder = new CityTour.PathFinder(roadNetwork);
 
 
-  var determineNextTargetPoint = function() {
+  var buildNextAnimations = function() {
     var targetPositionX, targetYPosition, targetPositionZ, targetXRotation, targetYRotation;
     var xPositionFrameCount, yPositionFrameCount, zPositionFrameCount, xRotationFrameCount, yRotationFrameCount;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
+    var newAnimations = [];
 
     navigator.nextTarget();
     targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
@@ -112,18 +113,20 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetYRotation, new CityTour.LinearEasing(yRotationFrameCount));
 
     // Y rotation
-    animations.push(new CityTour.Animation(positionXStationaryGenerator,
-                                           positionYStationaryGenerator,
-                                           positionZStationaryGenerator,
-                                           rotationXStationaryGenerator,
-                                           rotationYGenerator));
+    newAnimations.push(new CityTour.Animation(positionXStationaryGenerator,
+                                              positionYStationaryGenerator,
+                                              positionZStationaryGenerator,
+                                              rotationXStationaryGenerator,
+                                              rotationYGenerator));
 
     // Rest of the movement
-    animations.push(new CityTour.Animation(positionXGenerator,
-                                           positionYGenerator,
-                                           positionZGenerator,
-                                           rotationXGenerator,
-                                           rotationYStationaryGenerator));
+    newAnimations.push(new CityTour.Animation(positionXGenerator,
+                                              positionYGenerator,
+                                              positionZGenerator,
+                                              rotationXGenerator,
+                                              rotationYStationaryGenerator));
+
+    return newAnimations;
   };
 
   var determineRotationAngle = function(oldTargetPositionX, oldTargetPositionZ, targetPositionX, targetPositionZ) {
@@ -177,7 +180,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       }
 
       if (animations.length === 0) {
-        determineNextTargetPoint();
+        animations = buildNextAnimations();
       }
     }
 
@@ -192,7 +195,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
 
-  determineNextTargetPoint();
+  animations = buildNextAnimations();
 
   return {
     positionX: function() { return positionX; },
