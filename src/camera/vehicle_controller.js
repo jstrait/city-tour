@@ -54,7 +54,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var determineNextTargetPoint = function() {
     var targetPositionX, targetYPosition, targetPositionZ, targetXRotation, targetYRotation;
     var xPositionFrameCount, yPositionFrameCount, zPositionFrameCount, xRotationFrameCount, yRotationFrameCount;
-    var positionYDelta;
 
     navigator.nextTarget();
     targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
