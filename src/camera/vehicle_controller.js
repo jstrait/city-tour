@@ -45,9 +45,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var framesInCurrentVerticalMode = VERTICAL_MODE_DURATION_IN_FRAMES + 1;
   var verticalMode = INITIAL_DESCENT;
 
-  var navigator;
-  var pathFinder = new CityTour.PathFinder(roadNetwork);
-
   var InitialDescentNavigator = function() {
     return {
       targetMapX: function() { return CityTour.Coordinates.sceneXToMapX(initialTargetSceneX); },
@@ -56,64 +53,56 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     };
   };
 
+  var navigator = new InitialDescentNavigator();
+  var pathFinder = new CityTour.PathFinder(roadNetwork);
+
 
   var determineNextTargetPoint = function() {
-    var distanceToTarget;
     var positionYDelta;
     var xPositionFrameCount, yPositionFrameCount, zPositionFrameCount, xRotationFrameCount, yRotationFrameCount
     var oldTargetSceneX = targetSceneX;
     var oldTargetSceneZ = targetSceneZ;
 
-    if (verticalMode === BIRDSEYE_MODE) {
+    navigator.nextTarget();
+    targetSceneX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
+    targetSceneZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
+
+    xPositionFrameCount = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetSceneX, targetSceneZ) / HORIZONTAL_MOTION_DELTA);
+    zPositionFrameCount = xPositionFrameCount;
+
+    determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
+    yRotationFrameCount = Math.ceil(Math.abs(targetYRotation - rotationY) / Y_ROTATION_DELTA);
+
+    if (verticalMode === INITIAL_DESCENT) {
       targetYPosition = BIRDSEYE_Y;
       targetXRotation = BIRDSEYE_X_ROTATION;
+
+      yPositionFrameCount = xPositionFrameCount;
+      xRotationFrameCount = xPositionFrameCount;
+    }
+    else if (verticalMode === BIRDSEYE_MODE) {
+      targetYPosition = BIRDSEYE_Y;
+      targetXRotation = BIRDSEYE_X_ROTATION;
+
+      yPositionFrameCount = Math.ceil(Math.abs(targetYPosition - positionY) / POSITION_Y_DELTA);
+      xRotationFrameCount = Math.ceil(Math.abs(targetXRotation - rotationX) / BIRDSEYE_X_ROTATION_DELTA);
       navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
     }
     else if (verticalMode === DRIVING_MODE) {
-      targetYPosition = Number.NEGATIVE_INFINITY;
+      targetYPosition = positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * xPositionFrameCount);
       targetXRotation = 0.0;
+
+      yPositionFrameCount = Math.ceil(Math.abs(targetYPosition - positionY) / HOVER_TO_DRIVING_POSITION_Y_DELTA);
+      xRotationFrameCount = Math.ceil(Math.abs(targetXRotation - rotationX) / BIRDSEYE_X_ROTATION_DELTA);
       navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetSceneX), CityTour.Coordinates.sceneZToMapZ(targetSceneZ));
     }
     else if (verticalMode === HOVERING_MODE) {
       targetYPosition = HOVERING_Y;
       targetXRotation = 0.0;
-    }
-    else if (verticalMode === INITIAL_DESCENT) {
-      targetYPosition = BIRDSEYE_Y;
-      targetXRotation = BIRDSEYE_X_ROTATION;
-      navigator = new InitialDescentNavigator();
-    }
 
-    navigator.nextTarget();
-    targetSceneX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
-    targetSceneZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
-
-    if (verticalMode === INITIAL_DESCENT) {
-      distanceToTarget = CityTour.Math.distanceBetweenPoints3D(positionX, positionY, positionZ, targetSceneX, targetYPosition, targetSceneZ);
-      xPositionFrameCount = Math.ceil(Math.abs(distanceToTarget / HORIZONTAL_MOTION_DELTA));
-      yPositionFrameCount = xPositionFrameCount;
-      zPositionFrameCount = xPositionFrameCount;
-      xRotationFrameCount = xPositionFrameCount;
-    }
-    else {
-      xPositionFrameCount = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetSceneX, targetSceneZ) / HORIZONTAL_MOTION_DELTA);
-
-      if (verticalMode === DRIVING_MODE) {
-        targetYPosition = positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * xPositionFrameCount);
-        positionYDelta = HOVER_TO_DRIVING_POSITION_Y_DELTA;
-      }
-      else {
-        positionYDelta = POSITION_Y_DELTA;
-      }
-
-      yPositionFrameCount = Math.ceil(Math.abs(targetYPosition - positionY) / positionYDelta);
-      zPositionFrameCount = xPositionFrameCount;
+      yPositionFrameCount = Math.ceil(Math.abs(targetYPosition - positionY) / POSITION_Y_DELTA);
       xRotationFrameCount = Math.ceil(Math.abs(targetXRotation - rotationX) / BIRDSEYE_X_ROTATION_DELTA);
     }
-
-    determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
-
-    yRotationFrameCount = Math.ceil(Math.abs(targetYRotation - rotationY) / Y_ROTATION_DELTA);
 
     positionXGenerator = new CityTour.MotionGenerator(positionX, targetSceneX, new CityTour.LinearEasing(xPositionFrameCount));
     positionYGenerator = new CityTour.MotionGenerator(positionY, targetYPosition, new CityTour.LinearEasing(yPositionFrameCount));
@@ -182,8 +171,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
       determineNextTargetPoint();
     }
-
-    var previousYPosition = positionY;
 
     if (!rotationYGenerator.finished()) {
       rotationY = rotationYGenerator.next();
