@@ -170,12 +170,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     if (animations[0].finished()) {
       animations.splice(0, 1);
 
-      if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
-        verticalMode = MODE_TRANSITIONS[verticalMode];
-        framesInCurrentVerticalMode = 0;
-      }
-
       if (animations.length === 0) {
+        if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
+          verticalMode = MODE_TRANSITIONS[verticalMode];
+          framesInCurrentVerticalMode = 0;
+        }
+
         animations = buildNextAnimations();
       }
     }
