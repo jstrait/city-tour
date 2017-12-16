@@ -73,12 +73,7 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
     return simplifiedPath;
   };
 
-  var roadNavigator = {};
-
-  roadNavigator.targetMapX = function() { return subTargetMapX; };
-  roadNavigator.targetMapZ = function() { return subTargetMapZ; };
-
-  roadNavigator.nextTarget = function() {
+  var nextTarget = function() {
     if (path.length === 0) {
       var newTargetCoordinates = chooseNewTarget();
       path = pathFinder.shortestPath(targetMapX, targetMapZ, newTargetCoordinates[0], newTargetCoordinates[1]);
@@ -93,5 +88,10 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
     subTargetMapZ = nextTargetPoint[0][1];
   };
 
-  return roadNavigator;
+
+  return {
+    targetMapX: function() { return subTargetMapX; },
+    targetMapZ: function() { return subTargetMapZ; },
+    nextTarget: nextTarget,
+  };
 };

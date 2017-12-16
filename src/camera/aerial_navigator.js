@@ -49,7 +49,7 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTarge
     return [newTargetMapX, newTargetMapZ];
   };
 
-  var determineNextTargetPoint = function() {
+  var nextTarget = function() {
     var newTargetCoordinates;
 
     newTargetCoordinates = searchForTargetOnAxis();
@@ -71,14 +71,10 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTarge
     movementAxis = (movementAxis === X_AXIS) ? Z_AXIS : X_AXIS;
   };
 
-  var aerialNavigator = {};
 
-  aerialNavigator.targetMapX = function() { return targetMapX; };
-  aerialNavigator.targetMapZ = function() { return targetMapZ; };
-
-  aerialNavigator.nextTarget = function() {
-    determineNextTargetPoint();
+  return {
+    targetMapX: function() { return targetMapX; },
+    targetMapZ: function() { return targetMapZ; },
+    nextTarget: nextTarget,
   };
-
-  return aerialNavigator;
 };
