@@ -20,6 +20,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var BIRDSEYE_X_ROTATION = -(Math.PI / 3);
   var BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
 
+  var MODE_TRANSITIONS = {}
+  MODE_TRANSITIONS[INITIAL_DESCENT] = BIRDSEYE_MODE;
+  MODE_TRANSITIONS[BIRDSEYE_MODE] = HOVERING_MODE;
+  MODE_TRANSITIONS[HOVERING_MODE] = DRIVING_MODE;
+  MODE_TRANSITIONS[DRIVING_MODE] = BIRDSEYE_MODE;
 
   var MINIMUM_HEIGHT_OFF_GROUND = 0.5;
 
@@ -167,16 +172,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       animations.splice(0, 1);
 
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
-        if (verticalMode === DRIVING_MODE || verticalMode === INITIAL_DESCENT) {
-          verticalMode = BIRDSEYE_MODE;
-        }
-        else if (verticalMode === HOVERING_MODE) {
-          verticalMode = DRIVING_MODE;
-        }
-        else if (verticalMode === BIRDSEYE_MODE) {
-          verticalMode = HOVERING_MODE;
-        }
-
+        verticalMode = MODE_TRANSITIONS[verticalMode];
         framesInCurrentVerticalMode = 0;
       }
 
