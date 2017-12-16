@@ -8,6 +8,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   var FLYTHROUGH = 2;
   var FLYTHROUGH_STOP = 3;
 
+  var END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT = 10;
+
   var worldData;
   var timer;
   var vehicleController;
@@ -76,7 +78,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       rotationY: poleCamera.rotationY(),
     };
 
-    directTargetAnimation = new CityTour.DirectTargetAnimation(initial, target);
+    directTargetAnimation = new CityTour.DirectTargetAnimation(initial, target, END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
 
     mode = FLYTHROUGH_STOP;
   };
