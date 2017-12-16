@@ -154,10 +154,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     return newTargetYRotation;
   };
 
-  var isAtTargetPoint = function() {
-    return animations[0].finished();
-  };
-
   var roadHeightAtCurrentPosition = function() {
     var mapX = CityTour.Coordinates.sceneXToMapX(positionX);
     var mapZ = CityTour.Coordinates.sceneZToMapZ(positionZ);
@@ -171,7 +167,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var tick = function() {
-    if (isAtTargetPoint()) {
+    if (animations[0].finished()) {
       animations.splice(0, 1);
 
       if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
