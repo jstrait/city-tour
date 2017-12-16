@@ -33,9 +33,9 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var targetXRotation = initial.rotationX;
   var targetYRotation = initial.rotationY;
 
-  var xMotionGenerator;
-  var yMotionGenerator;
-  var zMotionGenerator;
+  var positionXGenerator;
+  var positionYGenerator;
+  var positionZGenerator;
   var rotationXGenerator;
   var rotationYGenerator;
 
@@ -114,11 +114,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
     determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
 
+    positionXGenerator = new CityTour.ClampedLinearMotionGenerator(positionX, targetSceneX, positionXDelta);
+    positionYGenerator = new CityTour.ClampedLinearMotionGenerator(positionY, targetYPosition, positionYDelta);
+    positionZGenerator = new CityTour.ClampedLinearMotionGenerator(positionZ, targetSceneZ, positionZDelta);
     rotationXGenerator = new CityTour.ClampedLinearMotionGenerator(rotationX, targetXRotation, rotationXDelta);
     rotationYGenerator = new CityTour.ClampedLinearMotionGenerator(rotationY, targetYRotation, Y_ROTATION_DELTA);
-    xMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionX, targetSceneX, positionXDelta);
-    yMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionY, targetYPosition, positionYDelta);
-    zMotionGenerator = new CityTour.ClampedLinearMotionGenerator(positionZ, targetSceneZ, positionZDelta);
   };
 
   var determineRotationAngle = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
@@ -184,11 +184,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       rotationY = rotationYGenerator.next();
     }
     else {
-      positionX = xMotionGenerator.next();
-      positionZ = zMotionGenerator.next();
+      positionX = positionXGenerator.next();
+      positionZ = positionZGenerator.next();
     }
 
-    positionY = Math.max(yMotionGenerator.next(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
+    positionY = Math.max(positionYGenerator.next(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
     rotationX = rotationXGenerator.next();
 
     framesInCurrentVerticalMode += 1;
