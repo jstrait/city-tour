@@ -29,12 +29,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var rotationX = initial.rotationX;
   var rotationY = initial.rotationY;
 
-  var targetSceneX = initial.positionX;
-  var targetYPosition = initial.positionY;
-  var targetSceneZ = initial.positionZ;
-  var targetXRotation = initial.rotationX;
-  var targetYRotation = initial.rotationY;
-
   var positionXGenerator;
   var positionYGenerator;
   var positionZGenerator;
@@ -58,10 +52,9 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
 
   var determineNextTargetPoint = function() {
+    var targetSceneX, targetYPosition, targetSceneZ, targetXRotation, targetYRotation;
+    var xPositionFrameCount, yPositionFrameCount, zPositionFrameCount, xRotationFrameCount, yRotationFrameCount;
     var positionYDelta;
-    var xPositionFrameCount, yPositionFrameCount, zPositionFrameCount, xRotationFrameCount, yRotationFrameCount
-    var oldTargetSceneX = targetSceneX;
-    var oldTargetSceneZ = targetSceneZ;
 
     navigator.nextTarget();
     targetSceneX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
@@ -70,7 +63,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     xPositionFrameCount = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetSceneX, targetSceneZ) / HORIZONTAL_MOTION_DELTA);
     zPositionFrameCount = xPositionFrameCount;
 
-    determineRotationAngle(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ);
+    targetYRotation = determineRotationAngle(positionX, positionZ, targetSceneX, targetSceneZ);
     yRotationFrameCount = Math.ceil(Math.abs(targetYRotation - rotationY) / Y_ROTATION_DELTA);
 
     if (verticalMode === INITIAL_DESCENT) {
@@ -112,7 +105,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var determineRotationAngle = function(oldTargetSceneX, oldTargetSceneZ, targetSceneX, targetSceneZ) {
-    var oldTargetYRotation = targetYRotation;
+    var oldYRotation = rotationY;
+    var newTargetYRotation;
 
     var x = targetSceneX - oldTargetSceneX;
     var z = -(targetSceneZ - oldTargetSceneZ);
@@ -122,15 +116,17 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     }
     var rightHandedAngle = angle - HALF_PI;
 
-    targetYRotation = rightHandedAngle;
+    newTargetYRotation = rightHandedAngle;
 
     // Prevent turns wider than 180 degrees
-    if ((oldTargetYRotation - targetYRotation) > Math.PI) {
+    if ((oldYRotation - newTargetYRotation) > Math.PI) {
       rotationY -= TWO_PI;
     }
-    else if ((oldTargetYRotation - targetYRotation) < -Math.PI) {
+    else if ((oldYRotation - newTargetYRotation) < -Math.PI) {
       rotationY += TWO_PI;
     }
+
+    return newTargetYRotation;
   };
 
   var isAtTargetPoint = function() {
