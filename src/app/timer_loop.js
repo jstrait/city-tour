@@ -117,6 +117,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       if (directTargetAnimation) {
         directTargetAnimation.tick();
         if (directTargetAnimation.isFinished()) {
+          vehicleController = undefined;
           directTargetAnimation = undefined;
           messageBroker.publish("flythrough.stopped", {});
         }
