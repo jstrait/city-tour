@@ -49,6 +49,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var navigator = new InitialDescentNavigator();
+  var aerialNavigator;
   var pathFinder = new CityTour.PathFinder(roadNetwork);
 
 
@@ -90,7 +91,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
       yPositionFrameCount = frameCount(positionY, targetYPosition, POSITION_Y_DELTA);
       xRotationFrameCount = frameCount(rotationX, targetXRotation, BIRDSEYE_X_ROTATION_DELTA);
-      navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
+      if (aerialNavigator === undefined) {
+        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
+        aerialNavigator = navigator;
+      }
     }
     else if (verticalMode === DRIVING_MODE) {
       targetYPosition = positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * xPositionFrameCount);
@@ -98,6 +102,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
       yPositionFrameCount = frameCount(positionY, targetYPosition, HOVER_TO_DRIVING_POSITION_Y_DELTA);
       xRotationFrameCount = frameCount(rotationX, targetXRotation, BIRDSEYE_X_ROTATION_DELTA);
+      aerialNavigator = undefined;
       navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
     }
     else if (verticalMode === HOVERING_MODE) {
