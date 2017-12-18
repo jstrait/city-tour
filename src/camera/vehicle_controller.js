@@ -62,18 +62,25 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var buildIntroAnimations = function() {
+    var CIRCLE_AROUND_CITY_CENTER_RADIUS = 10 * CityTour.Config.BLOCK_AND_STREET_WIDTH;
+    var CIRCLE_ANIMATION_FRAME_COUNT = 6 * 60;
+
     var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
     var newAnimations = [];
 
-    navigator.nextTarget();
-    targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
-    targetPositionY = BIRDSEYE_Y;
-    targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
-    targetRotationX = BIRDSEYE_X_ROTATION;
-    targetRotationY = determineRotationAngle(positionX, positionZ, targetPositionX, targetPositionZ);
+    var cityCenterX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
+    var cityCenterZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
+    var horizontalDistanceToCityCenter = CityTour.Math.distanceBetweenPoints(positionX, positionZ, cityCenterX, cityCenterZ);
+    var horizontalDistanceToCircle = horizontalDistanceToCityCenter - CIRCLE_AROUND_CITY_CENTER_RADIUS;
+
+    targetRotationY = determineRotationAngle(positionX, positionZ, cityCenterX, cityCenterZ);
+    targetPositionX = positionX - (Math.sin(targetRotationY) * horizontalDistanceToCircle);
+    targetPositionY = 40;
+    targetPositionZ = positionZ - (Math.cos(targetRotationY) * horizontalDistanceToCircle);
+    targetRotationX = 0.0;
 
     distanceToTarget = CityTour.Math.distanceBetweenPoints3D(positionX, positionY, positionZ, targetPositionX, targetPositionY, targetPositionZ);
 
@@ -84,12 +91,20 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountRotationX = frameCountPositionX;
     frameCountRotationY = Math.min(frameCountPositionX, frameCount(rotationY, targetRotationY, 0.008));
 
+    // Move to a point on the edge of a circle around the city center, facing the city center
     positionXGenerator = new CityTour.MotionGenerator(positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
     positionYGenerator = new CityTour.MotionGenerator(positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
     positionZGenerator = new CityTour.MotionGenerator(positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.SineEasing(frameCountRotationX, 0, HALF_PI));
+    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.LinearEasing(frameCountRotationX));
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
+    newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
+    // Rotate around the city in one full circle
+    positionXGenerator = new CityTour.MotionGenerator(cityCenterX, cityCenterX + CIRCLE_AROUND_CITY_CENTER_RADIUS, new CityTour.SineEasing(CIRCLE_ANIMATION_FRAME_COUNT, targetRotationY, targetRotationY - TWO_PI));
+    positionYGenerator = new CityTour.MotionGenerator(targetPositionY, BIRDSEYE_Y, new CityTour.LinearEasing(CIRCLE_ANIMATION_FRAME_COUNT));
+    positionZGenerator = new CityTour.MotionGenerator(cityCenterZ, cityCenterZ + CIRCLE_AROUND_CITY_CENTER_RADIUS, new CityTour.CosineEasing(CIRCLE_ANIMATION_FRAME_COUNT, targetRotationY, targetRotationY - TWO_PI));
+    rotationXGenerator = new CityTour.MotionGenerator(targetRotationX, BIRDSEYE_X_ROTATION, new CityTour.LinearEasing(CIRCLE_ANIMATION_FRAME_COUNT));
+    rotationYGenerator = new CityTour.MotionGenerator(targetRotationY, targetRotationY - TWO_PI, new CityTour.LinearEasing(CIRCLE_ANIMATION_FRAME_COUNT));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
     return newAnimations;
