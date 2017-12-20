@@ -130,7 +130,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
-    targetRotationY = determineRotationAngle(positionX, positionZ, targetPositionX, targetPositionZ);
+    targetRotationY = determineRotationAngle(positionX, positionZ, rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(rotationY, targetRotationY, ROTATION_Y_DELTA);
 
     if (verticalMode === BIRDSEYE_MODE) {
@@ -190,8 +190,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     return newAnimations;
   };
 
-  var determineRotationAngle = function(oldTargetPositionX, oldTargetPositionZ, targetPositionX, targetPositionZ) {
-    var oldYRotation = rotationY;
+  var determineRotationAngle = function(oldTargetPositionX, oldTargetPositionZ, oldRotationY, targetPositionX, targetPositionZ) {
     var newTargetYRotation;
 
     var x = targetPositionX - oldTargetPositionX;
@@ -205,11 +204,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     newTargetYRotation = rightHandedAngle;
 
     // Prevent turns wider than 180 degrees
-    if ((oldYRotation - newTargetYRotation) > Math.PI) {
-      rotationY -= TWO_PI;
+    if ((oldRotationY - newTargetYRotation) > Math.PI) {
+      newTargetYRotation += TWO_PI;
     }
-    else if ((oldYRotation - newTargetYRotation) < -Math.PI) {
-      rotationY += TWO_PI;
+    else if ((oldRotationY - newTargetYRotation) < -Math.PI) {
+      newTargetYRotation -= TWO_PI;
     }
 
     return newTargetYRotation;
