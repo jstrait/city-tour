@@ -103,9 +103,9 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
     // Move to center of the city
     positionXGenerator = new CityTour.MotionGenerator(positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
-    positionYGenerator = new CityTour.MotionGenerator(positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
+    positionYGenerator = new CityTour.MotionGenerator(positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
     positionZGenerator = new CityTour.MotionGenerator(positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.LinearEasing(frameCountRotationX));
+    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX, 0, HALF_PI));
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
