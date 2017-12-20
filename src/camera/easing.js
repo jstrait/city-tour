@@ -41,7 +41,7 @@ CityTour.LinearEasing = function(frameCount) {
 
 CityTour.SineEasing = function(frameCount, minX, maxX) {
   var easingFunc = function(x) {
-    return Math.sin(x)
+    return Math.sin(x);
   };
 
   return CityTour.BaseEasing(frameCount, easingFunc, minX, maxX);
@@ -49,7 +49,7 @@ CityTour.SineEasing = function(frameCount, minX, maxX) {
 
 CityTour.CosineEasing = function(frameCount, minX, maxX) {
   var easingFunc = function(x) {
-    return Math.cos(x)
+    return Math.cos(x);
   };
 
   return CityTour.BaseEasing(frameCount, easingFunc, minX, maxX);
