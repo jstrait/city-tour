@@ -74,7 +74,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var birdsEyeTargetMapX, birdsEyeTargetMapZ;
 
     // This angle is relative to the X-axis
-    var angleOfPositionToCityCenter = Math.atan2(cityCenterZ - positionZ, cityCenterX - positionX);
+    var angleOfPositionToCityCenter = Math.atan2(-(positionZ - cityCenterZ), positionX - cityCenterX);
 
     targetPositionX = cityCenterX;
     targetPositionY = BIRDSEYE_Y;
@@ -86,7 +86,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       birdsEyeTargetMapX = 0;
       birdsEyeTargetMapZ = 5;
     }
-    else if (angleOfPositionToCityCenter >= ((3 * Math.PI) / 4) || angleOfPositionToCityCenter < ((-3 * Math.PI) / 4)) {   // East quadrant
+    else if (angleOfPositionToCityCenter >= -(Math.PI / 4) && angleOfPositionToCityCenter < (Math.PI / 4)) {   // East quadrant
       targetRotationY = HALF_PI;
       birdsEyeTargetMapX = -5;
       birdsEyeTargetMapZ = 0;
@@ -96,7 +96,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       birdsEyeTargetMapX = 0;
       birdsEyeTargetMapZ = -5;
     }
-    else if (angleOfPositionToCityCenter < (Math.PI / 4) && angleOfPositionToCityCenter >= (-Math.PI / 4)) {   // West quadrant
+    else if (angleOfPositionToCityCenter >= ((3 * Math.PI) / 4) || angleOfPositionToCityCenter < -((3 * Math.PI) / 4)) {   // West quadrant
       targetRotationY = -HALF_PI;
       birdsEyeTargetMapX = 5;
       birdsEyeTargetMapZ = 0;
