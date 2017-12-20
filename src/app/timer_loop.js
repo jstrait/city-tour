@@ -37,10 +37,6 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     }
   };
 
-  var syncInteractiveCameraToPoleCamera = function(data) {
-    syncToPoleCamera();
-  };
-
   var startFlythrough = function() {
     var initialCoordinates = {
       positionX: poleCamera.positionX(),
@@ -99,11 +95,10 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   var reset = function(newWorldData) {
     worldData = newWorldData;
     interactiveCamera.setTerrain(worldData.terrain);
-    syncInteractiveCameraToPoleCamera();
+    syncToPoleCamera();
   };
 
-  var id1 = messageBroker.addSubscriber("camera.updated", syncInteractiveCameraToPoleCamera);
-  var id2 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
+  var id1 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
 
   reset(initialWorldData);
 
