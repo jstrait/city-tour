@@ -13,7 +13,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   var worldData;
   var timer;
   var vehicleController;
-  var directTargetAnimation;
+  var vehicleToInteractiveAnimation;
   var poleCamera = sceneView.poleCamera();
   var mode = INTERACTIVE;
 
@@ -29,11 +29,11 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       poleCamera.setRotationY(vehicleController.rotationY());
     }
     else if (mode === FLYTHROUGH_STOP) {
-      poleCamera.setPositionX(directTargetAnimation.positionX());
-      poleCamera.setPositionY(directTargetAnimation.positionY());
-      poleCamera.setPositionZ(directTargetAnimation.positionZ());
-      poleCamera.setRotationX(directTargetAnimation.rotationX());
-      poleCamera.setRotationY(directTargetAnimation.rotationY());
+      poleCamera.setPositionX(vehicleToInteractiveAnimation.positionX());
+      poleCamera.setPositionY(vehicleToInteractiveAnimation.positionY());
+      poleCamera.setPositionZ(vehicleToInteractiveAnimation.positionZ());
+      poleCamera.setRotationX(vehicleToInteractiveAnimation.rotationX());
+      poleCamera.setRotationY(vehicleToInteractiveAnimation.rotationY());
     }
   };
 
@@ -74,7 +74,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       rotationY: poleCamera.rotationY(),
     };
 
-    directTargetAnimation = new CityTour.DirectTargetAnimation(initial, target, END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
+    vehicleToInteractiveAnimation = new CityTour.DirectTargetAnimation(initial, target, END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
 
     mode = FLYTHROUGH_STOP;
   };
@@ -111,11 +111,11 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
         vehicleController.tick();
       }
 
-      if (directTargetAnimation) {
-        directTargetAnimation.tick();
-        if (directTargetAnimation.isFinished()) {
+      if (vehicleToInteractiveAnimation) {
+        vehicleToInteractiveAnimation.tick();
+        if (vehicleToInteractiveAnimation.isFinished()) {
           vehicleController = undefined;
-          directTargetAnimation = undefined;
+          vehicleToInteractiveAnimation = undefined;
           messageBroker.publish("flythrough.stopped", {});
         }
       }
