@@ -19,11 +19,17 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var MINIMUM_HEIGHT_OFF_GROUND = 5.0;
 
+  var VELOCITY_DECAY = 0.85;
+
   var centerX = 0.0;
   var centerZ = 0.0;
   var zoomPercentage = 0.0;
   var tiltPercentage = 0.2;
   var rotationAngle = 0.0;
+
+  var isVelocityEnabled = false;
+  var centerXVelocity = 0.0;
+  var centerZVelocity = 0.0;
 
   var terrain;
 
@@ -34,8 +40,12 @@ CityTour.InteractiveCamera = function(messageBroker) {
   interactiveCamera.centerX = function() { return centerX; };
   interactiveCamera.centerZ = function() { return centerZ; };
   interactiveCamera.setCenterCoordinates = function(newCenterX, newCenterZ) {
+    centerXVelocity = newCenterX - centerX;
+    centerZVelocity = newCenterZ - centerZ;
+
     centerX = CityTour.Math.clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
     centerZ = CityTour.Math.clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
+
     messageBroker.publish("camera.updated", {});
   };
 
@@ -63,6 +73,22 @@ CityTour.InteractiveCamera = function(messageBroker) {
     }
 
     messageBroker.publish("camera.updated", {});
+  };
+
+
+  interactiveCamera.isVelocityEnabled = function() { return isVelocityEnabled; };
+  interactiveCamera.setIsVelocityEnabled = function(newIsVelocityEnabled) { isVelocityEnabled = newIsVelocityEnabled; };
+
+  interactiveCamera.tickVelocity = function(frameCount) {
+    var i;
+
+    for (i = 0; i < frameCount; i++) {
+      centerXVelocity *= VELOCITY_DECAY;
+      centerZVelocity *= VELOCITY_DECAY;
+
+      centerX += centerXVelocity;
+      centerZ += centerZVelocity;
+    }
   };
 
 

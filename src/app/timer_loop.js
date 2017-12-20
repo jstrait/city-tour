@@ -121,6 +121,10 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       }
     }
 
+    if (interactiveCamera.isVelocityEnabled()) {
+      interactiveCamera.tickVelocity(frameCount);
+    }
+
     syncToPoleCamera();
     sceneView.render();
   };

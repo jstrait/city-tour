@@ -14,6 +14,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
     previousTouchPoints = [{x: e.clientX, z: e.clientY}];
+    interactiveCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStart = function(e) {
@@ -26,6 +27,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     }
 
     e.preventDefault();
+    interactiveCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStartStub = function(e) {
@@ -57,11 +59,13 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     el.classList.remove("cursor-grabbing");
     currentGesture = undefined;
     previousTouchPoints = [];
+    interactiveCamera.setIsVelocityEnabled(true);
   };
 
   var onTouchEnd = function(e) {
     currentGesture = undefined;
     previousTouchPoints = [];
+    interactiveCamera.setIsVelocityEnabled(true);
   };
 
   var onMouseOver = function(e) {
