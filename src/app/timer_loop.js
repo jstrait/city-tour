@@ -19,7 +19,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   var syncToPoleCamera = function() {
     if (mode === INTERACTIVE) {
-      interactiveCamera.syncCamera(poleCamera);
+      interactiveCamera.syncToPoleCamera(poleCamera);
     }
     else if (mode === FLYTHROUGH) {
       poleCamera.setPositionX(vehicleController.positionX());
@@ -56,7 +56,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   var requestStopFlythrough = function() {
     interactiveCamera.syncFromPoleCamera(poleCamera);
-    interactiveCamera.syncCamera(poleCamera);
+    interactiveCamera.syncToPoleCamera(poleCamera);
 
     var initial = {
       positionX: vehicleController.positionX(),
