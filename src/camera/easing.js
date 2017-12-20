@@ -15,7 +15,7 @@ CityTour.BaseEasing = function(frameCount, easingFunc, minX, maxX) {
       frame += 1;
     }
 
-    return easingFunc(frame * deltaPerFrame);
+    return easingFunc(minX + (frame * deltaPerFrame));
   };
 
 
