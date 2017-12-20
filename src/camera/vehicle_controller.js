@@ -66,10 +66,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
+    var birdsEyeTargetMapX, birdsEyeTargetMapZ;
     var newAnimations = [];
 
     var cityCenterX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
     var cityCenterZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
+    var birdsEyeTargetMapX, birdsEyeTargetMapZ;
 
     // This angle is relative to the X-axis
     var angleOfPositionToCityCenter = Math.atan2(cityCenterZ - positionZ, cityCenterX - positionX);
@@ -79,17 +81,25 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     targetPositionZ = cityCenterZ;
     targetRotationX = BIRDSEYE_X_ROTATION;
 
-    if (angleOfPositionToCityCenter >= (Math.PI / 4) && angleOfPositionToCityCenter < ((3 * Math.PI) / 4)) {   // North quad
+    if (angleOfPositionToCityCenter >= (Math.PI / 4) && angleOfPositionToCityCenter < ((3 * Math.PI) / 4)) {   // North quadrant
       targetRotationY = -Math.PI;
+      birdsEyeTargetMapX = 0;
+      birdsEyeTargetMapZ = 5;
     }
-    else if (angleOfPositionToCityCenter >= ((3 * Math.PI) / 4) || angleOfPositionToCityCenter < ((-3 * Math.PI) / 4)) {   // East quad
+    else if (angleOfPositionToCityCenter >= ((3 * Math.PI) / 4) || angleOfPositionToCityCenter < ((-3 * Math.PI) / 4)) {   // East quadrant
       targetRotationY = HALF_PI;
+      birdsEyeTargetMapX = -5;
+      birdsEyeTargetMapZ = 0;
     }
-    else if (angleOfPositionToCityCenter >= ((-3 * Math.PI) / 4) && angleOfPositionToCityCenter < (-Math.PI / 4)) {   // South quad
+    else if (angleOfPositionToCityCenter >= ((-3 * Math.PI) / 4) && angleOfPositionToCityCenter < (-Math.PI / 4)) {   // South quadrant
       targetRotationY = 0.0;
+      birdsEyeTargetMapX = 0;
+      birdsEyeTargetMapZ = -5;
     }
-    else if (angleOfPositionToCityCenter < (Math.PI / 4) && angleOfPositionToCityCenter >= (-Math.PI / 4)) {   // West quad
+    else if (angleOfPositionToCityCenter < (Math.PI / 4) && angleOfPositionToCityCenter >= (-Math.PI / 4)) {   // West quadrant
       targetRotationY = -HALF_PI;
+      birdsEyeTargetMapX = 5;
+      birdsEyeTargetMapZ = 0;
     }
 
     distanceToTarget = CityTour.Math.distanceBetweenPoints3D(positionX, positionY, positionZ, targetPositionX, targetPositionY, targetPositionZ);
@@ -109,6 +119,64 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
+    // Bird's eye animation to a point where the "real" bird's eye animation will begin
+    var birdsEyeAnimations = buildBirdsEyeAnimations({ positionX: targetPositionX,
+                                                       positionY: targetPositionY,
+                                                       positionZ: targetPositionZ,
+                                                       rotationX: targetRotationX,
+                                                       rotationY: targetRotationY },
+                                                     CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX),
+                                                     CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ));
+
+    return newAnimations.concat(birdsEyeAnimations);
+  };
+
+  var buildBirdsEyeAnimations = function(initial, targetPositionX, targetPositionZ) {
+    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+    var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
+    var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
+    var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
+    var newAnimations = [];
+
+    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
+    frameCountPositionZ = frameCountPositionX;
+
+    targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
+    frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
+
+    targetPositionY = BIRDSEYE_Y;
+    targetRotationX = BIRDSEYE_X_ROTATION;
+
+    frameCountPositionY = frameCount(initial.positionY, targetPositionY, POSITION_Y_DELTA);
+    frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
+
+    positionXStationaryGenerator = new CityTour.MotionGenerator(initial.positionX, initial.positionX, new CityTour.LinearEasing(0));
+    positionYStationaryGenerator = new CityTour.MotionGenerator(initial.positionY, initial.positionY, new CityTour.LinearEasing(0));
+    positionZStationaryGenerator = new CityTour.MotionGenerator(initial.positionZ, initial.positionZ, new CityTour.LinearEasing(0));
+    rotationXStationaryGenerator = new CityTour.MotionGenerator(initial.rotationX, initial.rotationX, new CityTour.LinearEasing(0));
+    rotationYStationaryGenerator = new CityTour.MotionGenerator(targetRotationY, targetRotationY, new CityTour.LinearEasing(0));
+
+    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
+    positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
+    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.LinearEasing(frameCountRotationX));
+    rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.LinearEasing(frameCountRotationY));
+
+    // Y rotation
+    newAnimations.push(new CityTour.Animation(positionXStationaryGenerator,
+                                              positionYStationaryGenerator,
+                                              positionZStationaryGenerator,
+                                              rotationXStationaryGenerator,
+                                              rotationYGenerator));
+
+    // Rest of the movement
+    newAnimations.push(new CityTour.Animation(positionXGenerator,
+                                              positionYGenerator,
+                                              positionZGenerator,
+                                              rotationXGenerator,
+                                              rotationYStationaryGenerator));
+
+
     return newAnimations;
   };
 
@@ -127,24 +195,28 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
     targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
 
+    if (verticalMode === BIRDSEYE_MODE) {
+      if (aerialNavigator === undefined) {
+        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
+        aerialNavigator = navigator;
+      }
+
+      return buildBirdsEyeAnimations({ positionX: positionX,
+                                       positionY: positionY,
+                                       positionZ: positionZ,
+                                       rotationX: rotationX,
+                                       rotationY: rotationY },
+                                     targetPositionX,
+                                     targetPositionZ);
+    }
+
     frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineRotationAngle(positionX, positionZ, rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(rotationY, targetRotationY, ROTATION_Y_DELTA);
 
-    if (verticalMode === BIRDSEYE_MODE) {
-      targetPositionY = BIRDSEYE_Y;
-      targetRotationX = BIRDSEYE_X_ROTATION;
-
-      frameCountPositionY = frameCount(positionY, targetPositionY, POSITION_Y_DELTA);
-      frameCountRotationX = frameCount(rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
-      if (aerialNavigator === undefined) {
-        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
-        aerialNavigator = navigator;
-      }
-    }
-    else if (verticalMode === DRIVING_MODE) {
+    if (verticalMode === DRIVING_MODE) {
       targetPositionY = positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * frameCountPositionX);
       targetRotationX = 0.0;
 
