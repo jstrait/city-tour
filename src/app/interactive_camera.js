@@ -23,8 +23,10 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var centerX = 0.0;
   var centerZ = 0.0;
-  var zoomPercentage = 0.0;
-  var tiltPercentage = 0.2;
+  var zoomDistance;
+  var zoomPercentage;
+  var tiltAngle;
+  var tiltPercentage;
   var rotationAngle = 0.0;
 
   var isVelocityEnabled = false;
@@ -47,11 +49,15 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var setZoomPercentage = function(newZoomPercentage) {
     zoomPercentage = CityTour.Math.clamp(newZoomPercentage, 0.0, 1.0);
+    zoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
+
     messageBroker.publish("camera.updated", {});
   };
 
   var setTiltPercentage = function(newTiltPercentage) {
     tiltPercentage = CityTour.Math.clamp(newTiltPercentage, 0.0, 1.0);
+    tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
+
     messageBroker.publish("camera.updated", {});
   };
 
@@ -109,9 +115,6 @@ CityTour.InteractiveCamera = function(messageBroker) {
   rotationY == rotation of this triangle around y-axis of center point
   */
   var syncToCamera = function(camera) {
-    var tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
-    var zoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
-
     var hypotenuse = zoomDistance;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
     var opposite = -Math.sin(tiltAngle) * hypotenuse;
@@ -128,7 +131,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var syncFromCamera = function(camera) {
     rotationAngle = camera.rotation.y;
-    var tiltAngle = Math.min(MAX_TILT_ANGLE, camera.rotation.x);
+    tiltAngle = Math.min(MAX_TILT_ANGLE, camera.rotation.x);
     tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
 
     var opposite = camera.position.y;
@@ -137,10 +140,15 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
     centerX = camera.position.x - (adjacent * Math.sin(rotationAngle));
     centerZ = camera.position.z - (adjacent * Math.cos(rotationAngle));
-    zoomPercentage = 1.0 - ((hypotenuse - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
+    zoomDistance = hypotenuse;
+    zoomPercentage = 1.0 - ((zoomDistance - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
 
     messageBroker.publish("camera.updated", {});
   };
+
+
+  setZoomPercentage(0.0);
+  setTiltPercentage(0.2);
 
 
   return {
