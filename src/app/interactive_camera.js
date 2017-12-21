@@ -33,13 +33,9 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var terrain;
 
-  var interactiveCamera = {};
+  var setTerrain = function(newTerrain) { terrain = newTerrain; };
 
-  interactiveCamera.setTerrain = function(newTerrain) { terrain = newTerrain; };
-
-  interactiveCamera.centerX = function() { return centerX; };
-  interactiveCamera.centerZ = function() { return centerZ; };
-  interactiveCamera.setCenterCoordinates = function(newCenterX, newCenterZ) {
+  var setCenterCoordinates = function(newCenterX, newCenterZ) {
     centerXVelocity = newCenterX - centerX;
     centerZVelocity = newCenterZ - centerZ;
 
@@ -49,20 +45,17 @@ CityTour.InteractiveCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  interactiveCamera.zoomPercentage = function() { return zoomPercentage; };
-  interactiveCamera.setZoomPercentage = function(newZoomPercentage) {
+  var setZoomPercentage = function(newZoomPercentage) {
     zoomPercentage = CityTour.Math.clamp(newZoomPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
-  interactiveCamera.tiltPercentage = function() { return tiltPercentage; };
-  interactiveCamera.setTiltPercentage = function(newTiltPercentage) {
+  var setTiltPercentage = function(newTiltPercentage) {
     tiltPercentage = CityTour.Math.clamp(newTiltPercentage, 0.0, 1.0);
     messageBroker.publish("camera.updated", {});
   };
 
-  interactiveCamera.rotationAngle = function() { return rotationAngle; };
-  interactiveCamera.setRotationAngle = function(newRotationAngle) {
+  var setRotationAngle = function(newRotationAngle) {
     rotationAngle = newRotationAngle;
 
     if (rotationAngle < -Math.PI) {
@@ -76,10 +69,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
   };
 
 
-  interactiveCamera.isVelocityEnabled = function() { return isVelocityEnabled; };
-  interactiveCamera.setIsVelocityEnabled = function(newIsVelocityEnabled) { isVelocityEnabled = newIsVelocityEnabled; };
-
-  interactiveCamera.tickVelocity = function(frameCount) {
+  var tickVelocity = function(frameCount) {
     var i;
 
     for (i = 0; i < frameCount; i++) {
@@ -106,7 +96,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
   Adjacent == X/Z distance of camera from center point
   rotationY == rotation of this triangle around y-axis of center point
   */
-  interactiveCamera.syncToCamera = function(camera) {
+  var syncToCamera = function(camera) {
     var tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
     var zoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
 
@@ -132,7 +122,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
     camera.rotation.y = rotationAngle;
   };
 
-  interactiveCamera.syncFromCamera = function(camera) {
+  var syncFromCamera = function(camera) {
     rotationAngle = camera.rotation.y;
     var tiltAngle = Math.min(MAX_TILT_ANGLE, camera.rotation.x);
     tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
@@ -148,5 +138,22 @@ CityTour.InteractiveCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  return interactiveCamera;
+
+  return {
+    setTerrain: setTerrain,
+    centerX: function() { return centerX; },
+    centerZ: function() { return centerZ; },
+    setCenterCoordinates: setCenterCoordinates,
+    zoomPercentage: function() { return zoomPercentage; },
+    setZoomPercentage: setZoomPercentage,
+    tiltPercentage: function() { return tiltPercentage; },
+    setTiltPercentage: setTiltPercentage,
+    rotationAngle: function() { return rotationAngle; },
+    setRotationAngle: setRotationAngle,
+    isVelocityEnabled: function() { return isVelocityEnabled; },
+    setIsVelocityEnabled: function(newIsVelocityEnabled) { isVelocityEnabled = newIsVelocityEnabled; },
+    tickVelocity: tickVelocity,
+    syncToCamera: syncToCamera,
+    syncFromCamera: syncFromCamera,
+  };
 };
