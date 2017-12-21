@@ -115,7 +115,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     positionXGenerator = new CityTour.MotionGenerator(positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
     positionYGenerator = new CityTour.MotionGenerator(positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
     positionZGenerator = new CityTour.MotionGenerator(positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX, 0, HALF_PI));
+    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX));
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
