@@ -102,9 +102,11 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
     var hypotenuse = zoomDistance;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
+    var opposite = -Math.sin(tiltAngle) * hypotenuse;
 
     var cameraX = centerX + (adjacent * Math.sin(rotationAngle));
     var cameraZ = centerZ + (adjacent * Math.cos(-rotationAngle));
+
     var terrainHeight = Number.NEGATIVE_INFINITY;
     if (terrain !== undefined) {
       terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(cameraX), CityTour.Coordinates.sceneZToMapZ(cameraZ));
@@ -113,10 +115,8 @@ CityTour.InteractiveCamera = function(messageBroker) {
       }
     }
 
-    var opposite = Math.max(terrainHeight + MINIMUM_HEIGHT_OFF_GROUND, -(Math.sin(tiltAngle) * hypotenuse));
-
     camera.position.x = cameraX;
-    camera.position.y = opposite;
+    camera.position.y = Math.max(terrainHeight + MINIMUM_HEIGHT_OFF_GROUND, opposite);
     camera.position.z = cameraZ;
     camera.rotation.x = tiltAngle;
     camera.rotation.y = rotationAngle;
