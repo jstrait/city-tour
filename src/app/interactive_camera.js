@@ -76,8 +76,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
       centerXVelocity *= VELOCITY_DECAY;
       centerZVelocity *= VELOCITY_DECAY;
 
-      centerX += centerXVelocity;
-      centerZ += centerZVelocity;
+      setCenterCoordinates(centerX + centerXVelocity, centerZ + centerZVelocity);
     }
   };
 
