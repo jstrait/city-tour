@@ -14,36 +14,36 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   var timer;
   var vehicleController;
   var vehicleToInteractiveAnimation;
-  var poleCamera = sceneView.poleCamera();
+  var camera = sceneView.camera();
   var mode = INTERACTIVE;
 
-  var syncToPoleCamera = function() {
+  var syncToCamera = function() {
     if (mode === INTERACTIVE) {
-      interactiveCamera.syncToPoleCamera(poleCamera);
+      interactiveCamera.syncToCamera(camera);
     }
     else if (mode === FLYTHROUGH) {
-      poleCamera.setPositionX(vehicleController.positionX());
-      poleCamera.setPositionY(vehicleController.positionY());
-      poleCamera.setPositionZ(vehicleController.positionZ());
-      poleCamera.setRotationX(vehicleController.rotationX());
-      poleCamera.setRotationY(vehicleController.rotationY());
+      camera.position.x = vehicleController.positionX();
+      camera.position.y = vehicleController.positionY();
+      camera.position.z = vehicleController.positionZ();
+      camera.rotation.x = vehicleController.rotationX();
+      camera.rotation.y = vehicleController.rotationY();
     }
     else if (mode === FLYTHROUGH_STOP) {
-      poleCamera.setPositionX(vehicleToInteractiveAnimation.positionX());
-      poleCamera.setPositionY(vehicleToInteractiveAnimation.positionY());
-      poleCamera.setPositionZ(vehicleToInteractiveAnimation.positionZ());
-      poleCamera.setRotationX(vehicleToInteractiveAnimation.rotationX());
-      poleCamera.setRotationY(vehicleToInteractiveAnimation.rotationY());
+      camera.position.x = vehicleToInteractiveAnimation.positionX();
+      camera.position.y = vehicleToInteractiveAnimation.positionY();
+      camera.position.z = vehicleToInteractiveAnimation.positionZ();
+      camera.rotation.x = vehicleToInteractiveAnimation.rotationX();
+      camera.rotation.y = vehicleToInteractiveAnimation.rotationY();
     }
   };
 
   var startFlythrough = function() {
     var initialCoordinates = {
-      positionX: poleCamera.positionX(),
-      positionY: poleCamera.positionY(),
-      positionZ: poleCamera.positionZ(),
-      rotationX: poleCamera.rotationX(),
-      rotationY: poleCamera.rotationY(),
+      positionX: camera.position.x,
+      positionY: camera.position.y,
+      positionZ: camera.position.z,
+      rotationX: camera.rotation.x,
+      rotationY: camera.rotation.y,
     };
 
     var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
@@ -55,8 +55,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   };
 
   var requestStopFlythrough = function() {
-    interactiveCamera.syncFromPoleCamera(poleCamera);
-    interactiveCamera.syncToPoleCamera(poleCamera);
+    interactiveCamera.syncFromCamera(camera);
+    interactiveCamera.syncToCamera(camera);
 
     var initial = {
       positionX: vehicleController.positionX(),
@@ -67,11 +67,11 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     };
 
     var target = {
-      positionX: poleCamera.positionX(),
-      positionY: poleCamera.positionY(),
-      positionZ: poleCamera.positionZ(),
-      rotationX: poleCamera.rotationX(),
-      rotationY: poleCamera.rotationY(),
+      positionX: camera.position.x,
+      positionY: camera.position.y,
+      positionZ: camera.position.z,
+      rotationX: camera.rotation.x,
+      rotationY: camera.rotation.y,
     };
 
     vehicleToInteractiveAnimation = new CityTour.DirectTargetAnimation(initial, target, END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
@@ -95,7 +95,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   var reset = function(newWorldData) {
     worldData = newWorldData;
     interactiveCamera.setTerrain(worldData.terrain);
-    syncToPoleCamera();
+    syncToCamera();
   };
 
   var id1 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
@@ -125,7 +125,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       interactiveCamera.tickVelocity(frameCount);
     }
 
-    syncToPoleCamera();
+    syncToCamera();
     sceneView.render();
   };
   timer.onTick(1);

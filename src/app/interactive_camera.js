@@ -106,7 +106,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
   Adjacent == X/Z distance of camera from center point
   rotationY == rotation of this triangle around y-axis of center point
   */
-  interactiveCamera.syncToPoleCamera = function(poleCamera) {
+  interactiveCamera.syncToCamera = function(camera) {
     var tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
     var zoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
 
@@ -125,24 +125,24 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
     var opposite = Math.max(terrainHeight + MINIMUM_HEIGHT_OFF_GROUND, -(Math.sin(tiltAngle) * hypotenuse));
 
-    poleCamera.setPositionX(cameraX);
-    poleCamera.setPositionY(opposite);
-    poleCamera.setPositionZ(cameraZ);
-    poleCamera.setRotationX(tiltAngle);
-    poleCamera.setRotationY(rotationAngle);
+    camera.position.x = cameraX;
+    camera.position.y = opposite;
+    camera.position.z = cameraZ;
+    camera.rotation.x = tiltAngle;
+    camera.rotation.y = rotationAngle;
   };
 
-  interactiveCamera.syncFromPoleCamera = function(poleCamera) {
-    rotationAngle = poleCamera.rotationY();
-    var tiltAngle = Math.min(MAX_TILT_ANGLE, poleCamera.rotationX());
+  interactiveCamera.syncFromCamera = function(camera) {
+    rotationAngle = camera.rotation.y;
+    var tiltAngle = Math.min(MAX_TILT_ANGLE, camera.rotation.x);
     tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
 
-    var opposite = poleCamera.positionY();
+    var opposite = camera.position.y;
     var hypotenuse = Math.max(MIN_ZOOM_DISTANCE, (1 / Math.sin(-tiltAngle)) * opposite);
     var adjacent = Math.sqrt((hypotenuse * hypotenuse) - (opposite * opposite));
 
-    centerX = poleCamera.positionX() - (adjacent * Math.sin(rotationAngle));
-    centerZ = poleCamera.positionZ() - (adjacent * Math.cos(rotationAngle));
+    centerX = camera.position.x - (adjacent * Math.sin(rotationAngle));
+    centerZ = camera.position.z - (adjacent * Math.cos(rotationAngle));
     zoomPercentage = 1.0 - ((hypotenuse - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
 
     messageBroker.publish("camera.updated", {});

@@ -2,26 +2,24 @@
 
 var CityTour = CityTour || {};
 
-CityTour.RenderView = function(container, initialScene) {
+CityTour.RenderView = function(container, scene) {
+  var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
+
   var scene;
   var renderer;
-  var poleCamera;
+  var camera;
 
-  var previousPoleCameraPositionX;
-  var previousPoleCameraPositionY;
-  var previousPoleCameraPositionZ;
-  var previousPoleCameraRotationX;
-  var previousPoleCameraRotationY;
+  var previousCameraPositionX;
+  var previousCameraPositionY;
+  var previousCameraPositionZ;
+  var previousCameraRotationX;
+  var previousCameraRotationY;
   var dirtyFromResize = false;
-
-  renderer = new THREE.WebGLRenderer({antialias: true});
-  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 
   var resize = function() {
     var width = container.clientWidth;
     var height = container.clientHeight;
 
-    var camera = poleCamera.camera();
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
@@ -31,37 +29,38 @@ CityTour.RenderView = function(container, initialScene) {
   };
 
   var render = function() {
-    var cameraHasMoved = previousPoleCameraPositionX !== poleCamera.positionX() ||
-                         previousPoleCameraPositionY !== poleCamera.positionY() ||
-                         previousPoleCameraPositionZ !== poleCamera.positionZ() ||
-                         previousPoleCameraRotationX !== poleCamera.rotationX() ||
-                         previousPoleCameraRotationY !== poleCamera.rotationY();
+    var cameraHasMoved = previousCameraPositionX !== camera.position.x ||
+                         previousCameraPositionY !== camera.position.y ||
+                         previousCameraPositionZ !== camera.position.z ||
+                         previousCameraRotationX !== camera.rotation.x ||
+                         previousCameraRotationY !== camera.rotation.y;
 
     if (cameraHasMoved || dirtyFromResize) {
-      renderer.render(scene, poleCamera.camera());
+      renderer.render(scene, camera);
 
-      previousPoleCameraPositionX = poleCamera.positionX();
-      previousPoleCameraPositionY = poleCamera.positionY();
-      previousPoleCameraPositionZ = poleCamera.positionZ();
-      previousPoleCameraRotationX = poleCamera.rotationX();
-      previousPoleCameraRotationY = poleCamera.rotationY();
+      previousCameraPositionX = camera.position.x;
+      previousCameraPositionY = camera.position.y;
+      previousCameraPositionZ = camera.position.z;
+      previousCameraRotationX = camera.rotation.x;
+      previousCameraRotationY = camera.rotation.y;
       dirtyFromResize = false;
     }
   };
 
-  var setScene = function(newScene) {
-    scene = newScene;
-    poleCamera = new CityTour.PoleCamera(scene.position);
-    scene.add(poleCamera.camera());
-  };
 
-  setScene(initialScene);
+  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+
+  camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
+  camera.lookAt(scene.position);
+  camera.rotation.order = "YXZ";
+  scene.add(camera);
 
 
   return {
     render: render,
     resize: resize,
     domElement: function() { return renderer.domElement; },
-    poleCamera: function() { return poleCamera; },
+    camera: function() { return camera; },
   };
 };

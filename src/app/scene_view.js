@@ -7,7 +7,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   var sceneBuilder = new CityTour.Scene.Builder();
   var scene = sceneBuilder.buildEmptyScene();
   var renderView = new CityTour.RenderView(containerEl, scene);
-  var poleCamera = renderView.poleCamera();
+  var camera = renderView.camera();
 
   var reset = function(newWorldData) {
     var masterStartTime, masterEndTime;
@@ -88,7 +88,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   return {
     reset: reset,
     render: render,
-    poleCamera: function() { return poleCamera; },
+    camera: function() { return camera; },
     domElement: function() { return renderView.domElement(); },
   };
 };
