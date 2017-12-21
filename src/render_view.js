@@ -52,7 +52,7 @@ CityTour.RenderView = function(container, initialScene) {
   var setScene = function(newScene) {
     scene = newScene;
     poleCamera = new CityTour.PoleCamera(scene.position);
-    scene.add(poleCamera.pole());
+    scene.add(poleCamera.camera());
   };
 
   setScene(initialScene);
