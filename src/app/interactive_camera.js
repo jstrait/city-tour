@@ -81,6 +81,19 @@ CityTour.InteractiveCamera = function(messageBroker) {
     }
   };
 
+  var minimumCameraHeightAtCoordinates = function(sceneX, sceneZ) {
+    var terrainHeight = Number.NEGATIVE_INFINITY;
+
+    if (terrain !== undefined) {
+      terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(sceneX), CityTour.Coordinates.sceneZToMapZ(sceneZ));
+      if (terrainHeight === undefined) {
+        terrainHeight = Number.NEGATIVE_INFINITY;
+      }
+    }
+
+    return terrainHeight + MINIMUM_HEIGHT_OFF_GROUND;
+  };
+
 
   /*    C
        /|
@@ -107,16 +120,8 @@ CityTour.InteractiveCamera = function(messageBroker) {
     var cameraX = centerX + (adjacent * Math.sin(rotationAngle));
     var cameraZ = centerZ + (adjacent * Math.cos(-rotationAngle));
 
-    var terrainHeight = Number.NEGATIVE_INFINITY;
-    if (terrain !== undefined) {
-      terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(cameraX), CityTour.Coordinates.sceneZToMapZ(cameraZ));
-      if (terrainHeight === undefined) {
-        terrainHeight = Number.NEGATIVE_INFINITY;
-      }
-    }
-
     camera.position.x = cameraX;
-    camera.position.y = Math.max(terrainHeight + MINIMUM_HEIGHT_OFF_GROUND, opposite);
+    camera.position.y = Math.max(minimumCameraHeightAtCoordinates(cameraX, cameraZ), opposite);
     camera.position.z = cameraZ;
     camera.rotation.x = tiltAngle;
     camera.rotation.y = rotationAngle;
