@@ -58,14 +58,22 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   var onMouseUp = function(e) {
     el.classList.remove("cursor-grabbing");
     currentGesture = undefined;
+
+    if (previousTouchPoints !== undefined) {
+      interactiveCamera.setIsVelocityEnabled(true);
+    }
+
     previousTouchPoints = [];
-    interactiveCamera.setIsVelocityEnabled(true);
   };
 
   var onTouchEnd = function(e) {
     currentGesture = undefined;
+
+    if (previousTouchPoints !== undefined) {
+      interactiveCamera.setIsVelocityEnabled(true);
+    }
+
     previousTouchPoints = [];
-    interactiveCamera.setIsVelocityEnabled(true);
   };
 
   var onMouseOver = function(e) {
