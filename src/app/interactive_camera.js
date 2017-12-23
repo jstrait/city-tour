@@ -19,7 +19,10 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var MINIMUM_HEIGHT_OFF_GROUND = 5.0;
 
-  var VELOCITY_DECAY = 0.85;
+  var POSITION_VELOCITY_DECAY = 0.85;
+  var ZOOM_VELOCITY_DECAY = 0.85;
+  var TILT_VELOCITY_DECAY = 0.85;
+  var ROTATION_VELOCITY_DECAY = 0.85;
 
   var centerX = 0.0;
   var centerZ = 0.0;
@@ -32,6 +35,9 @@ CityTour.InteractiveCamera = function(messageBroker) {
   var isVelocityEnabled = false;
   var centerXVelocity = 0.0;
   var centerZVelocity = 0.0;
+  var zoomDistanceVelocity = 0.0;
+  var tiltVelocity = 0.0;
+  var rotationVelocity = 0.0;
 
   var terrain;
 
@@ -47,21 +53,54 @@ CityTour.InteractiveCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
+  var setZoomDistance = function(newZoomDistance) {
+    newZoomDistance = CityTour.Math.clamp(newZoomDistance, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE);
+    zoomDistanceVelocity = newZoomDistance - zoomDistance;
+    zoomDistance = newZoomDistance;
+    zoomPercentage = 1.0 - ((zoomDistance - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
+
+    messageBroker.publish("camera.updated", {});
+  };
+
   var setZoomPercentage = function(newZoomPercentage) {
+    var newZoomDistance;
+
     zoomPercentage = CityTour.Math.clamp(newZoomPercentage, 0.0, 1.0);
-    zoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
+    newZoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
+
+    if (zoomDistance !== undefined) {
+      zoomDistanceVelocity = newZoomDistance - zoomDistance;
+    }
+    zoomDistance = newZoomDistance;
+
+    messageBroker.publish("camera.updated", {});
+  };
+
+  var setTiltAngle = function(newTiltAngle) {
+    newTiltAngle = CityTour.Math.clamp(newTiltAngle, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
+    tiltVelocity = newTiltAngle - tiltAngle;
+    tiltAngle = newTiltAngle;
+    tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
 
     messageBroker.publish("camera.updated", {});
   };
 
   var setTiltPercentage = function(newTiltPercentage) {
+    var newTiltAngle;
+
     tiltPercentage = CityTour.Math.clamp(newTiltPercentage, 0.0, 1.0);
-    tiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
+    newTiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
+
+    if (tiltAngle !== undefined) {
+      tiltVelocity = newTiltAngle - tiltAngle;
+    }
+    tiltAngle = newTiltAngle;
 
     messageBroker.publish("camera.updated", {});
   };
 
   var setRotationAngle = function(newRotationAngle) {
+    rotationVelocity = newRotationAngle - rotationAngle;
     rotationAngle = newRotationAngle;
 
     if (rotationAngle < -Math.PI) {
@@ -79,10 +118,16 @@ CityTour.InteractiveCamera = function(messageBroker) {
     var i;
 
     for (i = 0; i < frameCount; i++) {
-      centerXVelocity *= VELOCITY_DECAY;
-      centerZVelocity *= VELOCITY_DECAY;
+      centerXVelocity *= POSITION_VELOCITY_DECAY;
+      centerZVelocity *= POSITION_VELOCITY_DECAY;
+      zoomDistanceVelocity *= ZOOM_VELOCITY_DECAY;
+      tiltVelocity *= TILT_VELOCITY_DECAY;
+      rotationVelocity *= ROTATION_VELOCITY_DECAY;
 
       setCenterCoordinates(centerX + centerXVelocity, centerZ + centerZVelocity);
+      setZoomDistance(zoomDistance + zoomDistanceVelocity);
+      setTiltAngle(tiltAngle + tiltVelocity);
+      setRotationAngle(rotationAngle + rotationVelocity);
     }
   };
 
