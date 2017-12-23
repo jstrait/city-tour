@@ -61,6 +61,15 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     return Math.ceil(Math.abs(target - start) / delta);
   };
 
+  var atan2AngleToViewAngle = function(atan2Angle) {
+    if (atan2Angle >= 0) {
+      return atan2Angle - HALF_PI;
+    }
+    else if (atan2Angle < 0) {
+      return atan2Angle + TWO_PI;
+    }
+  };
+
   var buildIntroAnimations = function() {
     var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
@@ -73,34 +82,22 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var cityCenterZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
     var birdsEyeTargetMapX, birdsEyeTargetMapZ;
 
-    // This angle is relative to the X-axis
-    var angleOfPositionToCityCenter = Math.atan2(-(positionZ - cityCenterZ), positionX - cityCenterX);
+    var angleOfPositionToCityCenter = Math.atan2(-(positionZ - cityCenterZ), positionX - cityCenterX) + Math.PI;
+    var viewAngleToCityCenter = atan2AngleToViewAngle(angleOfPositionToCityCenter);
+
+    // Prevent turns wider than 180 degrees
+    if ((rotationY - viewAngleToCityCenter) > Math.PI) {
+      viewAngleToCityCenter += TWO_PI;
+    }
+    else if ((rotationY - viewAngleToCityCenter) < -Math.PI) {
+      viewAngleToCityCenter -= TWO_PI;
+    }
 
     targetPositionX = cityCenterX;
     targetPositionY = BIRDSEYE_Y;
     targetPositionZ = cityCenterZ;
     targetRotationX = BIRDSEYE_X_ROTATION;
-
-    if (angleOfPositionToCityCenter >= (Math.PI / 4) && angleOfPositionToCityCenter < ((3 * Math.PI) / 4)) {   // North quadrant
-      targetRotationY = -Math.PI;
-      birdsEyeTargetMapX = 0;
-      birdsEyeTargetMapZ = 5;
-    }
-    else if (angleOfPositionToCityCenter >= -(Math.PI / 4) && angleOfPositionToCityCenter < (Math.PI / 4)) {   // East quadrant
-      targetRotationY = HALF_PI;
-      birdsEyeTargetMapX = -5;
-      birdsEyeTargetMapZ = 0;
-    }
-    else if (angleOfPositionToCityCenter >= ((-3 * Math.PI) / 4) && angleOfPositionToCityCenter < (-Math.PI / 4)) {   // South quadrant
-      targetRotationY = 0.0;
-      birdsEyeTargetMapX = 0;
-      birdsEyeTargetMapZ = -5;
-    }
-    else if (angleOfPositionToCityCenter >= ((3 * Math.PI) / 4) || angleOfPositionToCityCenter < -((3 * Math.PI) / 4)) {   // West quadrant
-      targetRotationY = -HALF_PI;
-      birdsEyeTargetMapX = 5;
-      birdsEyeTargetMapZ = 0;
-    }
+    targetRotationY = viewAngleToCityCenter;
 
     distanceToTarget = CityTour.Math.distanceBetweenPoints3D(positionX, positionY, positionZ, targetPositionX, targetPositionY, targetPositionZ);
 
@@ -119,16 +116,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    // Bird's eye animation to a point where the "real" bird's eye animation will begin
-    var birdsEyeAnimations = buildBirdsEyeAnimations({ positionX: targetPositionX,
-                                                       positionY: targetPositionY,
-                                                       positionZ: targetPositionZ,
-                                                       rotationX: targetRotationX,
-                                                       rotationY: targetRotationY },
-                                                     CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX),
-                                                     CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ));
-
-    return newAnimations.concat(birdsEyeAnimations);
+    return newAnimations;
   };
 
   var buildBirdsEyeAnimations = function(initial, targetPositionX, targetPositionZ) {
