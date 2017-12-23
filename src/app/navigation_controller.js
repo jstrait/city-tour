@@ -45,14 +45,17 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
     var radians = degrees * (Math.PI / 180);
 
     interactiveCamera.setRotationAngle(radians);
+    interactiveCamera.setIsVelocityEnabled(false);
   };
 
   var setTiltAngle = function(e) {
     interactiveCamera.setTiltPercentage(parseFloat(rotationXControl.value));
+    interactiveCamera.setIsVelocityEnabled(false);
   };
 
   var setZoomPercentage = function(e) {
     interactiveCamera.setZoomPercentage(parseFloat(zoomControl.value));
+    interactiveCamera.setIsVelocityEnabled(false);
   };
 
   var toggleFlythrough = function(e) {

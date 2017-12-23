@@ -114,6 +114,18 @@ CityTour.InteractiveCamera = function(messageBroker) {
   };
 
 
+  var setIsVelocityEnabled = function(newIsVelocityEnabled) {
+    isVelocityEnabled = newIsVelocityEnabled;
+
+    if (newIsVelocityEnabled === false) {
+      centerXVelocity = 0.0;
+      centerZVelocity = 0.0;
+      zoomDistanceVelocity = 0.0;
+      tiltVelocity = 0.0;
+      rotationVelocity = 0.0;
+    }
+  };
+
   var tickVelocity = function(frameCount) {
     var i;
 
@@ -208,7 +220,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
     rotationAngle: function() { return rotationAngle; },
     setRotationAngle: setRotationAngle,
     isVelocityEnabled: function() { return isVelocityEnabled; },
-    setIsVelocityEnabled: function(newIsVelocityEnabled) { isVelocityEnabled = newIsVelocityEnabled; },
+    setIsVelocityEnabled: setIsVelocityEnabled,
     tickVelocity: tickVelocity,
     syncToCamera: syncToCamera,
     syncFromCamera: syncFromCamera,
