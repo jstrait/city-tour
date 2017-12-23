@@ -93,6 +93,28 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       viewAngleToCityCenter -= TWO_PI;
     }
 
+    var positiveViewAngleToCityCenter = viewAngleToCityCenter;
+    if (positiveViewAngleToCityCenter < 0) {
+      positiveViewAngleToCityCenter += TWO_PI;
+    }
+
+    if (positiveViewAngleToCityCenter >= ((7 * Math.PI) / 4) || positiveViewAngleToCityCenter < (Math.PI / 4)) {  // Moving north-ish
+      birdsEyeTargetMapX = 0;
+      birdsEyeTargetMapZ = -5;
+    }
+    else if (positiveViewAngleToCityCenter >= (Math.PI / 4) && positiveViewAngleToCityCenter < ((3 * Math.PI) / 4)) {  // Moving west-ish
+      birdsEyeTargetMapX = -5;
+      birdsEyeTargetMapZ = 0;
+    }
+    else if (positiveViewAngleToCityCenter >= ((3 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((5 * Math.PI) / 4)) { // Moving south-ish
+      birdsEyeTargetMapX = 0;
+      birdsEyeTargetMapZ = 5;
+    }
+    else if (positiveViewAngleToCityCenter >= ((5 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((7 * Math.PI) / 4)) { // Moving east-ish
+      birdsEyeTargetMapX = 5;
+      birdsEyeTargetMapZ = 0;
+    }
+
     targetPositionX = cityCenterX;
     targetPositionY = BIRDSEYE_Y;
     targetPositionZ = cityCenterZ;
@@ -116,7 +138,16 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    return newAnimations;
+    // Bird's eye animation to a point where the "real" bird's eye animation will begin
+    var birdsEyeAnimations = buildBirdsEyeAnimations({ positionX: targetPositionX,
+                                                       positionY: targetPositionY,
+                                                       positionZ: targetPositionZ,
+                                                       rotationX: targetRotationX,
+                                                       rotationY: targetRotationY },
+                                                     CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX),
+                                                     CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ));
+
+    return newAnimations.concat(birdsEyeAnimations);
   };
 
   var buildBirdsEyeAnimations = function(initial, targetPositionX, targetPositionZ) {
