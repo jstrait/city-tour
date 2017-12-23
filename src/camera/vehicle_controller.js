@@ -199,35 +199,60 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     return newAnimations;
   };
 
-  var buildNextAnimations = function() {
+  var buildHoveringAnimations = function(initial, targetPositionX, targetPositionZ) {
     var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    if (verticalMode === INITIAL_DESCENT) {
-      return buildIntroAnimations();
-    }
+    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
+    frameCountPositionZ = frameCountPositionX;
 
-    navigator.nextTarget();
-    targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
-    targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
+    targetRotationY = determineRotationAngle(positionX, positionZ, rotationY, targetPositionX, targetPositionZ);
+    frameCountRotationY = frameCount(rotationY, targetRotationY, ROTATION_Y_DELTA);
 
-    if (verticalMode === BIRDSEYE_MODE) {
-      if (aerialNavigator === undefined) {
-        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
-        aerialNavigator = navigator;
-      }
+    targetPositionY = HOVERING_Y;
+    targetRotationX = 0.0;
 
-      return buildBirdsEyeAnimations({ positionX: positionX,
-                                       positionY: positionY,
-                                       positionZ: positionZ,
-                                       rotationX: rotationX,
-                                       rotationY: rotationY },
-                                     targetPositionX,
-                                     targetPositionZ);
-    }
+    frameCountPositionY = frameCount(positionY, targetPositionY, POSITION_Y_DELTA);
+    frameCountRotationX = frameCount(rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
+
+    positionXStationaryGenerator = new CityTour.MotionGenerator(positionX, positionX, new CityTour.LinearEasing(0));
+    positionYStationaryGenerator = new CityTour.MotionGenerator(positionY, positionY, new CityTour.LinearEasing(0));
+    positionZStationaryGenerator = new CityTour.MotionGenerator(positionZ, positionZ, new CityTour.LinearEasing(0));
+    rotationXStationaryGenerator = new CityTour.MotionGenerator(rotationX, rotationX, new CityTour.LinearEasing(0));
+    rotationYStationaryGenerator = new CityTour.MotionGenerator(targetRotationY, targetRotationY, new CityTour.LinearEasing(0));
+
+    positionXGenerator = new CityTour.MotionGenerator(positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
+    positionYGenerator = new CityTour.MotionGenerator(positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
+    positionZGenerator = new CityTour.MotionGenerator(positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.LinearEasing(frameCountRotationX));
+    rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.LinearEasing(frameCountRotationY));
+
+    // Y rotation
+    newAnimations.push(new CityTour.Animation(positionXStationaryGenerator,
+                                              positionYStationaryGenerator,
+                                              positionZStationaryGenerator,
+                                              rotationXStationaryGenerator,
+                                              rotationYGenerator));
+
+    // Rest of the movement
+    newAnimations.push(new CityTour.Animation(positionXGenerator,
+                                              positionYGenerator,
+                                              positionZGenerator,
+                                              rotationXGenerator,
+                                              rotationYStationaryGenerator));
+
+    return newAnimations;
+  };
+
+  var buildDrivingAnimations = function(initial, targetPositionX, targetPositionZ) {
+    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+    var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
+    var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
+    var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
+    var newAnimations = [];
 
     frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(positionX, positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
@@ -243,13 +268,6 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       frameCountRotationX = frameCount(rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
       aerialNavigator = undefined;
       navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
-    }
-    else if (verticalMode === HOVERING_MODE) {
-      targetPositionY = HOVERING_Y;
-      targetRotationX = 0.0;
-
-      frameCountPositionY = frameCount(positionY, targetPositionY, POSITION_Y_DELTA);
-      frameCountRotationX = frameCount(rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
     }
 
     positionXStationaryGenerator = new CityTour.MotionGenerator(positionX, positionX, new CityTour.LinearEasing(0));
@@ -279,6 +297,46 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
                                               rotationYStationaryGenerator));
 
     return newAnimations;
+  };
+
+  var buildNextAnimations = function() {
+    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+    var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
+    var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
+    var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
+    var initial;
+    var newAnimations = [];
+
+    if (verticalMode === INITIAL_DESCENT) {
+      return buildIntroAnimations();
+    }
+
+    navigator.nextTarget();
+    targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
+    targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
+
+    initial = { positionX: positionX,
+                positionY: positionY,
+                positionZ: positionZ,
+                rotationX: rotationX,
+                rotationY: rotationY };
+
+    if (verticalMode === BIRDSEYE_MODE) {
+      if (aerialNavigator === undefined) {
+        navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
+        aerialNavigator = navigator;
+      }
+
+      return buildBirdsEyeAnimations(initial, targetPositionX, targetPositionZ);
+    }
+    else if (verticalMode === HOVERING_MODE) {
+      return buildHoveringAnimations(initial, targetPositionX, targetPositionZ);
+    }
+    else if (verticalMode === DRIVING_MODE) {
+      return buildDrivingAnimations(initial, targetPositionX, targetPositionZ);
+    }
+
+    return [];
   };
 
   var determineRotationAngle = function(oldTargetPositionX, oldTargetPositionZ, oldRotationY, targetPositionX, targetPositionZ) {
