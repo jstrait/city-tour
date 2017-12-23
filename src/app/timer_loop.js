@@ -49,6 +49,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
     var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
 
+    interactiveCamera.setIsVelocityEnabled(false);
+
     vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", {});
