@@ -7,8 +7,8 @@ CityTour.Animation = function(positionXMotionGenerator, positionYMotionGenerator
   var positionX;
   var positionY;
   var positionZ;
-  var positionX;
-  var positionY;
+  var rotationX;
+  var rotationY;
 
   var tick = function() {
     positionX = positionXMotionGenerator.next();
