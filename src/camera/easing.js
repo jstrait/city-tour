@@ -62,3 +62,11 @@ CityTour.SmoothStepEasing = function(frameCount) {
 
   return CityTour.BaseEasing(frameCount, easingFunc, 0.0, 1.0);
 };
+
+CityTour.SteepEasing = function(frameCount, minX, maxX) {
+  var easingFunc = function(x) {
+    return Math.pow(Math.min(Math.cos(Math.PI * x / 2.0), 1.0 - Math.abs(x)), 3.5);
+  };
+
+  return CityTour.BaseEasing(frameCount, easingFunc, minX, maxX);
+};
