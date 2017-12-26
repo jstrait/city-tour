@@ -7,8 +7,8 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var zStep = 1 / subDivisions;
   var columnCount = coordinates.length;
   var rowCount = coordinates[0].length;
-  var columnIndexOffset = Math.floor(columnCount / 2);
-  var rowIndexOffset = Math.floor(rowCount / 2);
+  var columnIndexOffset = Math.floor(columnCount / 2 / subDivisions);
+  var rowIndexOffset = Math.floor(rowCount / 2 / subDivisions);
   var minColumn = 0 - columnIndexOffset;
   var maxColumn = columnIndexOffset;
   var minRow = 0 - rowIndexOffset;
@@ -21,7 +21,10 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   };
 
   var materialAtCoordinates = function(x, z) {
-    return (coordinates[x + columnIndexOffset][z + rowIndexOffset].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
+    var normalizedX = (x + columnIndexOffset) * subDivisions;
+    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+
+    return (coordinates[normalizedX][normalizedZ].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
   };
 
   var componentHeightAtCoordinates = function(x, z, component) {
@@ -68,8 +71,8 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   };
 
   var heightAtCoordinates = function(x, z) {
-    var normalizedX = x + columnIndexOffset;
-    var normalizedZ = z + rowIndexOffset;
+    var normalizedX = (x + columnIndexOffset) * subDivisions;
+    var normalizedZ = (z + rowIndexOffset) * subDivisions;
 
     var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
     if (landHeight === undefined) {

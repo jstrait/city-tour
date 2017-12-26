@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.TerrainGenerator = (function() {
-  var SUB_DIVISIONS = 1;
+  var SUB_DIVISIONS = 1;   // Should be a power of two
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
 
   var emptyTerrain = function(columnCount, rowCount) {
