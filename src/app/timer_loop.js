@@ -60,23 +60,13 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     interactiveCamera.syncFromCamera(camera);
     interactiveCamera.syncToCamera(camera);
 
-    var initial = {
-      positionX: vehicleController.positionX(),
-      positionY: vehicleController.positionY(),
-      positionZ: vehicleController.positionZ(),
-      rotationX: vehicleController.rotationX(),
-      rotationY: vehicleController.rotationY(),
-    };
-
-    var target = {
-      positionX: camera.position.x,
-      positionY: camera.position.y,
-      positionZ: camera.position.z,
-      rotationX: camera.rotation.x,
-      rotationY: camera.rotation.y,
-    };
-
-    vehicleToInteractiveAnimation = new CityTour.DirectTargetAnimation(initial, target, END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
+    vehicleToInteractiveAnimation = new CityTour.Animation(
+      new CityTour.MotionGenerator(vehicleController.positionX(), camera.position.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new CityTour.MotionGenerator(vehicleController.positionY(), camera.position.y, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new CityTour.MotionGenerator(vehicleController.positionZ(), camera.position.z, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new CityTour.MotionGenerator(vehicleController.rotationX(), camera.rotation.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new CityTour.MotionGenerator(vehicleController.rotationY(), camera.rotation.y, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2))
+    );
 
     mode = FLYTHROUGH_STOP;
   };
@@ -115,7 +105,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
       if (vehicleToInteractiveAnimation) {
         vehicleToInteractiveAnimation.tick();
-        if (vehicleToInteractiveAnimation.isFinished()) {
+        if (vehicleToInteractiveAnimation.finished()) {
           vehicleController = undefined;
           vehicleToInteractiveAnimation = undefined;
           messageBroker.publish("flythrough.stopped", {});
