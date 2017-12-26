@@ -15,9 +15,7 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var maxRow = rowIndexOffset;
 
   var interpolateHeight = function(point, floor, ceiling) {
-    var heightDifferential = ceiling - floor;
-    var percentage = point - Math.floor(point);
-    return floor + (heightDifferential * percentage);
+    return CityTour.Math.lerp(floor, ceiling, point - Math.floor(point));
   };
 
   var materialAtCoordinates = function(x, z) {
