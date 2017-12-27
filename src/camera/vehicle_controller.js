@@ -70,19 +70,15 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     }
   };
 
-  var buildIntroAnimations = function(initial) {
-    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+  var buildIntroAnimations = function(initial, targetPositionX, targetPositionZ) {
+    var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
     var birdsEyeTargetMapX, birdsEyeTargetMapZ;
     var newAnimations = [];
 
-    var cityCenterX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
-    var cityCenterZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
-    var birdsEyeTargetMapX, birdsEyeTargetMapZ;
-
-    var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - cityCenterZ), initial.positionX - cityCenterX) + Math.PI;
+    var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - targetPositionZ), initial.positionX - targetPositionX) + Math.PI;
     var viewAngleToCityCenter = atan2AngleToViewAngle(angleOfPositionToCityCenter);
 
     // Prevent turns wider than 180 degrees
@@ -115,9 +111,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       birdsEyeTargetMapZ = 0;
     }
 
-    targetPositionX = cityCenterX;
     targetPositionY = BIRDSEYE_Y;
-    targetPositionZ = cityCenterZ;
     targetRotationX = BIRDSEYE_X_ROTATION;
     targetRotationY = viewAngleToCityCenter;
 
@@ -309,15 +303,14 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
                 rotationX: rotationX,
                 rotationY: rotationY };
 
-    if (verticalMode === INITIAL_DESCENT) {
-      return buildIntroAnimations(initial);
-    }
-
     navigator.nextTarget();
     targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
     targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
 
-    if (verticalMode === BIRDSEYE_MODE) {
+    if (verticalMode === INITIAL_DESCENT) {
+      return buildIntroAnimations(initial, targetPositionX, targetPositionZ);
+    }
+    else if (verticalMode === BIRDSEYE_MODE) {
       if (aerialNavigator === undefined) {
         navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
         aerialNavigator = navigator;
