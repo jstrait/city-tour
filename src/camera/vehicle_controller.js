@@ -145,7 +145,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var buildBirdsEyeAnimations = function(initial, targetPositionX, targetPositionZ) {
-    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+    var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
@@ -194,7 +194,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var buildHoveringAnimations = function(initial, targetPositionX, targetPositionZ) {
-    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+    var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
@@ -242,7 +242,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var buildDrivingAnimations = function(initial, targetPositionX, targetPositionZ) {
-    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
+    var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
