@@ -70,7 +70,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     }
   };
 
-  var buildIntroAnimations = function() {
+  var buildIntroAnimations = function(initial) {
     var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
@@ -82,14 +82,14 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var cityCenterZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
     var birdsEyeTargetMapX, birdsEyeTargetMapZ;
 
-    var angleOfPositionToCityCenter = Math.atan2(-(positionZ - cityCenterZ), positionX - cityCenterX) + Math.PI;
+    var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - cityCenterZ), initial.positionX - cityCenterX) + Math.PI;
     var viewAngleToCityCenter = atan2AngleToViewAngle(angleOfPositionToCityCenter);
 
     // Prevent turns wider than 180 degrees
-    if ((rotationY - viewAngleToCityCenter) > Math.PI) {
+    if ((initial.rotationY - viewAngleToCityCenter) > Math.PI) {
       viewAngleToCityCenter += TWO_PI;
     }
-    else if ((rotationY - viewAngleToCityCenter) < -Math.PI) {
+    else if ((initial.rotationY - viewAngleToCityCenter) < -Math.PI) {
       viewAngleToCityCenter -= TWO_PI;
     }
 
@@ -121,21 +121,21 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     targetRotationX = BIRDSEYE_X_ROTATION;
     targetRotationY = viewAngleToCityCenter;
 
-    distanceToTarget = CityTour.Math.distanceBetweenPoints3D(positionX, positionY, positionZ, targetPositionX, targetPositionY, targetPositionZ);
+    distanceToTarget = CityTour.Math.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
 
     frameCountPositionX = Math.ceil(distanceToTarget / HORIZONTAL_MOTION_DELTA);
     frameCountPositionX = Math.max(60, Math.min(3 * 60, frameCountPositionX));
     frameCountPositionY = frameCountPositionX;
     frameCountPositionZ = frameCountPositionX;
     frameCountRotationX = frameCountPositionX;
-    frameCountRotationY = Math.min(frameCountPositionX, frameCount(rotationY, targetRotationY, 0.008));
+    frameCountRotationY = Math.min(frameCountPositionX, frameCount(initial.rotationY, targetRotationY, 0.008));
 
     // Move to center of the city
-    positionXGenerator = new CityTour.MotionGenerator(positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
-    positionYGenerator = new CityTour.MotionGenerator(positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
-    positionZGenerator = new CityTour.MotionGenerator(positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX));
-    rotationYGenerator = new CityTour.MotionGenerator(rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
+    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
+    positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
+    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX));
+    rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
     // Bird's eye animation to a point where the "real" bird's eye animation will begin
@@ -303,19 +303,19 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var targetPositionX, targetPositionZ;
     var initial;
 
-    if (verticalMode === INITIAL_DESCENT) {
-      return buildIntroAnimations();
-    }
-
-    navigator.nextTarget();
-    targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
-    targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
-
     initial = { positionX: positionX,
                 positionY: positionY,
                 positionZ: positionZ,
                 rotationX: rotationX,
                 rotationY: rotationY };
+
+    if (verticalMode === INITIAL_DESCENT) {
+      return buildIntroAnimations(initial);
+    }
+
+    navigator.nextTarget();
+    targetPositionX = CityTour.Coordinates.mapXToSceneX(navigator.targetMapX());
+    targetPositionZ = CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ());
 
     if (verticalMode === BIRDSEYE_MODE) {
       if (aerialNavigator === undefined) {
