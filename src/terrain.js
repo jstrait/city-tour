@@ -68,6 +68,20 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     }
   };
 
+  var landHeightAtCoordinates = function(x, z) {
+    var normalizedX = (x + columnIndexOffset) * subDivisions;
+    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+
+    return componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
+  };
+
+  var waterHeightAtCoordinates = function(x, z) {
+    var normalizedX = (x + columnIndexOffset) * subDivisions;
+    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+
+    return componentHeightAtCoordinates(normalizedX, normalizedZ, "waterHeight");
+  };
+
   var heightAtCoordinates = function(x, z) {
     var normalizedX = (x + columnIndexOffset) * subDivisions;
     var normalizedZ = (z + rowIndexOffset) * subDivisions;
@@ -88,6 +102,8 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     minRow: function() { return minRow; },
     maxRow: function() { return maxRow; },
     materialAtCoordinates: materialAtCoordinates,
+    landHeightAtCoordinates: landHeightAtCoordinates,
+    waterHeightAtCoordinates: waterHeightAtCoordinates,
     heightAtCoordinates: heightAtCoordinates,
   };
 };
