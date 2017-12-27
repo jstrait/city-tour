@@ -300,12 +300,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var buildNextAnimations = function() {
-    var targetPositionX, targetPositionY, targetPositionZ, targetRotationX, targetRotationY;
-    var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
-    var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
-    var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
+    var targetPositionX, targetPositionZ;
     var initial;
-    var newAnimations = [];
 
     if (verticalMode === INITIAL_DESCENT) {
       return buildIntroAnimations();
