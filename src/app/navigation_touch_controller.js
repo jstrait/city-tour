@@ -153,7 +153,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
       else {
         currentGesture = PINCH_ZOOM;
         distanceBetweenTouches = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
-        interactiveCamera.setZoomPercentage(interactiveCamera.zoomPercentage() + (distanceBetweenTouches / 200));
+        interactiveCamera.setZoomPercentage(interactiveCamera.zoomPercentage() + (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, interactiveCamera.zoomPercentage())));
       }
     }
   };
