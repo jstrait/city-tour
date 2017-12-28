@@ -120,13 +120,13 @@ input[type="range"] {
       <div id="menu-editor" class="display-none bg-white" style="padding: 1.5rem; border-top: 1px solid #ddd; text-align: left;">
         <div class="section">
           <h3>Terrain</h3>
-          <span class="block">
+          <span class="display-none">
             <label>Jitter</label>
             <span class="control-legend">&minus;</span>
             <input id="terrain-jitter" type="range" value="20" min="0" max="200" step="1" />
             <span class="control-legend">+</span>
           </span>
-          <span class="block">
+          <span class="display-none">
             <label>Ruggedness</label>
             <span class="control-legend">&minus;</span>
             <input id="terrain-decay" type="range" value="0.65" min="0.0" max="1.0" step="0.01" />
@@ -138,7 +138,7 @@ input[type="range"] {
           </span>
         </div>
 
-        <div class="section">
+        <div class="section display-none">
           <h3>Road Network</h3>
           <span class="block">
             <label>Size</label>
