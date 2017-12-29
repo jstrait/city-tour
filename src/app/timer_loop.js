@@ -123,6 +123,16 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   timer.onTick(1);
   timer.start();
 
+  window.addEventListener("blur", function(e) {
+    timer.pause();
+  });
+
+  window.addEventListener("focus", function(e) {
+    if (timer.isPaused()) {
+      timer.start();
+    }
+  });
+
 
   return {
     reset: reset,

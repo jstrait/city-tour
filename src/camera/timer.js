@@ -9,6 +9,8 @@ CityTour.Timer = function() {
   var paused = true;
   var previousFrameTimestamp;
 
+  var animationRequestID;
+
   var tick = function() {
     if (paused) {
       return;
@@ -30,33 +32,26 @@ CityTour.Timer = function() {
 
     timer.onTick(frameCount);
 
-    requestAnimationFrame(tick);
+    animationRequestID = requestAnimationFrame(tick);
   };
 
   var start = function() {
     paused = false;
     previousFrameTimestamp = undefined;
-    requestAnimationFrame(tick);
+    animationRequestID = requestAnimationFrame(tick);
   };
 
   var pause = function() {
     paused = true;
+    window.cancelAnimationFrame(animationRequestID);
   };
 
   var timer = {};
 
   timer.onTick = function(frameCount) {};
-
   timer.start = start;
-
-  timer.togglePause = function() {
-    if (paused) {
-      start();
-    }
-    else {
-      pause();
-    }
-  };
+  timer.pause = pause;
+  timer.isPaused = function() { return paused; };
 
   return timer;
 };
