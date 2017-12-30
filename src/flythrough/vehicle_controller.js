@@ -114,7 +114,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionY = frameCountPositionX;
     frameCountPositionZ = frameCountPositionX;
     frameCountRotationX = frameCountPositionX;
-    frameCountRotationY = Math.min(frameCountPositionX, frameCount(initial.rotationY, targetRotationY, 0.008));
+    frameCountRotationY = CityTour.Math.clamp(frameCount(initial.rotationY, targetRotationY, 0.008), 60, frameCountPositionX);
 
     // Move to center of the city
     positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
