@@ -23,42 +23,27 @@ CityTour.Scene.Builder = function() {
     return scene;
   };
 
-  var buildTerrainMeshes = function(terrain, roadNetwork) {
-    var terrainMeshes = CityTour.Scene.TerrainMeshBuilder().build(terrain, roadNetwork);
-    var terrainGroup = new THREE.Group();
-    terrainGroup.name = "terrainMeshes";
+  var buildMeshGroup = function(groupName, meshes) {
+    var group = new THREE.Group();
+    group.name = groupName;
 
-    terrainMeshes.forEach(function(mesh) {
-      terrainGroup.add(mesh);
+    meshes.forEach(function(mesh) {
+      group.add(mesh);
     });
 
-    return terrainGroup;
+    return group;
+  };
+
+  var buildTerrainMeshes = function(terrain, roadNetwork) {
+    return buildMeshGroup("terrainMeshes", CityTour.Scene.TerrainMeshBuilder().build(terrain, roadNetwork));
   };
 
   var buildRoadNetworkMeshes = function(terrain, roadNetwork) {
-    var roadNetworkMeshes = CityTour.Scene.RoadMeshBuilder().build(terrain, roadNetwork);
-    var roadNetworkGroup = new THREE.Group();
-    roadNetworkGroup.name = "roadNetworkMeshes";
-
-    roadNetworkMeshes.forEach(function(mesh) {
-      roadNetworkGroup.add(mesh);
-    });
-
-    return roadNetworkGroup;
+    return buildMeshGroup("roadNetworkMeshes", CityTour.Scene.RoadMeshBuilder().build(terrain, roadNetwork));
   };
 
   var buildBuildingMeshes = function(buildings, roadNetwork) {
-    var buildingMeshes;
-    var buildingsGroup = new THREE.Group();
-    buildingsGroup.name = "buildingMeshes";
-
-    buildingMeshes = new CityTour.Scene.BuildingMeshBuilder().build(buildings, roadNetwork);
-
-    buildingMeshes.forEach(function(mesh) {
-      buildingsGroup.add(mesh);
-    });
-
-    return buildingsGroup;
+    return buildMeshGroup("buildingMeshes", CityTour.Scene.BuildingMeshBuilder().build(buildings, roadNetwork));
   };
 
 
