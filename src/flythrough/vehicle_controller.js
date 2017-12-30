@@ -130,8 +130,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
                                                        positionZ: targetPositionZ,
                                                        rotationX: targetRotationX,
                                                        rotationY: targetRotationY },
-                                                     CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX),
-                                                     CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ));
+                                                     targetPositionX + CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX),
+                                                     targetPositionZ + CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ));
 
     return newAnimations.concat(birdsEyeAnimations);
   };
