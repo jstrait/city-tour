@@ -19,7 +19,7 @@ CityTour.InteractiveCamera = function(messageBroker) {
 
   var MINIMUM_HEIGHT_OFF_GROUND = 5.0;
 
-  var POSITION_VELOCITY_DECAY = 0.85;
+  var POSITION_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
   var TILT_VELOCITY_DECAY = 0.85;
   var ROTATION_VELOCITY_DECAY = 0.85;
