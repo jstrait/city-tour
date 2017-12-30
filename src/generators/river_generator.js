@@ -90,54 +90,7 @@ CityTour.RiverGenerator = (function() {
         terrainCoordinates[xCoordinate][z].waterHeight = WATER_HEIGHT;
       }
     }
-
-    //erodeNorthRiverBank(terrainCoordinates, topCurve, minimumRiverBankHeight, xStep);
   };
-
-
-  var erodeNorthRiverBank = function(terrainCoordinates, riverBankCurve, riverBankHeight, xStep) {
-    var MAX_HEIGHT_INCREASE = 1.0;
-    var MAX_HEIGHT_DECREASE = -0.5;
-    var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 16;
-    var MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK = 25;
-
-    var i, x;
-    var xCoordinate, zCoordinate;
-    var vector;
-    var baseHeight;
-    var newHeight;
-    var depth;
-    var heightIncreaseAmount;
-    var previousX = -1;
-
-    baseHeight = riverBankHeight;
-    depth = Math.round(CityTour.Math.lerp(MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK,
-                                          MIN_EROSION_DISTANCE_AWAY_FROM_RIVERBANK,
-                                          Math.random()));
-    for (i = 1; i < depth; i++) {
-      heightIncreaseAmount = CityTour.Math.lerp(0.0, MAX_HEIGHT_INCREASE, Math.random());
-      baseHeight += heightIncreaseAmount;
-      previousX = -1;
-
-      for (x = 0.0; x <= 1.0; x += xStep / 2) {
-        vector = riverBankCurve.getPointAt(x);
-        xCoordinate = Math.round(vector.x);
-
-        if (xCoordinate > previousX) {
-          zCoordinate = Math.ceil(vector.y) - i;
-
-          newHeight = baseHeight + heightIncreaseAmount + CityTour.Math.lerp(MAX_HEIGHT_DECREASE, MAX_HEIGHT_INCREASE, Math.random());
-
-          if (newHeight < terrainCoordinates[xCoordinate][zCoordinate].landHeight) {
-            terrainCoordinates[xCoordinate][zCoordinate].landHeight = newHeight;
-          }
-        }
-      }
-
-      previousX = xCoordinate;
-    }
-  };
-
 
   var floodFill = function(terrainCoordinates, x, z, height, material) {
     terrainCoordinates[x][z].landHeight = height;
