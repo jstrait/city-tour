@@ -82,7 +82,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
         (e.which !== undefined && e.which === 0)) {
       el.classList.remove("cursor-grabbing");
       currentGesture = undefined;
-      previousTouchPoints = []
+      previousTouchPoints = [];
     }
   };
 
