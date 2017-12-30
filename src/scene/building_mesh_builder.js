@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 CityTour.Scene = CityTour.Scene || {};
 
-CityTour.Scene.BuildingGeometryBuilder = function() {
+CityTour.Scene.BuildingMeshBuilder = function() {
   var buildMaterials = function() {
     var i;
     var random;
@@ -84,9 +84,9 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
   };
 
 
-  var buildingGeometryBuilder = {};
+  var buildingMeshBuilder = {};
 
-  buildingGeometryBuilder.build = function(buildings, roadNetwork) {
+  buildingMeshBuilder.build = function(buildings, roadNetwork) {
     var i;
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
@@ -101,5 +101,5 @@ CityTour.Scene.BuildingGeometryBuilder = function() {
     return buildingMeshes;
   };
 
-  return buildingGeometryBuilder;
+  return buildingMeshBuilder;
 };

@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 CityTour.Scene = CityTour.Scene || {};
 
-CityTour.Scene.RoadGeometryBuilder = function() {
+CityTour.Scene.RoadMeshBuilder = function() {
   var HALF_PI = Math.PI / 2;
   var SIDEWALK_X_CENTER = (CityTour.Config.STREET_WIDTH / 2) - (CityTour.Config.SIDEWALK_WIDTH / 2);
   var SIDEWALK_Z_CENTER = (CityTour.Config.STREET_DEPTH / 2) - (CityTour.Config.SIDEWALK_DEPTH / 2);
@@ -53,9 +53,9 @@ CityTour.Scene.RoadGeometryBuilder = function() {
     return new THREE.Mesh(intersectionSidewalkCornerGeometry);
   };
 
-  var roadGeometryBuilder = {};
+  var roadMeshBuilder = {};
 
-  roadGeometryBuilder.build = function(terrain, roadNetwork) {
+  roadMeshBuilder.build = function(terrain, roadNetwork) {
     var HALF_BLOCK_AND_STREET_WIDTH = CityTour.Config.BLOCK_AND_STREET_WIDTH / 2;
     var HALF_BLOCK_AND_STREET_DEPTH = CityTour.Config.BLOCK_AND_STREET_DEPTH / 2;
     var BRIDGE_SUPPORT_HEIGHT = 100.0;
@@ -349,5 +349,5 @@ CityTour.Scene.RoadGeometryBuilder = function() {
             new THREE.Mesh(guardrailGeometry, guardrailMaterial)];
   };
 
-  return roadGeometryBuilder;
+  return roadMeshBuilder;
 };

@@ -24,7 +24,7 @@ CityTour.Scene.Builder = function() {
   };
 
   var buildTerrainMeshes = function(terrain, roadNetwork) {
-    var terrainMeshes = CityTour.Scene.TerrainGeometryBuilder().build(terrain, roadNetwork);
+    var terrainMeshes = CityTour.Scene.TerrainMeshBuilder().build(terrain, roadNetwork);
     var terrainGroup = new THREE.Group();
     terrainGroup.name = "terrainMeshes";
 
@@ -36,7 +36,7 @@ CityTour.Scene.Builder = function() {
   };
 
   var buildRoadNetworkMeshes = function(terrain, roadNetwork) {
-    var roadNetworkMeshes = CityTour.Scene.RoadGeometryBuilder().build(terrain, roadNetwork);
+    var roadNetworkMeshes = CityTour.Scene.RoadMeshBuilder().build(terrain, roadNetwork);
     var roadNetworkGroup = new THREE.Group();
     roadNetworkGroup.name = "roadNetworkMeshes";
 
@@ -52,7 +52,7 @@ CityTour.Scene.Builder = function() {
     var buildingsGroup = new THREE.Group();
     buildingsGroup.name = "buildingMeshes";
 
-    buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
+    buildingMeshes = new CityTour.Scene.BuildingMeshBuilder().build(buildings, roadNetwork);
 
     buildingMeshes.forEach(function(mesh) {
       buildingsGroup.add(mesh);
