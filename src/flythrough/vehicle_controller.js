@@ -110,7 +110,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     distanceToTarget = CityTour.Math.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
 
     frameCountPositionX = Math.ceil(distanceToTarget / HORIZONTAL_MOTION_DELTA);
-    frameCountPositionX = Math.max(60, Math.min(3 * 60, frameCountPositionX));
+    frameCountPositionX = CityTour.Math.clamp(frameCountPositionX, 60, 3 * 60);
     frameCountPositionY = frameCountPositionX;
     frameCountPositionZ = frameCountPositionX;
     frameCountRotationX = frameCountPositionX;
