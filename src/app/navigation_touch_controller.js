@@ -8,6 +8,9 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   var ROTATE = 3;
   var PINCH_ZOOM = 4;
 
+  var MIN_ROTATION_ANGLE =  0.01745329;  // 1 degree
+  var MIN_ZOOM_DELTA = 0.5;
+
   var currentGesture;
   var previousTouchPoints;
 
@@ -119,7 +122,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   };
 
   var rotationYActive = function(rotationYDelta) {
-    return Math.abs(rotationYDelta) >= 0.01;
+    return Math.abs(rotationYDelta) >= MIN_ROTATION_ANGLE;
   };
 
   var processMultiTouchGestures = function(currentTouchPoints) {
@@ -153,7 +156,9 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
       else {
         currentGesture = PINCH_ZOOM;
         distanceBetweenTouches = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
-        interactiveCamera.setZoomPercentage(interactiveCamera.zoomPercentage() + (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, interactiveCamera.zoomPercentage())));
+        if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
+          interactiveCamera.setZoomPercentage(interactiveCamera.zoomPercentage() + (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, interactiveCamera.zoomPercentage())));
+        }
       }
     }
   };
