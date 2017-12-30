@@ -2,7 +2,7 @@
 
 Visit a procedurally generated city, different each time. Sit back and enjoy the ride!
 
-<http://www.joelstrait.com/citytour/>
+<https://www.joelstrait.com/citytour/>
 
 <img src="city_tour.gif" width="400" />
 
