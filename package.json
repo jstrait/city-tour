@@ -1,0 +1,16 @@
+{
+  "name": "city_tour",
+  "version": "3.0.0",
+  "description": "City Tour",
+  "main": "city_tour.js",
+  "repository": "https://github.com/jstrait/city-tour.git",
+  "author": "Joel Strait",
+  "license": "MIT",
+  "homepage": "https://joelstrait.com/citytour/",
+  "scripts": {
+    "build": "uglifyjs --version; uglifyjs src/*.js src/**/*.js --compress --mangle --source-map filename=city_tour.js.map -o city_tour.js"
+  },
+  "devDependencies": {
+    "uglify-js": "^3.3.3"
+  }
+}
