@@ -18,7 +18,7 @@ CityTour.RiverGenerator = (function() {
     var i;
     var baseCurvePoints, topCurvePoints, bottomCurvePoints;
     var randomJitter;
-    var baseCurve, topCurve, bottomCurve;
+    var topCurve, bottomCurve;
 
     var riverSubDivisions = Math.round((Math.random() * (MAX_RIVER_BENDS - MIN_RIVER_BENDS))) + MIN_RIVER_BENDS;
     baseCurvePoints = [new THREE.Vector2(0, middleRow)];
@@ -26,7 +26,6 @@ CityTour.RiverGenerator = (function() {
       var column = columnsToGenerate * i * (1 / riverSubDivisions);
       baseCurvePoints.push(new THREE.Vector2(column, middleRow + ((Math.random() * MAX_BEND_AMOUNT) - (MAX_BEND_AMOUNT / 2))));
     }
-    baseCurve = new THREE.SplineCurve(baseCurvePoints);
 
     topCurvePoints = [];
     bottomCurvePoints = [];

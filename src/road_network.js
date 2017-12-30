@@ -81,7 +81,6 @@ CityTour.RoadNetwork = function(terrain) {
     var xIsExact = Math.floor(mapX) === mapX;
     var zIsExact = Math.floor(mapZ) === mapZ;
     var floor, ceil;
-    var heightDifferential, percentage;
 
     if (xIsExact && zIsExact) {
       return getIntersectionHeight(mapX, mapZ);
