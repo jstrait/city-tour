@@ -61,10 +61,10 @@ CityTour.WorldGenerator = (function() {
     };
 
     var zonedBlocksStartTime = new Date();
-    var zonedBlocks = (!GENERATE_BUILDINGS || cityCenter === undefined) ? false : CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig);
+    var zonedBlocks = (!GENERATE_BUILDINGS || cityCenter === undefined) ? [] : CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig);
     var zonedBlocksEndTime = new Date();
     var buildingsStartTime = new Date();
-    var buildings = (!GENERATE_BUILDINGS || cityCenter === undefined) ? false : CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
+    var buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
     var buildingsEndTime = new Date();
 
     var simplifierStartTime = new Date();

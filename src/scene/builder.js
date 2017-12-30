@@ -52,13 +52,11 @@ CityTour.Scene.Builder = function() {
     var buildingsGroup = new THREE.Group();
     buildingsGroup.name = "buildingMeshes";
 
-    if (buildings) {
-      buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
+    buildingMeshes = new CityTour.Scene.BuildingGeometryBuilder().build(buildings, roadNetwork);
 
-      buildingMeshes.forEach(function(mesh) {
-        buildingsGroup.add(mesh);
-      });
-    }
+    buildingMeshes.forEach(function(mesh) {
+      buildingsGroup.add(mesh);
+    });
 
     return buildingsGroup;
   };
