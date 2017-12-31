@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 
-CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, messageBroker) {
+CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
   var FLYTHROUGH_STOP = 3;
@@ -19,7 +19,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   var syncToCamera = function() {
     if (mode === INTERACTIVE) {
-      interactiveCamera.syncToCamera(camera);
+      orbitalCamera.syncToCamera(camera);
     }
     else if (mode === FLYTHROUGH) {
       camera.position.x = vehicleController.positionX();
@@ -49,7 +49,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
     var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
     var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
 
-    interactiveCamera.setIsVelocityEnabled(false);
+    orbitalCamera.setIsVelocityEnabled(false);
 
     vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     mode = FLYTHROUGH;
@@ -57,8 +57,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
   };
 
   var requestStopFlythrough = function() {
-    interactiveCamera.syncFromCamera(camera);
-    interactiveCamera.syncToCamera(camera);
+    orbitalCamera.syncFromCamera(camera);
+    orbitalCamera.syncToCamera(camera);
 
     vehicleToInteractiveAnimation = new CityTour.Animation(
       new CityTour.MotionGenerator(vehicleController.positionX(), camera.position.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
@@ -86,7 +86,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
 
   var reset = function(newWorldData) {
     worldData = newWorldData;
-    interactiveCamera.setTerrain(worldData.terrain);
+    orbitalCamera.setTerrain(worldData.terrain);
     syncToCamera();
   };
 
@@ -113,8 +113,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, interactiveCamera, me
       }
     }
 
-    if (interactiveCamera.isVelocityEnabled()) {
-      interactiveCamera.tickVelocity(frameCount);
+    if (orbitalCamera.isVelocityEnabled()) {
+      orbitalCamera.tickVelocity(frameCount);
     }
 
     syncToCamera();

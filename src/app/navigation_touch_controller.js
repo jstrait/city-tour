@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationTouchController = function(el, interactiveCamera, messageBroker) {
+CityTour.NavigationTouchController = function(el, orbitalCamera, messageBroker) {
   var PAN = 1;
   var TILT = 2;
   var ROTATE = 3;
@@ -17,7 +17,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
     previousTouchPoints = [{x: e.clientX, z: e.clientY}];
-    interactiveCamera.setIsVelocityEnabled(false);
+    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStart = function(e) {
@@ -30,7 +30,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     }
 
     e.preventDefault();
-    interactiveCamera.setIsVelocityEnabled(false);
+    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStartStub = function(e) {
@@ -63,7 +63,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     currentGesture = undefined;
 
     if (previousTouchPoints !== undefined) {
-      interactiveCamera.setIsVelocityEnabled(true);
+      orbitalCamera.setIsVelocityEnabled(true);
     }
 
     previousTouchPoints = [];
@@ -73,7 +73,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
     currentGesture = undefined;
 
     if (previousTouchPoints !== undefined) {
-      interactiveCamera.setIsVelocityEnabled(true);
+      orbitalCamera.setIsVelocityEnabled(true);
     }
 
     previousTouchPoints = [];
@@ -90,20 +90,20 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
   };
 
   var panCamera = function(currentTouchPoints) {
-    var rotationY = interactiveCamera.rotationAngle();
+    var rotationY = orbitalCamera.rotationAngle();
     var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
     var dragZDistanceInPixels = currentTouchPoints[0].z - previousTouchPoints[0].z;
     var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
 
     // Scale the drag distance based on the camera zoom. If zoomed in, dragging should
     // move the camera less than if the camera is zoomed out.
-    var zoomMultiplier = (((1 - interactiveCamera.zoomPercentage()) * 0.92)) + 0.08;
+    var zoomMultiplier = (((1 - orbitalCamera.zoomPercentage()) * 0.92)) + 0.08;
     var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
     var scaledDragDistanceInPixels = totalDragDistanceInPixels * zoomMultiplier;
 
     var rotatedDragXDistance = scaledDragDistanceInPixels * Math.cos(dragAngle - rotationY);
     var rotatedDragZDistance = scaledDragDistanceInPixels * Math.sin(dragAngle - rotationY);
-    interactiveCamera.setCenterCoordinates(interactiveCamera.centerX() + rotatedDragXDistance, interactiveCamera.centerZ() + rotatedDragZDistance);
+    orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() + rotatedDragXDistance, orbitalCamera.centerZ() + rotatedDragZDistance);
   };
 
 
@@ -143,7 +143,7 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
 
     if (currentGesture === TILT) {
       yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
-      interactiveCamera.setTiltPercentage(interactiveCamera.tiltPercentage() + (yDistanceDelta / 100));
+      orbitalCamera.setTiltPercentage(orbitalCamera.tiltPercentage() + (yDistanceDelta / 100));
     }
     else {
       previousAngleBetweenTouches = Math.atan2(-(previousTouchPoints[1].x - previousTouchPoints[0].x), -(previousTouchPoints[1].z - previousTouchPoints[0].z));
@@ -151,13 +151,13 @@ CityTour.NavigationTouchController = function(el, interactiveCamera, messageBrok
 
       if (rotationYActive(rotationAngleDelta)) {
         currentGesture = ROTATE;
-        interactiveCamera.setRotationAngle(interactiveCamera.rotationAngle() + rotationAngleDelta);
+        orbitalCamera.setRotationAngle(orbitalCamera.rotationAngle() + rotationAngleDelta);
       }
       else {
         currentGesture = PINCH_ZOOM;
         distanceBetweenTouches = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
         if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
-          interactiveCamera.setZoomPercentage(interactiveCamera.zoomPercentage() + (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, interactiveCamera.zoomPercentage())));
+          orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage())));
         }
       }
     }

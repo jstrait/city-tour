@@ -32,14 +32,14 @@ CityTour.App = (function() {
     var container = document.getElementById("container");
 
     var messageBroker = new CityTour.MessageBroker();
-    var interactiveCamera = new CityTour.InteractiveCamera(messageBroker);
+    var orbitalCamera = new CityTour.OrbitalCamera(messageBroker);
     var cityConfigService = new CityTour.CityConfigService();
     var initialWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
     var sceneView = new CityTour.SceneView(container, initialWorldData, messageBroker);
-    var timerLoop = new CityTour.TimerLoop(initialWorldData, sceneView, interactiveCamera, messageBroker);
+    var timerLoop = new CityTour.TimerLoop(initialWorldData, sceneView, orbitalCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
-    var navigationController = new CityTour.NavigationController(interactiveCamera, timerLoop, messageBroker);
-    var navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), interactiveCamera, messageBroker);
+    var navigationController = new CityTour.NavigationController(orbitalCamera, timerLoop, messageBroker);
+    var navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), orbitalCamera, messageBroker);
 
     container.appendChild(sceneView.domElement());
 

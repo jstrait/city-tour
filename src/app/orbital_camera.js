@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.InteractiveCamera = function(messageBroker) {
+CityTour.OrbitalCamera = function(messageBroker) {
   var TWO_PI = Math.PI * 2;
 
   var MIN_CENTER_X = -1000.0;

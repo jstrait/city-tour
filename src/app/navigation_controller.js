@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBroker) {
+CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker) {
   var DOWN_ARROW = "&#9660;";
   var UP_ARROW = "&#9650;";
   var START_TOUR_MESSAGE = "Take a Tour";
@@ -24,9 +24,9 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
   };
 
   var render = function(data) {
-    rotationYControl.value = interactiveCamera.rotationAngle() * (180 / Math.PI);
-    rotationXControl.value = interactiveCamera.tiltPercentage();
-    zoomControl.value = interactiveCamera.zoomPercentage();
+    rotationYControl.value = orbitalCamera.rotationAngle() * (180 / Math.PI);
+    rotationXControl.value = orbitalCamera.tiltPercentage();
+    zoomControl.value = orbitalCamera.zoomPercentage();
 
     if (navigationControlsEnabled) {
       containerToggle.innerHTML = DOWN_ARROW;
@@ -44,18 +44,18 @@ CityTour.NavigationController = function(interactiveCamera, timerLoop, messageBr
     var degrees = parseInt(rotationYControl.value, 10);
     var radians = degrees * (Math.PI / 180);
 
-    interactiveCamera.setRotationAngle(radians);
-    interactiveCamera.setIsVelocityEnabled(false);
+    orbitalCamera.setRotationAngle(radians);
+    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var setTiltAngle = function(e) {
-    interactiveCamera.setTiltPercentage(parseFloat(rotationXControl.value));
-    interactiveCamera.setIsVelocityEnabled(false);
+    orbitalCamera.setTiltPercentage(parseFloat(rotationXControl.value));
+    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var setZoomPercentage = function(e) {
-    interactiveCamera.setZoomPercentage(parseFloat(zoomControl.value));
-    interactiveCamera.setIsVelocityEnabled(false);
+    orbitalCamera.setZoomPercentage(parseFloat(zoomControl.value));
+    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var toggleFlythrough = function(e) {
