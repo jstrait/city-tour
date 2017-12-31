@@ -99,6 +99,11 @@ input[type="range"] {
 .center { text-align: center; }
 .no-underline { text-decoration: none; }
 
+.top-0 { top: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+.right-0 { right: 0; }
+
 .cursor-grabbing {
   cursor: -webkit-grabbing;
   cursor: grabbing;
@@ -109,15 +114,18 @@ input[type="range"] {
 
 .black { color: #2a2b2b; }
 .bg-white { background: #fff; }
+
+.bt-gray { border-top-color: #ddd; }
+.bt-thin { border-top-width: 1px; border-top-style: solid; }
     </style>
 </head>
 <body>
   <div id="container" class="full-width full-height">
-    <div id="city-editor-container" class="absolute" style="top: 0; right: 0; text-align: right;">
+    <div id="city-editor-container" class="absolute top-0 right-0" style="text-align: right;">
       <div class="block full-width">
         <a id="menu-editor-title" href="javascript:void(0);" class="menu-title inline-block no-underline">New City</a><a id="menu-about-title" href="javascript:void(0);" class="menu-title inline-block no-underline">About</a>
       </div>
-      <div id="menu-editor" class="display-none bg-white" style="padding: 1.5rem; border-top: 1px solid #ddd; text-align: left;">
+      <div id="menu-editor" class="display-none bg-white bt-thin bt-gray" style="padding: 1.5rem; text-align: left;">
         <div class="section">
           <h3>Terrain</h3>
           <span class="display-none">
@@ -165,11 +173,11 @@ input[type="range"] {
         </div>
 
         <span class="block center">
-          <button id="reset" style="margin-left: auto; margin-right: auto;">Create New City</button>
+          <button id="reset">Create New City</button>
         </span>
       </div>
 
-      <div id="menu-about" class="display-none bg-white center" style="padding: 3.0rem; border-top: 1px solid #ddd;">
+      <div id="menu-about" class="display-none bg-white bt-thin bt-gray center" style="padding: 3.0rem;">
         <h1 class="mt0">City Tour</h1>
         <p class="mb0">Code available <a href="https://github.com/jstrait/city-tour/">at GitHub</a></p>
         <p class="mt0 mb0">Made using <a href="http://threejs.org">three.js</a> and WebGL</p>
@@ -178,7 +186,7 @@ input[type="range"] {
     </div>
 
 
-    <div id="navigation-controls-container" class="absolute bg-white" style="bottom: 0; right: 0;">
+    <div id="navigation-controls-container" class="absolute bottom-0 right-0 bg-white">
       <a id="navigation-controls-toggle" href="javascript:void(0);" class="block full-width center no-underline">&#9650;</a>
       <div id="navigation-controls-inner-container" class="display-none" style="padding-top: 0.5rem; padding-bottom: 0.5rem; padding-left: 1.0rem; padding-right: 1.0rem;">
         <span class="block">
@@ -206,7 +214,7 @@ input[type="range"] {
     </div>
   </div>
 
-  <div id="loading-message" class="flex absolute" style="top: 0; left: 0; right: 0; bottom: 0;">Building new city...</div>
+  <div id="loading-message" class="flex absolute top-0 bottom-0 left-0 right-0">Building new city...</div>
 </body>
 <script src="lib/three-v89.min.js" type="text/javascript"></script>
 <script src="lib/analytics.js" type="text/javascript"></script>
