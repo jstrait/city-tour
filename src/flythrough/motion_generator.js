@@ -20,3 +20,10 @@ CityTour.MotionGenerator = function(start, target, easingFunction) {
     next: next,
   };
 };
+
+CityTour.StaticMotionGenerator = function(target) {
+  return {
+    finished: function() { return true; },
+    next: function() { return target; },
+  };
+};
