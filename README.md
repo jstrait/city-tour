@@ -22,7 +22,7 @@ The results are different each time due to random variation, but follow configur
 
 Next, this abstract definition is turned into a 3D model that can be rendered with WebGL, with the help of [three.js](http://threejs.org).
 
-Finally, a rendering loop begins which moves a three.js camera around the scene.
+Once this is all created, you can move around the city using touch gestures (mobile) or the mouse (desktop). Navigation works similar to Google/Apple Maps. You can also click the "Take a Tour" button to go on an automatic flight/drive through the city.
 
 
 ## Local Development
