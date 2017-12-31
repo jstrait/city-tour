@@ -68,6 +68,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
     var birdsEyeTargetMapX, birdsEyeTargetMapZ;
+    var birdsEyeTargetPositionX, birdsEyeTargetPositionZ, birdsEyeTargetRotationY;
+    var birdsEyeFrameCountPositionX, birdsEyeFrameCountPositionY, birdsEyeFrameCountPositionZ, birdsEyeFrameCountRotationX, birdsEyeFrameCountRotationY;
     var newAnimations = [];
 
     var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - targetPositionZ), initial.positionX - targetPositionX) + Math.PI;
@@ -117,23 +119,33 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountRotationY = CityTour.Math.clamp(frameCount(initial.rotationY, targetRotationY, 0.008), 60, frameCountPositionX);
 
     // Move to center of the city
-    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
+    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.SmoothStepEasing(frameCountPositionX));
     positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
-    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
+    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.SmoothStepEasing(frameCountPositionZ));
     rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX));
     rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    // Bird's eye animation to a point where the "real" bird's eye animation will begin
-    var birdsEyeAnimations = buildBirdsEyeAnimations({ positionX: targetPositionX,
-                                                       positionY: targetPositionY,
-                                                       positionZ: targetPositionZ,
-                                                       rotationX: targetRotationX,
-                                                       rotationY: targetRotationY },
-                                                     targetPositionX + CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX),
-                                                     targetPositionZ + CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ));
 
-    return newAnimations.concat(birdsEyeAnimations);
+    birdsEyeTargetPositionX = targetPositionX + CityTour.Coordinates.mapXToSceneX(birdsEyeTargetMapX);
+    birdsEyeTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(birdsEyeTargetMapZ);
+    birdsEyeTargetRotationY = determineRotationAngle(targetPositionX, targetPositionZ, targetRotationY, birdsEyeTargetPositionX, birdsEyeTargetPositionZ);
+
+    birdsEyeFrameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(targetPositionX, targetPositionZ, birdsEyeTargetPositionX, birdsEyeTargetPositionZ) / HORIZONTAL_MOTION_DELTA);
+    birdsEyeFrameCountPositionY = birdsEyeFrameCountPositionX;
+    birdsEyeFrameCountPositionZ = birdsEyeFrameCountPositionX;
+    birdsEyeFrameCountRotationX = birdsEyeFrameCountPositionX;
+    birdsEyeFrameCountRotationY = Math.ceil(birdsEyeFrameCountPositionX / 3);
+
+    // Transition to initial bird's eye movement
+    newAnimations.push(new CityTour.Animation(new CityTour.MotionGenerator(targetPositionX, birdsEyeTargetPositionX, new CityTour.LinearEasing(birdsEyeFrameCountPositionX)),
+                                              new CityTour.MotionGenerator(targetPositionY, targetPositionY, new CityTour.LinearEasing(birdsEyeFrameCountPositionY)),
+                                              new CityTour.MotionGenerator(targetPositionZ, birdsEyeTargetPositionZ, new CityTour.LinearEasing(birdsEyeFrameCountPositionZ)),
+                                              new CityTour.MotionGenerator(targetRotationX, targetRotationX, new CityTour.LinearEasing(birdsEyeFrameCountRotationX)),
+                                              new CityTour.MotionGenerator(targetRotationY, birdsEyeTargetRotationY, new CityTour.SineEasing(birdsEyeFrameCountRotationY, 0.0, HALF_PI))));
+
+
+    return newAnimations;
   };
 
   var buildBirdsEyeAnimations = function(initial, targetPositionX, targetPositionZ) {
