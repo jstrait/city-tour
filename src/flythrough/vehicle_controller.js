@@ -11,7 +11,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var HOVERING_MODE = 'hovering';
   var BIRDSEYE_MODE = 'birdseye';
 
-  var HORIZONTAL_MOTION_DELTA = 0.2;
+  var DRIVING_HORIZONTAL_MOTION_DELTA = 0.2;
+  var FLYING_HORIZONTAL_MOTION_DELTA = 0.3;
   var BIRDSEYE_Y = 150;
   var HOVERING_Y = 15;
   var POSITION_Y_DELTA = 2;
@@ -112,7 +113,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
     distanceToTarget = CityTour.Math.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
 
-    frameCountPositionX = Math.ceil(distanceToTarget / HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(distanceToTarget / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionX = CityTour.Math.clamp(frameCountPositionX, 60, 3 * 60);
     frameCountPositionY = frameCountPositionX;
     frameCountPositionZ = frameCountPositionX;
@@ -161,7 +162,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
@@ -210,7 +211,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
@@ -258,7 +259,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
