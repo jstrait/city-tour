@@ -124,7 +124,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
     positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
     positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX));
+    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SteepEasing(frameCountRotationX, -1.0, 0.0));
     rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
@@ -133,11 +133,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     drivingTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(drivingTargetMapZ);
     drivingTargetRotationY = determineRotationAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
-    diveFrameCount = 90;
+    diveFrameCount = 120;
 
     // Move to ground level, and rotate to initial driving X/Y rotation
     newAnimations.push(new CityTour.Animation(new CityTour.StaticMotionGenerator(targetPositionX),
-                                              new CityTour.MotionGenerator(targetPositionY, drivingTargetPositionY, new CityTour.SineEasing(diveFrameCount, 0.0, HALF_PI)),
+                                              new CityTour.MotionGenerator(targetPositionY, drivingTargetPositionY, new CityTour.SmoothStepEasing(diveFrameCount)),
                                               new CityTour.StaticMotionGenerator(targetPositionZ),
                                               new CityTour.MotionGenerator(targetRotationX, 0.0, new CityTour.SteepEasing(diveFrameCount, -1.0, 0.0)),
                                               new CityTour.MotionGenerator(targetRotationY, drivingTargetRotationY, new CityTour.LinearEasing(diveFrameCount))));
