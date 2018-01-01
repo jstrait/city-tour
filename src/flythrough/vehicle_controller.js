@@ -68,8 +68,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
+    var descentTargetMapX, descentTargetMapZ;
+    var descentTargetPositionX, descentTargetPositionY, descentTargetPositionZ;
     var drivingTargetMapX, drivingTargetMapZ;
-    var drivingTargetPositionX, drivingTargetPositionY, drivingTargetPositionZ, drivingTargetRotationY;
+    var drivingTargetPositionX, drivingTargetPositionZ, drivingTargetRotationY;
     var diveFrameCount;
     var newAnimations = [];
     var drivingAnimations;
@@ -91,19 +93,27 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     }
 
     if (positiveViewAngleToCityCenter >= ((7 * Math.PI) / 4) || positiveViewAngleToCityCenter < (Math.PI / 4)) {  // Moving north-ish
+      descentTargetMapX = 0;
+      descentTargetMapZ = -3;
       drivingTargetMapX = 0;
-      drivingTargetMapZ = -3;
+      drivingTargetMapZ = -6;
     }
     else if (positiveViewAngleToCityCenter >= (Math.PI / 4) && positiveViewAngleToCityCenter < ((3 * Math.PI) / 4)) {  // Moving west-ish
-      drivingTargetMapX = -3;
+      descentTargetMapX = -3;
+      descentTargetMapZ = 0;
+      drivingTargetMapX = -6;
       drivingTargetMapZ = 0;
     }
     else if (positiveViewAngleToCityCenter >= ((3 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((5 * Math.PI) / 4)) { // Moving south-ish
+      descentTargetMapX = 0;
+      descentTargetMapZ = 3;
       drivingTargetMapX = 0;
-      drivingTargetMapZ = 3;
+      drivingTargetMapZ = 6;
     }
     else if (positiveViewAngleToCityCenter >= ((5 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((7 * Math.PI) / 4)) { // Moving east-ish
-      drivingTargetMapX = 3;
+      descentTargetMapX = 3;
+      descentTargetMapZ = 0;
+      drivingTargetMapX = 6;
       drivingTargetMapZ = 0;
     }
 
@@ -124,28 +134,31 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
     positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
     positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SteepEasing(frameCountRotationX, -1.0, 0.0));
+    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX, -1.0, 0.0));
     rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
+    descentTargetPositionX = targetPositionX + CityTour.Coordinates.mapXToSceneX(descentTargetMapX);
+    descentTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(descentTargetMapZ);
+    descentTargetPositionY = roadNetwork.getRoadHeight(CityTour.Coordinates.sceneXToMapX(descentTargetPositionX), CityTour.Coordinates.sceneZToMapZ(descentTargetPositionZ));
+
     drivingTargetPositionX = targetPositionX + CityTour.Coordinates.mapXToSceneX(drivingTargetMapX);
-    drivingTargetPositionY = roadNetwork.getRoadHeight(CityTour.Coordinates.sceneXToMapX(targetPositionX), CityTour.Coordinates.sceneZToMapZ(targetPositionZ));
     drivingTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(drivingTargetMapZ);
     drivingTargetRotationY = determineRotationAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
-    diveFrameCount = 120;
+    diveFrameCount = 105;
 
-    // Move to ground level, and rotate to initial driving X/Y rotation
-    newAnimations.push(new CityTour.Animation(new CityTour.StaticMotionGenerator(targetPositionX),
-                                              new CityTour.MotionGenerator(targetPositionY, drivingTargetPositionY, new CityTour.SmoothStepEasing(diveFrameCount)),
-                                              new CityTour.StaticMotionGenerator(targetPositionZ),
-                                              new CityTour.MotionGenerator(targetRotationX, 0.0, new CityTour.SteepEasing(diveFrameCount, -1.0, 0.0)),
-                                              new CityTour.MotionGenerator(targetRotationY, drivingTargetRotationY, new CityTour.LinearEasing(diveFrameCount))));
+    // Dive to ground level, and rotate to initial driving X/Y rotation
+    newAnimations.push(new CityTour.Animation(new CityTour.MotionGenerator(targetPositionX, descentTargetPositionX, new CityTour.LinearEasing(diveFrameCount)),
+                                              new CityTour.MotionGenerator(descentTargetPositionY, targetPositionY, new CityTour.SteepEasing(diveFrameCount, 0.0, 1.0)),
+                                              new CityTour.MotionGenerator(targetPositionZ, descentTargetPositionZ, new CityTour.LinearEasing(diveFrameCount)),
+                                              new CityTour.MotionGenerator(targetRotationX, 0.0, new CityTour.SineEasing(diveFrameCount, 0.0, HALF_PI)),
+                                              new CityTour.MotionGenerator(targetRotationY, drivingTargetRotationY, new CityTour.SineEasing(diveFrameCount, 0.0, HALF_PI))));
 
     // Drive to target point
-    drivingAnimations = buildDrivingAnimations({ positionX: targetPositionX,
-                                                 positionY: drivingTargetPositionY,
-                                                 positionZ: targetPositionZ,
+    drivingAnimations = buildDrivingAnimations({ positionX: descentTargetPositionX,
+                                                 positionY: descentTargetPositionY,
+                                                 positionZ: descentTargetPositionZ,
                                                  rotationX: 0.0,
                                                  rotationY: drivingTargetRotationY, },
                                                drivingTargetPositionX,
