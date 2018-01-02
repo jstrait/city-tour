@@ -117,6 +117,15 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
       drivingTargetMapZ = 0;
     }
 
+    // Prevent attempting to navigate to non-existent road intersection, which will cause things to blow up
+    if (!roadNetwork.hasIntersection(descentTargetMapX, descentTargetMapZ) || !roadNetwork.hasIntersection(drivingTargetMapX, drivingTargetMapZ)) {
+      descentTargetMapX = 0;
+      descentTargetMapZ = 0;
+      drivingTargetMapX = 0;
+      drivingTargetMapZ = 0;
+    }
+
+
     targetPositionY = BIRDSEYE_Y;
     targetRotationX = -Math.PI / 2;
     targetRotationY = viewAngleToCityCenter;
