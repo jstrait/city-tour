@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationTouchController = function(el, orbitalCamera, messageBroker) {
+CityTour.NavigationTouchController = function(el, orbitalCamera, camera, messageBroker) {
   var PAN = 1;
   var TILT = 2;
   var ROTATE = 3;
@@ -89,21 +89,63 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, messageBroker) 
     }
   };
 
+  var normalizedScreenVector = function(screenX, screenY) {
+    return new THREE.Vector3(((screenX / (el.width / window.devicePixelRatio)) * 2) - 1,
+                             (-(screenY / (el.height / window.devicePixelRatio)) * 2) + 1,
+                             0.5);
+  };
+
+  // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
+  //
+  // Instead of using the camera's current position to unproject from the screen coordinate to the world coordinate,
+  // this always uses the equivalent of a camera looking straight down on the center of orbit, from the zoom distance away.
+  //
+  // The reason for doing this is so that the rate of movement is uniform regardless of the camera's tilt angle.
+  // I.e., at the same zoom level, moving your mouse/finger 10 pixels on the screen will result in the same amount
+  // of world movement if the camera is looking straight down, or straight forward. It also means that the location on
+  // the screen (i.e. top-left vs. center vs. bottom-right) won't affect the amount of world movement when the camera is
+  // tilted at an angle other than straight down.
+  var screenCoordinateToWorldCoordinateStraightDown = function(normalizedScreenVector) {
+    var straightDownEuler, straightDownPosition, straightDownQuaternion, straightDownScale, straightDownMatrix;
+    var matrix;
+    var direction, distanceToYPlane, worldPosition;
+
+    // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
+    straightDownEuler = new THREE.Euler(-Math.PI / 2, camera.rotation.y, 0.0, 'YXZ');
+    straightDownPosition = new THREE.Vector3(orbitalCamera.centerX(), orbitalCamera.zoomDistance(), orbitalCamera.centerZ());
+    straightDownQuaternion = new THREE.Quaternion();
+    straightDownQuaternion.setFromEuler(straightDownEuler);
+    straightDownScale = camera.scale.clone();
+    straightDownMatrix = new THREE.Matrix4().compose(straightDownPosition, straightDownQuaternion, straightDownScale);
+
+    // Unproject from the simulated camera position
+    matrix = new THREE.Matrix4();
+    matrix.multiplyMatrices(straightDownMatrix, matrix.getInverse(camera.projectionMatrix));
+    normalizedScreenVector.applyMatrix4(matrix);
+
+    direction = normalizedScreenVector.sub(straightDownPosition).normalize();
+    distanceToYPlane = -(straightDownPosition.y / direction.y);
+    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToYPlane));
+
+    return worldPosition;
+  };
+
+
   var panCamera = function(currentTouchPoints) {
-    var rotationY = orbitalCamera.rotationAngle();
-    var dragXDistanceInPixels = currentTouchPoints[0].x - previousTouchPoints[0].x;
-    var dragZDistanceInPixels = currentTouchPoints[0].z - previousTouchPoints[0].z;
-    var dragAngle = Math.atan2(-dragZDistanceInPixels, -dragXDistanceInPixels);
+    var previousTouchNormalized = normalizedScreenVector(previousTouchPoints[0].x, previousTouchPoints[0].z);
+    var currentTouchNormalized = normalizedScreenVector(currentTouchPoints[0].x, currentTouchPoints[0].z);
 
-    // Scale the drag distance based on the camera zoom. If zoomed in, dragging should
-    // move the camera less than if the camera is zoomed out.
-    var zoomMultiplier = (((1 - orbitalCamera.zoomPercentage()) * 0.92)) + 0.08;
-    var totalDragDistanceInPixels = Math.sqrt((dragXDistanceInPixels * dragXDistanceInPixels) + (dragZDistanceInPixels * dragZDistanceInPixels));
-    var scaledDragDistanceInPixels = totalDragDistanceInPixels * zoomMultiplier;
+    var normalizedScreenDragDistance = new THREE.Vector3(currentTouchNormalized.x - previousTouchNormalized.x,
+                                                         currentTouchNormalized.y - previousTouchNormalized.y,
+                                                         currentTouchNormalized.z - previousTouchNormalized.z);
 
-    var rotatedDragXDistance = scaledDragDistanceInPixels * Math.cos(dragAngle - rotationY);
-    var rotatedDragZDistance = scaledDragDistanceInPixels * Math.sin(dragAngle - rotationY);
-    orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() + rotatedDragXDistance, orbitalCamera.centerZ() + rotatedDragZDistance);
+    var worldDragStart = new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ());
+    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance);
+    var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
+                                              worldDragEnd.y - worldDragStart.y,
+                                              worldDragEnd.z - worldDragStart.z);
+
+    orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
   };
 
 

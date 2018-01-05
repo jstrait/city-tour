@@ -215,6 +215,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
     setCenterCoordinates: setCenterCoordinates,
     zoomPercentage: function() { return zoomPercentage; },
     setZoomPercentage: setZoomPercentage,
+    zoomDistance: function() { return zoomDistance; },
     tiltPercentage: function() { return tiltPercentage; },
     setTiltPercentage: setTiltPercentage,
     rotationAngle: function() { return rotationAngle; },
