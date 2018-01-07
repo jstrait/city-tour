@@ -13,6 +13,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
   var currentGesture;
   var previousTouchPoints;
+  var zoomProperties;
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
@@ -130,6 +131,21 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     return worldPosition;
   };
 
+  // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
+  var screenCoordinateToWorldPosition = function(screenX, screenY) {
+    var direction, distanceToYPlane, worldPosition;
+
+    var normalizedDeviceVector = normalizedScreenVector(screenX, screenY);
+
+    normalizedDeviceVector.unproject(camera);
+
+    direction = normalizedDeviceVector.sub(camera.position).normalize();
+    distanceToYPlane = -(camera.position.y / direction.y);
+    worldPosition = camera.position.clone().add(direction.multiplyScalar(distanceToYPlane));
+
+    return worldPosition;
+  };
+
 
   var panCamera = function(currentTouchPoints) {
     var previousTouchNormalized = normalizedScreenVector(previousTouchPoints[0].x, previousTouchPoints[0].z);
@@ -146,6 +162,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
                                               worldDragEnd.z - worldDragStart.z);
 
     orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
+    zoomProperties = undefined;
   };
 
 
@@ -153,6 +170,15 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     var previousDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(previousTouchPoints[0].x, previousTouchPoints[0].z, previousTouchPoints[1].x, previousTouchPoints[1].z);
     var currentDistanceBetweenTouches = CityTour.Math.distanceBetweenPoints(currentTouchPoints[0].x, currentTouchPoints[0].z, currentTouchPoints[1].x, currentTouchPoints[1].z);
     return currentDistanceBetweenTouches - previousDistanceBetweenTouches;
+  };
+
+  var calculateCenterOfZoom = function(currentTouchPoints) {
+    var touch1WorldPosition = screenCoordinateToWorldPosition(currentTouchPoints[0].x, currentTouchPoints[0].z);
+    var touch2WorldPosition = screenCoordinateToWorldPosition(currentTouchPoints[1].x, currentTouchPoints[1].z);
+
+    return new THREE.Vector3((touch1WorldPosition.x + touch2WorldPosition.x) / 2,
+                             (touch1WorldPosition.y + touch2WorldPosition.y) / 2,
+                             (touch1WorldPosition.z + touch2WorldPosition.z) / 2);
   };
 
   var touchPointsAreHorizontal = function(angleBetweenTouchPoints) {
@@ -165,6 +191,36 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
   var rotationYActive = function(rotationYDelta) {
     return Math.abs(rotationYDelta) >= MIN_ROTATION_ANGLE;
+  };
+
+  var processZoom = function(currentTouchPoints, distanceBetweenTouches) {
+    var newCenterOfOrbitX, newCenterOfOrbitZ;
+    var interpolationXZTowardCenterOfZoomPecentage;
+
+    var zoomDeltaPercentage = (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage()));
+
+    if (zoomProperties === undefined) {
+      zoomProperties = {
+        centerOfZoom: calculateCenterOfZoom(currentTouchPoints),
+        zoomStartX: orbitalCamera.centerX(),
+        zoomStartZ: orbitalCamera.centerZ(),
+        zoomStartDistancePercentage: orbitalCamera.zoomPercentage(),
+      };
+    }
+
+    interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.zoomStartDistancePercentage) / (1.0 - zoomProperties.zoomStartDistancePercentage);
+
+    if (orbitalCamera.zoomPercentage() < 1.0) {
+      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.zoomStartX, zoomProperties.centerOfZoom.x, interpolationXZTowardCenterOfZoomPecentage);
+      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.zoomStartZ, zoomProperties.centerOfZoom.z, interpolationXZTowardCenterOfZoomPecentage);
+    }
+    else {
+      newCenterOfOrbitX = zoomProperties.centerOfZoom.x;
+      newCenterOfOrbitZ = zoomProperties.centerOfZoom.z;
+    }
+
+    orbitalCamera.setCenterCoordinates(newCenterOfOrbitX, newCenterOfOrbitZ);
+    orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + zoomDeltaPercentage);
   };
 
   var processMultiTouchGestures = function(currentTouchPoints) {
@@ -184,6 +240,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     }
 
     if (currentGesture === TILT) {
+      zoomProperties = undefined;
       yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       orbitalCamera.setTiltPercentage(orbitalCamera.tiltPercentage() + (yDistanceDelta / 100));
     }
@@ -192,6 +249,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       rotationAngleDelta = previousAngleBetweenTouches - currentAngleBetweenTouches;
 
       if (rotationYActive(rotationAngleDelta)) {
+        zoomProperties = undefined;
         currentGesture = ROTATE;
         orbitalCamera.setRotationAngle(orbitalCamera.rotationAngle() + rotationAngleDelta);
       }
@@ -199,7 +257,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
         currentGesture = PINCH_ZOOM;
         distanceBetweenTouches = calculateZoomDelta(previousTouchPoints, currentTouchPoints);
         if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
-          orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage())));
+          processZoom(currentTouchPoints, distanceBetweenTouches);
         }
       }
     }
