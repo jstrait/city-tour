@@ -13,6 +13,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
   var currentGesture;
   var previousTouchPoints;
+  var centerOfAction;
   var zoomProperties;
 
   var onMouseDown = function(e) {
@@ -72,6 +73,8 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
   var onTouchEnd = function(e) {
     currentGesture = undefined;
+    centerOfAction = undefined;
+    zoomProperties = undefined;
 
     if (previousTouchPoints !== undefined) {
       orbitalCamera.setIsVelocityEnabled(true);
@@ -162,7 +165,6 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
                                               worldDragEnd.z - worldDragStart.z);
 
     orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
-    zoomProperties = undefined;
   };
 
 
@@ -172,7 +174,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     return currentDistanceBetweenTouches - previousDistanceBetweenTouches;
   };
 
-  var calculateCenterOfZoom = function(currentTouchPoints) {
+  var calculateTouchPointsMidpoint = function(currentTouchPoints) {
     var touch1WorldPosition = screenCoordinateToWorldPosition(currentTouchPoints[0].x, currentTouchPoints[0].z);
     var touch2WorldPosition = screenCoordinateToWorldPosition(currentTouchPoints[1].x, currentTouchPoints[1].z);
 
@@ -199,9 +201,12 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
     var zoomDeltaPercentage = (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage()));
 
+    if (centerOfAction === undefined) {
+      centerOfAction = calculateTouchPointsMidpoint(currentTouchPoints);
+    }
+
     if (zoomProperties === undefined) {
       zoomProperties = {
-        centerOfZoom: calculateCenterOfZoom(currentTouchPoints),
         zoomStartX: orbitalCamera.centerX(),
         zoomStartZ: orbitalCamera.centerZ(),
         zoomStartDistancePercentage: orbitalCamera.zoomPercentage(),
@@ -211,16 +216,30 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.zoomStartDistancePercentage) / (1.0 - zoomProperties.zoomStartDistancePercentage);
 
     if (orbitalCamera.zoomPercentage() < 1.0) {
-      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.zoomStartX, zoomProperties.centerOfZoom.x, interpolationXZTowardCenterOfZoomPecentage);
-      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.zoomStartZ, zoomProperties.centerOfZoom.z, interpolationXZTowardCenterOfZoomPecentage);
+      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.zoomStartX, centerOfAction.x, interpolationXZTowardCenterOfZoomPecentage);
+      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.zoomStartZ, centerOfAction.z, interpolationXZTowardCenterOfZoomPecentage);
     }
     else {
-      newCenterOfOrbitX = zoomProperties.centerOfZoom.x;
-      newCenterOfOrbitZ = zoomProperties.centerOfZoom.z;
+      newCenterOfOrbitX = centerOfAction.x;
+      newCenterOfOrbitZ = centerOfAction.z;
     }
 
     orbitalCamera.setCenterCoordinates(newCenterOfOrbitX, newCenterOfOrbitZ);
     orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + zoomDeltaPercentage);
+  };
+
+  var processRotationY = function(currentTouchPoints, rotationAngleDelta) {
+    var newCenterX, newCenterZ;
+
+    if (centerOfAction === undefined) {
+      centerOfAction = calculateTouchPointsMidpoint(currentTouchPoints);
+    }
+
+    newCenterX = ((orbitalCamera.centerX() - centerOfAction.x) * Math.cos(-rotationAngleDelta)) - ((orbitalCamera.centerZ() - centerOfAction.z) * Math.sin(-rotationAngleDelta)) + centerOfAction.x;
+    newCenterZ = ((orbitalCamera.centerX() - centerOfAction.x) * Math.sin(-rotationAngleDelta)) + ((orbitalCamera.centerZ() - centerOfAction.z) * Math.cos(-rotationAngleDelta)) + centerOfAction.z;
+
+    orbitalCamera.setCenterCoordinates(newCenterX, newCenterZ);
+    orbitalCamera.setRotationAngle(orbitalCamera.rotationAngle() + rotationAngleDelta);
   };
 
   var processMultiTouchGestures = function(currentTouchPoints) {
@@ -240,6 +259,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     }
 
     if (currentGesture === TILT) {
+      centerOfAction = undefined;
       zoomProperties = undefined;
       yDistanceDelta = currentTouchPoints[0].z - previousTouchPoints[0].z;
       orbitalCamera.setTiltPercentage(orbitalCamera.tiltPercentage() + (yDistanceDelta / 100));
@@ -251,7 +271,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       if (rotationYActive(rotationAngleDelta)) {
         zoomProperties = undefined;
         currentGesture = ROTATE;
-        orbitalCamera.setRotationAngle(orbitalCamera.rotationAngle() + rotationAngleDelta);
+        processRotationY(currentTouchPoints, rotationAngleDelta);
       }
       else {
         currentGesture = PINCH_ZOOM;
@@ -266,6 +286,8 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
   var processGesture = function(currentTouchPoints) {
     if (currentTouchPoints.length === 1) {
       currentGesture = PAN;
+      centerOfAction = undefined;
+      zoomProperties = undefined;
       panCamera(currentTouchPoints);
     }
     else if (currentTouchPoints.length === 2) {
