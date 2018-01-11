@@ -163,22 +163,27 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
   };
 
   var processGesture = function(currentTouches) {
-    if (currentTouches !== undefined && previousTouches !== undefined && currentTouches.count() === 1) {
-      currentGesture = PAN;
-      centerOfAction = undefined;
-      zoomProperties = undefined;
-      panCamera(currentTouches);
-    }
-    else if (currentTouches !== undefined && previousTouches !== undefined && currentTouches.count() === 2) {
-      processMultiTouchGestures(currentTouches);
-    }
-
-    previousTouches = currentTouches;
     if (currentTouches === undefined) {
       currentGesture = undefined;
       centerOfAction = undefined;
       zoomProperties = undefined;
+      orbitalCamera.setIsVelocityEnabled(true);
     }
+    else if (previousTouches !== undefined) {
+      orbitalCamera.setIsVelocityEnabled(false);
+
+      if (currentTouches.count() === 1) {
+        currentGesture = PAN;
+        centerOfAction = undefined;
+        zoomProperties = undefined;
+        panCamera(currentTouches);
+      }
+      else if (currentTouches.count() === 2) {
+        processMultiTouchGestures(currentTouches);
+      }
+    }
+
+    previousTouches = currentTouches;
   };
 
   return {

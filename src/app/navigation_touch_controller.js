@@ -8,7 +8,6 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
     gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]));
-    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStart = function(e) {
@@ -22,7 +21,6 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints));
 
     e.preventDefault();
-    orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStartStub = function(e) {
@@ -52,19 +50,10 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
   var onMouseUp = function(e) {
     el.classList.remove("cursor-grabbing");
-
-    if (gestureProcessor.previousTouches() !== undefined) {
-      orbitalCamera.setIsVelocityEnabled(true);
-    }
-
     gestureProcessor.processGesture(undefined);
   };
 
   var onTouchEnd = function(e) {
-    if (gestureProcessor.previousTouches() !== undefined) {
-      orbitalCamera.setIsVelocityEnabled(true);
-    }
-
     gestureProcessor.processGesture(undefined);
   };
 
@@ -105,7 +94,6 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
   var id1 = messageBroker.addSubscriber("flythrough.started", disableEventHandlers);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", enableEventHandlers);
 
-  onMouseUp();
   enableEventHandlers();
 
 
