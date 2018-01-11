@@ -163,23 +163,18 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
   };
 
   var processGesture = function(currentTouches) {
-    if (currentTouches.count() === 1) {
+    if (currentTouches !== undefined && previousTouches !== undefined && currentTouches.count() === 1) {
       currentGesture = PAN;
       centerOfAction = undefined;
       zoomProperties = undefined;
       panCamera(currentTouches);
     }
-    else if (currentTouches.count() === 2) {
+    else if (currentTouches !== undefined && previousTouches !== undefined && currentTouches.count() === 2) {
       processMultiTouchGestures(currentTouches);
     }
 
     previousTouches = currentTouches;
-  };
-
-  var setPreviousTouches = function(newPreviousTouches) {
-    previousTouches = newPreviousTouches;
-
-    if (newPreviousTouches === undefined) {
+    if (currentTouches === undefined) {
       currentGesture = undefined;
       centerOfAction = undefined;
       zoomProperties = undefined;
@@ -189,6 +184,5 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
   return {
     processGesture: processGesture,
     previousTouches: function() { return previousTouches; },
-    setPreviousTouches: setPreviousTouches,
   };
 };

@@ -7,19 +7,19 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    gestureProcessor.setPreviousTouches(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]));
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var onTouchStart = function(e) {
     var i, touch;
 
-    var previousTouchPoints = [];
+    var touchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      previousTouchPoints.push({x: touch.clientX, z: touch.clientY});
+      touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    gestureProcessor.setPreviousTouches(CityTour.WorldTouchCollection(el, camera, previousTouchPoints));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints));
 
     e.preventDefault();
     orbitalCamera.setIsVelocityEnabled(false);
@@ -34,21 +34,18 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       return;
     }
 
-    var currentTouches = CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]);
-
-    gestureProcessor.processGesture(currentTouches);
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]));
   };
 
   var onTouchMove = function(e) {
     var i, touch;
-    var currentTouchPoints;
 
-    var currentTouchPoints = [];
+    var touchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      currentTouchPoints.push({x: touch.clientX, z: touch.clientY});
+      touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    var currentTouches = CityTour.WorldTouchCollection(el, camera, currentTouchPoints);
+    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints);
 
     gestureProcessor.processGesture(currentTouches);
   };
@@ -60,7 +57,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       orbitalCamera.setIsVelocityEnabled(true);
     }
 
-    gestureProcessor.setPreviousTouches(undefined);
+    gestureProcessor.processGesture(undefined);
   };
 
   var onTouchEnd = function(e) {
@@ -68,7 +65,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       orbitalCamera.setIsVelocityEnabled(true);
     }
 
-    gestureProcessor.setPreviousTouches(undefined);
+    gestureProcessor.processGesture(undefined);
   };
 
   var onMouseOver = function(e) {
@@ -76,7 +73,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
     if ((e.buttons !== undefined && e.buttons === 0) ||
         (e.which !== undefined && e.which === 0)) {
       el.classList.remove("cursor-grabbing");
-      gestureProcessor.setPreviousTouches(undefined);
+      gestureProcessor.processGesture(undefined);
     }
   };
 
