@@ -14,15 +14,20 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var minRow = 0 - rowIndexOffset;
   var maxRow = rowIndexOffset;
 
+  var worldXToNormalizedX = function(worldX) {
+    return (worldX + columnIndexOffset) * subDivisions;
+  };
+
+  var worldZToNormalizedZ = function(worldZ) {
+    return (worldZ + rowIndexOffset) * subDivisions;
+  };
+
   var interpolateHeight = function(point, floor, ceiling) {
     return CityTour.Math.lerp(floor, ceiling, point - Math.floor(point));
   };
 
   var materialAtCoordinates = function(worldX, worldZ) {
-    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
-    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
-
-    return (coordinates[normalizedX][normalizedZ].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
+    return (coordinates[worldXToNormalizedX(worldX)][worldZToNormalizedZ(worldZ)].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
   };
 
   var componentHeightAtCoordinates = function(x, z, component) {
@@ -69,22 +74,16 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   };
 
   var landHeightAtCoordinates = function(worldX, worldZ) {
-    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
-    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
-
-    return componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
+    return componentHeightAtCoordinates(worldXToNormalizedX(worldX), worldZToNormalizedZ(worldZ), "landHeight");
   };
 
   var waterHeightAtCoordinates = function(worldX, worldZ) {
-    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
-    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
-
-    return componentHeightAtCoordinates(normalizedX, normalizedZ, "waterHeight");
+    return componentHeightAtCoordinates(worldXToNormalizedX(worldX), worldZToNormalizedZ(worldZ), "waterHeight");
   };
 
   var heightAtCoordinates = function(worldX, worldZ) {
-    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
-    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
+    var normalizedX = worldXToNormalizedX(worldX);
+    var normalizedZ = worldZToNormalizedZ(worldZ);
 
     var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
     if (landHeight === undefined) {
