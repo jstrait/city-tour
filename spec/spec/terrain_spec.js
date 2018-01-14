@@ -66,21 +66,13 @@ describe("CityTour.Terrain", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 1);
 
       it("returns the correct height for coordinates on an intersection", function() {
-        expect(terrain.landHeightAtCoordinates(-2, -2)).toBe(0.0);
         expect(terrain.landHeightAtCoordinates(-2.0, -2.0)).toBe(0.0);
-
-        expect(terrain.landHeightAtCoordinates(-1, 1.0)).toBe(5.2);
         expect(terrain.landHeightAtCoordinates(-1.0, 1.0)).toBe(5.2);
-
-        expect(terrain.landHeightAtCoordinates(-2, 0)).toBe(2.0);
         expect(terrain.landHeightAtCoordinates(-2.0, 0.0)).toBe(2.0);
       });
 
       it("returns the correct height for coordinates along an edge", function() {
-        expect(terrain.landHeightAtCoordinates(-1, 0.4)).toBe(4.66);
         expect(terrain.landHeightAtCoordinates(-1.0, 0.4)).toBe(4.66);
-
-        expect(terrain.landHeightAtCoordinates(-0.6, 0)).toBe(5.14);
         expect(terrain.landHeightAtCoordinates(-0.6, 0.0)).toBe(5.14);
       });
 
@@ -104,21 +96,13 @@ describe("CityTour.Terrain", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 2);
 
       it("returns the correct height for coordinates on an intersection", function() {
-        expect(terrain.landHeightAtCoordinates(-1, -1)).toBe(0.0);
         expect(terrain.landHeightAtCoordinates(-1.0, -1.0)).toBe(0.0);
-
         expect(terrain.landHeightAtCoordinates(-0.5, 0.5)).toBe(5.2);
-        expect(terrain.landHeightAtCoordinates(-0.5, 0.5)).toBe(5.2);
-
-        expect(terrain.landHeightAtCoordinates(-1, 0)).toBe(2.0);
         expect(terrain.landHeightAtCoordinates(-1.0, 0.0)).toBe(2.0);
       });
 
       it("returns the correct height for coordinates along an edge", function() {
         expect(terrain.landHeightAtCoordinates(-0.5, 0.2)).toBe(4.66);
-        expect(terrain.landHeightAtCoordinates(-0.5, 0.2)).toBe(4.66);
-
-        expect(terrain.landHeightAtCoordinates(-0.3, 0)).toBe(5.14);
         expect(terrain.landHeightAtCoordinates(-0.3, 0.0)).toBe(5.14);
       });
 
@@ -145,21 +129,13 @@ describe("CityTour.Terrain", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 1);
 
       it("returns the correct height for coordinates on an intersection", function() {
-        expect(terrain.waterHeightAtCoordinates(-2, -2)).toBe(0.0);
         expect(terrain.waterHeightAtCoordinates(-2.0, -2.0)).toBe(0.0);
-
-        expect(terrain.waterHeightAtCoordinates(-1, 1.0)).toBe(1.3);
         expect(terrain.waterHeightAtCoordinates(-1.0, 1.0)).toBe(1.3);
-
-        expect(terrain.waterHeightAtCoordinates(-2, 0)).toBe(3.0);
         expect(terrain.waterHeightAtCoordinates(-2.0, 0.0)).toBe(3.0);
       });
 
       it("returns the correct height for coordinates along an edge", function() {
-        expect(terrain.waterHeightAtCoordinates(-1, 0.4)).toBeCloseTo(0.52);
         expect(terrain.waterHeightAtCoordinates(-1.0, 0.4)).toBeCloseTo(0.52);
-
-        expect(terrain.waterHeightAtCoordinates(-0.6, 0)).toBeCloseTo(0.16);
         expect(terrain.waterHeightAtCoordinates(-0.6, 0.0)).toBeCloseTo(0.16);
       });
 
@@ -183,21 +159,13 @@ describe("CityTour.Terrain", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 2);
 
       it("returns the correct height for coordinates on an intersection", function() {
-        expect(terrain.waterHeightAtCoordinates(-1, -1)).toBe(0.0);
         expect(terrain.waterHeightAtCoordinates(-1.0, -1.0)).toBe(0.0);
-
         expect(terrain.waterHeightAtCoordinates(-0.5, 0.5)).toBe(1.3);
-        expect(terrain.waterHeightAtCoordinates(-0.5, 0.5)).toBe(1.3);
-
-        expect(terrain.waterHeightAtCoordinates(-1, 0)).toBe(3.0);
         expect(terrain.waterHeightAtCoordinates(-1.0, 0.0)).toBe(3.0);
       });
 
       it("returns the correct height for coordinates along an edge", function() {
         expect(terrain.waterHeightAtCoordinates(-0.5, 0.2)).toBeCloseTo(0.52);
-        expect(terrain.waterHeightAtCoordinates(-0.5, 0.2)).toBeCloseTo(0.52);
-
-        expect(terrain.waterHeightAtCoordinates(-0.3, 0)).toBeCloseTo(0.16);
         expect(terrain.waterHeightAtCoordinates(-0.3, 0.0)).toBeCloseTo(0.16);
       });
 
@@ -224,21 +192,13 @@ describe("CityTour.Terrain", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 1);
 
       it("returns the correct height for coordinates on an intersection", function() {
-        expect(terrain.heightAtCoordinates(-2, -2)).toBe(0.0);
         expect(terrain.heightAtCoordinates(-2.0, -2.0)).toBe(0.0);
-
-        expect(terrain.heightAtCoordinates(-1, 1.0)).toBe(6.5);
         expect(terrain.heightAtCoordinates(-1.0, 1.0)).toBe(6.5);
-
-        expect(terrain.heightAtCoordinates(-2, 0)).toBe(5.0);
         expect(terrain.heightAtCoordinates(-2.0, 0.0)).toBe(5.0);
       });
 
       it("returns the correct height for coordinates along an edge", function() {
-        expect(terrain.heightAtCoordinates(-1, 0.4)).toBe(5.18);
         expect(terrain.heightAtCoordinates(-1.0, 0.4)).toBe(5.18);
-
-        expect(terrain.heightAtCoordinates(-0.6, 0)).toBe(5.3);
         expect(terrain.heightAtCoordinates(-0.6, 0.0)).toBe(5.3);
       });
 
@@ -262,21 +222,13 @@ describe("CityTour.Terrain", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 2);
 
       it("returns the correct height for coordinates on an intersection", function() {
-        expect(terrain.heightAtCoordinates(-1, -1)).toBe(0.0);
         expect(terrain.heightAtCoordinates(-1.0, -1.0)).toBe(0.0);
-
         expect(terrain.heightAtCoordinates(-0.5, 0.5)).toBe(6.5);
-        expect(terrain.heightAtCoordinates(-0.5, 0.5)).toBe(6.5);
-
-        expect(terrain.heightAtCoordinates(-1, 0)).toBe(5.0);
         expect(terrain.heightAtCoordinates(-1.0, 0.0)).toBe(5.0);
       });
 
       it("returns the correct height for coordinates along an edge", function() {
         expect(terrain.heightAtCoordinates(-0.5, 0.2)).toBe(5.18);
-        expect(terrain.heightAtCoordinates(-0.5, 0.2)).toBe(5.18);
-
-        expect(terrain.heightAtCoordinates(-0.3, 0)).toBe(5.3);
         expect(terrain.heightAtCoordinates(-0.3, 0.0)).toBe(5.3);
       });
 
