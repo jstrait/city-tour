@@ -13,13 +13,17 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var maxColumn = columnIndexOffset;
   var minRow = 0 - rowIndexOffset;
   var maxRow = rowIndexOffset;
+  var maxWorldX = (columnCount - 1) * 0.5 * xStep;
+  var minWorldX = -maxWorldX;
+  var maxWorldZ = (rowCount - 1) * 0.5 * zStep;
+  var minWorldZ = -maxWorldZ;
 
   var worldXToNormalizedX = function(worldX) {
-    return (worldX + columnIndexOffset) * subDivisions;
+    return (worldX + maxWorldX) * subDivisions;
   };
 
   var worldZToNormalizedZ = function(worldZ) {
-    return (worldZ + rowIndexOffset) * subDivisions;
+    return (worldZ + maxWorldZ) * subDivisions;
   };
 
   var interpolateHeight = function(point, floor, ceiling) {
