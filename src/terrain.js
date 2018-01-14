@@ -18,9 +18,9 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     return CityTour.Math.lerp(floor, ceiling, point - Math.floor(point));
   };
 
-  var materialAtCoordinates = function(x, z) {
-    var normalizedX = (x + columnIndexOffset) * subDivisions;
-    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+  var materialAtCoordinates = function(worldX, worldZ) {
+    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
+    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
 
     return (coordinates[normalizedX][normalizedZ].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
   };
@@ -68,23 +68,23 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     }
   };
 
-  var landHeightAtCoordinates = function(x, z) {
-    var normalizedX = (x + columnIndexOffset) * subDivisions;
-    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+  var landHeightAtCoordinates = function(worldX, worldZ) {
+    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
+    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
 
     return componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
   };
 
-  var waterHeightAtCoordinates = function(x, z) {
-    var normalizedX = (x + columnIndexOffset) * subDivisions;
-    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+  var waterHeightAtCoordinates = function(worldX, worldZ) {
+    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
+    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
 
     return componentHeightAtCoordinates(normalizedX, normalizedZ, "waterHeight");
   };
 
-  var heightAtCoordinates = function(x, z) {
-    var normalizedX = (x + columnIndexOffset) * subDivisions;
-    var normalizedZ = (z + rowIndexOffset) * subDivisions;
+  var heightAtCoordinates = function(worldX, worldZ) {
+    var normalizedX = (worldX + columnIndexOffset) * subDivisions;
+    var normalizedZ = (worldZ + rowIndexOffset) * subDivisions;
 
     var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
     if (landHeight === undefined) {
