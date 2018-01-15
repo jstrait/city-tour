@@ -12,25 +12,25 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var maxColumn = columnIndexOffset;
   var minRow = 0 - rowIndexOffset;
   var maxRow = rowIndexOffset;
-  var maxWorldX = (columnCount - 1) * 0.5 * scale;
-  var minWorldX = -maxWorldX;
-  var maxWorldZ = (rowCount - 1) * 0.5 * scale;
-  var minWorldZ = -maxWorldZ;
+  var maxMapX = (columnCount - 1) * 0.5 * scale;
+  var minMapX = -maxMapX;
+  var maxMapZ = (rowCount - 1) * 0.5 * scale;
+  var minMapZ = -maxMapZ;
 
-  var worldXToNormalizedX = function(worldX) {
-    return (worldX + maxWorldX) * subDivisions;
+  var mapXToNormalizedX = function(mapX) {
+    return (mapX + maxMapX) * subDivisions;
   };
 
-  var worldZToNormalizedZ = function(worldZ) {
-    return (worldZ + maxWorldZ) * subDivisions;
+  var mapZToNormalizedZ = function(mapZ) {
+    return (mapZ + maxMapZ) * subDivisions;
   };
 
   var interpolateHeight = function(point, floor, ceiling) {
     return CityTour.Math.lerp(floor, ceiling, point - Math.floor(point));
   };
 
-  var materialAtCoordinates = function(worldX, worldZ) {
-    return (coordinates[worldXToNormalizedX(worldX)][worldZToNormalizedZ(worldZ)].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
+  var materialAtCoordinates = function(mapX, mapZ) {
+    return (coordinates[mapXToNormalizedX(mapX)][mapZToNormalizedZ(mapZ)].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
   };
 
   var componentHeightAtCoordinates = function(x, z, component) {
@@ -76,17 +76,17 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     }
   };
 
-  var landHeightAtCoordinates = function(worldX, worldZ) {
-    return componentHeightAtCoordinates(worldXToNormalizedX(worldX), worldZToNormalizedZ(worldZ), "landHeight");
+  var landHeightAtCoordinates = function(mapX, mapZ) {
+    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), "landHeight");
   };
 
-  var waterHeightAtCoordinates = function(worldX, worldZ) {
-    return componentHeightAtCoordinates(worldXToNormalizedX(worldX), worldZToNormalizedZ(worldZ), "waterHeight");
+  var waterHeightAtCoordinates = function(mapX, mapZ) {
+    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), "waterHeight");
   };
 
-  var heightAtCoordinates = function(worldX, worldZ) {
-    var normalizedX = worldXToNormalizedX(worldX);
-    var normalizedZ = worldZToNormalizedZ(worldZ);
+  var heightAtCoordinates = function(mapX, mapZ) {
+    var normalizedX = mapXToNormalizedX(mapX);
+    var normalizedZ = mapZToNormalizedZ(mapZ);
 
     var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
     if (landHeight === undefined) {
