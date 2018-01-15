@@ -40,7 +40,10 @@ CityTour.Scene.BuildingMeshBuilder = function() {
     var mapX, mapZ, sceneX, sceneZ;
     var block;
 
-    var reusableBuildingMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1));
+    var reusableBuildingGeometry = new THREE.BoxGeometry(1, 1, 1);
+    reusableBuildingGeometry.faces.splice(6, 2);   // Remove bottom faces, since they are underground and invisible
+
+    var reusableBuildingMesh = new THREE.Mesh(reusableBuildingGeometry);
 
     var generateLotBuilding = function(lot) {
       var storyHeight = Math.round(CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT));
