@@ -3,6 +3,9 @@
 var CityTour = CityTour || {};
 
 CityTour.Terrain = function(coordinates, scale) {
+  var LAND_HEIGHT_COMPONENT = "landHeight";
+  var WATER_HEIGHT_COMPONENT = "waterHeight";
+
   var subDivisions = 1 / scale;
   var columnCount = coordinates.length;
   var rowCount = coordinates[0].length;
@@ -67,23 +70,23 @@ CityTour.Terrain = function(coordinates, scale) {
   };
 
   var landHeightAtCoordinates = function(mapX, mapZ) {
-    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), "landHeight");
+    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), LAND_HEIGHT_COMPONENT);
   };
 
   var waterHeightAtCoordinates = function(mapX, mapZ) {
-    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), "waterHeight");
+    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), WATER_HEIGHT_COMPONENT);
   };
 
   var heightAtCoordinates = function(mapX, mapZ) {
     var normalizedX = mapXToNormalizedX(mapX);
     var normalizedZ = mapZToNormalizedZ(mapZ);
 
-    var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, "landHeight");
+    var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, LAND_HEIGHT_COMPONENT);
     if (landHeight === undefined) {
       return undefined;
     }
 
-    return landHeight + componentHeightAtCoordinates(normalizedX, normalizedZ, "waterHeight");
+    return landHeight + componentHeightAtCoordinates(normalizedX, normalizedZ, WATER_HEIGHT_COMPONENT);
   };
 
 
