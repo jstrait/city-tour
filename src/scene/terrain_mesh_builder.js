@@ -9,6 +9,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
   var WATER_COLOR_1 = new THREE.Color(0.1, 0.2, 1.0);
   var WATER_COLOR_2 = new THREE.Color(0.1, 0.19, 1.0);
 
+  var LAND = 1;
+  var WATER = 2;
+
   var SOLID_SHADING_MODE = 1;
   var GRADIENT_SHADING_MODE = 2;
   var SHADING_MODE = SOLID_SHADING_MODE;
@@ -33,7 +36,7 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     }
 
     if (SHADING_MODE === SOLID_SHADING_MODE) {
-      if (material1 === CityTour.Terrain.WATER && material2 === CityTour.Terrain.WATER && material3 == CityTour.Terrain.WATER) {
+      if (material1 === WATER && material2 === WATER && material3 == WATER) {
         reusableTriangle.faces[0].vertexColors = [waterColor, waterColor, waterColor];
       }
       else {
@@ -41,9 +44,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
       }
     }
     else {
-      reusableTriangle.faces[0].vertexColors = [(material1 === CityTour.Terrain.WATER) ? waterColor : landColor,
-                                                (material2 === CityTour.Terrain.WATER) ? waterColor : landColor,
-                                                (material3 === CityTour.Terrain.WATER) ? waterColor : landColor,];
+      reusableTriangle.faces[0].vertexColors = [(material1 === WATER) ? waterColor : landColor,
+                                                (material2 === WATER) ? waterColor : landColor,
+                                                (material3 === WATER) ? waterColor : landColor,];
     }
 
     reusableTriangle.computeFaceNormals();
@@ -82,9 +85,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
       var leftHeight = terrain.heightAtCoordinates(mapX, mapZ);
       var rightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ);
 
-      var leftMaterial = terrain.materialAtCoordinates(mapX, mapZ);
-      var rightMaterial = terrain.materialAtCoordinates(mapX + triangleWidth, mapZ);
-      var material = (leftMaterial === CityTour.Terrain.WATER && rightMaterial === CityTour.Terrain.WATER) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
+      var leftWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
+      var rightWaterHeight = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ);
+      var material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
 
       triangle = buildTriangleGeometry(leftX,  leftHeight,         sceneZ, material,
                                        leftX,  SIDE_BOTTOM_HEIGHT, sceneZ, material,
@@ -109,9 +112,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
       var leftHeight = terrain.heightAtCoordinates(mapX, mapZ);
       var rightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ);
 
-      var leftMaterial = terrain.materialAtCoordinates(mapX, mapZ);
-      var rightMaterial = terrain.materialAtCoordinates(mapX + triangleWidth, mapZ);
-      var material = (leftMaterial === CityTour.Terrain.WATER && rightMaterial === CityTour.Terrain.WATER) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
+      var leftWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
+      var rightWaterHeight = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ);
+      var material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
 
       triangle = buildTriangleGeometry(rightX, rightHeight,        sceneZ, material,
                                        leftX,  SIDE_BOTTOM_HEIGHT, sceneZ, material,
@@ -146,28 +149,28 @@ CityTour.Scene.TerrainMeshBuilder = function() {
         bottomLandHeight = bottomTotalHeight;
       }
 
-      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, topZ,    CityTour.Terrain.LAND,
-                                       sceneX, bottomLandHeight,   bottomZ, CityTour.Terrain.LAND,
-                                       sceneX, topLandHeight,      topZ,    CityTour.Terrain.LAND,
+      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
+                                       sceneX, bottomLandHeight,   bottomZ, LAND,
+                                       sceneX, topLandHeight,      topZ,    LAND,
                                        1);
       terrainGeometry.merge(triangle);
 
-      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, topZ,    CityTour.Terrain.LAND,
-                                       sceneX, SIDE_BOTTOM_HEIGHT, bottomZ, CityTour.Terrain.LAND,
-                                       sceneX, bottomLandHeight,   bottomZ, CityTour.Terrain.LAND,
+      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
+                                       sceneX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
+                                       sceneX, bottomLandHeight,   bottomZ, LAND,
                                        1);
       terrainGeometry.merge(triangle);
 
       if (topWaterHeight > 0.0 && bottomWaterHeight > 0.0 && neighboringWaterHeight > 0.0) {
-        triangle = buildTriangleGeometry(sceneX, topLandHeight,     topZ,    CityTour.Terrain.WATER,
-                                         sceneX, bottomTotalHeight, bottomZ, CityTour.Terrain.WATER,
-                                         sceneX, topTotalHeight,    topZ,    CityTour.Terrain.WATER,
+        triangle = buildTriangleGeometry(sceneX, topLandHeight,     topZ,    WATER,
+                                         sceneX, bottomTotalHeight, bottomZ, WATER,
+                                         sceneX, topTotalHeight,    topZ,    WATER,
                                          1);
         terrainGeometry.merge(triangle);
 
-        triangle = buildTriangleGeometry(sceneX, topLandHeight,     topZ,    CityTour.Terrain.WATER,
-                                         sceneX, bottomLandHeight,  bottomZ, CityTour.Terrain.WATER,
-                                         sceneX, bottomTotalHeight, bottomZ, CityTour.Terrain.WATER,
+        triangle = buildTriangleGeometry(sceneX, topLandHeight,     topZ,    WATER,
+                                         sceneX, bottomLandHeight,  bottomZ, WATER,
+                                         sceneX, bottomTotalHeight, bottomZ, WATER,
                                          1);
         terrainGeometry.merge(triangle);
       }
@@ -193,28 +196,28 @@ CityTour.Scene.TerrainMeshBuilder = function() {
         bottomLandHeight = bottomTotalHeight;
       }
 
-      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, bottomZ, CityTour.Terrain.LAND,
-                                       sceneX, topLandHeight,      topZ,    CityTour.Terrain.LAND,
-                                       sceneX, bottomLandHeight,   bottomZ, CityTour.Terrain.LAND,
+      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
+                                       sceneX, topLandHeight,      topZ,    LAND,
+                                       sceneX, bottomLandHeight,   bottomZ, LAND,
                                        1);
       terrainGeometry.merge(triangle);
 
-      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, bottomZ, CityTour.Terrain.LAND,
-                                       sceneX, SIDE_BOTTOM_HEIGHT, topZ,    CityTour.Terrain.LAND,
-                                       sceneX, topLandHeight,      topZ,    CityTour.Terrain.LAND,
+      triangle = buildTriangleGeometry(sceneX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
+                                       sceneX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
+                                       sceneX, topLandHeight,      topZ,    LAND,
                                        1);
       terrainGeometry.merge(triangle);
 
       if (topWaterHeight > 0.0 && bottomWaterHeight > 0.0 && neighboringWaterHeight > 0.0) {
-        triangle = buildTriangleGeometry(sceneX, bottomLandHeight,  bottomZ, CityTour.Terrain.WATER,
-                                         sceneX, topTotalHeight,    topZ,    CityTour.Terrain.WATER,
-                                         sceneX, bottomTotalHeight, bottomZ, CityTour.Terrain.WATER,
+        triangle = buildTriangleGeometry(sceneX, bottomLandHeight,  bottomZ, WATER,
+                                         sceneX, topTotalHeight,    topZ,    WATER,
+                                         sceneX, bottomTotalHeight, bottomZ, WATER,
                                          1);
         terrainGeometry.merge(triangle);
 
-        triangle = buildTriangleGeometry(sceneX, bottomLandHeight, bottomZ, CityTour.Terrain.WATER,
-                                         sceneX, topLandHeight,    topZ,    CityTour.Terrain.WATER,
-                                         sceneX, topTotalHeight,   topZ,    CityTour.Terrain.WATER,
+        triangle = buildTriangleGeometry(sceneX, bottomLandHeight, bottomZ, WATER,
+                                         sceneX, topLandHeight,    topZ,    WATER,
+                                         sceneX, topTotalHeight,   topZ,    WATER,
                                          1);
         terrainGeometry.merge(triangle);
       }
@@ -274,10 +277,10 @@ CityTour.Scene.TerrainMeshBuilder = function() {
         bottomLeftHeight = terrain.heightAtCoordinates(mapX, mapZ + triangleDepth);
         bottomRightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ + triangleDepth);
 
-        topLeftMaterial = terrain.materialAtCoordinates(mapX, mapZ);
-        topRightMaterial = terrain.materialAtCoordinates(mapX + triangleWidth, mapZ);
-        bottomLeftMaterial = terrain.materialAtCoordinates(mapX, mapZ + triangleDepth);
-        bottomRightMaterial = terrain.materialAtCoordinates(mapX + triangleWidth, mapZ + triangleDepth);
+        topLeftMaterial = terrain.waterHeightAtCoordinates(mapX, mapZ) === 0.0 ? LAND : WATER;
+        topRightMaterial = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ) === 0.0 ? LAND : WATER;
+        bottomLeftMaterial = terrain.waterHeightAtCoordinates(mapX, mapZ + triangleDepth) === 0.0 ? LAND : WATER;
+        bottomRightMaterial = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ + triangleDepth) === 0.0 ? LAND : WATER;
 
         // Core triangles
         triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ, topLeftMaterial,

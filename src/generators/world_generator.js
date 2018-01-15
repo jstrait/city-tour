@@ -14,7 +14,7 @@ CityTour.WorldGenerator = (function() {
       while (squareSize < CityTour.Config.TERRAIN_ROWS && squareSize < CityTour.Config.TERRAIN_COLUMNS) {
         for (x = -(squareSize - 1) / 2; x <= (squareSize - 1) / 2; x++) {
           for (z = -(squareSize - 1) / 2; z <= (squareSize - 1) / 2; z++) {
-            if (terrain.materialAtCoordinates(x, z) === CityTour.Terrain.LAND) {
+            if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
               return {x: x, z: z};
             }
           }

@@ -46,8 +46,8 @@ CityTour.RoadNetworkGenerator = (function() {
     };
 
     var shouldConnectIntersections = function(terrain, mapX1, mapZ1, mapX2, mapZ2) {
-      var edgeIsOnLand = terrain.materialAtCoordinates(mapX1, mapZ1) === CityTour.Terrain.LAND &&
-                         terrain.materialAtCoordinates(mapX2, mapZ2) === CityTour.Terrain.LAND;
+      var edgeIsOnLand = terrain.waterHeightAtCoordinates(mapX1, mapZ1) === 0.0 &&
+                         terrain.waterHeightAtCoordinates(mapX2, mapZ2) === 0.0;
 
       return edgeIsOnLand &&
              (Math.random() < probabilityOfBranching(mapX1, mapZ1, mapX2, mapZ2)) &&
@@ -71,7 +71,7 @@ CityTour.RoadNetworkGenerator = (function() {
         return;
       }
 
-      if (terrain.materialAtCoordinates(targetMapX, targetMapZ) === CityTour.Terrain.WATER) {
+      if (terrain.waterHeightAtCoordinates(targetMapX, targetMapZ) > 0.0) {
         bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ, config);
 
         if (bridgeAttributes !== null) {

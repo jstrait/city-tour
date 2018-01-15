@@ -23,10 +23,6 @@ CityTour.Terrain = function(coordinates, scale) {
     return CityTour.Math.lerp(floor, ceiling, point - Math.floor(point));
   };
 
-  var materialAtCoordinates = function(mapX, mapZ) {
-    return (coordinates[mapXToNormalizedX(mapX)][mapZToNormalizedZ(mapZ)].waterHeight > 0.0) ? CityTour.Terrain.WATER : CityTour.Terrain.LAND;
-  };
-
   var componentHeightAtCoordinates = function(x, z, component) {
     var leftHeight, rightHeight, topHeight, bottomHeight;
     var topRowInterpolatedHeight, bottomRowInterpolatedHeight;
@@ -97,12 +93,8 @@ CityTour.Terrain = function(coordinates, scale) {
     maxMapX: function() { return maxMapX; },
     minMapZ: function() { return minMapZ; },
     maxMapZ: function() { return maxMapZ; },
-    materialAtCoordinates: materialAtCoordinates,
     landHeightAtCoordinates: landHeightAtCoordinates,
     waterHeightAtCoordinates: waterHeightAtCoordinates,
     heightAtCoordinates: heightAtCoordinates,
   };
 };
-
-CityTour.Terrain.LAND = 'land';
-CityTour.Terrain.WATER = 'water';

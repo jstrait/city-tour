@@ -44,7 +44,7 @@ CityTour.BridgeGenerator = (function() {
     bridgeEndZ = targetMapZ;
 
     bridgeLength = 1;
-    while (terrain.materialAtCoordinates(bridgeEndX, bridgeEndZ) === CityTour.Terrain.WATER) {
+    while (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ) > 0.0) {
       if (waterHeight === undefined) {
         waterHeight = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
       }
@@ -53,18 +53,18 @@ CityTour.BridgeGenerator = (function() {
       }
 
       if (xDelta === 0.0) {  // North/south bridge
-        if (terrain.materialAtCoordinates(bridgeEndX - 1, bridgeEndZ) === CityTour.Terrain.WATER) {
+        if (terrain.waterHeightAtCoordinates(bridgeEndX - 1, bridgeEndZ) > 0.0) {
           side1WaterCount += 1;
         }
-        if (terrain.materialAtCoordinates(bridgeEndX + 1, bridgeEndZ) === CityTour.Terrain.WATER) {
+        if (terrain.waterHeightAtCoordinates(bridgeEndX + 1, bridgeEndZ) > 0.0) {
           side2WaterCount += 1;
         }
       }
       else if (zDelta === 0.0) {  // West/east bridge
-        if (terrain.materialAtCoordinates(bridgeEndX, bridgeEndZ - 1) === CityTour.Terrain.WATER) {
+        if (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ - 1) > 0.0) {
           side1WaterCount += 1;
         }
-        if (terrain.materialAtCoordinates(bridgeEndX, bridgeEndZ + 1) === CityTour.Terrain.WATER) {
+        if (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ + 1) > 0.0) {
           side2WaterCount += 1;
         }
       }
