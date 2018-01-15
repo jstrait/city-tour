@@ -31,15 +31,14 @@ CityTour.Terrain = function(coordinates, scale) {
   var componentHeightAtCoordinates = function(x, z, component) {
     var leftHeight, rightHeight, topHeight, bottomHeight;
     var topRowInterpolatedHeight, bottomRowInterpolatedHeight;
-
-    var xIntegerCoordinate = x / scale;
-    var zIntegerCoordinate = z / scale;
-    var xIsExact = Math.floor(xIntegerCoordinate) === xIntegerCoordinate;
-    var zIsExact = Math.floor(zIntegerCoordinate) === zIntegerCoordinate;
+    var xIsExact, zIsExact;
 
     if (x < 0 || x > maxXIndex || z < 0 || z > maxZIndex) {
       return undefined;
     }
+
+    xIsExact = (Math.floor(x) === x);
+    zIsExact = (Math.floor(z) === z);
 
     if (xIsExact && zIsExact) {
       return coordinates[x][z][component];
