@@ -3,8 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.Terrain = function(coordinates, subDivisions) {
-  var xStep = 1 / subDivisions;
-  var zStep = 1 / subDivisions;
+  var scale = 1 / subDivisions;
   var columnCount = coordinates.length;
   var rowCount = coordinates[0].length;
   var columnIndexOffset = Math.floor(columnCount / 2 / subDivisions);
@@ -13,9 +12,9 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var maxColumn = columnIndexOffset;
   var minRow = 0 - rowIndexOffset;
   var maxRow = rowIndexOffset;
-  var maxWorldX = (columnCount - 1) * 0.5 * xStep;
+  var maxWorldX = (columnCount - 1) * 0.5 * scale;
   var minWorldX = -maxWorldX;
-  var maxWorldZ = (rowCount - 1) * 0.5 * zStep;
+  var maxWorldZ = (rowCount - 1) * 0.5 * scale;
   var minWorldZ = -maxWorldZ;
 
   var worldXToNormalizedX = function(worldX) {
@@ -38,8 +37,8 @@ CityTour.Terrain = function(coordinates, subDivisions) {
     var leftHeight, rightHeight, topHeight, bottomHeight;
     var topRowInterpolatedHeight, bottomRowInterpolatedHeight;
 
-    var xIntegerCoordinate = x / xStep;
-    var zIntegerCoordinate = z / zStep;
+    var xIntegerCoordinate = x / scale;
+    var zIntegerCoordinate = z / scale;
     var xIsExact = Math.floor(xIntegerCoordinate) === xIntegerCoordinate;
     var zIsExact = Math.floor(zIntegerCoordinate) === zIntegerCoordinate;
 
