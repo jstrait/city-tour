@@ -54,30 +54,12 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     return reusableTriangle;
   };
 
-  var terrainMeshBuilder = {};
+  var addNorthVerticalFace = function(terrain, terrainGeometry, triangleWidth) {
+    var mapX;
+    var mapZ = terrain.maxMapZ();
+    var sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
+    var triangle;
 
-  terrainMeshBuilder.build = function(terrain, roadNetwork) {
-    var mapX, mapZ, triangle;
-    var sceneX, sceneZ;
-    var leftRoad, topRoad, bottomRoad, rightRoad;
-    var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
-    var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
-    var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight;
-    var topLeftMaterial, topRightMaterial, bottomLeftMaterial, bottomRightMaterial;
-
-    var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
-    var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
-
-    var triangleWidth = terrain.scale();
-    var triangleDepth = terrain.scale();
-
-    var terrainGeometry = new THREE.Geometry();
-    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
-
-
-    // North vertical face
-    mapZ = terrain.maxMapZ();
-    sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
     for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
       var leftX = CityTour.Coordinates.mapXToSceneX(mapX);
       var rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
@@ -101,10 +83,14 @@ CityTour.Scene.TerrainMeshBuilder = function() {
                                        1);
       terrainGeometry.merge(triangle);
     }
+  };
 
-    // South vertical face
-    mapZ = terrain.minMapZ();
-    sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
+  var addSouthVerticalFace = function(terrain, terrainGeometry, triangleWidth) {
+    var mapX;
+    var mapZ = terrain.minMapZ();
+    var sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
+    var triangle;
+
     for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
       var leftX = CityTour.Coordinates.mapXToSceneX(mapX);
       var rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
@@ -128,10 +114,14 @@ CityTour.Scene.TerrainMeshBuilder = function() {
                                        1);
       terrainGeometry.merge(triangle);
     }
+  };
 
-    // West vertical face
-    mapX = terrain.minMapX();
-    sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
+  var addWestVerticalFace = function(terrain, terrainGeometry, triangleDepth) {
+    var mapZ;
+    var mapX = terrain.minMapX();
+    var sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
+    var triangle;
+
     for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
       var topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
       var bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
@@ -175,10 +165,14 @@ CityTour.Scene.TerrainMeshBuilder = function() {
         terrainGeometry.merge(triangle);
       }
     }
+  };
 
-    // East vertical face
-    mapX = terrain.maxMapX();
-    sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
+  var addEastVerticalFace = function(terrain, terrainGeometry, triangleDepth) {
+    var mapZ;
+    var mapX = terrain.maxMapX();
+    var sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
+    var triangle;
+
     for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
       var topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
       var bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
@@ -222,6 +216,34 @@ CityTour.Scene.TerrainMeshBuilder = function() {
         terrainGeometry.merge(triangle);
       }
     }
+  };
+
+
+  var terrainMeshBuilder = {};
+
+  terrainMeshBuilder.build = function(terrain, roadNetwork) {
+    var mapX, mapZ, triangle;
+    var sceneX, sceneZ;
+    var leftRoad, topRoad, bottomRoad, rightRoad;
+    var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
+    var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
+    var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight;
+    var topLeftMaterial, topRightMaterial, bottomLeftMaterial, bottomRightMaterial;
+
+    var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
+    var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
+
+    var triangleWidth = terrain.scale();
+    var triangleDepth = terrain.scale();
+
+    var terrainGeometry = new THREE.Geometry();
+    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
+
+    // Vertical sides along the edges of the terrain
+    addNorthVerticalFace(terrain, terrainGeometry, triangleWidth);
+    addSouthVerticalFace(terrain, terrainGeometry, triangleWidth);
+    addWestVerticalFace(terrain, terrainGeometry, triangleDepth);
+    addEastVerticalFace(terrain, terrainGeometry, triangleDepth);
 
     // Main terrain
     for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
