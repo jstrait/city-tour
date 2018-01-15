@@ -93,36 +93,6 @@ CityTour.RiverGenerator = (function() {
     }
   };
 
-  var floodFill = function(terrainCoordinates, x, z, height, material) {
-    terrainCoordinates[x][z].landHeight = height;
-    terrainCoordinates[x][z].material = material;
-
-    if (terrainCoordinates[x - 1] &&
-        terrainCoordinates[x - 1][z] &&
-        terrainCoordinates[x - 1][z].landHeight <= height &&
-        terrainCoordinates[x - 1][z].material != material) {
-      floodFill(terrainCoordinates, x - 1, z, height, material);
-    }
-    if (terrainCoordinates[x + 1] &&
-        terrainCoordinates[x + 1][z] &&
-        terrainCoordinates[x + 1][z].landHeight <= height &&
-        terrainCoordinates[x + 1][z].material != material) {
-      floodFill(terrainCoordinates, x + 1, z, height, material);
-    }
-    if (terrainCoordinates[x] &&
-        terrainCoordinates[x][z - 1] &&
-        terrainCoordinates[x][z - 1].landHeight <= height &&
-        terrainCoordinates[x][z - 1].material != material) {
-      floodFill(terrainCoordinates, x, z - 1, height, material);
-    }
-    if (terrainCoordinates[x] &&
-        terrainCoordinates[x][z + 1] &&
-        terrainCoordinates[x][z + 1].landHeight <= height &&
-        terrainCoordinates[x][z + 1].material != material) {
-      floodFill(terrainCoordinates, x, z + 1, height, material);
-    }
-  };
-
 
   return {
     addRiver: addRiver,
