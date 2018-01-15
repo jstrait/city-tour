@@ -98,7 +98,7 @@ CityTour.Terrain = function(coordinates, subDivisions) {
 
 
   return {
-    subDivisions: function() { return subDivisions; },
+    scale: function() { return scale; },
     minColumn: function() { return minColumn; },
     maxColumn: function() { return maxColumn; },
     minRow: function() { return minRow; },

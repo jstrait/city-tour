@@ -65,8 +65,8 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
     var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
 
-    var triangleWidth = 1 / terrain.subDivisions();
-    var triangleDepth = 1 / terrain.subDivisions();
+    var triangleWidth = terrain.scale();
+    var triangleDepth = terrain.scale();
 
     var terrainGeometry = new THREE.Geometry();
     var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
