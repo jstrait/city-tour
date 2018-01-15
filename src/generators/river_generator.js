@@ -61,42 +61,38 @@ CityTour.RiverGenerator = (function() {
     return { topCurve: topCurve, bottomCurve: bottomCurve, };
   };
 
+  var lowestHeightOnRiverBank = function(riverBankCurve, terrainCoordinates, xStep) {
+    var vector;
+    var x, xCoordinate, zCoordinate;
+    var minimumRiverBankHeight = Number.POSITIVE_INFINITY;
+
+    for (x = 0.0; x <= 1.0; x += xStep) {
+      vector = riverBankCurve.getPointAt(x);
+      xCoordinate = Math.round(vector.x);
+      zCoordinate = Math.round(vector.y);
+
+      if (terrainCoordinates[xCoordinate][zCoordinate].landHeight < minimumRiverBankHeight) {
+        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].landHeight;
+      }
+    }
+
+    return minimumRiverBankHeight;
+  };
 
   var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
     var WATER_HEIGHT = 5.0;
 
-    var x, z, xStep;
-    var xCoordinate, zCoordinate;
-    var minimumRiverBankHeight;
-    var vector, topVector, bottomVector;
+    var x, z, xCoordinate;
+    var topVector, bottomVector;
+    var xStep = 1 / columnsToGenerate;
 
     var riverCurves = generateRiverCurves(middleRow, columnsToGenerate);
     var topCurve = riverCurves.topCurve;
     var bottomCurve = riverCurves.bottomCurve;
 
-    xStep = 1 / columnsToGenerate;
+    var minimumRiverBankHeight = Math.min(lowestHeightOnRiverBank(topCurve, terrainCoordinates, xStep),
+                                          lowestHeightOnRiverBank(bottomCurve, terrainCoordinates, xStep));
 
-    // Find the lowest point on the north river bank
-    minimumRiverBankHeight = Number.POSITIVE_INFINITY;
-    for (x = 0.0; x <= 1.0; x += xStep) {
-      vector = topCurve.getPointAt(x);
-      xCoordinate = Math.round(vector.x);
-      zCoordinate = Math.round(vector.y);
-
-      if (terrainCoordinates[xCoordinate][zCoordinate].landHeight < minimumRiverBankHeight) {
-        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].landHeight;
-      }
-    }
-    // Find the lowest point on the south river bank
-    for (x = 0.0; x <= 1.0; x += xStep) {
-      vector = bottomCurve.getPointAt(x);
-      xCoordinate = Math.round(vector.x);
-      zCoordinate = Math.round(vector.y);
-
-      if (terrainCoordinates[xCoordinate][zCoordinate].landHeight < minimumRiverBankHeight) {
-        minimumRiverBankHeight = terrainCoordinates[xCoordinate][zCoordinate].landHeight;
-      }
-    }
     // Set every terrain point between the two river banks to same height as the lowest point
     for (x = 0.0; x <= 1.0; x += xStep / 2) {
       topVector = topCurve.getPointAt(x);
