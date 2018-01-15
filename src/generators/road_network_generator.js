@@ -10,10 +10,10 @@ CityTour.RoadNetworkGenerator = (function() {
     var centerMapX = config.centerMapX;
     var centerMapZ = config.centerMapZ;
 
-    var MIN_MAP_X = Math.max(terrain.minColumn(), -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
-    var MAX_MAP_X = Math.min(terrain.maxColumn(), CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
-    var MIN_MAP_Z = Math.max(terrain.minRow(), -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
-    var MAX_MAP_Z = Math.min(terrain.maxRow(), CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
+    var MIN_MAP_X = Math.max(terrain.minMapX(), -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
+    var MAX_MAP_X = Math.min(terrain.maxMapX(), CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
+    var MIN_MAP_Z = Math.max(terrain.minMapZ(), -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
+    var MAX_MAP_Z = Math.min(terrain.maxMapZ(), CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
 
     var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * config.safeFromDecayPercentage;
 

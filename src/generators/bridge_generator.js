@@ -73,10 +73,10 @@ CityTour.BridgeGenerator = (function() {
       bridgeEndZ += zDelta;
       bridgeLength += 1;
 
-      if (bridgeEndX < terrain.minColumn() ||
-          bridgeEndX > terrain.maxColumn()  ||
-          bridgeEndZ < terrain.minRow()    ||
-          bridgeEndZ > terrain.maxRow()) {
+      if (bridgeEndX < terrain.minMapX() ||
+          bridgeEndX > terrain.maxMapX() ||
+          bridgeEndZ < terrain.minMapZ() ||
+          bridgeEndZ > terrain.maxMapZ()) {
         return null;
       }
     }

@@ -6,12 +6,6 @@ CityTour.Terrain = function(coordinates, subDivisions) {
   var scale = 1 / subDivisions;
   var columnCount = coordinates.length;
   var rowCount = coordinates[0].length;
-  var columnIndexOffset = Math.floor(columnCount / 2 / subDivisions);
-  var rowIndexOffset = Math.floor(rowCount / 2 / subDivisions);
-  var minColumn = 0 - columnIndexOffset;
-  var maxColumn = columnIndexOffset;
-  var minRow = 0 - rowIndexOffset;
-  var maxRow = rowIndexOffset;
   var maxMapX = (columnCount - 1) * 0.5 * scale;
   var minMapX = -maxMapX;
   var maxMapZ = (rowCount - 1) * 0.5 * scale;
@@ -99,10 +93,10 @@ CityTour.Terrain = function(coordinates, subDivisions) {
 
   return {
     scale: function() { return scale; },
-    minColumn: function() { return minColumn; },
-    maxColumn: function() { return maxColumn; },
-    minRow: function() { return minRow; },
-    maxRow: function() { return maxRow; },
+    minMapX: function() { return minMapX; },
+    maxMapX: function() { return maxMapX; },
+    minMapZ: function() { return minMapZ; },
+    maxMapZ: function() { return maxMapZ; },
     materialAtCoordinates: materialAtCoordinates,
     landHeightAtCoordinates: landHeightAtCoordinates,
     waterHeightAtCoordinates: waterHeightAtCoordinates,

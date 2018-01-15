@@ -73,9 +73,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
 
 
     // North vertical face
-    mapZ = CityTour.Config.TERRAIN_ROWS / 2;
+    mapZ = terrain.maxMapZ();
     sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
-    for (mapX = terrain.minColumn(); mapX < terrain.maxColumn(); mapX += triangleWidth) {
+    for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
       var leftX = CityTour.Coordinates.mapXToSceneX(mapX);
       var rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
 
@@ -100,9 +100,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     }
 
     // South vertical face
-    mapZ = -(CityTour.Config.TERRAIN_ROWS / 2);
+    mapZ = terrain.minMapZ();
     sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
-    for (mapX = terrain.minColumn(); mapX < terrain.maxColumn(); mapX += triangleWidth) {
+    for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
       var leftX = CityTour.Coordinates.mapXToSceneX(mapX);
       var rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
 
@@ -127,9 +127,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     }
 
     // West vertical face
-    mapX = -(CityTour.Config.TERRAIN_COLUMNS / 2);
+    mapX = terrain.minMapX();
     sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
-    for (mapZ = terrain.minRow(); mapZ < terrain.maxRow(); mapZ += triangleDepth) {
+    for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
       var topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
       var bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
 
@@ -174,9 +174,9 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     }
 
     // East vertical face
-    mapX = CityTour.Config.TERRAIN_COLUMNS / 2;
+    mapX = terrain.maxMapX();
     sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
-    for (mapZ = terrain.minRow(); mapZ < terrain.maxRow(); mapZ += triangleDepth) {
+    for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
       var topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
       var bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
 
@@ -221,8 +221,8 @@ CityTour.Scene.TerrainMeshBuilder = function() {
     }
 
     // Main terrain
-    for (mapX = terrain.minColumn(); mapX < terrain.maxColumn(); mapX += triangleWidth) {
-      for (mapZ = terrain.minRow(); mapZ < terrain.maxRow(); mapZ += triangleDepth) {
+    for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
+      for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
         topLeftRoad     = roadNetwork.getIntersectionSurfaceType(mapX, mapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
         topRightRoad    = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, mapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
         bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(mapX, mapZ + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;

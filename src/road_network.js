@@ -59,7 +59,7 @@ CityTour.RoadNetwork = function(terrain) {
 
   var minColumn = Number.POSITIVE_INFINITY, maxColumn = Number.NEGATIVE_INFINITY, minRow = Number.POSITIVE_INFINITY, maxRow = Number.NEGATIVE_INFINITY;
   var intersections = [];
-  for (var mapX = terrain.minColumn(); mapX <= terrain.maxColumn(); mapX++) {
+  for (var mapX = Math.ceil(terrain.minMapX()); mapX <= Math.floor(terrain.maxMapX()); mapX++) {
     intersections[mapX] = [];
   }
 
