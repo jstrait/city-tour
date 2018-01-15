@@ -3,44 +3,58 @@
 var CityTour = CityTour || {};
 
 CityTour.RiverGenerator = (function() {
-  var generateRiverCurves = function(middleRow, columnsToGenerate) {
-    var SUB_DIVISIONS = 1;
-    var MIN_RIVER_BENDS = 2;
-    var MAX_RIVER_BENDS = 7;
-    var MAX_BEND_AMOUNT = 20 * SUB_DIVISIONS;
-    var TOP_BANK_OFFSET = 4 * SUB_DIVISIONS;
-    var BOTTOM_BANK_OFFSET = 12 * SUB_DIVISIONS;
-    var TOP_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
-    var HALF_TOP_BANK_MAX_JITTER = TOP_BANK_MAX_JITTER / 2;
-    var BOTTOM_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
-    var HALF_BOTTOM_BANK_MAX_JITTER = BOTTOM_BANK_MAX_JITTER / 2;
+  var SUB_DIVISIONS = 1;
+  var MIN_RIVER_BENDS = 2;
+  var MAX_RIVER_BENDS = 7;
+  var MAX_BEND_AMOUNT = 20 * SUB_DIVISIONS;
+  var TOP_BANK_OFFSET = 4 * SUB_DIVISIONS;
+  var BOTTOM_BANK_OFFSET = 12 * SUB_DIVISIONS;
+  var TOP_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
+  var BOTTOM_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
 
-    var i;
-    var baseCurvePoints, topCurvePoints, bottomCurvePoints;
-    var randomJitter;
-    var topCurve, bottomCurve;
-
+  var generateBaseRiverCurvePoints = function(middleRow, columnsToGenerate) {
     var riverBendCount = CityTour.Math.randomInteger(MIN_RIVER_BENDS, MAX_RIVER_BENDS);
     var columnsBetweenBends = columnsToGenerate / (riverBendCount + 1);
     var column, row;
+    var i;
 
-    baseCurvePoints = [new THREE.Vector2(0, middleRow)];
+    var baseCurvePoints = [new THREE.Vector2(0, middleRow)];
+
     for (i = 1; i <= riverBendCount + 1; i++) {
       column = i * columnsBetweenBends;
       row = middleRow + ((Math.random() * MAX_BEND_AMOUNT) - (MAX_BEND_AMOUNT / 2));
       baseCurvePoints.push(new THREE.Vector2(column, row));
     }
 
-    topCurvePoints = [];
-    bottomCurvePoints = [];
-    for (i = 0; i < baseCurvePoints.length; i++) {
-      randomJitter = Math.round(((Math.random() * TOP_BANK_MAX_JITTER) - HALF_TOP_BANK_MAX_JITTER));
-      topCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + TOP_BANK_OFFSET + randomJitter));
+    return baseCurvePoints;
+  };
 
-      randomJitter = Math.round(((Math.random() * BOTTOM_BANK_MAX_JITTER) - HALF_BOTTOM_BANK_MAX_JITTER));
-      bottomCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + BOTTOM_BANK_OFFSET + randomJitter));
+  var generateOffsetCurvePoints = function(baseCurvePoints, offset, maxJitter) {
+    var i;
+    var randomJitter;
+    var halfMaxJitter = maxJitter / 2;
+    var offsetCurvePoints = [];
+
+    for (i = 0; i < baseCurvePoints.length; i++) {
+      randomJitter = Math.round(((Math.random() * maxJitter) - halfMaxJitter));
+      offsetCurvePoints.push(new THREE.Vector2(baseCurvePoints[i].x, baseCurvePoints[i].y + offset + randomJitter));
     }
 
+    return offsetCurvePoints;
+  };
+
+  var generateRiverCurves = function(middleRow, columnsToGenerate) {
+    var baseCurvePoints, topCurvePoints, bottomCurvePoints;
+    var topCurve, bottomCurve;
+
+    // Generate reference curve representing the middle of the river
+    baseCurvePoints = generateBaseRiverCurvePoints(middleRow, columnsToGenerate);
+
+    // Generate top/bottom river banks offset from this curve, with random jitter
+    topCurvePoints = generateOffsetCurvePoints(baseCurvePoints, TOP_BANK_OFFSET, TOP_BANK_MAX_JITTER);
+    bottomCurvePoints = generateOffsetCurvePoints(baseCurvePoints, BOTTOM_BANK_OFFSET, BOTTOM_BANK_MAX_JITTER);
+
+    // Convert control points into splines
     topCurve = new THREE.SplineCurve(topCurvePoints);
     bottomCurve = new THREE.SplineCurve(bottomCurvePoints);
 
