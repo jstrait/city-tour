@@ -50,8 +50,8 @@ describe("CityTour.Terrain", function() {
       expect(terrain.maxMapZ()).toBe(2);
     });
 
-    it("returns the correct size bounds at two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+    it("returns the correct size bounds at half scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
 
       expect(terrain.minMapX()).toBe(-1);
       expect(terrain.maxMapX()).toBe(1);
@@ -59,8 +59,8 @@ describe("CityTour.Terrain", function() {
       expect(terrain.maxMapZ()).toBe(1);
     });
 
-    it("returns the correct size bounds at two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 4);
+    it("returns the correct size bounds at quarter scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
 
       expect(terrain.minMapX()).toBe(-0.5);
       expect(terrain.maxMapX()).toBe(0.5);
@@ -101,8 +101,8 @@ describe("CityTour.Terrain", function() {
       });
     });
 
-    describe("two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+    describe("half scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.landHeightAtCoordinates(-1.0, -1.0)).toBe(0.0);
@@ -131,8 +131,8 @@ describe("CityTour.Terrain", function() {
       });
     });
 
-    describe("four times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 4);
+    describe("quarter scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.landHeightAtCoordinates(-0.5, -0.5)).toBe(0.0);
@@ -194,8 +194,8 @@ describe("CityTour.Terrain", function() {
       });
     });
 
-    describe("two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+    describe("half scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.waterHeightAtCoordinates(-1.0, -1.0)).toBe(0.0);
@@ -224,8 +224,8 @@ describe("CityTour.Terrain", function() {
       });
     });
 
-    describe("four times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 4);
+    describe("quarter scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.waterHeightAtCoordinates(-0.5, -0.5)).toBe(0.0);
@@ -287,8 +287,8 @@ describe("CityTour.Terrain", function() {
       });
     });
 
-    describe("two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+    describe("half scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.heightAtCoordinates(-1.0, -1.0)).toBe(0.0);
@@ -317,8 +317,8 @@ describe("CityTour.Terrain", function() {
       });
     });
 
-    describe("four times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 4);
+    describe("quarter scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.heightAtCoordinates(-0.5, -0.5)).toBe(0.0);

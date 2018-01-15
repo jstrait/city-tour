@@ -2,8 +2,8 @@
 
 var CityTour = CityTour || {};
 
-CityTour.Terrain = function(coordinates, subDivisions) {
-  var scale = 1 / subDivisions;
+CityTour.Terrain = function(coordinates, scale) {
+  var subDivisions = 1 / scale;
   var columnCount = coordinates.length;
   var rowCount = coordinates[0].length;
   var maxMapX = (columnCount - 1) * 0.5 * scale;

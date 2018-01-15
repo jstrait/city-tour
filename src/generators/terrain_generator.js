@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.TerrainGenerator = (function() {
-  var SUB_DIVISIONS = 1;   // Should be a power of two
+  var SCALE = 1;   // Should be a power of 0.5
   var MAX_INITIAL_TERRAIN_HEIGHT = 6;
 
   var emptyTerrain = function(columnCount, rowCount) {
@@ -30,8 +30,8 @@ CityTour.TerrainGenerator = (function() {
   var buildTerrainCoordinates = function(columns, rows, config) {
     var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 10;
     var hydraulicErosionIteration;
-    var columnsToGenerate = nextPowerOfTwo(columns * SUB_DIVISIONS) + 1;
-    var rowsToGenerate = nextPowerOfTwo(rows * SUB_DIVISIONS) + 1;
+    var columnsToGenerate = nextPowerOfTwo(columns / SCALE) + 1;
+    var rowsToGenerate = nextPowerOfTwo(rows / SCALE) + 1;
 
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
@@ -215,7 +215,7 @@ CityTour.TerrainGenerator = (function() {
 
   terrainGenerator.generate = function(columns, rows, config) {
     var terrainCoordinates = buildTerrainCoordinates(columns, rows, config);
-    return new CityTour.Terrain(terrainCoordinates, SUB_DIVISIONS);
+    return new CityTour.Terrain(terrainCoordinates, SCALE);
   };
 
   return terrainGenerator;
