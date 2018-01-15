@@ -67,6 +67,15 @@ describe("CityTour.Terrain", function() {
       expect(terrain.minMapZ()).toBe(-0.5);
       expect(terrain.maxMapZ()).toBe(0.5);
     });
+
+    it("returns the correct size bounds at quarter scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 2);
+
+      expect(terrain.minMapX()).toBe(-4);
+      expect(terrain.maxMapX()).toBe(4);
+      expect(terrain.minMapZ()).toBe(-4);
+      expect(terrain.maxMapZ()).toBe(4);
+    });
   });
 
 
@@ -158,6 +167,36 @@ describe("CityTour.Terrain", function() {
         expect(terrain.landHeightAtCoordinates(-0.51, 0)).toBeUndefined();
         expect(terrain.landHeightAtCoordinates(0, 0.51)).toBeUndefined();
         expect(terrain.landHeightAtCoordinates(0, -0.51)).toBeUndefined();
+      });
+    });
+
+    describe("two times scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 2);
+
+      it("returns the correct height for coordinates on an intersection", function() {
+        expect(terrain.landHeightAtCoordinates(-4.0, -4.0)).toBe(0.0);
+        expect(terrain.landHeightAtCoordinates(-2.0, 2.0)).toBe(5.2);
+        expect(terrain.landHeightAtCoordinates(-4.0, 0.0)).toBe(2.0);
+      });
+
+      it("returns the correct height for coordinates along an edge", function() {
+        expect(terrain.landHeightAtCoordinates(-2.0, 0.8)).toBe(4.66);
+        expect(terrain.landHeightAtCoordinates(-1.2, 0.0)).toBe(5.14);
+      });
+
+      it("returns `undefined` for coordinates outside the bounds of the terrain", function() {
+        // Way out of bounds
+        expect(terrain.landHeightAtCoordinates(10000, 0)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(-10000, 0)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(0, 10000)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(0, -10000)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(10000, 10000)).toBeUndefined();
+
+        // Almost in bounds
+        expect(terrain.landHeightAtCoordinates(4.01, 0)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(-4.01, 0)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(0, 4.01)).toBeUndefined();
+        expect(terrain.landHeightAtCoordinates(0, -4.01)).toBeUndefined();
       });
     });
   });
@@ -253,6 +292,36 @@ describe("CityTour.Terrain", function() {
         expect(terrain.waterHeightAtCoordinates(0, -0.51)).toBeUndefined();
       });
     });
+
+    describe("two times scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 2);
+
+      it("returns the correct height for coordinates on an intersection", function() {
+        expect(terrain.waterHeightAtCoordinates(-4.0, -4.0)).toBe(0.0);
+        expect(terrain.waterHeightAtCoordinates(-2.0, 2.0)).toBe(1.3);
+        expect(terrain.waterHeightAtCoordinates(-4.0, 0.0)).toBe(3.0);
+      });
+
+      it("returns the correct height for coordinates along an edge", function() {
+        expect(terrain.waterHeightAtCoordinates(-2.0, 0.8)).toBeCloseTo(0.52);
+        expect(terrain.waterHeightAtCoordinates(-1.2, 0.0)).toBeCloseTo(0.16);
+      });
+
+      it("returns `undefined` for coordinates outside the bounds of the terrain", function() {
+        // Way out of bounds
+        expect(terrain.waterHeightAtCoordinates(10000, 0)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(-10000, 0)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(0, 10000)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(0, -10000)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(10000, 10000)).toBeUndefined();
+
+        // Almost in bounds
+        expect(terrain.waterHeightAtCoordinates(4.01, 0)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(-4.01, 0)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(0, 4.01)).toBeUndefined();
+        expect(terrain.waterHeightAtCoordinates(0, -4.01)).toBeUndefined();
+      });
+    });
   });
 
 
@@ -344,6 +413,36 @@ describe("CityTour.Terrain", function() {
         expect(terrain.heightAtCoordinates(-0.51, 0)).toBeUndefined();
         expect(terrain.heightAtCoordinates(0, 0.51)).toBeUndefined();
         expect(terrain.heightAtCoordinates(0, -0.51)).toBeUndefined();
+      });
+    });
+
+    describe("two times scale", function() {
+      var terrain = new CityTour.Terrain(terrainMesh, 2);
+
+      it("returns the correct height for coordinates on an intersection", function() {
+        expect(terrain.heightAtCoordinates(-4.0, -4.0)).toBe(0.0);
+        expect(terrain.heightAtCoordinates(-2.0, 2.0)).toBe(6.5);
+        expect(terrain.heightAtCoordinates(-4.0, 0.0)).toBe(5.0);
+      });
+
+      it("returns the correct height for coordinates along an edge", function() {
+        expect(terrain.heightAtCoordinates(-2.0, 0.8)).toBe(5.18);
+        expect(terrain.heightAtCoordinates(-1.2, 0.0)).toBe(5.3);
+      });
+
+      it("returns `undefined` for coordinates outside the bounds of the terrain", function() {
+        // Way out of bounds
+        expect(terrain.heightAtCoordinates(10000, 0)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(-10000, 0)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(0, 10000)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(0, -10000)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(10000, 10000)).toBeUndefined();
+
+        // Almost in bounds
+        expect(terrain.heightAtCoordinates(4.01, 0)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(-4.01, 0)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(0, 4.01)).toBeUndefined();
+        expect(terrain.heightAtCoordinates(0, -4.01)).toBeUndefined();
       });
     });
   });
