@@ -9,9 +9,11 @@ CityTour.Terrain = function(coordinates, scale) {
   var subDivisions = 1 / scale;
   var columnCount = coordinates.length;
   var rowCount = coordinates[0].length;
-  var maxMapX = (columnCount - 1) * 0.5 * scale;
+  var maxXIndex = columnCount - 1;
+  var maxZIndex = rowCount - 1;
+  var maxMapX = maxXIndex * 0.5 * scale;
   var minMapX = -maxMapX;
-  var maxMapZ = (rowCount - 1) * 0.5 * scale;
+  var maxMapZ = maxZIndex * 0.5 * scale;
   var minMapZ = -maxMapZ;
 
   var mapXToNormalizedX = function(mapX) {
@@ -35,8 +37,7 @@ CityTour.Terrain = function(coordinates, scale) {
     var xIsExact = Math.floor(xIntegerCoordinate) === xIntegerCoordinate;
     var zIsExact = Math.floor(zIntegerCoordinate) === zIntegerCoordinate;
 
-    if((coordinates[Math.ceil(x)] === undefined) || (coordinates[Math.ceil(x)][Math.ceil(z)] === undefined) ||
-       (coordinates[Math.floor(x)] === undefined) || (coordinates[Math.floor(x)][Math.floor(z)] === undefined)) {
+    if (x < 0 || x > maxXIndex || z < 0 || z > maxZIndex) {
       return undefined;
     }
 
