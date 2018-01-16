@@ -24,6 +24,8 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var TILT_VELOCITY_DECAY = 0.85;
   var ROTATION_VELOCITY_DECAY = 0.85;
 
+  var MINIMUM_VELOCITY = 0.00001;
+
   var centerX = 0.0;
   var centerZ = 0.0;
   var zoomDistance;
@@ -140,6 +142,30 @@ CityTour.OrbitalCamera = function(messageBroker) {
       setZoomDistance(zoomDistance + zoomDistanceVelocity);
       setTiltAngle(tiltAngle + tiltVelocity);
       setRotationAngle(rotationAngle + rotationVelocity);
+    }
+
+    if (Math.abs(centerXVelocity) < MINIMUM_VELOCITY) {
+      centerXVelocity = 0.0;
+    }
+    if (Math.abs(centerZVelocity) < MINIMUM_VELOCITY) {
+      centerZVelocity = 0.0;
+    }
+    if (Math.abs(zoomDistanceVelocity) < MINIMUM_VELOCITY) {
+      zoomDistanceVelocity = 0.0;
+    }
+    if (Math.abs(tiltVelocity) < MINIMUM_VELOCITY) {
+      tiltVelocity = 0.0;
+    }
+    if (Math.abs(rotationVelocity) < MINIMUM_VELOCITY) {
+      rotationVelocity = 0.0;
+    }
+
+    if (centerXVelocity === 0.0 &&
+        centerZVelocity === 0.0 &&
+        zoomDistanceVelocity === 0.0 &&
+        tiltVelocity === 0.0 &&
+        rotationVelocity === 0.0) {
+      isVelocityEnabled = false;
     }
   };
 
