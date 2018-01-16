@@ -10,6 +10,9 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
 
   var MIN_ROTATION_ANGLE =  0.01745329;  // 1 degree
   var MIN_ZOOM_DELTA = 0.5;
+  var ALLOWABLE_DELTA_FOR_TILT_GESTURE = Math.PI / 16;
+  var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
+  var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
 
   var currentGesture;
   var previousTouches;
@@ -66,18 +69,6 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
     orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
   };
 
-  var touchPointsAreHorizontal = function(angleBetweenTouchPoints) {
-    var ALLOWABLE_DELTA_FOR_X_ROTATION = Math.PI / 16;
-    var HALF_PI = Math.PI / 2;
-
-    return Math.abs(angleBetweenTouchPoints) >= (HALF_PI - ALLOWABLE_DELTA_FOR_X_ROTATION) &&
-           Math.abs(angleBetweenTouchPoints) <= (HALF_PI + ALLOWABLE_DELTA_FOR_X_ROTATION);
-  };
-
-  var rotationYActive = function(rotationYDelta) {
-    return Math.abs(rotationYDelta) >= MIN_ROTATION_ANGLE;
-  };
-
   var processZoom = function(currentTouches, distanceBetweenTouches) {
     var newCenterOfOrbitX, newCenterOfOrbitZ;
     var interpolationXZTowardCenterOfZoomPecentage;
@@ -125,17 +116,44 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
     orbitalCamera.setRotationAngle(orbitalCamera.rotationAngle() + rotationAngleDelta);
   };
 
+  var determineMultiTouchGesture = function(currentTouches) {
+    var absoluteAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
+    var touchPointsAreHorizontal = absoluteAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
+                                   absoluteAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
+    var rotationAngleDelta;
+
+    if (previousTouches.count() !== 2) {
+      return undefined;
+    }
+
+    if (currentGesture === TILT) {
+      return TILT;
+    }
+    else if (currentGesture === undefined && touchPointsAreHorizontal) {
+      return TILT;
+    }
+    else {
+      rotationAngleDelta = previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches();
+
+      if (Math.abs(rotationAngleDelta) >= MIN_ROTATION_ANGLE) {
+        return ROTATE;
+      }
+      else {
+        return PINCH_ZOOM;
+      }
+    }
+  };
+
+
   var processMultiTouchGestures = function(currentTouches) {
     var yDistanceDelta;
     var rotationAngleDelta;
     var distanceBetweenTouches;
 
-    if (previousTouches.count() !== 2) {
-      return;
-    }
+    currentGesture = determineMultiTouchGesture(currentTouches);
 
-    if (currentGesture === undefined && touchPointsAreHorizontal(currentTouches.angleBetweenTouches())) {
-      currentGesture = TILT;
+    if (currentGesture === undefined) {
+      return;
     }
 
     if (currentGesture === TILT) {
@@ -144,20 +162,14 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
       yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
       orbitalCamera.setTiltPercentage(orbitalCamera.tiltPercentage() + (yDistanceDelta / 100));
     }
+    else if (currentGesture === ROTATE) {
+      zoomProperties = undefined;
+      processRotationY(currentTouches, previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
+    }
     else {
-      rotationAngleDelta = previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches();
-
-      if (rotationYActive(rotationAngleDelta)) {
-        zoomProperties = undefined;
-        currentGesture = ROTATE;
-        processRotationY(currentTouches, rotationAngleDelta);
-      }
-      else {
-        currentGesture = PINCH_ZOOM;
-        distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();
-        if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
-          processZoom(currentTouches, distanceBetweenTouches);
-        }
+      distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();
+      if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
+        processZoom(currentTouches, distanceBetweenTouches);
       }
     }
   };
