@@ -18,6 +18,7 @@ CityTour.CityConfigService = function() {
         probabilityOfRiver: includeRiver ? 1.0 : 0.0,
       },
       roadNetwork: {
+        present: true,
         safeFromDecayPercentage: safeFromDecayPercentage,
       },
       zonedBlocks: {

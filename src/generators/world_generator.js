@@ -4,7 +4,7 @@ var CityTour = CityTour || {};
 
 CityTour.WorldGenerator = (function() {
   var generate = function(config) {
-    var GENERATE_ROAD_NETWORK = true;
+    var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true);
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
     var findLandPointNearCenter = function(terrain) {
