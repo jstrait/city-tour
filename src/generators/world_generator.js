@@ -52,7 +52,7 @@ CityTour.WorldGenerator = (function() {
     };
 
     var roadStartTime = new Date();
-    var roadNetwork = (!GENERATE_ROAD_NETWORK || cityCenter === undefined) ? new CityTour.RoadNetwork(terrain) : CityTour.RoadNetworkGenerator.generate(terrain, roadConfig);
+    var roadNetwork = (!GENERATE_ROAD_NETWORK || cityCenter === undefined) ? new CityTour.RoadNetwork(terrain) : CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, roadConfig);
     var roadEndTime = new Date();
 
     var zonedBlockConfig = {
