@@ -15,7 +15,7 @@ CityTour.RoadNetworkGenerator = (function() {
     var MIN_MAP_Z = Math.max(terrain.minMapZ(), -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
     var MAX_MAP_Z = Math.min(terrain.maxMapZ(), CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
 
-    var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * config.safeFromDecayPercentage;
+    var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
 
     var probabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
       // Guarantee roads along x and z axes

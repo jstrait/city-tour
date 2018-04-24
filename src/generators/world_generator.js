@@ -48,7 +48,7 @@ CityTour.WorldGenerator = (function() {
     var roadConfig = {
       centerMapX: centerX,
       centerMapZ: centerZ,
-      safeFromDecayPercentage: config.roadNetwork.safeFromDecayPercentage,
+      safeFromDecayBlocks: config.roadNetwork.safeFromDecayBlocks,
     };
 
     var roadStartTime = new Date();

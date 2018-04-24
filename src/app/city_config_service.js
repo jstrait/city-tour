@@ -6,7 +6,7 @@ CityTour.CityConfigService = function() {
   var heightJitter = 20;
   var heightJitterDecay = 0.65;
   var includeRiver = true;
-  var safeFromDecayPercentage = 0.4;
+  var safeFromDecayBlocks = 13;
   var percentageDistanceDecayBegins = 0.4;
   var maxBuildingStories = 40;
 
@@ -19,7 +19,7 @@ CityTour.CityConfigService = function() {
       },
       roadNetwork: {
         present: true,
-        safeFromDecayPercentage: safeFromDecayPercentage,
+        safeFromDecayBlocks: safeFromDecayBlocks,
       },
       zonedBlocks: {
         percentageDistanceDecayBegins: percentageDistanceDecayBegins,
@@ -36,8 +36,8 @@ CityTour.CityConfigService = function() {
     setHeightJitterDecay: function(newHeightJitterDecay) { heightJitterDecay = newHeightJitterDecay; },
     includeRiver: function() { return includeRiver; },
     setIncludeRiver: function(newIncludeRiver) { includeRiver = newIncludeRiver; },
-    safeFromDecayPercentage: function() { return safeFromDecayPercentage; },
-    setSafeFromDecayPercentage: function(newSafeFromDecayPercentage) { safeFromDecayPercentage = newSafeFromDecayPercentage; },
+    safeFromDecayBlocks: function() { return safeFromDecayBlocks; },
+    setSafeFromDecayBlocks: function(newSafeFromDecayBlocks) { safeFromDecayBlocks = newSafeFromDecayBlocks; },
     percentageDistanceDecayBegins: function() { return percentageDistanceDecayBegins; },
     setPercentageDistanceDecayBegins: function(newPercentageDistanceDecayBegins) { percentageDistanceDecayBegins = newPercentageDistanceDecayBegins; },
     maxBuildingStories: function() { return maxBuildingStories; },

@@ -11,7 +11,7 @@ CityTour.BridgeGenerator = (function() {
   var PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = 0.5;
 
   var buildBridge = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetMapX, targetMapZ, config) {
-    var SAFE_FROM_DECAY_DISTANCE = DISTANCE_TO_CITY_EDGE * config.safeFromDecayPercentage;
+    var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
 
     var centerMapX = config.centerMapX;
     var centerMapZ = config.centerMapZ;
