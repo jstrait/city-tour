@@ -9,17 +9,39 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
 
   var buildRoadNetwork = function(terrain, config) {
     var roadNetwork = new CityTour.RoadNetwork(terrain);
+    var previousCityCenterX, previousCityCenterZ;
     var i;
 
     buildNeighborhood(terrain, roadNetwork, config);
     for (i = 0; i < NEIGHBORHOOD_COUNT - 1; i++) {
+      previousCityCenterX = config.centerMapX;
+      previousCityCenterZ = config.centerMapZ;
+
       config.centerMapX = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_COLUMNS, CityTour.Config.BLOCK_COLUMNS);
       config.centerMapZ = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_ROWS, CityTour.Config.BLOCK_ROWS);
 
       buildNeighborhood(terrain, roadNetwork, config);
+
+      buildRoadBetweenNeighborhoods(terrain, roadNetwork, previousCityCenterX, previousCityCenterZ, config.centerMapX, config.centerMapZ);
     }
 
     return roadNetwork;
+  };
+
+  var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, mapX1, mapZ1, mapX2, mapZ2) {
+    var terrainCandidateRoadNetwork = new CityTour.TerrainCandidateRoadNetwork(terrain);
+    var pathFinder = new CityTour.PathFinder(terrainCandidateRoadNetwork);
+    var shortestPath = pathFinder.shortestPath(mapX1, mapZ1, mapX2, mapZ2);
+    var previousIntersectionX, previousIntersectionZ;
+    var i;
+
+    previousIntersectionX = mapX1;
+    previousIntersectionZ = mapZ1;
+    for (i = 0; i < shortestPath.length; i++) {
+      roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, shortestPath[i][0], shortestPath[i][1], 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      previousIntersectionX = shortestPath[i][0];
+      previousIntersectionZ = shortestPath[i][1];
+    }
   };
 
   var buildNeighborhood = function(terrain, roadNetwork, config) {
