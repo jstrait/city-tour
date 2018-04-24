@@ -41,8 +41,7 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
         return 1.0;
       }
 
-      normalizedPercentageFromCenter = (distanceFromCenter - SAFE_FROM_DECAY_DISTANCE) / (DISTANCE_TO_CITY_EDGE - SAFE_FROM_DECAY_DISTANCE);
-      return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
+      return 0.25;
     };
 
     var isTerrainTooSteep = function(terrain, mapX, mapZ, targetMapX, targetMapZ) {
