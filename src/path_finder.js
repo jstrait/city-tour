@@ -82,14 +82,13 @@ CityTour.PathFinder = function(roadNetwork) {
 
   var shortestPath = function(startX, startZ, endX, endZ) {
     var nodes = [];
+    var currentNode;
     var unvisitedSet = new Set();
     var x;
 
     for (x = roadNetwork.minColumn(); x <= roadNetwork.maxColumn(); x++) {
       nodes[x] = [];
     }
-
-    var currentNode;
 
     nodes[startX][startZ] = new Node(startX, startZ);
     currentNode = nodes[startX][startZ];
