@@ -3,7 +3,6 @@
 var CityTour = CityTour || {};
 
 CityTour.NeighborhoodRoadNetworkGenerator = (function() {
-  var DISTANCE_TO_CITY_EDGE = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
   var MAX_STEEPNESS = Math.PI / 6;
   var NEIGHBORHOOD_COUNT = 5;
 
@@ -43,14 +42,23 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   };
 
   var buildNeighborhood = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
-    var MIN_MAP_X = Math.max(terrain.minMapX(), -CityTour.Config.HALF_BLOCK_COLUMNS + neighborhoodCenterX);
-    var MAX_MAP_X = Math.min(terrain.maxMapX(), CityTour.Config.HALF_BLOCK_COLUMNS + neighborhoodCenterX);
-    var MIN_MAP_Z = Math.max(terrain.minMapZ(), -CityTour.Config.HALF_BLOCK_ROWS + neighborhoodCenterZ);
-    var MAX_MAP_Z = Math.min(terrain.maxMapZ(), CityTour.Config.HALF_BLOCK_ROWS + neighborhoodCenterZ);
+    var MIN_MAP_X = Math.max(terrain.minMapX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
+    var MAX_MAP_X = Math.min(terrain.maxMapX(), (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
+    var MIN_MAP_Z = Math.max(terrain.minMapZ(), -(config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
+    var MAX_MAP_Z = Math.min(terrain.maxMapZ(), (config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
 
+    var DISTANCE_TO_NEIGHBORHOOD_BOUNDARY = Math.min(config.neighborhoods.columnCount / 2, config.neighborhoods.rowCount / 2);
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
 
     var probabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
+      // Guarantee roads along x and z axes
+      if (mapX1 === neighborhoodCenterX && mapX2 === neighborhoodCenterX && mapZ2 >= MIN_MAP_Z && mapZ2 <= MAX_MAP_Z) {
+        return 1.0;
+      }
+      else if (mapZ1 === neighborhoodCenterZ && mapZ2 === neighborhoodCenterZ && mapX2 >= MIN_MAP_X && mapX2 <= MAX_MAP_X) {
+        return 1.0;
+      }
+
       var distanceFromCenter = CityTour.Math.distanceBetweenPoints(neighborhoodCenterX, neighborhoodCenterZ, mapX1, mapZ1);
       var normalizedPercentageFromCenter;
 
@@ -58,7 +66,8 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
         return 1.0;
       }
 
-      return 0.25;
+      normalizedPercentageFromCenter = (distanceFromCenter - SAFE_FROM_DECAY_DISTANCE) / (DISTANCE_TO_NEIGHBORHOOD_BOUNDARY - SAFE_FROM_DECAY_DISTANCE);
+      return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
     };
 
     var isTerrainTooSteep = function(terrain, mapX, mapZ, targetMapX, targetMapZ) {

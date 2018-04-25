@@ -50,6 +50,10 @@ CityTour.WorldGenerator = (function() {
     var roadConfig = {
       centerMapX: centerX,
       centerMapZ: centerZ,
+      neighborhoods: {
+        columnCount: config.neighborhoods.columnCount,
+        rowCount: config.neighborhoods.rowCount,
+      },
       safeFromDecayBlocks: config.roadNetwork.safeFromDecayBlocks,
     };
 
