@@ -45,7 +45,7 @@ CityTour.WorldGenerator = (function() {
       centerZ = cityCenter.z;
     }
 
-    var neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, centerX, centerZ, config.neighborhoodCount);
+    var neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, centerX, centerZ, config.neighborhoods.count);
 
     var roadConfig = {
       centerMapX: centerX,

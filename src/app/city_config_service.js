@@ -18,7 +18,6 @@ CityTour.CityConfigService = function() {
 
   var toWorldConfig = function() {
     return {
-      neighborhoodCount: NEIGHBORHOOD_COUNT,
       terrain: {
         columnCount: TERRAIN_COLUMN_COUNT,
         rowCount: TERRAIN_ROW_COUNT,
@@ -27,6 +26,7 @@ CityTour.CityConfigService = function() {
         probabilityOfRiver: includeRiver ? 1.0 : 0.0,
       },
       neighborhoods: {
+        count: NEIGHBORHOOD_COUNT,
         columnCount: NEIGHBORHOOD_MAX_COLUMNS,
         rowCount: NEIGHBORHOOD_MAX_ROWS,
       },
