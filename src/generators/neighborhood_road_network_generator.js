@@ -11,9 +11,11 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
     var roadNetwork = new CityTour.RoadNetwork(terrain);
     var i;
 
-    for (i = 0; i < neighborhoods.length; i++) {
-      buildNeighborhood(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
+    buildNeighborhood(terrain, roadNetwork, neighborhoods[0].centerX, neighborhoods[0].centerZ, config);
+
+    for (i = 1; i < neighborhoods.length; i++) {
       buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerMapX, config.centerMapZ);
+      buildNeighborhood(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
     }
 
     return roadNetwork;
@@ -22,7 +24,12 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, mapX1, mapZ1, mapX2, mapZ2) {
     var terrainCandidateRoadNetwork = new CityTour.TerrainCandidateRoadNetwork(terrain);
     var pathFinder = new CityTour.PathFinder(terrainCandidateRoadNetwork);
-    var shortestPath = pathFinder.shortestPath(mapX1, mapZ1, mapX2, mapZ2);
+
+    var targetPredicate = function(x, z) {
+      return roadNetwork.hasIntersection(x, z);
+    };
+
+    var shortestPath = pathFinder.shortestPath(mapX1, mapZ1, mapX2, mapZ2, targetPredicate);
     var previousIntersectionX, previousIntersectionZ;
     var i;
 

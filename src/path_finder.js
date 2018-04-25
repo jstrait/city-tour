@@ -80,11 +80,17 @@ CityTour.PathFinder = function(roadNetwork) {
     return shortestLengthNode;
   };
 
-  var shortestPath = function(startX, startZ, endX, endZ) {
+  var shortestPath = function(startX, startZ, endX, endZ, targetPredicate) {
     var nodes = [];
     var currentNode;
     var unvisitedSet = new Set();
     var x;
+
+    if (targetPredicate === undefined) {
+      targetPredicate = function(x, z) {
+        return x === endX && z === endZ;
+      };
+    }
 
     for (x = roadNetwork.minColumn(); x <= roadNetwork.maxColumn(); x++) {
       nodes[x] = [];
@@ -94,7 +100,7 @@ CityTour.PathFinder = function(roadNetwork) {
     currentNode = nodes[startX][startZ];
     currentNode.distance = 0;
 
-    while(currentNode.x !== endX || currentNode.z !== endZ) {
+    while(!targetPredicate(currentNode.x, currentNode.z)) {
       evaluateNodeConnections(currentNode, nodes, unvisitedSet);
       unvisitedSet.delete(currentNode);
 
@@ -104,7 +110,7 @@ CityTour.PathFinder = function(roadNetwork) {
       }
     }
 
-    return extractShortestPath(nodes, endX, endZ);
+    return extractShortestPath(nodes, currentNode.x, currentNode.z);
   };
 
 
