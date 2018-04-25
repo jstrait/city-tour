@@ -80,7 +80,7 @@ CityTour.WorldGenerator = (function() {
     var buildingsEndTime = new Date();
 
     var simplifierStartTime = new Date();
-    CityTour.RoadNetworkSimplifier.simplify(roadNetwork, buildings);
+    //CityTour.RoadNetworkSimplifier.simplify(roadNetwork, buildings);
     var simplifierEndTime = new Date();
 
     var combinedEndTime = new Date();
