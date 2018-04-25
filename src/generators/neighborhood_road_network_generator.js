@@ -10,18 +10,19 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   var buildRoadNetwork = function(terrain, config) {
     var roadNetwork = new CityTour.RoadNetwork(terrain);
     var cityCenterX, cityCenterZ;
+    var neighborhoodCenterX, neighborhoodCenterZ;
     var i;
 
     cityCenterX = config.centerMapX;
     cityCenterZ = config.centerMapZ;
 
-    buildNeighborhood(terrain, roadNetwork, config);
+    buildNeighborhood(terrain, roadNetwork, cityCenterX, cityCenterZ, config);
     for (i = 0; i < NEIGHBORHOOD_COUNT - 1; i++) {
-      config.centerMapX = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_COLUMNS, CityTour.Config.BLOCK_COLUMNS);
-      config.centerMapZ = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_ROWS, CityTour.Config.BLOCK_ROWS);
+      neighborhoodCenterX = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_COLUMNS, CityTour.Config.BLOCK_COLUMNS);
+      neighborhoodCenterZ = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_ROWS, CityTour.Config.BLOCK_ROWS);
 
-      buildNeighborhood(terrain, roadNetwork, config);
-      buildRoadBetweenNeighborhoods(terrain, roadNetwork, config.centerMapX, config.centerMapZ, cityCenterX, cityCenterZ);
+      buildNeighborhood(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config);
+      buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, cityCenterX, cityCenterZ);
     }
 
     return roadNetwork;
@@ -43,19 +44,16 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
     }
   };
 
-  var buildNeighborhood = function(terrain, roadNetwork, config) {
-    var centerMapX = config.centerMapX;
-    var centerMapZ = config.centerMapZ;
-
-    var MIN_MAP_X = Math.max(terrain.minMapX(), -CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
-    var MAX_MAP_X = Math.min(terrain.maxMapX(), CityTour.Config.HALF_BLOCK_COLUMNS + centerMapX);
-    var MIN_MAP_Z = Math.max(terrain.minMapZ(), -CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
-    var MAX_MAP_Z = Math.min(terrain.maxMapZ(), CityTour.Config.HALF_BLOCK_ROWS + centerMapZ);
+  var buildNeighborhood = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
+    var MIN_MAP_X = Math.max(terrain.minMapX(), -CityTour.Config.HALF_BLOCK_COLUMNS + neighborhoodCenterX);
+    var MAX_MAP_X = Math.min(terrain.maxMapX(), CityTour.Config.HALF_BLOCK_COLUMNS + neighborhoodCenterX);
+    var MIN_MAP_Z = Math.max(terrain.minMapZ(), -CityTour.Config.HALF_BLOCK_ROWS + neighborhoodCenterZ);
+    var MAX_MAP_Z = Math.min(terrain.maxMapZ(), CityTour.Config.HALF_BLOCK_ROWS + neighborhoodCenterZ);
 
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
 
     var probabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
-      var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX1, mapZ1);
+      var distanceFromCenter = CityTour.Math.distanceBetweenPoints(neighborhoodCenterX, neighborhoodCenterZ, mapX1, mapZ1);
       var normalizedPercentageFromCenter;
 
       if (distanceFromCenter <= SAFE_FROM_DECAY_DISTANCE) {
@@ -131,7 +129,7 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
       }
     };
 
-    branchFromIntersection(terrain, roadNetwork, centerMapX, centerMapZ);
+    branchFromIntersection(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ);
   };
 
 
