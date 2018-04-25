@@ -44,6 +44,4 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
       return buildRoadNetwork(terrain, neighborhoods, config);
     },
   };
-
-  return neighborhoodRoadNetworkGenerator;
 })();
