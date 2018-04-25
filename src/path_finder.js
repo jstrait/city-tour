@@ -12,7 +12,7 @@ CityTour.PathFinder = function(roadNetwork) {
     return {
       isVisited: false,
       distance:  Number.POSITIVE_INFINITY,
-      previous:  null,
+      previous:  undefined,
       x:         x,
       z:         z,
     };
@@ -23,7 +23,7 @@ CityTour.PathFinder = function(roadNetwork) {
     var currentNode = nodes[endX][endZ];
     var previous;
 
-    while (currentNode.previous) {
+    while (currentNode.previous !== undefined) {
       path.unshift([currentNode.x, currentNode.z]);
 
       previous = currentNode.previous;
@@ -68,7 +68,7 @@ CityTour.PathFinder = function(roadNetwork) {
 
   var unvisitedNodeWithShortestLength = function(unvisitedSet) {
     var shortestLength = Number.POSITIVE_INFINITY;
-    var shortestLengthNode = null;
+    var shortestLengthNode = undefined;
 
     unvisitedSet.forEach(function(node) {
       if (node.distance < shortestLength) {
@@ -99,7 +99,7 @@ CityTour.PathFinder = function(roadNetwork) {
       unvisitedSet.delete(currentNode);
 
       currentNode = unvisitedNodeWithShortestLength(unvisitedSet);
-      if (currentNode === null) {
+      if (currentNode === undefined) {
         return undefined;
       }
     }
