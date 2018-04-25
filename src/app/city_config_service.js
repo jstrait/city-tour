@@ -3,6 +3,9 @@
 var CityTour = CityTour || {};
 
 CityTour.CityConfigService = function() {
+  var TERRAIN_COLUMN_COUNT = 128;
+  var TERRAIN_ROW_COUNT = 128;
+
   var heightJitter = 20;
   var heightJitterDecay = 0.65;
   var includeRiver = true;
@@ -13,6 +16,8 @@ CityTour.CityConfigService = function() {
   var toWorldConfig = function() {
     return {
       terrain: {
+        columnCount: TERRAIN_COLUMN_COUNT,
+        rowCount: TERRAIN_ROW_COUNT,
         heightJitter: heightJitter,
         heightJitterDecay: heightJitterDecay,
         probabilityOfRiver: includeRiver ? 1.0 : 0.0,

@@ -11,7 +11,7 @@ CityTour.WorldGenerator = (function() {
       var x, z;
       var squareSize = 1;
 
-      while (squareSize < CityTour.Config.TERRAIN_ROWS && squareSize < CityTour.Config.TERRAIN_COLUMNS) {
+      while (squareSize < config.terrain.rowCount && squareSize < config.terrain.columnCount) {
         for (x = -(squareSize - 1) / 2; x <= (squareSize - 1) / 2; x++) {
           for (z = -(squareSize - 1) / 2; z <= (squareSize - 1) / 2; z++) {
             if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
@@ -35,7 +35,7 @@ CityTour.WorldGenerator = (function() {
     };
 
     var terrainStartTime = new Date();
-    var terrain = CityTour.TerrainGenerator.generate(CityTour.Config.TERRAIN_COLUMNS, CityTour.Config.TERRAIN_ROWS, terrainConfig);
+    var terrain = CityTour.TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
     var terrainEndTime = new Date();
 
     var cityCenter = findLandPointNearCenter(terrain);
