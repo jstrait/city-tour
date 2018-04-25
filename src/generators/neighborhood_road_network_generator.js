@@ -9,20 +9,19 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
 
   var buildRoadNetwork = function(terrain, config) {
     var roadNetwork = new CityTour.RoadNetwork(terrain);
-    var previousCityCenterX, previousCityCenterZ;
+    var cityCenterX, cityCenterZ;
     var i;
+
+    cityCenterX = config.centerMapX;
+    cityCenterZ = config.centerMapZ;
 
     buildNeighborhood(terrain, roadNetwork, config);
     for (i = 0; i < NEIGHBORHOOD_COUNT - 1; i++) {
-      previousCityCenterX = config.centerMapX;
-      previousCityCenterZ = config.centerMapZ;
-
       config.centerMapX = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_COLUMNS, CityTour.Config.BLOCK_COLUMNS);
       config.centerMapZ = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_ROWS, CityTour.Config.BLOCK_ROWS);
 
       buildNeighborhood(terrain, roadNetwork, config);
-
-      buildRoadBetweenNeighborhoods(terrain, roadNetwork, previousCityCenterX, previousCityCenterZ, config.centerMapX, config.centerMapZ);
+      buildRoadBetweenNeighborhoods(terrain, roadNetwork, config.centerMapX, config.centerMapZ, cityCenterX, cityCenterZ);
     }
 
     return roadNetwork;
