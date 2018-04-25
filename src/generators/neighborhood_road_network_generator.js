@@ -4,7 +4,6 @@ var CityTour = CityTour || {};
 
 CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   var MAX_STEEPNESS = Math.PI / 6;
-  var NEIGHBORHOOD_COUNT = 5;
 
   var buildRoadNetwork = function(terrain, neighborhoods, config) {
     var roadNetwork = new CityTour.RoadNetwork(terrain);
