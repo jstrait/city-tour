@@ -5,6 +5,7 @@ var CityTour = CityTour || {};
 CityTour.CityConfigService = function() {
   var TERRAIN_COLUMN_COUNT = 128;
   var TERRAIN_ROW_COUNT = 128;
+  var NEIGHBORHOOD_COUNT = 5;
 
   var heightJitter = 20;
   var heightJitterDecay = 0.65;
@@ -15,6 +16,7 @@ CityTour.CityConfigService = function() {
 
   var toWorldConfig = function() {
     return {
+      neighborhoodCount: NEIGHBORHOOD_COUNT,
       terrain: {
         columnCount: TERRAIN_COLUMN_COUNT,
         rowCount: TERRAIN_ROW_COUNT,
