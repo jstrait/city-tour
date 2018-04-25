@@ -7,22 +7,13 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   var MAX_STEEPNESS = Math.PI / 6;
   var NEIGHBORHOOD_COUNT = 5;
 
-  var buildRoadNetwork = function(terrain, config) {
+  var buildRoadNetwork = function(terrain, neighborhoods, config) {
     var roadNetwork = new CityTour.RoadNetwork(terrain);
-    var cityCenterX, cityCenterZ;
-    var neighborhoodCenterX, neighborhoodCenterZ;
     var i;
 
-    cityCenterX = config.centerMapX;
-    cityCenterZ = config.centerMapZ;
-
-    buildNeighborhood(terrain, roadNetwork, cityCenterX, cityCenterZ, config);
-    for (i = 0; i < NEIGHBORHOOD_COUNT - 1; i++) {
-      neighborhoodCenterX = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_COLUMNS, CityTour.Config.BLOCK_COLUMNS);
-      neighborhoodCenterZ = CityTour.Math.randomInteger(-CityTour.Config.BLOCK_ROWS, CityTour.Config.BLOCK_ROWS);
-
-      buildNeighborhood(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config);
-      buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, cityCenterX, cityCenterZ);
+    for (i = 0; i < neighborhoods.length; i++) {
+      buildNeighborhood(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
+      buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerMapX, config.centerMapZ);
     }
 
     return roadNetwork;
@@ -134,8 +125,8 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
 
 
   return {
-    generate: function(terrain, config) {
-      return buildRoadNetwork(terrain, config);
+    generate: function(terrain, neighborhoods, config) {
+      return buildRoadNetwork(terrain, neighborhoods, config);
     },
   };
 

@@ -45,6 +45,8 @@ CityTour.WorldGenerator = (function() {
       centerZ = cityCenter.z;
     }
 
+    var neighborhoods = CityTour.NeighborhoodGenerator.generate(centerX, centerZ, 5);
+
     var roadConfig = {
       centerMapX: centerX,
       centerMapZ: centerZ,
@@ -57,7 +59,7 @@ CityTour.WorldGenerator = (function() {
       roadNetwork = new CityTour.RoadNetwork(terrain);
     }
     else {
-      roadNetwork = CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, roadConfig);
+      roadNetwork = CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, neighborhoods, roadConfig);
     }
     var roadEndTime = new Date();
 
