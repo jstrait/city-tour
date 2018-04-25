@@ -7,7 +7,7 @@ CityTour.CityConfigService = function() {
   var heightJitterDecay = 0.65;
   var includeRiver = true;
   var safeFromDecayBlocks = 4;
-  var percentageDistanceDecayBegins = 0.4;
+  var blockDistanceDecayBegins = 4;
   var maxBuildingStories = 40;
 
   var toWorldConfig = function() {
@@ -22,7 +22,7 @@ CityTour.CityConfigService = function() {
         safeFromDecayBlocks: safeFromDecayBlocks,
       },
       zonedBlocks: {
-        percentageDistanceDecayBegins: percentageDistanceDecayBegins,
+        blockDistanceDecayBegins: blockDistanceDecayBegins,
         maxBuildingStories: maxBuildingStories,
       },
     };
@@ -38,8 +38,8 @@ CityTour.CityConfigService = function() {
     setIncludeRiver: function(newIncludeRiver) { includeRiver = newIncludeRiver; },
     safeFromDecayBlocks: function() { return safeFromDecayBlocks; },
     setSafeFromDecayBlocks: function(newSafeFromDecayBlocks) { safeFromDecayBlocks = newSafeFromDecayBlocks; },
-    percentageDistanceDecayBegins: function() { return percentageDistanceDecayBegins; },
-    setPercentageDistanceDecayBegins: function(newPercentageDistanceDecayBegins) { percentageDistanceDecayBegins = newPercentageDistanceDecayBegins; },
+    blockDistanceDecayBegins: function() { return blockDistanceDecayBegins; },
+    setBlockDistanceDecayBegins: function(newBlockDistanceDecayBegins) { blockDistanceDecayBegins = newBlockDistanceDecayBegins; },
     maxBuildingStories: function() { return maxBuildingStories; },
     setMaxBuildingStories: function(newMaxBuildingStories) { maxBuildingStories = newMaxBuildingStories; },
     toWorldConfig: toWorldConfig,

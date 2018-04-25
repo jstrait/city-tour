@@ -64,7 +64,7 @@ CityTour.WorldGenerator = (function() {
     var roadEndTime = new Date();
 
     var zonedBlockConfig = {
-      percentageDistanceDecayBegins: config.zonedBlocks.percentageDistanceDecayBegins,
+      blockDistanceDecayBegins: config.zonedBlocks.blockDistanceDecayBegins,
       maxBuildingStories: config.zonedBlocks.maxBuildingStories,
     };
 

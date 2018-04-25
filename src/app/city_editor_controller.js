@@ -19,7 +19,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   var heightJitterDecay = document.getElementById("terrain-decay");
   var includeRiver = document.getElementById("terrain-river");
   var safeFromDecayBlocks = document.getElementById("roads-decay-distance-blocks");
-  var percentageDistanceDecayBegins = document.getElementById("buildings-decay-distance-percentage");
+  var blockDistanceDecayBegins = document.getElementById("buildings-decay-distance-blocks");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
 
   var currentMenu;
@@ -101,7 +101,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   heightJitterDecay.addEventListener('change', function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
   includeRiver.addEventListener('change', function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
   safeFromDecayBlocks.addEventListener('change', function(e) { cityConfigService.setSafeFromDecayBlocks(parseInt(e.target.value, 10)); }, false);
-  percentageDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setPercentageDistanceDecayBegins(parseFloat(e.target.value)); }, false);
+  blockDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setBlockDistanceDecayBegins(parseInt(e.target.value, 10)); }, false);
   maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
 
   container.addEventListener('click', hideMenus);
