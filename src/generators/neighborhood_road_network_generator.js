@@ -40,8 +40,6 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
 
 
   return {
-    generate: function(terrain, neighborhoods, config) {
-      return buildRoadNetwork(terrain, neighborhoods, config);
-    },
+    generate: buildRoadNetwork,
   };
 })();
