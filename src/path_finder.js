@@ -94,7 +94,7 @@ CityTour.PathFinder = function(roadNetwork) {
     currentNode = nodes[startX][startZ];
     currentNode.distance = 0;
 
-    while(currentNode.x != endX || currentNode.z != endZ) {
+    while(currentNode.x !== endX || currentNode.z !== endZ) {
       evaluateNodeConnections(currentNode, nodes, unvisitedSet);
       unvisitedSet.delete(currentNode);
 
