@@ -6,7 +6,7 @@ CityTour.CityConfigService = function() {
   var heightJitter = 20;
   var heightJitterDecay = 0.65;
   var includeRiver = true;
-  var safeFromDecayBlocks = 13;
+  var safeFromDecayBlocks = 4;
   var percentageDistanceDecayBegins = 0.4;
   var maxBuildingStories = 40;
 
