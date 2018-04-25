@@ -74,7 +74,7 @@ CityTour.WorldGenerator = (function() {
       zonedBlocks = [];
     }
     else {
-      zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, roadNetwork, centerX, centerZ, zonedBlockConfig);
+      zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, neighborhoods, roadNetwork, zonedBlockConfig);
     }
     var zonedBlocksEndTime = new Date();
     var buildingsStartTime = new Date();

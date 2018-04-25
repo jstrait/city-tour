@@ -135,15 +135,14 @@ CityTour.ZonedBlockGenerator = (function() {
     });
   });
 
-  var calculateBlockProbabilityOfBuilding = function(centerMapX, centerMapZ, mapX, mapZ, percentageDistanceDecayBegins) {
+  var calculateBlockProbabilityOfBuilding = function(mapX, mapZ, distanceToClosestNeighborhoodCenter, percentageDistanceDecayBegins) {
     var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
-    var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, mapX, mapZ);
-    var percentageFromCenter = (distanceFromCenter / distanceToCityEdge);
+    var percentageFromCenter = (distanceToClosestNeighborhoodCenter / distanceToCityEdge);
     var normalizedPercentageFromCenter;
 
     if (percentageFromCenter >= percentageDistanceDecayBegins) {
       var safeFromDecayDistance = distanceToCityEdge * percentageDistanceDecayBegins;
-      normalizedPercentageFromCenter = (distanceFromCenter - safeFromDecayDistance) / (distanceToCityEdge - safeFromDecayDistance);
+      normalizedPercentageFromCenter = (distanceToClosestNeighborhoodCenter - safeFromDecayDistance) / (distanceToCityEdge - safeFromDecayDistance);
     }
     else {
       normalizedPercentageFromCenter = 0.0;
@@ -152,7 +151,7 @@ CityTour.ZonedBlockGenerator = (function() {
     return (Math.pow(0.5, normalizedPercentageFromCenter) - 0.5) * 2;
   };
 
-  var calculateMaxStoriesForBlock = function(centerMapX, centerMapZ, mapX, mapZ, maxBuildingStories) {
+  var calculateMaxStoriesForBlock = function(mapX, mapZ, centerMapX, centerMapZ, maxBuildingStories) {
     var squareRootOfMaxBuildingStories = Math.pow(maxBuildingStories, (1/9));
 
     var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX - centerMapX) / CityTour.Config.HALF_BLOCK_COLUMNS));
@@ -178,28 +177,46 @@ CityTour.ZonedBlockGenerator = (function() {
              steepness: maximumHeight - minimumHeight };
   };
 
-  var zonedBlockGenerator = {};
+  var nearestNeighborhoodCenterDistance = function(neighborhoods, mapX, mapZ) {
+    var nearestCenterDistance = Number.POSITIVE_INFINITY;
+    var distanceToNeighborhoodCenter;
+    var i;
 
-  zonedBlockGenerator.generate = function(terrain, roadNetwork, centerMapX, centerMapZ, config) {
+    for (i = 0; i < neighborhoods.length; i++) {
+      distanceToNeighborhoodCenter = CityTour.Math.distanceBetweenPoints(neighborhoods[i].centerX, neighborhoods[i].centerZ, mapX, mapZ);
+
+      if (distanceToNeighborhoodCenter < nearestCenterDistance) {
+        nearestCenterDistance = distanceToNeighborhoodCenter;
+      }
+    }
+
+    return nearestCenterDistance;
+  };
+
+  var generate = function(terrain, neighborhoods, roadNetwork, config) {
     var mapX, mapZ;
-    var block, blocks = [];
+    var blocks = [];
+    var block;
     var hasTopRoad, hasRightRoad, hasBottomRoad, hasLeftRoad;
     var blockLayout, terrainAttributes, blockSteepness, maxBlockSteepness;
+    var distanceToClosestNeighborhoodCenter;
 
-    for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
-      for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
+    for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX++) {
+      for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ++) {
         hasTopRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX + 1, mapZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
         hasRightRoad = roadNetwork.hasEdgeBetween(mapX + 1, mapZ, mapX + 1, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
         hasBottomRoad = roadNetwork.hasEdgeBetween(mapX, mapZ + 1, mapX + 1, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
         hasLeftRoad = roadNetwork.hasEdgeBetween(mapX, mapZ, mapX, mapZ + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
         if (hasTopRoad === true || hasRightRoad === true || hasBottomRoad === true || hasLeftRoad === true) {
+          distanceToClosestNeighborhoodCenter = nearestNeighborhoodCenterDistance(neighborhoods, mapX, mapZ);
+
           block = {};
 
           block.mapX = mapX;
           block.mapZ = mapZ;
-          block.probabilityOfBuilding = calculateBlockProbabilityOfBuilding(centerMapX, centerMapZ, mapX, mapZ, config.percentageDistanceDecayBegins);
-          block.maxStories = calculateMaxStoriesForBlock(centerMapX, centerMapZ, mapX, mapZ, config.maxBuildingStories);
+          block.probabilityOfBuilding = calculateBlockProbabilityOfBuilding(mapX, mapZ, distanceToClosestNeighborhoodCenter, config.percentageDistanceDecayBegins);
+          block.maxStories = calculateMaxStoriesForBlock(neighborhoods[0].centerX, neighborhoods[0].centerZ, mapX, mapZ, config.maxBuildingStories);
 
           block.hasTopRoad = hasTopRoad;
           block.hasRightRoad = hasRightRoad;
@@ -225,5 +242,8 @@ CityTour.ZonedBlockGenerator = (function() {
     return blocks;
   };
 
-  return zonedBlockGenerator;
+
+  return {
+    generate: generate,
+  }
 })();
