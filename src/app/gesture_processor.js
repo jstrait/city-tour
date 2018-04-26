@@ -87,7 +87,12 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
       };
     }
 
-    interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.zoomStartDistancePercentage) / (1.0 - zoomProperties.zoomStartDistancePercentage);
+    if (zoomProperties.zoomStartDistancePercentage === 1.0) {
+      interpolationXZTowardCenterOfZoomPecentage = orbitalCamera.zoomPercentage();
+    }
+    else {
+      interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.zoomStartDistancePercentage) / (1.0 - zoomProperties.zoomStartDistancePercentage);
+    }
 
     if (orbitalCamera.zoomPercentage() < 1.0) {
       newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.zoomStartX, centerOfAction.x, interpolationXZTowardCenterOfZoomPecentage);
