@@ -48,13 +48,85 @@ CityTour.HydraulicErosionGenerator = (function() {
     return waterFlowCoordinates;
   };
 
+  var lowestAdjacentTerrain = function(terrainCoordinates, x, z) {
+    var northTotalHeight, southTotalHeight, westTotalHeight, eastTotalHeight, southWestTotalHeight, northEastTotalHeight;
+    var minTargetTotalHeight = Number.POSITIVE_INFINITY;
+    var minTargetX, minTargetZ;
+
+    // North
+    if (z > 0) {
+      northTotalHeight = terrainCoordinates[x][z - 1].landHeight + terrainCoordinates[x][z - 1].waterHeight;
+      if (northTotalHeight < minTargetTotalHeight) {
+        minTargetTotalHeight = northTotalHeight;
+        minTargetX = x;
+        minTargetZ = z - 1;
+      }
+    }
+
+    // South
+    if (z < terrainCoordinates[0].length - 1) {
+      southTotalHeight = terrainCoordinates[x][z + 1].landHeight + terrainCoordinates[x][z + 1].waterHeight;
+      if (southTotalHeight < minTargetTotalHeight) {
+        minTargetTotalHeight = southTotalHeight;
+        minTargetX = x;
+        minTargetZ = z + 1;
+      }
+    }
+
+    // West
+    if (x > 0) {
+      westTotalHeight = terrainCoordinates[x - 1][z].landHeight + terrainCoordinates[x - 1][z].waterHeight;
+      if (westTotalHeight < minTargetTotalHeight) {
+        minTargetTotalHeight = westTotalHeight;
+        minTargetX = x - 1;
+        minTargetZ = z;
+      }
+    }
+
+    // East
+    if (x < terrainCoordinates.length - 1) {
+      eastTotalHeight = terrainCoordinates[x + 1][z].landHeight + terrainCoordinates[x + 1][z].waterHeight;
+      if (eastTotalHeight < minTargetTotalHeight) {
+        minTargetTotalHeight = eastTotalHeight;
+        minTargetX = x + 1;
+        minTargetZ = z;
+      }
+    }
+
+    // Southwest
+    if (x > 0 && z < (terrainCoordinates[0].length - 1)) {
+      southWestTotalHeight = terrainCoordinates[x - 1][z + 1].landHeight + terrainCoordinates[x - 1][z + 1].waterHeight;
+      if (southWestTotalHeight < minTargetTotalHeight) {
+        minTargetTotalHeight = southWestTotalHeight;
+        minTargetX = x - 1;
+        minTargetZ = z + 1;
+      }
+    }
+
+    // Northeast
+    if (x < (terrainCoordinates.length - 1) && z > 0) {
+      northEastTotalHeight = terrainCoordinates[x + 1][z - 1].landHeight + terrainCoordinates[x + 1][z - 1].waterHeight;
+      if (northEastTotalHeight < minTargetTotalHeight) {
+        minTargetTotalHeight = northEastTotalHeight;
+        minTargetX = x + 1;
+        minTargetZ = z - 1;
+      }
+    }
+
+    return {
+      minTargetTotalHeight: minTargetTotalHeight,
+      minTargetX: minTargetX,
+      minTargetZ: minTargetZ,
+    };
+  };
+
   var erode = function(terrainCoordinates, iterationCount) {
     var waterFlowCoordinates;
-    var northTotalHeight, southTotalHeight, westTotalHeight, eastTotalHeight, southWestTotalHeight, northEastTotalHeight;
     var currentLandHeight, currentTotalHeight, minTargetTotalHeight;
     var minTargetX, minTargetZ;
     var landDelta, waterDelta, maxLandDelta, maxWaterDelta;
     var i, x, z;
+    var lowestAdjacentTerrainAttributes;
 
     var columnCount = terrainCoordinates.length;
     var rowCount = terrainCoordinates[0].length;
@@ -66,67 +138,11 @@ CityTour.HydraulicErosionGenerator = (function() {
         for (z = 0; z < rowCount; z++) {
           currentLandHeight = terrainCoordinates[x][z].landHeight;
           currentTotalHeight = currentLandHeight + terrainCoordinates[x][z].waterHeight;
-          minTargetTotalHeight = Number.POSITIVE_INFINITY;
 
-          // North
-          if (z > 0) {
-            northTotalHeight = terrainCoordinates[x][z - 1].landHeight + terrainCoordinates[x][z - 1].waterHeight;
-            if (northTotalHeight < minTargetTotalHeight) {
-              minTargetTotalHeight = northTotalHeight;
-              minTargetX = x;
-              minTargetZ = z - 1;
-            }
-          }
-
-          // South
-          if (z < terrainCoordinates[0].length - 1) {
-            southTotalHeight = terrainCoordinates[x][z + 1].landHeight + terrainCoordinates[x][z + 1].waterHeight;
-            if (southTotalHeight < minTargetTotalHeight) {
-              minTargetTotalHeight = southTotalHeight;
-              minTargetX = x;
-              minTargetZ = z + 1;
-            }
-          }
-
-          // West
-          if (x > 0) {
-            westTotalHeight = terrainCoordinates[x - 1][z].landHeight + terrainCoordinates[x - 1][z].waterHeight;
-            if (westTotalHeight < minTargetTotalHeight) {
-              minTargetTotalHeight = westTotalHeight;
-              minTargetX = x - 1;
-              minTargetZ = z;
-            }
-          }
-
-          // East
-          if (x < terrainCoordinates.length - 1) {
-            eastTotalHeight = terrainCoordinates[x + 1][z].landHeight + terrainCoordinates[x + 1][z].waterHeight;
-            if (eastTotalHeight < minTargetTotalHeight) {
-              minTargetTotalHeight = eastTotalHeight;
-              minTargetX = x + 1;
-              minTargetZ = z;
-            }
-          }
-
-          // Southwest
-          if (x > 0 && z < (terrainCoordinates[0].length - 1)) {
-            southWestTotalHeight = terrainCoordinates[x - 1][z + 1].landHeight + terrainCoordinates[x - 1][z + 1].waterHeight;
-            if (southWestTotalHeight < minTargetTotalHeight) {
-              minTargetTotalHeight = southWestTotalHeight;
-              minTargetX = x - 1;
-              minTargetZ = z + 1;
-            }
-          }
-
-          // Northeast
-          if (x < (terrainCoordinates.length - 1) && z > 0) {
-            northEastTotalHeight = terrainCoordinates[x + 1][z - 1].landHeight + terrainCoordinates[x + 1][z - 1].waterHeight;
-            if (northEastTotalHeight < minTargetTotalHeight) {
-              minTargetTotalHeight = northEastTotalHeight;
-              minTargetX = x + 1;
-              minTargetZ = z - 1;
-            }
-          }
+          lowestAdjacentTerrainAttributes = lowestAdjacentTerrain(terrainCoordinates, x, z);
+          minTargetTotalHeight = lowestAdjacentTerrainAttributes.minTargetTotalHeight;
+          minTargetX = lowestAdjacentTerrainAttributes.minTargetX;
+          minTargetZ = lowestAdjacentTerrainAttributes.minTargetZ;
 
           if (currentTotalHeight > minTargetTotalHeight && terrainCoordinates[x][z].waterHeight > 0.0) {
             maxLandDelta = (currentLandHeight - terrainCoordinates[minTargetX][minTargetZ].landHeight) / 2;
