@@ -122,7 +122,7 @@ CityTour.HydraulicErosionGenerator = (function() {
 
   var erode = function(terrainCoordinates, iterationCount) {
     var waterFlowCoordinates;
-    var currentLandHeight, currentTotalHeight, minTargetTotalHeight;
+    var currentLandHeight, currentWaterHeight, currentTotalHeight, minTargetTotalHeight;
     var minTargetX, minTargetZ;
     var landDelta, waterDelta, maxLandDelta, maxWaterDelta;
     var i, x, z;
@@ -137,19 +137,20 @@ CityTour.HydraulicErosionGenerator = (function() {
       for (x = 0; x < columnCount; x++) {
         for (z = 0; z < rowCount; z++) {
           currentLandHeight = terrainCoordinates[x][z].landHeight;
-          currentTotalHeight = currentLandHeight + terrainCoordinates[x][z].waterHeight;
+          currentWaterHeight = terrainCoordinates[x][z].waterHeight;
+          currentTotalHeight = currentLandHeight + currentWaterHeight;
 
           lowestAdjacentTerrainAttributes = lowestAdjacentTerrain(terrainCoordinates, x, z);
           minTargetTotalHeight = lowestAdjacentTerrainAttributes.minTargetTotalHeight;
           minTargetX = lowestAdjacentTerrainAttributes.minTargetX;
           minTargetZ = lowestAdjacentTerrainAttributes.minTargetZ;
 
-          if (currentTotalHeight > minTargetTotalHeight && terrainCoordinates[x][z].waterHeight > 0.0) {
+          if (currentTotalHeight > minTargetTotalHeight && currentWaterHeight > 0.0) {
             maxLandDelta = (currentLandHeight - terrainCoordinates[minTargetX][minTargetZ].landHeight) / 2;
             landDelta = (maxLandDelta > 0.0) ? Math.min(1.0, maxLandDelta) : 0.0;
 
             maxWaterDelta = (currentTotalHeight - minTargetTotalHeight) / 2;
-            waterDelta = Math.min(maxWaterDelta, terrainCoordinates[x][z].waterHeight);
+            waterDelta = Math.min(maxWaterDelta, currentWaterHeight);
 
             waterFlowCoordinates[x][z].landDelta -= landDelta;
             waterFlowCoordinates[x][z].waterDelta -= waterDelta;
