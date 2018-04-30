@@ -61,6 +61,9 @@ CityTour.TerrainGenerator = (function() {
       CityTour.HydraulicErosionGenerator.evaporate(terrainCoordinates);
     }*/
 
+    // Hydraulic erosion
+    //CityTour.HydraulicErosionGenerator2.erode(terrainCoordinates, 500000);
+
     // Blur erosion
     //CityTour.BlurEroder.erode(terrainCoordinates);
 
