@@ -7,25 +7,6 @@ CityTour.WorldGenerator = (function() {
     var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true);
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
-    var findLandPointNearCenter = function(terrain) {
-      var x, z;
-      var squareSize = 1;
-
-      while (squareSize < config.terrain.rowCount && squareSize < config.terrain.columnCount) {
-        for (x = -(squareSize - 1) / 2; x <= (squareSize - 1) / 2; x++) {
-          for (z = -(squareSize - 1) / 2; z <= (squareSize - 1) / 2; z++) {
-            if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
-              return {x: x, z: z};
-            }
-          }
-        }
-
-        squareSize += 2;
-      }
-
-      return undefined;
-    };
-
     var combinedStartTime = new Date();
 
     var terrainConfig = {
@@ -38,18 +19,13 @@ CityTour.WorldGenerator = (function() {
     var terrain = CityTour.TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
     var terrainEndTime = new Date();
 
-    var cityCenter = findLandPointNearCenter(terrain);
-    var centerX, centerZ;
-    if (cityCenter !== undefined) {
-      centerX = cityCenter.x;
-      centerZ = cityCenter.z;
-    }
+    var neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
+    var cityCenter = { x: neighborhoods[0].centerX, z: neighborhoods[0].centerZ };
 
-    var neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, centerX, centerZ, config.neighborhoods.count);
 
     var roadConfig = {
-      centerMapX: centerX,
-      centerMapZ: centerZ,
+      centerMapX: neighborhoods[0].centerX,
+      centerMapZ: neighborhoods[0].centerZ,
       neighborhoods: {
         columnCount: config.neighborhoods.columnCount,
         rowCount: config.neighborhoods.rowCount,
@@ -102,8 +78,8 @@ CityTour.WorldGenerator = (function() {
       terrain: terrain,
       roadNetwork: roadNetwork,
       buildings: buildings,
-      centerX: centerX,
-      centerZ: centerZ,
+      centerX: cityCenter.x,
+      centerZ: cityCenter.z,
     };
   };
 
