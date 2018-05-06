@@ -3,11 +3,33 @@
 var CityTour = CityTour || {};
 
 CityTour.NeighborhoodGenerator = (function() {
-  var bestNeighborhoodSite = function(terrain) {
+  var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 10;
+
+  var closestNeighborhoodDistance = function(neighborhoods, x, z) {
+    var minDistanceToNeighborhood = Number.POSITIVE_INFINITY;
+    var distanceToClosestNeighborhood;
+    var i;
+
+    if (neighborhoods.length === 0) {
+      return 0;
+    }
+
+    for (i = 0; i < neighborhoods.length; i++) {
+      distanceToClosestNeighborhood = CityTour.Math.distanceBetweenPoints(x, z, neighborhoods[i].centerX, neighborhoods[i].centerZ);
+      if (distanceToClosestNeighborhood < minDistanceToNeighborhood) {
+        minDistanceToNeighborhood = distanceToClosestNeighborhood;
+      }
+    }
+
+    return minDistanceToNeighborhood;
+  };
+
+  var bestNeighborhoodSite = function(terrain, neighborhoods) {
     var landHeight, averageHeightDifference;
     var bestSiteCoordinates = { x: terrain.minMapX(), z: terrain.minMapZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
     var score, centralityScore, flatnessScore;
+    var distanceToClosestNeighborhood;
     var x, z;
 
     for (x = terrain.minMapX() + 1; x < terrain.maxMapX(); x++) {
@@ -29,7 +51,12 @@ CityTour.NeighborhoodGenerator = (function() {
                                      Math.abs((landHeight - terrain.landHeightAtCoordinates(x + 1, z + 1)))) / 8;
           flatnessScore = averageHeightDifference;
 
-          score = centralityScore + (flatnessScore * 100);
+          distanceToClosestNeighborhood = closestNeighborhoodDistance(neighborhoods, x, z);
+          if (distanceToClosestNeighborhood < MIN_DISTANCE_BETWEEN_NEIGHBORHOODS) {
+            distanceToClosestNeighborhood = 1000;
+          }
+
+          score = centralityScore + (flatnessScore * 100) + distanceToClosestNeighborhood;
         }
 
         if (score < bestSiteScore) {
@@ -45,19 +72,12 @@ CityTour.NeighborhoodGenerator = (function() {
 
   var generate = function(terrain, count) {
     var neighborhoods = [];
-    var neighborhoodCenterX, neighborhoodCenterZ;
     var neighborhoodCenter;
     var i;
 
-    neighborhoodCenter = bestNeighborhoodSite(terrain);
-    neighborhoods.push({ centerX: neighborhoodCenter.x, centerZ: neighborhoodCenter.z });
-    for (i = 0; i < count - 1; i++) {
-      do {
-        neighborhoodCenterX = CityTour.Math.randomInteger(terrain.minMapX(), terrain.maxMapX());
-        neighborhoodCenterZ = CityTour.Math.randomInteger(terrain.minMapZ(), terrain.maxMapZ());
-      } while (terrain.waterHeightAtCoordinates(neighborhoodCenterX, neighborhoodCenterZ) > 0.0);
-
-      neighborhoods.push({ centerX: neighborhoodCenterX, centerZ: neighborhoodCenterZ });
+    for (i = 0; i < count; i++) {
+      neighborhoodCenter = bestNeighborhoodSite(terrain, neighborhoods);
+      neighborhoods.push({ centerX: neighborhoodCenter.x, centerZ: neighborhoodCenter.z });
     }
 
     return neighborhoods;
