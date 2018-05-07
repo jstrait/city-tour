@@ -7,18 +7,19 @@ CityTour.NeighborhoodGenerator = (function() {
 
   var averageHeightDifferenceAroundPoint = function(terrain, centerX, centerZ) {
     var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
+    var pointCount = 0;
+    var totalHeightDeltas = 0.0;
+    var x, z;
 
-    var averageHeightDifference = (Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX - 1, centerZ - 1))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX, centerZ - 1))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX + 1, centerZ - 1))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX - 1, centerZ))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX + 1, centerZ))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX - 1, centerZ + 1))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX, centerZ + 1))) +
-                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX + 1, centerZ + 1)))) / 8;
+    for (x = Math.max(terrain.minMapX(), centerX - 4); x <= Math.min(terrain.maxMapX(), centerX + 4); x++) {
+      for (z = Math.max(terrain.minMapZ(), centerZ - 4); z <= Math.min(terrain.maxMapZ(), centerZ + 4); z++) {
+        totalHeightDeltas += Math.abs(centerHeight - terrain.landHeightAtCoordinates(x, z));
+        pointCount += 1;
+      }
+    }
 
-      return averageHeightDifference;
-    };
+    return totalHeightDeltas / pointCount;
+  };
 
   var closestNeighborhoodDistance = function(neighborhoods, x, z) {
     var minDistanceToNeighborhood = Number.POSITIVE_INFINITY;
@@ -61,7 +62,7 @@ CityTour.NeighborhoodGenerator = (function() {
             distanceToClosestNeighborhood = 1000;
           }
 
-          score = centralityScore + (flatnessScore * 100) + distanceToClosestNeighborhood;
+          score = centralityScore + (flatnessScore * 10) + distanceToClosestNeighborhood;
         }
 
         if (score < bestSiteScore) {
