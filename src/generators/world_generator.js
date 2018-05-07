@@ -19,9 +19,10 @@ CityTour.WorldGenerator = (function() {
     var terrain = CityTour.TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
     var terrainEndTime = new Date();
 
+    var neighborhoodsStartTime = new Date();
     var neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
     var cityCenter = { x: neighborhoods[0].centerX, z: neighborhoods[0].centerZ };
-
+    var neighborhoodsEndTime = new Date();
 
     var roadConfig = {
       centerMapX: neighborhoods[0].centerX,
@@ -68,10 +69,11 @@ CityTour.WorldGenerator = (function() {
     var combinedEndTime = new Date();
 
     console.log("Time to generate world data: " + (combinedEndTime - combinedStartTime) + "ms");
-    console.log("  Terrain:      " + (terrainEndTime - terrainStartTime) + "ms");
-    console.log("  Road Network: " + (roadEndTime - roadStartTime) + "ms");
-    console.log("  Lots:         " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
-    console.log("  Buildings:    " + (buildingsEndTime - buildingsStartTime) + "ms");
+    console.log("  Terrain:       " + (terrainEndTime - terrainStartTime) + "ms");
+    console.log("  Neighborhoods: " + (neighborhoodsEndTime - neighborhoodsStartTime) + "ms");
+    console.log("  Road Network:  " + (roadEndTime - roadStartTime) + "ms");
+    console.log("  Lots:          " + (zonedBlocksEndTime - zonedBlocksStartTime) + "ms");
+    console.log("  Buildings:     " + (buildingsEndTime - buildingsStartTime) + "ms");
     console.log("  Road network simplification: " + (simplifierEndTime - simplifierStartTime) + "ms");
 
     return {
