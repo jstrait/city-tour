@@ -5,6 +5,21 @@ var CityTour = CityTour || {};
 CityTour.NeighborhoodGenerator = (function() {
   var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 10;
 
+  var calculateFlatnessScores = function(terrain) {
+    var flatnessScores = [];
+    var x, z;
+
+    for (x = terrain.minMapX(); x <= terrain.maxMapX(); x++) {
+      flatnessScores[x] = [];
+
+      for (z = terrain.minMapZ(); z <= terrain.maxMapZ(); z++) {
+        flatnessScores[x][z] = averageHeightDifferenceAroundPoint(terrain, x, z);
+      }
+    }
+
+    return flatnessScores;
+  };
+
   var averageHeightDifferenceAroundPoint = function(terrain, centerX, centerZ) {
     var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
     var pointCount = 0;
@@ -40,7 +55,7 @@ CityTour.NeighborhoodGenerator = (function() {
     return minDistanceToNeighborhood;
   };
 
-  var bestNeighborhoodSite = function(terrain, neighborhoods) {
+  var bestNeighborhoodSite = function(terrain, flatnessScores, neighborhoods) {
     var bestSiteCoordinates = { x: terrain.minMapX(), z: terrain.minMapZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
     var score, centralityScore, flatnessScore;
@@ -55,7 +70,7 @@ CityTour.NeighborhoodGenerator = (function() {
         else {
           centralityScore = Math.abs(x) + Math.abs(z);
 
-          flatnessScore = averageHeightDifferenceAroundPoint(terrain, x, z);
+          flatnessScore = flatnessScores[x][z];
 
           distanceToClosestNeighborhood = closestNeighborhoodDistance(neighborhoods, x, z);
           if (distanceToClosestNeighborhood < MIN_DISTANCE_BETWEEN_NEIGHBORHOODS) {
@@ -77,12 +92,13 @@ CityTour.NeighborhoodGenerator = (function() {
   };
 
   var generate = function(terrain, count) {
+    var flatnessScores = calculateFlatnessScores(terrain);
     var neighborhoods = [];
     var neighborhoodCenter;
     var i;
 
     for (i = 0; i < count; i++) {
-      neighborhoodCenter = bestNeighborhoodSite(terrain, neighborhoods);
+      neighborhoodCenter = bestNeighborhoodSite(terrain, flatnessScores, neighborhoods);
       neighborhoods.push({ centerX: neighborhoodCenter.x, centerZ: neighborhoodCenter.z });
     }
 
