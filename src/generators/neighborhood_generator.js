@@ -5,6 +5,21 @@ var CityTour = CityTour || {};
 CityTour.NeighborhoodGenerator = (function() {
   var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 10;
 
+  var averageHeightDifferenceAroundPoint = function(terrain, centerX, centerZ) {
+    var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
+
+    var averageHeightDifference = (Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX - 1, centerZ - 1))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX, centerZ - 1))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX + 1, centerZ - 1))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX - 1, centerZ))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX + 1, centerZ))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX - 1, centerZ + 1))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX, centerZ + 1))) +
+                                   Math.abs((centerHeight - terrain.landHeightAtCoordinates(centerX + 1, centerZ + 1)))) / 8;
+
+      return averageHeightDifference;
+    };
+
   var closestNeighborhoodDistance = function(neighborhoods, x, z) {
     var minDistanceToNeighborhood = Number.POSITIVE_INFINITY;
     var distanceToClosestNeighborhood;
@@ -25,7 +40,6 @@ CityTour.NeighborhoodGenerator = (function() {
   };
 
   var bestNeighborhoodSite = function(terrain, neighborhoods) {
-    var landHeight, averageHeightDifference;
     var bestSiteCoordinates = { x: terrain.minMapX(), z: terrain.minMapZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
     var score, centralityScore, flatnessScore;
@@ -40,16 +54,7 @@ CityTour.NeighborhoodGenerator = (function() {
         else {
           centralityScore = Math.abs(x) + Math.abs(z);
 
-          landHeight = terrain.landHeightAtCoordinates(x, z);
-          averageHeightDifference = (Math.abs((landHeight - terrain.landHeightAtCoordinates(x - 1, z - 1))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x, z - 1))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x + 1, z - 1))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x - 1, z))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x + 1, z))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x - 1, z + 1))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x, z + 1))) +
-                                     Math.abs((landHeight - terrain.landHeightAtCoordinates(x + 1, z + 1)))) / 8;
-          flatnessScore = averageHeightDifference;
+          flatnessScore = averageHeightDifferenceAroundPoint(terrain, x, z);
 
           distanceToClosestNeighborhood = closestNeighborhoodDistance(neighborhoods, x, z);
           if (distanceToClosestNeighborhood < MIN_DISTANCE_BETWEEN_NEIGHBORHOODS) {
