@@ -31,25 +31,29 @@ CityTour.WorldGenerator = (function() {
     terrainEndTime = new Date();
 
     neighborhoodsStartTime = new Date();
-    neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
-    cityCenter = { x: neighborhoods[0].centerX, z: neighborhoods[0].centerZ };
+    if (!GENERATE_ROAD_NETWORK) {
+      neighborhoods = [];
+    }
+    else {
+      neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
+    }
     neighborhoodsEndTime = new Date();
 
-    roadConfig = {
-      centerMapX: neighborhoods[0].centerX,
-      centerMapZ: neighborhoods[0].centerZ,
-      neighborhoods: {
-        columnCount: config.neighborhoods.columnCount,
-        rowCount: config.neighborhoods.rowCount,
-      },
-      safeFromDecayBlocks: config.roadNetwork.safeFromDecayBlocks,
-    };
-
     roadStartTime = new Date();
-    if (!GENERATE_ROAD_NETWORK || cityCenter === undefined) {
+    if (!GENERATE_ROAD_NETWORK) {
       roadNetwork = new CityTour.RoadNetwork(terrain);
     }
     else {
+      roadConfig = {
+        centerMapX: neighborhoods[0].centerX,
+        centerMapZ: neighborhoods[0].centerZ,
+        neighborhoods: {
+          columnCount: config.neighborhoods.columnCount,
+          rowCount: config.neighborhoods.rowCount,
+        },
+        safeFromDecayBlocks: config.roadNetwork.safeFromDecayBlocks,
+      };
+
       roadNetwork = CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, neighborhoods, roadConfig);
     }
     roadEndTime = new Date();
@@ -61,7 +65,7 @@ CityTour.WorldGenerator = (function() {
 
     zonedBlocksStartTime = new Date();
     zonedBlocks;
-    if (!GENERATE_BUILDINGS || cityCenter === undefined) {
+    if (!GENERATE_BUILDINGS) {
       zonedBlocks = [];
     }
     else {
@@ -90,8 +94,8 @@ CityTour.WorldGenerator = (function() {
       terrain: terrain,
       roadNetwork: roadNetwork,
       buildings: buildings,
-      centerX: cityCenter.x,
-      centerZ: cityCenter.z,
+      centerX: (neighborhoods.length >= 1) ? neighborhoods[0].centerX : undefined,
+      centerZ: (neighborhoods.length >= 1) ? neighborhoods[0].centerZ : undefined,
     };
   };
 
