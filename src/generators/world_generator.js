@@ -7,24 +7,35 @@ CityTour.WorldGenerator = (function() {
     var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true);
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
-    var combinedStartTime = new Date();
+    var terrain, neighborhoods, cityCenter, roadNetwork, zonedBlocks, buildings;
+    var terrainConfig, roadConfig, zonedBlockConfig;
 
-    var terrainConfig = {
+    var combinedStartTime, combinedEndTime;
+    var terrainStartTime, terrainEndTime;
+    var neighborhoodsStartTime, neighborhoodsEndTime;
+    var roadStartTime, roadEndTime;
+    var zonedBlocksStartTime, zonedBlocksEndTime;
+    var buildingsStartTime, buildingsEndTime;
+    var simplifierStartTime, simplifierEndTime;
+
+    combinedStartTime = new Date();
+
+    terrainConfig = {
       heightJitter: config.terrain.heightJitter,
       heightJitterDecay: config.terrain.heightJitterDecay,
       river: (Math.random() < config.terrain.probabilityOfRiver),
     };
 
-    var terrainStartTime = new Date();
-    var terrain = CityTour.TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
-    var terrainEndTime = new Date();
+    terrainStartTime = new Date();
+    terrain = CityTour.TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
+    terrainEndTime = new Date();
 
-    var neighborhoodsStartTime = new Date();
-    var neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
-    var cityCenter = { x: neighborhoods[0].centerX, z: neighborhoods[0].centerZ };
-    var neighborhoodsEndTime = new Date();
+    neighborhoodsStartTime = new Date();
+    neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
+    cityCenter = { x: neighborhoods[0].centerX, z: neighborhoods[0].centerZ };
+    neighborhoodsEndTime = new Date();
 
-    var roadConfig = {
+    roadConfig = {
       centerMapX: neighborhoods[0].centerX,
       centerMapZ: neighborhoods[0].centerZ,
       neighborhoods: {
@@ -34,39 +45,38 @@ CityTour.WorldGenerator = (function() {
       safeFromDecayBlocks: config.roadNetwork.safeFromDecayBlocks,
     };
 
-    var roadStartTime = new Date();
-    var roadNetwork;
+    roadStartTime = new Date();
     if (!GENERATE_ROAD_NETWORK || cityCenter === undefined) {
       roadNetwork = new CityTour.RoadNetwork(terrain);
     }
     else {
       roadNetwork = CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, neighborhoods, roadConfig);
     }
-    var roadEndTime = new Date();
+    roadEndTime = new Date();
 
-    var zonedBlockConfig = {
+    zonedBlockConfig = {
       blockDistanceDecayBegins: config.zonedBlocks.blockDistanceDecayBegins,
       maxBuildingStories: config.zonedBlocks.maxBuildingStories,
     };
 
-    var zonedBlocksStartTime = new Date();
-    var zonedBlocks;
+    zonedBlocksStartTime = new Date();
+    zonedBlocks;
     if (!GENERATE_BUILDINGS || cityCenter === undefined) {
       zonedBlocks = [];
     }
     else {
       zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, neighborhoods, roadNetwork, zonedBlockConfig);
     }
-    var zonedBlocksEndTime = new Date();
-    var buildingsStartTime = new Date();
-    var buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
-    var buildingsEndTime = new Date();
+    zonedBlocksEndTime = new Date();
+    buildingsStartTime = new Date();
+    buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
+    buildingsEndTime = new Date();
 
-    var simplifierStartTime = new Date();
+    simplifierStartTime = new Date();
     //CityTour.RoadNetworkSimplifier.simplify(roadNetwork, buildings);
-    var simplifierEndTime = new Date();
+    simplifierEndTime = new Date();
 
-    var combinedEndTime = new Date();
+    combinedEndTime = new Date();
 
     console.log("Time to generate world data: " + (combinedEndTime - combinedStartTime) + "ms");
     console.log("  Terrain:       " + (terrainEndTime - terrainStartTime) + "ms");
