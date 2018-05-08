@@ -71,7 +71,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
       if (terrain.waterHeightAtCoordinates(targetMapX, targetMapZ) > 0.0) {
         bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ, config);
 
-        if (bridgeAttributes !== null) {
+        if (bridgeAttributes !== undefined) {
           bridgeIntersectionX = mapX;
           bridgeIntersectionZ = mapZ;
           while (bridgeIntersectionX !== bridgeAttributes.endX || bridgeIntersectionZ !== bridgeAttributes.endZ) {

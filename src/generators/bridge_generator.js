@@ -25,7 +25,7 @@ CityTour.BridgeGenerator = (function() {
 
     var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, bridgeStartX, bridgeStartZ);
     if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
-      return null;
+      return;
     }
 
     if (targetMapX === bridgeStartX) {
@@ -49,7 +49,7 @@ CityTour.BridgeGenerator = (function() {
         waterHeight = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
       }
       if (roadNetwork.hasIntersection(bridgeEndX, bridgeEndZ)) {
-        return null;
+        return;
       }
 
       if (xDelta === 0.0) {  // North/south bridge
@@ -77,32 +77,32 @@ CityTour.BridgeGenerator = (function() {
           bridgeEndX > terrain.maxMapX() ||
           bridgeEndZ < terrain.minMapZ() ||
           bridgeEndZ > terrain.maxMapZ()) {
-        return null;
+        return;
       }
     }
 
     if (bridgeLength > MAX_BRIDGE_LENGTH) {
-      return null;
+      return;
     }
 
     // Don't build the bridge if either only borders land
     if (side1WaterCount === 0 || side2WaterCount === 0) {
-      return null;
+      return;
     }
 
     heightAtTerminal1 = terrain.heightAtCoordinates(bridgeStartX, bridgeStartZ);
     heightAtTerminal2 = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
     if (Math.abs(heightAtTerminal1 - heightAtTerminal2) > MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS) {
-      return null;
+      return;
     }
     roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2, waterHeight + MIN_BRIDGE_HEIGHT_FROM_WATER);
 
     if (parallelBridgeExistsNearby(roadNetwork, bridgeStartX, bridgeStartZ, bridgeEndX, bridgeEndZ)) {
-      return null;
+      return;
     }
 
     if (Math.random() < PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT) {
-      return null;
+      return;
     }
 
     return {
