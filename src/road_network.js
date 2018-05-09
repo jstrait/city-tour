@@ -5,44 +5,61 @@ var CityTour = CityTour || {};
 CityTour.RoadNetwork = function(terrain) {
   var Intersection = function(mapX, mapZ, height, surfaceType) {
     var edges = [];
-    var edgeCount = 0;
 
     var addEdge = function(destinationMapX, destinationMapZ, distance, surfaceType) {
-      if (!edges[destinationMapX]) {
-        edges[destinationMapX] = [];
+      var i;
+
+      for(i = 0; i < edges.length; i++) {
+        if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
+          edges[i].edge = { distance: distance, surfaceType: surfaceType };
+          return;
+        }
       }
-      if (edges[destinationMapX][destinationMapZ] === undefined) {
-        edgeCount += 1;
-      }
-      edges[destinationMapX][destinationMapZ] = { distance: distance, surfaceType: surfaceType };
+
+      edges.push({ destinationMapX: destinationMapX, destinationMapZ: destinationMapZ, edge: { distance: distance, surfaceType: surfaceType }});
     };
 
     var removeEdge = function(mapX, mapZ) {
-      if (edges[mapX]) {
-        // Splice doesn't work here, since array indices can be negative
-        edges[mapX][mapZ] = undefined;
-        edgeCount -= 1;
+      var i, indexToRemove;
+
+      for (i = 0; i < edges.length; i++) {
+        if (edges[i].destinationMapX === mapX && edges[i].destinationMapZ == mapZ) {
+          indexToRemove = i;
+        }
+      }
+
+      if (indexToRemove !== undefined) {
+        edges.splice(indexToRemove, 1);
       }
     };
 
     var hasEdgeTo = function(destinationMapX, destinationMapZ, surfaceType) {
-      var hasEdge = edges[destinationMapX] !== undefined && edges[destinationMapX][destinationMapZ] !== undefined;
-      if (surfaceType) {
-        return hasEdge && edges[destinationMapX][destinationMapZ].surfaceType === surfaceType;
+      var i;
+
+      for (i = 0; i < edges.length; i++) {
+        if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
+          if (surfaceType) {
+            return edges[i].edge.surfaceType === surfaceType;
+          }
+          else {
+            return true;
+          }
+        }
       }
-      else {
-        return hasEdge;
-      }
+
+      return false;
     };
 
     var getEdge = function(destinationMapX, destinationMapZ) {
-      var edge = undefined;
+      var i;
 
-      if (edges[destinationMapX] !== undefined) {
-        edge = edges[destinationMapX][destinationMapZ];
+      for (i = 0; i < edges.length; i++) {
+        if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
+          return edges[i].edge;
+        }
       }
 
-      return edge;
+      return undefined;
     };
 
     return {
@@ -52,7 +69,7 @@ CityTour.RoadNetwork = function(terrain) {
       removeEdge: removeEdge,
       hasEdgeTo: hasEdgeTo,
       getEdge: getEdge,
-      edgeCount: function() { return edgeCount; },
+      edgeCount: function() { return edges.length; },
     };
   };
 
