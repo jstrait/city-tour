@@ -38,10 +38,13 @@ CityTour.PathFinder = function(roadNetwork) {
     var x = currentNode.x;
     var z = currentNode.z;
     var edgesFromNode = roadNetwork.edgesFrom(x, z);
+    var adjacentX, adjacentZ, adjacentEdge;
+    var adjacentNode, candidateDistance;
 
-    var evaluateAdjacentNode = function(adjacentX, adjacentZ, adjacentEdge) {
-      var adjacentNode, candidateDistance;
-
+    for (i = 0; i < edgesFromNode.length; i++) {
+      adjacentX = edgesFromNode[i].destinationMapX;
+      adjacentZ = edgesFromNode[i].destinationMapZ;
+      adjacentEdge = edgesFromNode[i].edge;
       adjacentNode = nodes[adjacentX][adjacentZ];
 
       if (adjacentNode === undefined) {
@@ -57,10 +60,6 @@ CityTour.PathFinder = function(roadNetwork) {
           adjacentNode.previous = [x, z];
         }
       }
-    };
-
-    for (i = 0; i < edgesFromNode.length; i++) {
-      evaluateAdjacentNode(edgesFromNode[i].destinationMapX, edgesFromNode[i].destinationMapZ, edgesFromNode[i].edge);
     }
 
     currentNode.isVisited = true;
