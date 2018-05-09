@@ -47,8 +47,8 @@ CityTour.TerrainGenerator = (function() {
                                              config.heightJitter,
                                              config.heightJitterDecay,
                                              0,
-                                             rowsToGenerate - 1,
                                              columnsToGenerate - 1,
+                                             rowsToGenerate - 1,
                                              0);
 
     // Hydraulic erosion
