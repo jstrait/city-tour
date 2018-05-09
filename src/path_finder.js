@@ -34,35 +34,34 @@ CityTour.PathFinder = function(roadNetwork) {
   };
 
   var evaluateNodeConnections = function(currentNode, nodes, unvisitedSet) {
+    var i;
     var x = currentNode.x;
     var z = currentNode.z;
+    var edgesFromNode = roadNetwork.edgesFrom(x, z);
 
-    var evaluateAdjacentNode = function(adjacentX, adjacentZ) {
+    var evaluateAdjacentNode = function(adjacentX, adjacentZ, adjacentEdge) {
       var adjacentNode, candidateDistance;
-      var adjacentEdge = roadNetwork.edgeBetween(x, z, adjacentX, adjacentZ);
 
-      if (adjacentEdge !== undefined) {
-        adjacentNode = nodes[adjacentX][adjacentZ];
+      adjacentNode = nodes[adjacentX][adjacentZ];
 
-        if (!adjacentNode) {
-          adjacentNode = new Node(adjacentX, adjacentZ);
-          nodes[adjacentX][adjacentZ] = adjacentNode;
-          unvisitedSet.add(adjacentNode);
-        }
-        if (!adjacentNode.isVisited) {
-          candidateDistance = currentNode.distance + adjacentEdge.distance;
-          if (candidateDistance < adjacentNode.distance) {
-            adjacentNode.distance = candidateDistance;
-            adjacentNode.previous = [x, z];
-          }
+      if (adjacentNode === undefined) {
+        adjacentNode = new Node(adjacentX, adjacentZ);
+        nodes[adjacentX][adjacentZ] = adjacentNode;
+        unvisitedSet.add(adjacentNode);
+      }
+
+      if (!adjacentNode.isVisited) {
+        candidateDistance = currentNode.distance + adjacentEdge.distance;
+        if (candidateDistance < adjacentNode.distance) {
+          adjacentNode.distance = candidateDistance;
+          adjacentNode.previous = [x, z];
         }
       }
     };
 
-    evaluateAdjacentNode(x - 1, z);
-    evaluateAdjacentNode(x + 1, z);
-    evaluateAdjacentNode(x, z - 1);
-    evaluateAdjacentNode(x, z + 1);
+    for (i = 0; i < edgesFromNode.length; i++) {
+      evaluateAdjacentNode(edgesFromNode[i].destinationMapX, edgesFromNode[i].destinationMapZ, edgesFromNode[i].edge);
+    }
 
     currentNode.isVisited = true;
   };

@@ -69,6 +69,7 @@ CityTour.RoadNetwork = function(terrain) {
       removeEdge: removeEdge,
       hasEdgeTo: hasEdgeTo,
       getEdge: getEdge,
+      edgesFrom: function() { return edges; },
       edgeCount: function() { return edges.length; },
     };
   };
@@ -198,6 +199,12 @@ CityTour.RoadNetwork = function(terrain) {
     return (intersection1 === undefined) ? undefined : intersection1.getEdge(mapX2, mapZ2);
   };
 
+  var edgesFrom = function(mapX, mapZ) {
+    var intersection = (intersections[mapX] === undefined) ? undefined : intersections[mapX][mapZ];
+
+    return (intersection === undefined) ? undefined : intersection.edgesFrom();
+  };
+
 
   return {
     hasIntersection: hasIntersection,
@@ -207,6 +214,7 @@ CityTour.RoadNetwork = function(terrain) {
     removeEdge: removeEdge,
     hasEdgeBetween: hasEdgeBetween,
     edgeBetween: edgeBetween,
+    edgesFrom: edgesFrom,
     minColumn: function() { return minColumn; },
     maxColumn: function() { return maxColumn; },
     minRow: function() { return minRow; },
