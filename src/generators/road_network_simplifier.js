@@ -70,7 +70,7 @@ CityTour.RoadNetworkSimplifier = (function() {
 
         // Road to the east
         if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
-            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
           southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
           northEastBlock = buildings.blockAtCoordinates(mapX, mapZ - 1);
 
@@ -95,7 +95,7 @@ CityTour.RoadNetworkSimplifier = (function() {
 
         // Road the south
         if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
-            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
           southWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ);
           southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
 

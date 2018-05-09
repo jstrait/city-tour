@@ -7,14 +7,14 @@ CityTour.RoadNetwork = function(terrain) {
     var edges = [];
     var edgeCount = 0;
 
-    var addEdge = function(destinationMapX, destinationMapZ, surfaceType) {
+    var addEdge = function(destinationMapX, destinationMapZ, distance, surfaceType) {
       if (!edges[destinationMapX]) {
         edges[destinationMapX] = [];
       }
       if (edges[destinationMapX][destinationMapZ] === undefined) {
         edgeCount += 1;
       }
-      edges[destinationMapX][destinationMapZ] = surfaceType;
+      edges[destinationMapX][destinationMapZ] = { distance: distance, surfaceType: surfaceType };
     };
 
     var removeEdge = function(mapX, mapZ) {
@@ -28,7 +28,7 @@ CityTour.RoadNetwork = function(terrain) {
     var hasEdgeTo = function(destinationMapX, destinationMapZ, surfaceType) {
       var hasEdge = edges[destinationMapX] !== undefined && edges[destinationMapX][destinationMapZ] !== undefined;
       if (surfaceType) {
-        return hasEdge && edges[destinationMapX][destinationMapZ] === surfaceType;
+        return hasEdge && edges[destinationMapX][destinationMapZ].surfaceType === surfaceType;
       }
       else {
         return hasEdge;
@@ -139,8 +139,8 @@ CityTour.RoadNetwork = function(terrain) {
       intersections[mapX2][mapZ2] = intersection2;
     }
 
-    intersection1.addEdge(mapX2, mapZ2, surfaceType);
-    intersection2.addEdge(mapX1, mapZ1, surfaceType);
+    intersection1.addEdge(mapX2, mapZ2, 1.0, surfaceType);
+    intersection2.addEdge(mapX1, mapZ1, 1.0, surfaceType);
 
     minColumn = Math.min(minColumn, mapX1, mapX2);
     maxColumn = Math.max(maxColumn, mapX1, mapX2);
