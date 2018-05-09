@@ -4,7 +4,8 @@ var CityTour = CityTour || {};
 
 CityTour.TerrainGenerator = (function() {
   var SCALE = 1;   // Should be a power of 0.5
-  var MAX_INITIAL_TERRAIN_HEIGHT = 6;
+  var MIN_INITIAL_TERRAIN_HEIGHT = -3;
+  var MAX_INITIAL_TERRAIN_HEIGHT = 3;
 
   var emptyTerrain = function(columnCount, rowCount) {
     var x, z;
@@ -36,10 +37,10 @@ CityTour.TerrainGenerator = (function() {
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
     // Initial randomization of corners
-    terrainCoordinates[0][0].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[0][rowsToGenerate - 1].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columnsToGenerate - 1][0].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columnsToGenerate - 1][rowsToGenerate - 1].landHeight = Math.floor(Math.random() * MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][0].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rowsToGenerate - 1].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate - 1][0].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate - 1][rowsToGenerate - 1].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
     CityTour.DiamondSquareGenerator.generate(terrainCoordinates,
