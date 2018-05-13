@@ -122,9 +122,9 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
   };
 
   var determineMultiTouchGesture = function(currentTouches) {
-    var absoluteAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
-    var touchPointsAreHorizontal = absoluteAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
-                                   absoluteAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
+    var screenAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
+    var touchPointsAreHorizontal = screenAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
+                                   screenAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
     var rotationAngleDelta;
 
     if (previousTouches.count() !== 2) {
