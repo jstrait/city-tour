@@ -24,8 +24,8 @@ CityTour.TerrainShapeGenerator = (function() {
   var addPyramid = function(terrainCoordinates, centerX, centerZ, width, height, depth) {
     var x, z;
 
-    var halfWidth = width / 2;
-    var halfDepth = depth / 2;
+    var halfWidth = (width % 2 === 0) ? width / 2 : (width - 1) / 2;
+    var halfDepth = (depth % 2 === 0) ? depth / 2 : (depth - 1) / 2;
 
     var startX = Math.max(0, centerX - halfWidth);
     var endX = Math.min(terrainCoordinates.length - 1, centerX + halfWidth);
