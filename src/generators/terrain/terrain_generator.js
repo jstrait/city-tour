@@ -51,6 +51,8 @@ CityTour.TerrainGenerator = (function() {
                                              rowsToGenerate - 1,
                                              0);
 
+    addRandomPyramids(terrainCoordinates, 0);
+
     // Hydraulic erosion
     /*for (hydraulicErosionIteration = 0; hydraulicErosionIteration < TOTAL_HYDRAULIC_EROSION_ITERATIONS; hydraulicErosionIteration++) {
       CityTour.HydraulicErosionGenerator.addRandomRainfall(terrainCoordinates);
@@ -71,6 +73,29 @@ CityTour.TerrainGenerator = (function() {
     return terrainCoordinates;
   };
 
+  var addRandomPyramids = function(terrainCoordinates, pyramidCount) {
+    var MAX_HEIGHT = 300;
+    var COLUMN_COUNT = terrainCoordinates.length;
+    var ROW_COUNT = terrainCoordinates[0].length;
+    var HALF_ROW_COUNT = ROW_COUNT / 2;
+
+    var centerX, centerZ;
+    var maxHeightForCenterCoordinate;
+    var i;
+
+    for (i = 0; i < pyramidCount; i++) {
+      centerX = CityTour.Math.randomInteger(0, COLUMN_COUNT - 1);
+      centerZ = CityTour.Math.randomInteger(0, ROW_COUNT - 1);
+      maxHeightForCenterCoordinate = Math.min(MAX_HEIGHT, (Math.abs(centerZ - HALF_ROW_COUNT) / (HALF_ROW_COUNT * 0.75)) * MAX_HEIGHT);
+
+      CityTour.TerrainShapeGenerator.addPyramid(terrainCoordinates,
+                                                centerX,
+                                                centerZ,
+                                                CityTour.Math.randomInteger(10, 70),
+                                                CityTour.Math.randomInteger(0, maxHeightForCenterCoordinate),
+                                                CityTour.Math.randomInteger(10, 70));
+    }
+  };
 
   var flattenLowTerrain = function(terrainCoordinates, minHeightThreshold, top, right, bottom, left) {
     var x, z;
