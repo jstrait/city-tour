@@ -39,7 +39,12 @@ CityTour.TerrainShapeGenerator = (function() {
       for (z = startZ; z <= endZ; z++) {
         currentDistance = CityTour.Math.distanceBetweenPoints(x, z, centerX, centerZ);
 
-        terrainCoordinates[x][z].landHeight += (height * (1 - (currentDistance / maxDistance)));
+        if (height < 0) {
+          terrainCoordinates[x][z].landHeight = Math.min(terrainCoordinates[x][z].landHeight, (height * (1 - (currentDistance / maxDistance))));
+        }
+        else {
+          terrainCoordinates[x][z].landHeight = Math.max(terrainCoordinates[x][z].landHeight, (height * (1 - (currentDistance / maxDistance))));
+        }
       }
     }
   };
