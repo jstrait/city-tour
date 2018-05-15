@@ -29,7 +29,7 @@ CityTour.TerrainGenerator = (function() {
 
 
   var buildTerrainCoordinates = function(columns, rows, config) {
-    var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 10;
+    var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 500000;
     var hydraulicErosionIteration;
     var columnsToGenerate = nextPowerOfTwo(columns / SCALE) + 1;
     var rowsToGenerate = nextPowerOfTwo(rows / SCALE) + 1;
@@ -54,14 +54,7 @@ CityTour.TerrainGenerator = (function() {
     addRandomPyramids(terrainCoordinates, 50);
 
     // Hydraulic erosion
-    /*for (hydraulicErosionIteration = 0; hydraulicErosionIteration < TOTAL_HYDRAULIC_EROSION_ITERATIONS; hydraulicErosionIteration++) {
-      CityTour.HydraulicErosionGenerator.addRandomRainfall(terrainCoordinates);
-      CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, 50);
-      CityTour.HydraulicErosionGenerator.evaporate(terrainCoordinates);
-    }*/
-
-    // Hydraulic erosion
-    CityTour.HydraulicErosionGenerator2.erode(terrainCoordinates, 500000);
+    CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);
 
     // Blur erosion
     CityTour.BlurEroder.erode(terrainCoordinates);
