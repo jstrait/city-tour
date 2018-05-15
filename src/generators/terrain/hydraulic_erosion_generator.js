@@ -94,8 +94,8 @@ CityTour.HydraulicErosionGenerator = (function() {
     var erosionHeight;
 
     for (i = 0; i < iterationCount; i++) {
-      x = Math.round(Math.random() * maxColumnIndex);
-      z = Math.round(Math.random() * maxRowIndex);
+      x = CityTour.Math.randomInteger(0, maxColumnIndex);
+      z = CityTour.Math.randomInteger(0, maxRowIndex);
       waterAmount = STARTING_WATER_HEIGHT;
       soilAmount = 0.0;
 
