@@ -6,73 +6,73 @@ var CityTour = CityTour || {};
 CityTour.HydraulicErosionGenerator = (function() {
   var lowestAdjacentTerrain = function(terrainCoordinates, x, z) {
     var candidateLandHeight;
-    var minTargetLandHeight = Number.POSITIVE_INFINITY;
-    var minTargetX, minTargetZ;
+    var minAdjacentLandHeight = Number.POSITIVE_INFINITY;
+    var minAdjacentX, minAdjacentZ;
 
     // North
     if (z > 0) {
       candidateLandHeight = terrainCoordinates[x][z - 1].landHeight;
-      if (candidateLandHeight < minTargetLandHeight) {
-        minTargetLandHeight = candidateLandHeight;
-        minTargetX = x;
-        minTargetZ = z - 1;
+      if (candidateLandHeight < minAdjacentLandHeight) {
+        minAdjacentLandHeight = candidateLandHeight;
+        minAdjacentX = x;
+        minAdjacentZ = z - 1;
       }
     }
 
     // South
     if (z < terrainCoordinates[0].length - 1) {
       candidateLandHeight = terrainCoordinates[x][z + 1].landHeight;
-      if (candidateLandHeight < minTargetLandHeight) {
-        minTargetLandHeight = candidateLandHeight;
-        minTargetX = x;
-        minTargetZ = z + 1;
+      if (candidateLandHeight < minAdjacentLandHeight) {
+        minAdjacentLandHeight = candidateLandHeight;
+        minAdjacentX = x;
+        minAdjacentZ = z + 1;
       }
     }
 
     // West
     if (x > 0) {
       candidateLandHeight = terrainCoordinates[x - 1][z].landHeight;
-      if (candidateLandHeight < minTargetLandHeight) {
-        minTargetLandHeight = candidateLandHeight;
-        minTargetX = x - 1;
-        minTargetZ = z;
+      if (candidateLandHeight < minAdjacentLandHeight) {
+        minAdjacentLandHeight = candidateLandHeight;
+        minAdjacentX = x - 1;
+        minAdjacentZ = z;
       }
     }
 
     // East
     if (x < terrainCoordinates.length - 1) {
       candidateLandHeight = terrainCoordinates[x + 1][z].landHeight;
-      if (candidateLandHeight < minTargetLandHeight) {
-        minTargetLandHeight = candidateLandHeight;
-        minTargetX = x + 1;
-        minTargetZ = z;
+      if (candidateLandHeight < minAdjacentLandHeight) {
+        minAdjacentLandHeight = candidateLandHeight;
+        minAdjacentX = x + 1;
+        minAdjacentZ = z;
       }
     }
 
     // Southwest
     if (x > 0 && z < (terrainCoordinates[0].length - 1)) {
       candidateLandHeight = terrainCoordinates[x - 1][z + 1].landHeight;
-      if (candidateLandHeight < minTargetLandHeight) {
-        minTargetLandHeight = candidateLandHeight;
-        minTargetX = x - 1;
-        minTargetZ = z + 1;
+      if (candidateLandHeight < minAdjacentLandHeight) {
+        minAdjacentLandHeight = candidateLandHeight;
+        minAdjacentX = x - 1;
+        minAdjacentZ = z + 1;
       }
     }
 
     // Northeast
     if (x < (terrainCoordinates.length - 1) && z > 0) {
       candidateLandHeight = terrainCoordinates[x + 1][z - 1].landHeight;
-      if (candidateLandHeight < minTargetLandHeight) {
-        minTargetLandHeight = candidateLandHeight;
-        minTargetX = x + 1;
-        minTargetZ = z - 1;
+      if (candidateLandHeight < minAdjacentLandHeight) {
+        minAdjacentLandHeight = candidateLandHeight;
+        minAdjacentX = x + 1;
+        minAdjacentZ = z - 1;
       }
     }
 
     return {
-      minTargetLandHeight: minTargetLandHeight,
-      minTargetX: minTargetX,
-      minTargetZ: minTargetZ,
+      minAdjacentLandHeight: minAdjacentLandHeight,
+      minAdjacentX: minAdjacentX,
+      minAdjacentZ: minAdjacentZ,
     };
   };
 
@@ -83,8 +83,7 @@ CityTour.HydraulicErosionGenerator = (function() {
     var MAX_EROSION_HEIGHT = 2.5;
     var MAX_SOIL_DEPOSIT_HEIGHT = 2.5;
 
-    var minTargetLandHeight, minTargetX, minTargetZ;
-    var i, x, z;
+    var lowestAdjacentLandHeight, lowestAdjacentX, lowestAdjacentZ;
     var lowestAdjacentTerrainAttributes;
 
     var maxColumnIndex = terrainCoordinates.length - 1;
@@ -92,6 +91,8 @@ CityTour.HydraulicErosionGenerator = (function() {
     var waterAmount;
     var soilAmount, soilDepositHeight;
     var erosionHeight;
+
+    var i, x, z;
 
     for (i = 0; i < iterationCount; i++) {
       x = CityTour.Math.randomInteger(0, maxColumnIndex);
@@ -101,9 +102,9 @@ CityTour.HydraulicErosionGenerator = (function() {
 
       do {
         lowestAdjacentTerrainAttributes = lowestAdjacentTerrain(terrainCoordinates, x, z);
-        minTargetLandHeight = lowestAdjacentTerrainAttributes.minTargetLandHeight;
-        minTargetX = lowestAdjacentTerrainAttributes.minTargetX;
-        minTargetZ = lowestAdjacentTerrainAttributes.minTargetZ;
+        lowestAdjacentLandHeight = lowestAdjacentTerrainAttributes.minAdjacentLandHeight;
+        lowestAdjacentX = lowestAdjacentTerrainAttributes.minAdjacentX;
+        lowestAdjacentZ = lowestAdjacentTerrainAttributes.minAdjacentZ;
 
         if (soilAmount > WATER_CARRYING_CAPACITY) {
           soilDepositHeight = Math.min(MAX_SOIL_DEPOSIT_HEIGHT, soilAmount);
@@ -111,16 +112,16 @@ CityTour.HydraulicErosionGenerator = (function() {
           soilAmount -= soilDepositHeight;
           waterAmount -= WATER_EVAPORATION_RATE;
         }
-        else if (terrainCoordinates[x][z].landHeight >= minTargetLandHeight) {
-          erosionHeight = Math.min(MAX_EROSION_HEIGHT, (terrainCoordinates[x][z].landHeight - minTargetLandHeight));
+        else if (terrainCoordinates[x][z].landHeight >= lowestAdjacentLandHeight) {
+          erosionHeight = Math.min(MAX_EROSION_HEIGHT, (terrainCoordinates[x][z].landHeight - lowestAdjacentLandHeight));
           terrainCoordinates[x][z].landHeight -= erosionHeight;
           soilAmount += erosionHeight;
           waterAmount -= WATER_EVAPORATION_RATE;
         }
 
-        x = minTargetX;
-        z = minTargetZ;
-      } while (waterAmount > 0.0 && minTargetLandHeight <= terrainCoordinates[x][z].landHeight);
+        x = lowestAdjacentX;
+        z = lowestAdjacentZ;
+      } while (waterAmount > 0.0 && lowestAdjacentLandHeight <= terrainCoordinates[x][z].landHeight);
     }
   };
 
