@@ -51,7 +51,7 @@ CityTour.TerrainGenerator = (function() {
                                              rowsToGenerate - 1,
                                              0);
 
-    addRandomPyramids(terrainCoordinates, 0);
+    addRandomPyramids(terrainCoordinates, 50);
 
     // Hydraulic erosion
     /*for (hydraulicErosionIteration = 0; hydraulicErosionIteration < TOTAL_HYDRAULIC_EROSION_ITERATIONS; hydraulicErosionIteration++) {
@@ -61,10 +61,10 @@ CityTour.TerrainGenerator = (function() {
     }*/
 
     // Hydraulic erosion
-    //CityTour.HydraulicErosionGenerator2.erode(terrainCoordinates, 500000);
+    CityTour.HydraulicErosionGenerator2.erode(terrainCoordinates, 500000);
 
     // Blur erosion
-    //CityTour.BlurEroder.erode(terrainCoordinates);
+    CityTour.BlurEroder.erode(terrainCoordinates);
 
     if (config.river) {
       CityTour.RiverGenerator.addRiver(terrainCoordinates, (rowsToGenerate - 1) * (68 / 128), columnsToGenerate - 1);
