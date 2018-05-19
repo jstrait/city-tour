@@ -3,7 +3,6 @@
 var CityTour = CityTour || {};
 
 CityTour.BridgeGenerator = (function() {
-  var DISTANCE_TO_CITY_EDGE = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
   var MAX_BRIDGE_LENGTH = 10;
   var MIN_BRIDGE_HEIGHT_FROM_WATER = 5;
   var MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS = 5.0;
