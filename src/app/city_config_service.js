@@ -5,15 +5,15 @@ var CityTour = CityTour || {};
 CityTour.CityConfigService = function() {
   var TERRAIN_COLUMN_COUNT = 128;
   var TERRAIN_ROW_COUNT = 128;
-  var NEIGHBORHOOD_COUNT = 1;
-  var NEIGHBORHOOD_MAX_COLUMNS = 64;
-  var NEIGHBORHOOD_MAX_ROWS = 64;
+  var NEIGHBORHOOD_COUNT = 15;
+  var NEIGHBORHOOD_MAX_COLUMNS = 12;
+  var NEIGHBORHOOD_MAX_ROWS = 12;
 
   var heightJitter = 20;
   var heightJitterDecay = 0.65;
   var includeRiver = true;
-  var safeFromDecayBlocks = 13;
-  var blockDistanceDecayBegins = 13;
+  var safeFromDecayBlocks = 6;
+  var blockDistanceDecayBegins = 6;
   var maxBuildingStories = 40;
 
   var toWorldConfig = function() {
