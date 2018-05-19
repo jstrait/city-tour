@@ -5,9 +5,9 @@ CityTour.Scene = CityTour.Scene || {};
 
 CityTour.Scene.TerrainMeshBuilder = function() {
   var TERRAIN_COLOR_1 = new THREE.Color(0.0, 0.48, 0.0);
-  var TERRAIN_COLOR_2 = new THREE.Color(0.0, 0.49, 0.0);
+  var TERRAIN_COLOR_2 = new THREE.Color(0.0, 0.48, 0.0);
   var WATER_COLOR_1 = new THREE.Color(0.1, 0.2, 1.0);
-  var WATER_COLOR_2 = new THREE.Color(0.1, 0.19, 1.0);
+  var WATER_COLOR_2 = new THREE.Color(0.1, 0.2, 1.0);
 
   var LAND = 1;
   var WATER = 2;
