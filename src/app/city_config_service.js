@@ -6,8 +6,8 @@ CityTour.CityConfigService = function() {
   var TERRAIN_COLUMN_COUNT = 128;
   var TERRAIN_ROW_COUNT = 128;
   var NEIGHBORHOOD_COUNT = 15;
-  var NEIGHBORHOOD_MAX_COLUMNS = 12;
-  var NEIGHBORHOOD_MAX_ROWS = 12;
+  var NEIGHBORHOOD_MAX_COLUMNS = 20;
+  var NEIGHBORHOOD_MAX_ROWS = 20;
 
   var heightJitter = 20;
   var heightJitterDecay = 0.65;
