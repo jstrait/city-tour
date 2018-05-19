@@ -51,7 +51,7 @@ CityTour.RoadNetworkSimplifier = (function() {
     return false;
   };
 
-  var simplify = function(roadNetwork, buildings) {
+  var simplifyHelper = function(roadNetwork, buildings) {
     var mapX, mapZ, targetMapX, targetMapZ;
     var southWestBlock, northWestBlock, southEastBlock, northEastBlock;
     var southWestBlockHasBuildings, northWestBlockHasBuildings, southEastBlockHasBuildings, northEastBlockHasBuildings;
@@ -62,6 +62,8 @@ CityTour.RoadNetworkSimplifier = (function() {
     var roadNetworkMaxColumn = roadNetwork.maxColumn();
     var roadNetworkMinRow = roadNetwork.minRow();
     var roadNetworkMaxRow = roadNetwork.maxRow();
+
+    var edgesRemovedCount = 0;
 
     // Road to the east
     for (mapX = roadNetworkMinColumn; mapX < roadNetworkMaxColumn; mapX++) {
@@ -79,6 +81,7 @@ CityTour.RoadNetworkSimplifier = (function() {
 
           if (southEastBlockHasBuildings === false && northEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
@@ -86,6 +89,7 @@ CityTour.RoadNetworkSimplifier = (function() {
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
               roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              edgesRemovedCount -= 1;
             }
           }
         }
@@ -108,6 +112,7 @@ CityTour.RoadNetworkSimplifier = (function() {
 
           if (southWestBlockHasBuildings === false && northWestBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
@@ -115,6 +120,7 @@ CityTour.RoadNetworkSimplifier = (function() {
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
               roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              edgesRemovedCount -= 1;
             }
           }
         }
@@ -137,6 +143,7 @@ CityTour.RoadNetworkSimplifier = (function() {
 
           if (southWestBlockHasBuildings === false && southEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
@@ -144,6 +151,7 @@ CityTour.RoadNetworkSimplifier = (function() {
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
               roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              edgesRemovedCount -= 1;
             }
           }
         }
@@ -166,6 +174,7 @@ CityTour.RoadNetworkSimplifier = (function() {
 
           if (northWestBlockHasBuildings === false && northEastBlockHasBuildings === false) {
             roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
@@ -173,12 +182,24 @@ CityTour.RoadNetworkSimplifier = (function() {
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
               roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              edgesRemovedCount -= 1;
             }
           }
         }
       }
     }
+
+    return edgesRemovedCount;
   };
+
+  var simplify = function(roadNetwork, buildings) {
+    var edgesRemovedCount;
+
+    do {
+      edgesRemovedCount = simplifyHelper(roadNetwork, buildings);
+    } while(edgesRemovedCount > 0);
+  };
+
 
   return {
     simplify: simplify,
