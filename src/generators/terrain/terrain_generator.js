@@ -29,7 +29,7 @@ CityTour.TerrainGenerator = (function() {
 
 
   var buildTerrainCoordinates = function(columns, rows, config) {
-    var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 500000;
+    var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 100000;
     var hydraulicErosionIteration;
     var columnsToGenerate = nextPowerOfTwo(columns / SCALE) + 1;
     var rowsToGenerate = nextPowerOfTwo(rows / SCALE) + 1;
