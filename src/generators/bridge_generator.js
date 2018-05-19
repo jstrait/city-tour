@@ -7,10 +7,11 @@ CityTour.BridgeGenerator = (function() {
   var MIN_BRIDGE_HEIGHT_FROM_WATER = 5;
   var MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS = 5.0;
   var MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS = 3;
-  var PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = 0.5;
+  var DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = 0.5;
 
   var buildBridge = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetMapX, targetMapZ, config) {
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
+    var PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = (config.probability !== undefined) ? config.probability : DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT;
 
     var centerMapX = config.centerMapX;
     var centerMapZ = config.centerMapZ;
@@ -100,7 +101,7 @@ CityTour.BridgeGenerator = (function() {
       return;
     }
 
-    if (Math.random() < PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT) {
+    if (Math.random() > PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT) {
       return;
     }
 
