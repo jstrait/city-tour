@@ -19,13 +19,16 @@ CityTour.App = (function() {
     return true;
   };
 
+  var showLoadFailureMessage = function() {
+    var loadingMessage = document.getElementById("loading-message");
+    loadingMessage.innerText = "This site is not compatible with your browser, because it requires WebGL.";
+    loadingMessage.classList.add("flex");
+    loadingMessage.classList.remove("display-none");
+  };
+
   var init = function() {
-    var loadingMessage;
     if (!detectWebGL()) {
-      loadingMessage = document.getElementById("loading-message");
-      loadingMessage.innerText = "This site is not compatible with your browser, because it requires WebGL.";
-      loadingMessage.classList.add("flex");
-      loadingMessage.classList.remove("display-none");
+      showLoadFailureMessage();
       return;
     }
 
