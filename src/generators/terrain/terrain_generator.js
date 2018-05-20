@@ -51,7 +51,7 @@ CityTour.TerrainGenerator = (function() {
                                              rowsToGenerate - 1,
                                              0);
 
-    addRandomPyramids(terrainCoordinates, 50);
+    addRandomPyramids(terrainCoordinates, 40);
 
     // Hydraulic erosion
     CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);
@@ -67,7 +67,11 @@ CityTour.TerrainGenerator = (function() {
   };
 
   var addRandomPyramids = function(terrainCoordinates, pyramidCount) {
-    var MAX_HEIGHT = 300;
+    var MAX_HEIGHT = 200;
+    var MIN_WIDTH = 10;
+    var MAX_WIDTH = 70;
+    var MIN_DEPTH = 10;
+    var MAX_DEPTH = 70;
     var COLUMN_COUNT = terrainCoordinates.length;
     var ROW_COUNT = terrainCoordinates[0].length;
     var HALF_ROW_COUNT = ROW_COUNT / 2;
@@ -84,9 +88,9 @@ CityTour.TerrainGenerator = (function() {
       CityTour.TerrainShapeGenerator.addPyramid(terrainCoordinates,
                                                 centerX,
                                                 centerZ,
-                                                CityTour.Math.randomInteger(10, 70),
+                                                CityTour.Math.randomInteger(MIN_WIDTH, MAX_WIDTH),
                                                 CityTour.Math.randomInteger(0, maxHeightForCenterCoordinate),
-                                                CityTour.Math.randomInteger(10, 70));
+                                                CityTour.Math.randomInteger(MIN_DEPTH, MAX_DEPTH));
     }
   };
 
