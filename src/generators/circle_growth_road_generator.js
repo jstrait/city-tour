@@ -4,6 +4,7 @@ var CityTour = CityTour || {};
 
 CityTour.CircleGrowthRoadGenerator = (function() {
   var MAX_STEEPNESS = Math.PI / 6;
+  var BUILD_BRIDGES = false;
 
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
     var MIN_MAP_X = Math.max(terrain.minMapX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
@@ -68,7 +69,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
         return;
       }
 
-      if (terrain.waterHeightAtCoordinates(targetMapX, targetMapZ) > 0.0) {
+      if (BUILD_BRIDGES && terrain.waterHeightAtCoordinates(targetMapX, targetMapZ) > 0.0) {
         bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ, config);
 
         if (bridgeAttributes !== undefined) {
