@@ -4,7 +4,7 @@ var CityTour = CityTour || {};
 
 CityTour.WorldGenerator = (function() {
   var generate = function(config) {
-    var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true);
+    var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true && config.neighborhoods.count > 0);
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
     var terrain, neighborhoods, cityCenter, roadNetwork, zonedBlocks, buildings;
@@ -31,7 +31,7 @@ CityTour.WorldGenerator = (function() {
     terrainEndTime = new Date();
 
     neighborhoodsStartTime = new Date();
-    if (!GENERATE_ROAD_NETWORK) {
+    if (config.neighborhoods.count <= 0) {
       neighborhoods = [];
     }
     else {
