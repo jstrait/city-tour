@@ -12,6 +12,7 @@ CityTour.CityConfigService = function() {
   var heightJitterDecay = 0.65;
   var includeRiver = true;
   var hillCount = 40;
+  var maxHillHeight = 200;
   var safeFromDecayBlocks = 6;
   var blockDistanceDecayBegins = 6;
   var maxBuildingStories = 40;
@@ -25,6 +26,7 @@ CityTour.CityConfigService = function() {
         heightJitter: heightJitter,
         heightJitterDecay: heightJitterDecay,
         hillCount: hillCount,
+        maxHillHeight: maxHillHeight,
         probabilityOfRiver: includeRiver ? 1.0 : 0.0,
       },
       neighborhoods: {
@@ -51,6 +53,8 @@ CityTour.CityConfigService = function() {
     setHeightJitterDecay: function(newHeightJitterDecay) { heightJitterDecay = newHeightJitterDecay; },
     hillCount: function() { return hillCount; },
     setHillCount: function(newHillCount) { hillCount = newHillCount; },
+    maxHillHeight: function() { return maxHillHeight; },
+    setMaxHillHeight: function(newMaxHillHeight) { maxHillHeight = newMaxHillHeight; },
     includeRiver: function() { return includeRiver; },
     setIncludeRiver: function(newIncludeRiver) { includeRiver = newIncludeRiver; },
     safeFromDecayBlocks: function() { return safeFromDecayBlocks; },

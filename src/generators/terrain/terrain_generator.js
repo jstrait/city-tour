@@ -51,7 +51,7 @@ CityTour.TerrainGenerator = (function() {
                                              rowsToGenerate - 1,
                                              0);
 
-    addRandomPyramids(terrainCoordinates, config.hillCount);
+    addRandomPyramids(terrainCoordinates, config.hillCount, config.maxHillHeight);
 
     // Hydraulic erosion
     CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);
@@ -66,8 +66,7 @@ CityTour.TerrainGenerator = (function() {
     return terrainCoordinates;
   };
 
-  var addRandomPyramids = function(terrainCoordinates, pyramidCount) {
-    var MAX_HEIGHT = 200;
+  var addRandomPyramids = function(terrainCoordinates, pyramidCount, maxHillHeight) {
     var MIN_WIDTH = 10;
     var MAX_WIDTH = 70;
     var MIN_DEPTH = 10;
@@ -83,7 +82,7 @@ CityTour.TerrainGenerator = (function() {
     for (i = 0; i < pyramidCount; i++) {
       centerX = CityTour.Math.randomInteger(0, COLUMN_COUNT - 1);
       centerZ = CityTour.Math.randomInteger(0, ROW_COUNT - 1);
-      maxHeightForCenterCoordinate = Math.min(MAX_HEIGHT, (Math.abs(centerZ - HALF_ROW_COUNT) / (HALF_ROW_COUNT * 0.75)) * MAX_HEIGHT);
+      maxHeightForCenterCoordinate = Math.min(maxHillHeight, (Math.abs(centerZ - HALF_ROW_COUNT) / (HALF_ROW_COUNT * 0.75)) * maxHillHeight);
 
       CityTour.TerrainShapeGenerator.addPyramid(terrainCoordinates,
                                                 centerX,
