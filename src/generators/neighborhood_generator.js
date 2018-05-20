@@ -24,10 +24,14 @@ CityTour.NeighborhoodGenerator = (function() {
     var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
     var pointCount = 0;
     var totalHeightDeltas = 0.0;
+    var minX = Math.max(terrain.minMapX(), centerX - 4);
+    var maxX = Math.min(terrain.maxMapX(), centerX + 4);
+    var minZ = Math.max(terrain.minMapZ(), centerZ - 4);
+    var maxZ = Math.min(terrain.maxMapZ(), centerZ + 4);
     var x, z;
 
-    for (x = Math.max(terrain.minMapX(), centerX - 4); x <= Math.min(terrain.maxMapX(), centerX + 4); x++) {
-      for (z = Math.max(terrain.minMapZ(), centerZ - 4); z <= Math.min(terrain.maxMapZ(), centerZ + 4); z++) {
+    for (x = minX; x <= maxX; x++) {
+      for (z = minZ; z <= maxZ; z++) {
         totalHeightDeltas += Math.abs(centerHeight - terrain.landHeightAtCoordinates(x, z));
         pointCount += 1;
       }
