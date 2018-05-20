@@ -21,6 +21,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   var safeFromDecayBlocks = document.getElementById("roads-decay-distance-blocks");
   var blockDistanceDecayBegins = document.getElementById("buildings-decay-distance-blocks");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
+  var neighborhoodCount = document.getElementById("buildings-neighborhood-count");
 
   var currentMenu;
 
@@ -103,6 +104,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
   safeFromDecayBlocks.addEventListener('change', function(e) { cityConfigService.setSafeFromDecayBlocks(parseInt(e.target.value, 10)); }, false);
   blockDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setBlockDistanceDecayBegins(parseInt(e.target.value, 10)); }, false);
   maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
+  neighborhoodCount.addEventListener('change', function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
 
   container.addEventListener('click', hideMenus);
   editorMenuTitle.addEventListener('click', toggleEditMenu, false);

@@ -5,7 +5,6 @@ var CityTour = CityTour || {};
 CityTour.CityConfigService = function() {
   var TERRAIN_COLUMN_COUNT = 128;
   var TERRAIN_ROW_COUNT = 128;
-  var NEIGHBORHOOD_COUNT = 15;
   var NEIGHBORHOOD_MAX_COLUMNS = 20;
   var NEIGHBORHOOD_MAX_ROWS = 20;
 
@@ -15,6 +14,7 @@ CityTour.CityConfigService = function() {
   var safeFromDecayBlocks = 6;
   var blockDistanceDecayBegins = 6;
   var maxBuildingStories = 40;
+  var neighborhoodCount = 15;
 
   var toWorldConfig = function() {
     return {
@@ -26,7 +26,7 @@ CityTour.CityConfigService = function() {
         probabilityOfRiver: includeRiver ? 1.0 : 0.0,
       },
       neighborhoods: {
-        count: NEIGHBORHOOD_COUNT,
+        count: neighborhoodCount,
         columnCount: NEIGHBORHOOD_MAX_COLUMNS,
         rowCount: NEIGHBORHOOD_MAX_ROWS,
       },
@@ -55,6 +55,7 @@ CityTour.CityConfigService = function() {
     setBlockDistanceDecayBegins: function(newBlockDistanceDecayBegins) { blockDistanceDecayBegins = newBlockDistanceDecayBegins; },
     maxBuildingStories: function() { return maxBuildingStories; },
     setMaxBuildingStories: function(newMaxBuildingStories) { maxBuildingStories = newMaxBuildingStories; },
+    setNeighborhoodCount: function(newNeighborhoodCount) { neighborhoodCount = newNeighborhoodCount; },
     toWorldConfig: toWorldConfig,
   };
 };
