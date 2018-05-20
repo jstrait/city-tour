@@ -4,13 +4,10 @@ var CityTour = CityTour || {};
 CityTour.Scene = CityTour.Scene || {};
 
 CityTour.Scene.Builder = function() {
-  var SKY_COLOR = new THREE.Color(0x66ccff);
-
   var buildEmptyScene = function() {
     var scene, light, directionalLight;
 
     scene = new THREE.Scene();
-    scene.background = SKY_COLOR;
 
     light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
     light.position.set( 0, 500, 0 );

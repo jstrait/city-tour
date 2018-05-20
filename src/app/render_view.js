@@ -48,7 +48,7 @@ CityTour.RenderView = function(container, scene) {
   };
 
 
-  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);

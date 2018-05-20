@@ -10,6 +10,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Helvetica", arial, sans-serif;
   line-height: 1.5rem;
   color: #2a2b2b;
+  background: linear-gradient(#66ccff, #fff);
 }
 
 label {
