@@ -51,7 +51,7 @@ CityTour.TerrainGenerator = (function() {
                                              rowsToGenerate - 1,
                                              0);
 
-    addRandomPyramids(terrainCoordinates, 40);
+    addRandomPyramids(terrainCoordinates, config.hillCount);
 
     // Hydraulic erosion
     CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);

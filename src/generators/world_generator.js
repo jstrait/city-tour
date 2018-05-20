@@ -23,6 +23,7 @@ CityTour.WorldGenerator = (function() {
     terrainConfig = {
       heightJitter: config.terrain.heightJitter,
       heightJitterDecay: config.terrain.heightJitterDecay,
+      hillCount: config.terrain.hillCount,
       river: (Math.random() < config.terrain.probabilityOfRiver),
     };
 

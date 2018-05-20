@@ -17,6 +17,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
 
   var terrainJitter = document.getElementById("terrain-jitter");
   var heightJitterDecay = document.getElementById("terrain-decay");
+  var hillCount = document.getElementById("terrain-hill-count");
   var includeRiver = document.getElementById("terrain-river");
   var safeFromDecayBlocks = document.getElementById("roads-decay-distance-blocks");
   var blockDistanceDecayBegins = document.getElementById("buildings-decay-distance-blocks");
@@ -100,6 +101,7 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
 
   terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
   heightJitterDecay.addEventListener('change', function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
+  hillCount.addEventListener('change', function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
   includeRiver.addEventListener('change', function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
   safeFromDecayBlocks.addEventListener('change', function(e) { cityConfigService.setSafeFromDecayBlocks(parseInt(e.target.value, 10)); }, false);
   blockDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setBlockDistanceDecayBegins(parseInt(e.target.value, 10)); }, false);
