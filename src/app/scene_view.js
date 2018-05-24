@@ -6,6 +6,10 @@ var CityTour = CityTour || {};
 CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   var SHOW_MARKERS = false;
 
+  var centerOfActionMarkerMesh;
+  var touchPoint1MarkerMesh;
+  var touchPoint2MarkerMesh;
+
   var sceneBuilder = new CityTour.Scene.Builder();
   var scene = sceneBuilder.buildEmptyScene();
   var renderView = new CityTour.RenderView(containerEl, scene);
@@ -35,8 +39,9 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     buildingsEndTime = new Date();
 
     markersStartTime = new Date();
+    var markerMeshes = buildMarkerMeshes(newWorldData);
     if (SHOW_MARKERS) {
-      scene.add(buildMarkerMeshes(newWorldData));
+      scene.add(markerMeshes);
     }
     markersEndTime = new Date();
 
@@ -62,6 +67,27 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     centerOfCityMarkerMesh.position.z = newWorldData.centerZ;
 
     group.add(centerOfCityMarkerMesh);
+
+    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+                                              new THREE.MeshBasicMaterial({ color: 0x55ff00 }));
+
+    centerOfActionMarkerMesh.position.x = 0.0;
+    centerOfActionMarkerMesh.position.z = 0.0;
+    group.add(centerOfActionMarkerMesh);
+
+    touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+                                           new THREE.MeshBasicMaterial({ color: 0xff0055 }));
+
+    touchPoint1MarkerMesh.position.x = 0.0;
+    touchPoint1MarkerMesh.position.z = 0.0;
+    group.add(touchPoint1MarkerMesh);
+
+    touchPoint2MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+                                           new THREE.MeshBasicMaterial({ color: 0x0000ff }));
+
+    touchPoint2MarkerMesh.position.x = 0.0;
+    touchPoint2MarkerMesh.position.z = 0.0;
+    group.add(touchPoint2MarkerMesh);
 
     return group;
   };
@@ -120,5 +146,10 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     render: render,
     camera: function() { return camera; },
     domElement: function() { return renderView.domElement(); },
+    scene: function() { return scene; },
+    terrainMesh: function() { return scene.getObjectByName("terrainMeshes"); },
+    centerOfActionMarkerMesh: function() { return centerOfActionMarkerMesh; },
+    touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
+    touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
   };
 };

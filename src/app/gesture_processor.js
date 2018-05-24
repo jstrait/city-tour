@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.GestureProcessor = function(orbitalCamera, camera) {
+CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
   var PAN = 1;
   var TILT = 2;
   var ROTATE = 3;
@@ -14,6 +14,7 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
   var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
   var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
 
+  var camera = sceneView.camera();
   var currentGesture;
   var previousTouches;
   var centerOfAction;
@@ -77,6 +78,8 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
 
     if (centerOfAction === undefined) {
       centerOfAction = currentTouches.midpoint();
+      sceneView.centerOfActionMarkerMesh().position.x = centerOfAction.x;
+      sceneView.centerOfActionMarkerMesh().position.z = centerOfAction.z;
     }
 
     if (zoomProperties === undefined) {
@@ -112,6 +115,8 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
 
     if (centerOfAction === undefined) {
       centerOfAction = currentTouches.midpoint();
+      sceneView.centerOfActionMarkerMesh().position.x = centerOfAction.x;
+      sceneView.centerOfActionMarkerMesh().position.z = centerOfAction.z;
     }
 
     newCenterX = ((orbitalCamera.centerX() - centerOfAction.x) * Math.cos(-rotationAngleDelta)) - ((orbitalCamera.centerZ() - centerOfAction.z) * Math.sin(-rotationAngleDelta)) + centerOfAction.x;
@@ -162,6 +167,8 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
     }
 
     if (currentGesture === TILT) {
+      sceneView.centerOfActionMarkerMesh().position.x = 0.0;
+      sceneView.centerOfActionMarkerMesh().position.z = 0.0;
       centerOfAction = undefined;
       zoomProperties = undefined;
       yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
@@ -185,6 +192,12 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
       centerOfAction = undefined;
       zoomProperties = undefined;
       orbitalCamera.setIsVelocityEnabled(true);
+      sceneView.centerOfActionMarkerMesh().position.x = 0.0;
+      sceneView.centerOfActionMarkerMesh().position.z = 0.0;
+      sceneView.touchPoint1MarkerMesh().position.x = 0.0;
+      sceneView.touchPoint1MarkerMesh().position.z = 0.0;
+      sceneView.touchPoint2MarkerMesh().position.x = 0.0;
+      sceneView.touchPoint2MarkerMesh().position.z = 0.0;
     }
     else if (previousTouches !== undefined) {
       orbitalCamera.setIsVelocityEnabled(false);
@@ -194,8 +207,23 @@ CityTour.GestureProcessor = function(orbitalCamera, camera) {
         centerOfAction = undefined;
         zoomProperties = undefined;
         panCamera(currentTouches);
+
+        sceneView.centerOfActionMarkerMesh().position.x = 0.0;
+        sceneView.centerOfActionMarkerMesh().position.z = 0.0;
+        sceneView.touchPoint1MarkerMesh().position.x = currentTouches.touches()[0].worldX();
+        sceneView.touchPoint1MarkerMesh().position.y = currentTouches.touches()[0].worldY();
+        sceneView.touchPoint1MarkerMesh().position.z = currentTouches.touches()[0].worldZ();
+        sceneView.touchPoint2MarkerMesh().position.x = 0.0;
+        sceneView.touchPoint2MarkerMesh().position.z = 0.0;
       }
       else if (currentTouches.count() === 2) {
+        sceneView.touchPoint1MarkerMesh().position.x = currentTouches.touches()[0].worldX();
+        sceneView.touchPoint1MarkerMesh().position.y = currentTouches.touches()[0].worldY();
+        sceneView.touchPoint1MarkerMesh().position.z = currentTouches.touches()[0].worldZ();
+        sceneView.touchPoint2MarkerMesh().position.x = currentTouches.touches()[1].worldX();
+        sceneView.touchPoint2MarkerMesh().position.y = currentTouches.touches()[1].worldY();
+        sceneView.touchPoint2MarkerMesh().position.z = currentTouches.touches()[1].worldZ();
+
         processMultiTouchGestures(currentTouches);
       }
     }

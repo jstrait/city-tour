@@ -2,12 +2,14 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationTouchController = function(el, orbitalCamera, camera, messageBroker) {
-  var gestureProcessor = CityTour.GestureProcessor(orbitalCamera, camera);
+CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageBroker) {
+  var el = sceneView.domElement();
+  var camera = sceneView.camera();
+  var gestureProcessor = CityTour.GestureProcessor(sceneView, orbitalCamera);
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrainMesh()));
   };
 
   var onTouchStart = function(e) {
@@ -18,7 +20,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       touch = e.touches.item(i);
       touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrainMesh()));
 
     e.preventDefault();
   };
@@ -32,7 +34,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       return;
     }
 
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}]));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrainMesh()));
   };
 
   var onTouchMove = function(e) {
@@ -43,7 +45,7 @@ CityTour.NavigationTouchController = function(el, orbitalCamera, camera, message
       touch = e.touches.item(i);
       touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints);
+    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrainMesh());
 
     gestureProcessor.processGesture(currentTouches);
   };

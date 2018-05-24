@@ -42,7 +42,7 @@ CityTour.App = (function() {
     var timerLoop = new CityTour.TimerLoop(initialWorldData, sceneView, orbitalCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
     var navigationController = new CityTour.NavigationController(orbitalCamera, timerLoop, messageBroker);
-    var navigationTouchController = new CityTour.NavigationTouchController(sceneView.domElement(), orbitalCamera, sceneView.camera(), messageBroker);
+    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, orbitalCamera, messageBroker);
 
     container.appendChild(sceneView.domElement());
 
