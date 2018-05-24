@@ -11,51 +11,52 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   };
 
   var buildRoadNetwork = function(terrain, neighborhoods, config) {
+    var terrainCandidateRoadNetwork = new CityTour.TerrainCandidateRoadNetwork(terrain);
+    var pathFinder = new CityTour.PathFinder(terrainCandidateRoadNetwork);
     var roadNetwork = new CityTour.RoadNetwork(terrain);
+    var targetPredicate = function(x, z) {
+      return roadNetwork.hasIntersection(x, z);
+    };
+    var shortestPathToRestOfCity;
     var i;
 
     CityTour.CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[0].centerX, neighborhoods[0].centerZ, config);
 
     for (i = 1; i < neighborhoods.length; i++) {
-      buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerMapX, config.centerMapZ);
-      CityTour.CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
+      shortestPathToRestOfCity = pathFinder.shortestPath(neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerMapX, config.centerMapZ, targetPredicate);
+      if (shortestPathToRestOfCity !== undefined) {
+        buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, shortestPathToRestOfCity);
+        CityTour.CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
+      }
     }
 
     return roadNetwork;
   };
 
-  var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, mapX1, mapZ1, mapX2, mapZ2) {
-    var terrainCandidateRoadNetwork = new CityTour.TerrainCandidateRoadNetwork(terrain);
-    var pathFinder = new CityTour.PathFinder(terrainCandidateRoadNetwork);
-
-    var targetPredicate = function(x, z) {
-      return roadNetwork.hasIntersection(x, z);
-    };
-
-    var shortestPath = pathFinder.shortestPath(mapX1, mapZ1, mapX2, mapZ2, targetPredicate);
+  var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, startMapX, startMapZ, path) {
     var previousIntersectionX, previousIntersectionZ;
     var bridgeAttributes, bridgeIntersectionX, bridgeIntersectionZ;
     var i;
 
-    previousIntersectionX = mapX1;
-    previousIntersectionZ = mapZ1;
-    for (i = 0; i < shortestPath.length; i++) {
+    previousIntersectionX = startMapX;
+    previousIntersectionZ = startMapZ;
+    for (i = 0; i < path.length; i++) {
       // Assumption is that a distance larger than 1 means a bridge, since normal on-surface road paths will involve steps between adjacent
       // coordinates with length 1.
-      if (CityTour.Math.distanceBetweenPoints(previousIntersectionX, previousIntersectionZ, shortestPath[i][0], shortestPath[i][1]) > 1.0) {
-        if (shortestPath[i][1] > previousIntersectionZ) {
+      if (CityTour.Math.distanceBetweenPoints(previousIntersectionX, previousIntersectionZ, path[i][0], path[i][1]) > 1.0) {
+        if (path[i][1] > previousIntersectionZ) {
           // North -> South
           bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ + 1, BRIDGE_CONFIG);
         }
-        else if (shortestPath[i][1] < previousIntersectionZ) {
+        else if (path[i][1] < previousIntersectionZ) {
           // South -> North
           bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ - 1, BRIDGE_CONFIG);
         }
-        else if (shortestPath[i][0] > previousIntersectionX) {
+        else if (path[i][0] > previousIntersectionX) {
           // West -> East
           bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX + 1, previousIntersectionZ, BRIDGE_CONFIG);
         }
-        else if (shortestPath[i][0] < previousIntersectionX) {
+        else if (path[i][0] < previousIntersectionX) {
           // East -> West
           bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX - 1, previousIntersectionZ, BRIDGE_CONFIG);
         }
@@ -76,11 +77,11 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
         }
       }
       else {
-        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, shortestPath[i][0], shortestPath[i][1], 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, path[i][0], path[i][1], 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
       }
 
-      previousIntersectionX = shortestPath[i][0];
-      previousIntersectionZ = shortestPath[i][1];
+      previousIntersectionX = path[i][0];
+      previousIntersectionZ = path[i][1];
     }
   };
 
