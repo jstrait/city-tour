@@ -67,9 +67,9 @@ CityTour.TerrainGenerator = (function() {
   };
 
   var addRandomPyramids = function(terrainCoordinates, pyramidCount, maxHillHeight) {
-    var MIN_WIDTH = 10;
+    var MIN_WIDTH = 30;
     var MAX_WIDTH = 70;
-    var MIN_DEPTH = 10;
+    var MIN_DEPTH = 30;
     var MAX_DEPTH = 70;
     var COLUMN_COUNT = terrainCoordinates.length;
     var ROW_COUNT = terrainCoordinates[0].length;
