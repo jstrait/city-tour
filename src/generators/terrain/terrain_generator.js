@@ -67,16 +67,15 @@ CityTour.TerrainGenerator = (function() {
   };
 
   var addRandomPyramids = function(terrainCoordinates, pyramidCount, maxHillHeight) {
-    var MIN_WIDTH = 30;
-    var MAX_WIDTH = 70;
-    var MIN_DEPTH = 30;
-    var MAX_DEPTH = 70;
+    var MIN_BASE_LENGTH = 15;
+    var MAX_BASE_LENGTH = 35;
     var COLUMN_COUNT = terrainCoordinates.length;
     var ROW_COUNT = terrainCoordinates[0].length;
     var HALF_ROW_COUNT = ROW_COUNT / 2;
 
     var centerX, centerZ;
     var maxHeightForCenterCoordinate;
+    var baseLength, hillHeight;
     var i;
 
     for (i = 0; i < pyramidCount; i++) {
@@ -84,12 +83,14 @@ CityTour.TerrainGenerator = (function() {
       centerZ = CityTour.Math.randomInteger(0, ROW_COUNT - 1);
       maxHeightForCenterCoordinate = Math.min(maxHillHeight, (Math.abs(centerZ - HALF_ROW_COUNT) / (HALF_ROW_COUNT * 0.75)) * maxHillHeight);
 
+      baseLength = CityTour.Math.randomInteger(MIN_BASE_LENGTH, MAX_BASE_LENGTH) * 2;
+      hillHeight = CityTour.Math.randomInteger(0, maxHeightForCenterCoordinate);
+
       CityTour.TerrainShapeGenerator.addPyramid(terrainCoordinates,
                                                 centerX,
                                                 centerZ,
-                                                CityTour.Math.randomInteger(MIN_WIDTH, MAX_WIDTH),
-                                                CityTour.Math.randomInteger(0, maxHeightForCenterCoordinate),
-                                                CityTour.Math.randomInteger(MIN_DEPTH, MAX_DEPTH));
+                                                baseLength,
+                                                hillHeight);
     }
   };
 

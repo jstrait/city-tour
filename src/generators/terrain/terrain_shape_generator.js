@@ -21,29 +21,32 @@ CityTour.TerrainShapeGenerator = (function() {
     }
   };
 
-  var addPyramid = function(terrainCoordinates, centerX, centerZ, width, height, depth) {
+  var addPyramid = function(terrainCoordinates, centerX, centerZ, baseLength, height) {
+    if ((baseLength % 2) !== 0) {
+      throw new Error("Base length of '" + baseLength + "' is invalid, it must be an even number");
+    }
+
+    var halfBaseLength = baseLength / 2;
+    var heightDifference = height / halfBaseLength;
+
+    var startX = Math.max(0, centerX - halfBaseLength);
+    var endX = Math.min(terrainCoordinates.length - 1, centerX + halfBaseLength);
+    var startZ = Math.max(0, centerZ - halfBaseLength);
+    var endZ = Math.min(terrainCoordinates[0].length - 1, centerZ + halfBaseLength);
+
     var x, z;
-
-    var halfWidth = (width % 2 === 0) ? width / 2 : (width - 1) / 2;
-    var halfDepth = (depth % 2 === 0) ? depth / 2 : (depth - 1) / 2;
-
-    var startX = Math.max(0, centerX - halfWidth);
-    var endX = Math.min(terrainCoordinates.length - 1, centerX + halfWidth);
-    var startZ = Math.max(0, centerZ - halfDepth);
-    var endZ = Math.min(terrainCoordinates[0].length - 1, centerZ + halfDepth);
-
-    var maxDistance = CityTour.Math.distanceBetweenPoints(startX, startZ, centerX, centerZ);
-    var currentDistance;
+    var distanceFromCenter, pointHeight;
 
     for (x = startX; x <= endX; x++) {
       for (z = startZ; z <= endZ; z++) {
-        currentDistance = CityTour.Math.distanceBetweenPoints(x, z, centerX, centerZ);
+        distanceFromCenter = Math.max(Math.abs(centerX - x), Math.abs(centerZ - z));
+        pointHeight = (halfBaseLength - distanceFromCenter) * heightDifference;
 
         if (height < 0) {
-          terrainCoordinates[x][z].landHeight = Math.min(terrainCoordinates[x][z].landHeight, (height * (1 - (currentDistance / maxDistance))));
+          terrainCoordinates[x][z].landHeight = Math.min(terrainCoordinates[x][z].landHeight, pointHeight);
         }
         else {
-          terrainCoordinates[x][z].landHeight = Math.max(terrainCoordinates[x][z].landHeight, (height * (1 - (currentDistance / maxDistance))));
+          terrainCoordinates[x][z].landHeight = Math.max(terrainCoordinates[x][z].landHeight, pointHeight);
         }
       }
     }
