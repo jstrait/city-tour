@@ -49,10 +49,28 @@ CityTour.App = (function() {
     messageBroker.publish("generation.complete", {});
 
     messageBroker.addSubscriber("generation.started", function(data) {
-      var newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
+      var emptyTerrain = CityTour.Terrain([[]], 1);
+      var emptyWorldData = {
+        terrain: emptyTerrain,
+        roadNetwork: CityTour.RoadNetwork(emptyTerrain),
+        buildings: [],
+        centerX: undefined,
+        centerZ: undefined,
+      };
+      var newWorldData;
 
+      // Replace old scene with mostly empty scene, to reclaim memory.
+      // A device with limited memory (such as a phone) might have enough
+      // memory to have a single city, but not two at once (which can
+      // temporarily be the case while creating a new city).
+      timerLoop.reset(emptyWorldData);
+      sceneView.reset(emptyWorldData);
+
+      // Now that old city's memory has been reclaimed, add new city
+      newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
+
       messageBroker.publish("generation.complete", {});
     });
   };
