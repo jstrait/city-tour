@@ -14,6 +14,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   var scene = sceneBuilder.buildEmptyScene();
   var renderView = new CityTour.RenderView(containerEl, scene);
   var camera = renderView.camera();
+  var terrain = initialWorldData.terrain;
 
   var reset = function(newWorldData) {
     var masterStartTime, masterEndTime;
@@ -26,6 +27,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
 
     masterStartTime = new Date();
 
+    var terrain = newWorldData.terrain;
     terrainStartTime = new Date();
     scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
     terrainEndTime = new Date();
@@ -147,7 +149,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     camera: function() { return camera; },
     domElement: function() { return renderView.domElement(); },
     scene: function() { return scene; },
-    terrainMesh: function() { return scene.getObjectByName("terrainMeshes"); },
+    terrain: function() { return terrain; },
     centerOfActionMarkerMesh: function() { return centerOfActionMarkerMesh; },
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },

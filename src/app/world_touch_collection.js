@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrainMesh) {
+CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrain) {
   var worldTouches = [];
   var distance;
   var midpoint;
@@ -10,7 +10,7 @@ CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrainMesh)
   var i;
 
   for (i = 0; i < screenTouches.length; i++) {
-    worldTouches.push(CityTour.WorldTouch(el, camera, screenTouches[i].x, screenTouches[i].z, terrainMesh));
+    worldTouches.push(CityTour.WorldTouch(el, camera, screenTouches[i].x, screenTouches[i].z, terrain));
   }
 
   if (worldTouches.length === 1) {

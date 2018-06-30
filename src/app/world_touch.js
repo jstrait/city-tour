@@ -2,26 +2,30 @@
 
 var CityTour = CityTour || {};
 
-CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrainMesh) {
+CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) {
   var normalizedScreenVector;
-  var raycaster = new THREE.Raycaster();
 
   // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
   var screenCoordinateToWorldPosition = function(camera, screenX, screenY) {
-    var intersectingObjects;
-    var direction, distanceToYPlane, worldPosition;
+    var direction, worldPosition;
+    var ray, movementTowardYPlaneAmount;
+    var mapX, mapZ;
 
-    raycaster.setFromCamera(new THREE.Vector2(screenX, screenY), camera);
-    intersectingObjects = raycaster.intersectObjects([terrainMesh], true);
-    if (intersectingObjects.length === 1) {
-      worldPosition = intersectingObjects[0].point;
-    }
-    else {
-      normalizedScreenVector.unproject(camera);
+    normalizedScreenVector.unproject(camera);
+    direction = normalizedScreenVector.sub(camera.position).normalize();
+    ray = camera.position.clone();
+    movementTowardYPlaneAmount = direction.clone().multiplyScalar(10.0);
 
-      direction = normalizedScreenVector.sub(camera.position).normalize();
-      distanceToYPlane = -(camera.position.y / direction.y);
-      worldPosition = camera.position.clone().add(direction.multiplyScalar(distanceToYPlane));
+    while (ray.y > 0.0 && worldPosition === undefined) {
+      ray = ray.add(movementTowardYPlaneAmount);
+      mapX = CityTour.Coordinates.sceneXToMapX(ray.x);
+      mapZ = CityTour.Coordinates.sceneZToMapZ(ray.z);
+
+      if (mapX >= -CityTour.Config.BLOCK_COLUMNS && mapX <= CityTour.Config.BLOCK_COLUMNS && mapZ >= -CityTour.Config.BLOCK_ROWS && mapZ <= CityTour.Config.BLOCK_ROWS) {
+        if (ray.y <= terrain.heightAtCoordinates(mapX, mapZ)) {
+          worldPosition = ray;
+        }
+      }
     }
 
     return worldPosition;

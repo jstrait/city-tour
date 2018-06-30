@@ -9,7 +9,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrainMesh()));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrain()));
   };
 
   var onTouchStart = function(e) {
@@ -20,7 +20,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
       touch = e.touches.item(i);
       touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrainMesh()));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrain()));
 
     e.preventDefault();
   };
@@ -34,7 +34,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
       return;
     }
 
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrainMesh()));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrain()));
   };
 
   var onTouchMove = function(e) {
@@ -45,7 +45,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
       touch = e.touches.item(i);
       touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrainMesh());
+    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrain());
 
     gestureProcessor.processGesture(currentTouches);
   };
