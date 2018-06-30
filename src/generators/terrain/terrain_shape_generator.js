@@ -52,6 +52,34 @@ CityTour.TerrainShapeGenerator = (function() {
     }
   };
 
+  var addCone = function(terrainCoordinates, centerX, centerZ, radius, height) {
+    var heightDifference = height / radius;
+
+    var startX = Math.max(0, centerX - radius);
+    var endX = Math.min(terrainCoordinates.length - 1, centerX + radius);
+    var startZ = Math.max(0, centerZ - radius);
+    var endZ = Math.min(terrainCoordinates[0].length - 1, centerZ + radius);
+
+    var x, z;
+    var distanceFromCenter, pointHeight;
+
+    for (x = startX; x <= endX; x++) {
+      for (z = startZ; z <= endZ; z++) {
+        distanceFromCenter = CityTour.Math.distanceBetweenPoints(x, z, centerX, centerZ);
+        if (distanceFromCenter <= radius) {
+          pointHeight = height - ((distanceFromCenter / radius) * height);
+
+          if (height < 0) {
+            terrainCoordinates[x][z].landHeight = Math.min(terrainCoordinates[x][z].landHeight, pointHeight);
+          }
+          else {
+            terrainCoordinates[x][z].landHeight = Math.max(terrainCoordinates[x][z].landHeight, pointHeight);
+          }
+        }
+      }
+    }
+  };
+
   var addLine = function(terrainCoordinates, startX, startZ, endX, endZ, thickness, height) {
     var halfThickness = thickness / 2;
     var boundingStartX = Math.max(0, startX - halfThickness);
@@ -113,6 +141,7 @@ CityTour.TerrainShapeGenerator = (function() {
   return {
     addPlateau: addPlateau,
     addPyramid: addPyramid,
+    addCone: addCone,
     addLine: addLine,
     addRidge: addRidge,
   };

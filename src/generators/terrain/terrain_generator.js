@@ -86,11 +86,11 @@ CityTour.TerrainGenerator = (function() {
       baseLength = CityTour.Math.randomInteger(MIN_BASE_LENGTH, MAX_BASE_LENGTH) * 2;
       hillHeight = CityTour.Math.randomInteger(0, maxHeightForCenterCoordinate);
 
-      CityTour.TerrainShapeGenerator.addPyramid(terrainCoordinates,
-                                                centerX,
-                                                centerZ,
-                                                baseLength,
-                                                hillHeight);
+      CityTour.TerrainShapeGenerator.addCone(terrainCoordinates,
+                                             centerX,
+                                             centerZ,
+                                             baseLength,
+                                             hillHeight);
     }
   };
 
