@@ -79,6 +79,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     if (centerOfAction === undefined) {
       centerOfAction = currentTouches.midpoint();
       sceneView.centerOfActionMarkerMesh().position.x = centerOfAction.x;
+      sceneView.centerOfActionMarkerMesh().position.y = centerOfAction.y;
       sceneView.centerOfActionMarkerMesh().position.z = centerOfAction.z;
     }
 
@@ -116,6 +117,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     if (centerOfAction === undefined) {
       centerOfAction = currentTouches.midpoint();
       sceneView.centerOfActionMarkerMesh().position.x = centerOfAction.x;
+      sceneView.centerOfActionMarkerMesh().position.y = centerOfAction.y;
       sceneView.centerOfActionMarkerMesh().position.z = centerOfAction.z;
     }
 
@@ -168,6 +170,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
 
     if (currentGesture === TILT) {
       sceneView.centerOfActionMarkerMesh().position.x = 0.0;
+      sceneView.centerOfActionMarkerMesh().position.y = 0.0;
       sceneView.centerOfActionMarkerMesh().position.z = 0.0;
       centerOfAction = undefined;
       zoomProperties = undefined;
@@ -193,6 +196,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       zoomProperties = undefined;
       orbitalCamera.setIsVelocityEnabled(true);
       sceneView.centerOfActionMarkerMesh().position.x = 0.0;
+      sceneView.centerOfActionMarkerMesh().position.y = 0.0;
       sceneView.centerOfActionMarkerMesh().position.z = 0.0;
       sceneView.touchPoint1MarkerMesh().position.x = 0.0;
       sceneView.touchPoint1MarkerMesh().position.z = 0.0;
@@ -209,6 +213,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
         panCamera(currentTouches);
 
         sceneView.centerOfActionMarkerMesh().position.x = 0.0;
+        sceneView.centerOfActionMarkerMesh().position.y = 0.0;
         sceneView.centerOfActionMarkerMesh().position.z = 0.0;
         sceneView.touchPoint1MarkerMesh().position.x = currentTouches.touches()[0].worldX();
         sceneView.touchPoint1MarkerMesh().position.y = currentTouches.touches()[0].worldY();
