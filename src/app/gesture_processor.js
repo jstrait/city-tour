@@ -96,28 +96,28 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       sceneView.targetOfActionMarkerMesh().position.set(zoomEndPoint.x, zoomEndPoint.y, zoomEndPoint.z);
 
       zoomProperties = {
-        zoomStartX: orbitalCamera.centerX(),
-        zoomStartZ: orbitalCamera.centerZ(),
-        zoomTargetX: zoomEndPoint.x,
-        zoomTargetZ: zoomEndPoint.z,
-        zoomStartDistancePercentage: orbitalCamera.zoomPercentage(),
+        startX: orbitalCamera.centerX(),
+        startZ: orbitalCamera.centerZ(),
+        targetX: zoomEndPoint.x,
+        targetZ: zoomEndPoint.z,
+        startDistancePercentage: orbitalCamera.zoomPercentage(),
       };
     }
 
-    if (zoomProperties.zoomStartDistancePercentage === 1.0) {
+    if (zoomProperties.startDistancePercentage === 1.0) {
       interpolationXZTowardCenterOfZoomPecentage = orbitalCamera.zoomPercentage();
     }
     else {
-      interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.zoomStartDistancePercentage) / (1.0 - zoomProperties.zoomStartDistancePercentage);
+      interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.startDistancePercentage) / (1.0 - zoomProperties.startDistancePercentage);
     }
 
     if (orbitalCamera.zoomPercentage() < 1.0) {
-      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.zoomStartX, zoomProperties.zoomTargetX, interpolationXZTowardCenterOfZoomPecentage);
-      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.zoomStartZ, zoomProperties.zoomTargetZ, interpolationXZTowardCenterOfZoomPecentage);
+      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.startX, zoomProperties.targetX, interpolationXZTowardCenterOfZoomPecentage);
+      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.startZ, zoomProperties.targetZ, interpolationXZTowardCenterOfZoomPecentage);
     }
     else {
-      newCenterOfOrbitX = zoomProperties.zoomTargetX;
-      newCenterOfOrbitZ = zoomProperties.zoomTargetZ;
+      newCenterOfOrbitX = zoomProperties.targetX;
+      newCenterOfOrbitZ = zoomProperties.targetZ;
     }
 
     orbitalCamera.setCenterCoordinates(newCenterOfOrbitX, newCenterOfOrbitZ);
