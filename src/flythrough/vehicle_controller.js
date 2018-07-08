@@ -153,7 +153,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
     drivingTargetPositionX = targetPositionX + CityTour.Coordinates.mapXToSceneX(drivingTargetMapX);
     drivingTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(drivingTargetMapZ);
-    drivingTargetRotationY = determineRotationAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
+    drivingTargetRotationY = determineAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     diveFrameCount = 105;
 
@@ -187,7 +187,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
-    targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
+    targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
     targetPositionY = BIRDSEYE_Y;
@@ -236,7 +236,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
-    targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
+    targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
     targetPositionY = HOVERING_Y;
@@ -284,7 +284,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
-    targetRotationY = determineRotationAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
+    targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
     targetPositionY = initial.positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * frameCountPositionX);
@@ -347,7 +347,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     return [];
   };
 
-  var determineRotationAngle = function(oldTargetPositionX, oldTargetPositionZ, oldRotationY, targetPositionX, targetPositionZ) {
+  var determineAzimuthAngle = function(oldTargetPositionX, oldTargetPositionZ, oldRotationY, targetPositionX, targetPositionZ) {
     var newTargetYRotation;
 
     var x = targetPositionX - oldTargetPositionX;

@@ -109,7 +109,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + zoomDeltaPercentage);
   };
 
-  var processRotationY = function(currentTouches, rotationAngleDelta) {
+  var processAzimuthRotation = function(currentTouches, azimuthAngleDelta) {
     var newCenterX, newCenterZ;
 
     if (centerOfAction === undefined) {
@@ -117,18 +117,18 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
     }
 
-    newCenterX = ((orbitalCamera.centerX() - centerOfAction.x) * Math.cos(-rotationAngleDelta)) - ((orbitalCamera.centerZ() - centerOfAction.z) * Math.sin(-rotationAngleDelta)) + centerOfAction.x;
-    newCenterZ = ((orbitalCamera.centerX() - centerOfAction.x) * Math.sin(-rotationAngleDelta)) + ((orbitalCamera.centerZ() - centerOfAction.z) * Math.cos(-rotationAngleDelta)) + centerOfAction.z;
+    newCenterX = ((orbitalCamera.centerX() - centerOfAction.x) * Math.cos(-azimuthAngleDelta)) - ((orbitalCamera.centerZ() - centerOfAction.z) * Math.sin(-azimuthAngleDelta)) + centerOfAction.x;
+    newCenterZ = ((orbitalCamera.centerX() - centerOfAction.x) * Math.sin(-azimuthAngleDelta)) + ((orbitalCamera.centerZ() - centerOfAction.z) * Math.cos(-azimuthAngleDelta)) + centerOfAction.z;
 
     orbitalCamera.setCenterCoordinates(newCenterX, newCenterZ);
-    orbitalCamera.setRotationAngle(orbitalCamera.rotationAngle() + rotationAngleDelta);
+    orbitalCamera.setAzimuthAngle(orbitalCamera.azimuthAngle() + azimuthAngleDelta);
   };
 
   var determineMultiTouchGesture = function(currentTouches) {
     var screenAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
     var touchPointsAreHorizontal = screenAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
                                    screenAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
-    var rotationAngleDelta;
+    var azimuthAngleDelta;
 
     if (previousTouches.count() !== 2) {
       return undefined;
@@ -141,9 +141,9 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       return TILT;
     }
     else {
-      rotationAngleDelta = previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches();
+      azimuthAngleDelta = previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches();
 
-      if (Math.abs(rotationAngleDelta) >= MIN_ROTATION_ANGLE) {
+      if (Math.abs(azimuthAngleDelta) >= MIN_ROTATION_ANGLE) {
         return ROTATE;
       }
       else {
@@ -155,7 +155,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
 
   var processMultiTouchGestures = function(currentTouches) {
     var yDistanceDelta;
-    var rotationAngleDelta;
+    var azimuthAngleDelta;
     var distanceBetweenTouches;
 
     currentGesture = determineMultiTouchGesture(currentTouches);
@@ -173,7 +173,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     }
     else if (currentGesture === ROTATE) {
       zoomProperties = undefined;
-      processRotationY(currentTouches, previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
+      processAzimuthRotation(currentTouches, previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
     else {
       distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();

@@ -32,7 +32,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var zoomPercentage;
   var tiltAngle;
   var tiltPercentage;
-  var rotationAngle = 0.0;
+  var azimuthAngle = 0.0;
 
   var isVelocityEnabled = false;
   var centerXVelocity = 0.0;
@@ -101,15 +101,15 @@ CityTour.OrbitalCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  var setRotationAngle = function(newRotationAngle) {
-    rotationVelocity = newRotationAngle - rotationAngle;
-    rotationAngle = newRotationAngle;
+  var setAzimuthAngle = function(newAzimuthAngle) {
+    rotationVelocity = newAzimuthAngle - azimuthAngle;
+    azimuthAngle = newAzimuthAngle;
 
-    if (rotationAngle < -Math.PI) {
-      rotationAngle += TWO_PI;
+    if (azimuthAngle < -Math.PI) {
+      azimuthAngle += TWO_PI;
     }
-    else if (rotationAngle > Math.PI) {
-      rotationAngle -= TWO_PI;
+    else if (azimuthAngle > Math.PI) {
+      azimuthAngle -= TWO_PI;
     }
 
     messageBroker.publish("camera.updated", {});
@@ -141,7 +141,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
       setCenterCoordinates(centerX + centerXVelocity, centerZ + centerZVelocity);
       setZoomDistance(zoomDistance + zoomDistanceVelocity);
       setTiltAngle(tiltAngle + tiltVelocity);
-      setRotationAngle(rotationAngle + rotationVelocity);
+      setAzimuthAngle(azimuthAngle + rotationVelocity);
     }
 
     if (Math.abs(centerXVelocity) < MINIMUM_VELOCITY) {
@@ -202,18 +202,18 @@ CityTour.OrbitalCamera = function(messageBroker) {
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
     var opposite = -Math.sin(tiltAngle) * hypotenuse;
 
-    var cameraX = centerX + (adjacent * Math.sin(rotationAngle));
-    var cameraZ = centerZ + (adjacent * Math.cos(-rotationAngle));
+    var cameraX = centerX + (adjacent * Math.sin(azimuthAngle));
+    var cameraZ = centerZ + (adjacent * Math.cos(-azimuthAngle));
 
     camera.position.x = cameraX;
     camera.position.y = Math.max(minimumCameraHeightAtCoordinates(cameraX, cameraZ), opposite);
     camera.position.z = cameraZ;
     camera.rotation.x = tiltAngle;
-    camera.rotation.y = rotationAngle;
+    camera.rotation.y = azimuthAngle;
   };
 
   var syncFromCamera = function(camera) {
-    rotationAngle = camera.rotation.y;
+    azimuthAngle = camera.rotation.y;
     tiltAngle = Math.min(MAX_TILT_ANGLE, camera.rotation.x);
     tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
 
@@ -221,8 +221,8 @@ CityTour.OrbitalCamera = function(messageBroker) {
     var hypotenuse = Math.max(MIN_ZOOM_DISTANCE, (1 / Math.sin(-tiltAngle)) * opposite);
     var adjacent = Math.sqrt((hypotenuse * hypotenuse) - (opposite * opposite));
 
-    centerX = camera.position.x - (adjacent * Math.sin(rotationAngle));
-    centerZ = camera.position.z - (adjacent * Math.cos(rotationAngle));
+    centerX = camera.position.x - (adjacent * Math.sin(azimuthAngle));
+    centerZ = camera.position.z - (adjacent * Math.cos(azimuthAngle));
     zoomDistance = hypotenuse;
     zoomPercentage = 1.0 - ((zoomDistance - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
 
@@ -244,8 +244,8 @@ CityTour.OrbitalCamera = function(messageBroker) {
     zoomDistance: function() { return zoomDistance; },
     tiltPercentage: function() { return tiltPercentage; },
     setTiltPercentage: setTiltPercentage,
-    rotationAngle: function() { return rotationAngle; },
-    setRotationAngle: setRotationAngle,
+    azimuthAngle: function() { return azimuthAngle; },
+    setAzimuthAngle: setAzimuthAngle,
     isVelocityEnabled: function() { return isVelocityEnabled; },
     setIsVelocityEnabled: setIsVelocityEnabled,
     tickVelocity: tickVelocity,

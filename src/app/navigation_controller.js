@@ -24,7 +24,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   };
 
   var render = function(data) {
-    rotationYControl.value = orbitalCamera.rotationAngle() * (180 / Math.PI);
+    rotationYControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
     rotationXControl.value = orbitalCamera.tiltPercentage();
     zoomControl.value = orbitalCamera.zoomPercentage();
 
@@ -38,13 +38,13 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
     }
   };
 
-  var setRotationAngle = function(e) {
+  var setAzimuthAngle = function(e) {
     // The slider uses degrees instead of radians to avoid Firefox thinking that float values are invalid,
     // seemingly due to precision issues.
     var degrees = parseInt(rotationYControl.value, 10);
     var radians = degrees * (Math.PI / 180);
 
-    orbitalCamera.setRotationAngle(radians);
+    orbitalCamera.setAzimuthAngle(radians);
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
@@ -80,7 +80,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   };
 
   containerToggle.addEventListener('click', toggleNavigationControls, false);
-  rotationYControl.addEventListener('input', setRotationAngle, false);
+  rotationYControl.addEventListener('input', setAzimuthAngle, false);
   rotationXControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomPercentage, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
