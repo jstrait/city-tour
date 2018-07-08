@@ -73,7 +73,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
   var processZoom = function(currentTouches, distanceBetweenTouches) {
     var cameraToCenterOfActionVector, centerOfActionPercentageOfFullHeight, zoomEndPoint;
     var newCenterOfOrbitX, newCenterOfOrbitZ;
-    var interpolationXZTowardCenterOfZoomPecentage;
+    var interpolationXZTowardCenterOfZoomPercentage;
 
     var zoomDeltaPercentage = (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage()));
 
@@ -105,15 +105,15 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     }
 
     if (zoomProperties.startDistancePercentage === 1.0) {
-      interpolationXZTowardCenterOfZoomPecentage = orbitalCamera.zoomPercentage();
+      interpolationXZTowardCenterOfZoomPercentage = orbitalCamera.zoomPercentage();
     }
     else {
-      interpolationXZTowardCenterOfZoomPecentage = (orbitalCamera.zoomPercentage() - zoomProperties.startDistancePercentage) / (1.0 - zoomProperties.startDistancePercentage);
+      interpolationXZTowardCenterOfZoomPercentage = (orbitalCamera.zoomPercentage() - zoomProperties.startDistancePercentage) / (1.0 - zoomProperties.startDistancePercentage);
     }
 
     if (orbitalCamera.zoomPercentage() < 1.0) {
-      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.startX, zoomProperties.targetX, interpolationXZTowardCenterOfZoomPecentage);
-      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.startZ, zoomProperties.targetZ, interpolationXZTowardCenterOfZoomPecentage);
+      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.startX, zoomProperties.targetX, interpolationXZTowardCenterOfZoomPercentage);
+      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.startZ, zoomProperties.targetZ, interpolationXZTowardCenterOfZoomPercentage);
     }
     else {
       newCenterOfOrbitX = zoomProperties.targetX;
