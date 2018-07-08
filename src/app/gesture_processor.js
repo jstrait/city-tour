@@ -155,7 +155,6 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
 
   var processMultiTouchGestures = function(currentTouches) {
     var yDistanceDelta;
-    var azimuthAngleDelta;
     var distanceBetweenTouches;
 
     currentGesture = determineMultiTouchGesture(currentTouches);
