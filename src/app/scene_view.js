@@ -7,6 +7,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   var SHOW_MARKERS = false;
 
   var centerOfActionMarkerMesh;
+  var targetOfActionMarkerMesh;
   var touchPoint1MarkerMesh;
   var touchPoint2MarkerMesh;
 
@@ -76,6 +77,13 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     centerOfActionMarkerMesh.position.x = 0.0;
     centerOfActionMarkerMesh.position.z = 0.0;
     group.add(centerOfActionMarkerMesh);
+
+    targetOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+                                              new THREE.MeshBasicMaterial({ color: 0xff5a00 }));
+
+    targetOfActionMarkerMesh.position.x = 0.0;
+    targetOfActionMarkerMesh.position.z = 0.0;
+    group.add(targetOfActionMarkerMesh);
 
     touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
                                            new THREE.MeshBasicMaterial({ color: 0xff0055 }));
@@ -151,6 +159,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     scene: function() { return scene; },
     terrain: function() { return terrain; },
     centerOfActionMarkerMesh: function() { return centerOfActionMarkerMesh; },
+    targetOfActionMarkerMesh: function() { return targetOfActionMarkerMesh; },
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
   };
