@@ -73,7 +73,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
   var processZoom = function(currentTouches, distanceBetweenTouches) {
     var cameraToCenterOfActionVector, centerOfActionPercentageOfFullHeight, zoomEndPoint;
     var newCenterOfOrbitX, newCenterOfOrbitZ;
-    var interpolationXZTowardCenterOfZoomPercentage;
+    var interpolationXZTowardCenterOfZoomPercentage, maxInterpolationXZPercentage;
 
     var zoomDeltaPercentage = (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage()));
 
@@ -100,6 +100,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
         startZ: orbitalCamera.centerZ(),
         targetX: zoomEndPoint.x,
         targetZ: zoomEndPoint.z,
+        maxInterpolationXZPercentage: centerOfActionPercentageOfFullHeight,
         startDistancePercentage: orbitalCamera.zoomPercentage(),
       };
     }
@@ -109,6 +110,10 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     }
     else {
       interpolationXZTowardCenterOfZoomPercentage = (orbitalCamera.zoomPercentage() - zoomProperties.startDistancePercentage) / (1.0 - zoomProperties.startDistancePercentage);
+    }
+
+    if (interpolationXZTowardCenterOfZoomPercentage > zoomProperties.maxInterpolationXZPercentage && zoomDeltaPercentage > 0.0) {
+      return;
     }
 
     if (orbitalCamera.zoomPercentage() < 1.0) {
