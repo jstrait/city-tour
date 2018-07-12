@@ -4,7 +4,6 @@ var CityTour = CityTour || {};
 
 CityTour.CircleGrowthRoadGenerator = (function() {
   var MAX_STEEPNESS = Math.PI / 6;
-  var BUILD_BRIDGES = false;
 
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
     var MIN_MAP_X = Math.max(terrain.minMapX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
@@ -69,34 +68,12 @@ CityTour.CircleGrowthRoadGenerator = (function() {
         return;
       }
 
-      if (BUILD_BRIDGES && terrain.waterHeightAtCoordinates(targetMapX, targetMapZ) > 0.0) {
-        bridgeAttributes = CityTour.BridgeGenerator.buildBridge(terrain, roadNetwork, mapX, mapZ, targetMapX, targetMapZ, config);
+      if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
+        targetIntersectionExists = roadNetwork.hasIntersection(targetMapX, targetMapZ);
 
-        if (bridgeAttributes !== undefined) {
-          bridgeIntersectionX = mapX;
-          bridgeIntersectionZ = mapZ;
-          while (bridgeIntersectionX !== bridgeAttributes.endX || bridgeIntersectionZ !== bridgeAttributes.endZ) {
-            roadNetwork.addEdge(bridgeIntersectionX,
-                                bridgeIntersectionZ,
-                                bridgeIntersectionX + bridgeAttributes.xDelta,
-                                bridgeIntersectionZ + bridgeAttributes.zDelta,
-                                bridgeAttributes.roadDeckHeight,
-                                CityTour.RoadNetwork.BRIDGE_SURFACE);
-            bridgeIntersectionX += bridgeAttributes.xDelta;
-            bridgeIntersectionZ += bridgeAttributes.zDelta;
-          }
-
-          branchFromIntersection(terrain, roadNetwork, bridgeAttributes.endX, bridgeAttributes.endZ);
-        }
-      }
-      else {
-        if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
-          targetIntersectionExists = roadNetwork.hasIntersection(targetMapX, targetMapZ);
-
-          roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-          if (!targetIntersectionExists) {
-            branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
-          }
+        roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        if (!targetIntersectionExists) {
+          branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
         }
       }
     };
