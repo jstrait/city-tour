@@ -82,7 +82,7 @@ CityTour.BuildingsGenerator = (function() {
       }
 
       if (block !== []) {
-        if (!blocks[mapX]) {
+        if (blocks[mapX] === undefined) {
           blocks[mapX] = [];
         }
         blocks[mapX][mapZ] = block;
