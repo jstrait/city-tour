@@ -28,6 +28,11 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
       }
     }
 
+    // Ray doesn't intersect the terrain
+    if (worldPosition === undefined) {
+      worldPosition = ray;
+    }
+
     return worldPosition;
   };
 
