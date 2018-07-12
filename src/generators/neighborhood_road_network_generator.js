@@ -70,6 +70,7 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
                                 bridgeIntersectionX + bridgeAttributes.xDelta,
                                 bridgeIntersectionZ + bridgeAttributes.zDelta,
                                 bridgeAttributes.roadDeckHeight,
+                                1.0,
                                 CityTour.RoadNetwork.BRIDGE_SURFACE);
             bridgeIntersectionX += bridgeAttributes.xDelta;
             bridgeIntersectionZ += bridgeAttributes.zDelta;
@@ -77,7 +78,7 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
         }
       }
       else {
-        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, path[i][0], path[i][1], 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, path[i][0], path[i][1], 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
       }
 
       previousIntersectionX = path[i][0];

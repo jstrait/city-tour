@@ -48,7 +48,7 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.hasIntersection(1, 2)).toBe(false);
     expect(roadNetwork.hasIntersection(3, 4)).toBe(false);
 
-    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
     expect(roadNetwork.hasIntersection(-1, 0)).toBe(true);
     expect(roadNetwork.hasIntersection(1, 2)).toBe(true);
@@ -71,7 +71,7 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.hasEdgeBetween(-2, 1, 1, 2)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 2, 1)).toBe(false);
 
-    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
     expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2)).toBe(true);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, CityTour.RoadNetwork.TERRAIN_SURFACE)).toBe(true);
@@ -85,7 +85,7 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.hasEdgeBetween(-2, 1, 1, 2)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 2, 1)).toBe(false);
 
-    roadNetwork.addEdge(-1, 0, -2, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, -2, 1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
     expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2)).toBe(true);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, CityTour.RoadNetwork.TERRAIN_SURFACE)).toBe(true);
@@ -127,7 +127,7 @@ describe("CityTour.RoadNetwork", function() {
     expect(roadNetwork.edgeBetween(-2, 0, -3, 0)).toBe(undefined);
 
     // Edge exists
-    roadNetwork.addEdge(0, 0, 1, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
     expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toEqual({ distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE });
 
     expect(roadNetwork.edgeBetween(1, 0, 2, 0)).toBe(undefined);
@@ -140,7 +140,7 @@ describe("CityTour.RoadNetwork", function() {
     it("allows removing an existing edge", function() {
       // Remove an existing edge
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
-      roadNetwork.addEdge(0, 0, 1, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(true);
       roadNetwork.removeEdge(0, 0, 1, 0);
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
@@ -166,14 +166,14 @@ describe("CityTour.RoadNetwork", function() {
 
     it("doesn't blow up when removing a non-existent edge between one intersection that exists, and another that doesn't", function() {
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
-      roadNetwork.addEdge(1, 0, 2, 0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
       roadNetwork.removeEdge(2, 0, 3, 0);
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
     });
 
     it("removes an intersection if it no longer has any connected edges", function() {
-      roadNetwork.addEdge(0, 0, 0, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-      roadNetwork.addEdge(0, 1, 1, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 0, 0, 1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 1, 1, 1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
       expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(true);
       expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);
@@ -197,7 +197,7 @@ describe("CityTour.RoadNetwork", function() {
       expect(roadNetwork.hasIntersection(0, 1)).toBe(false);
       expect(roadNetwork.hasIntersection(1, 1)).toBe(false);
 
-      roadNetwork.addEdge(0, 1, 1, 1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 1, 1, 1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
       expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(false);
       expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);

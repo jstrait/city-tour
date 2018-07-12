@@ -138,11 +138,11 @@ CityTour.RoadNetwork = function(terrain) {
     }
   };
 
-  var addEdge = function(mapX1, mapZ1, mapX2, mapZ2, nonTerrainHeight, surfaceType) {
+  var addEdge = function(mapX1, mapZ1, mapX2, mapZ2, nonTerrainHeight, distance, surfaceType) {
     var intersection1 = intersections[mapX1][mapZ1];
     var intersection2 = intersections[mapX2][mapZ2];
     var intersectionHeight, intersectionSurfaceType;
-    var edge = { distance: 1.0, surfaceType: surfaceType };
+    var edge = { distance: distance, surfaceType: surfaceType };
 
     if (!intersection1) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(mapX1, mapZ1) === 0.0) ? terrain.heightAtCoordinates(mapX1, mapZ1) : nonTerrainHeight;

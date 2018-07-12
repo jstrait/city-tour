@@ -88,7 +88,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(mapX, mapZ) &&
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -119,7 +119,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(mapX, mapZ) &&
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -150,7 +150,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(mapX, mapZ) &&
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -181,7 +181,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(mapX, mapZ) &&
                 roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
                 pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }

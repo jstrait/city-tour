@@ -71,7 +71,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
       if (shouldConnectIntersections(terrain, mapX, mapZ, targetMapX, targetMapZ)) {
         targetIntersectionExists = roadNetwork.hasIntersection(targetMapX, targetMapZ);
 
-        roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
         if (!targetIntersectionExists) {
           branchFromIntersection(terrain, roadNetwork, targetMapX, targetMapZ);
         }
