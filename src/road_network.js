@@ -6,17 +6,17 @@ CityTour.RoadNetwork = function(terrain) {
   var Intersection = function(mapX, mapZ, height, surfaceType) {
     var edges = [];
 
-    var addEdge = function(destinationMapX, destinationMapZ, distance, surfaceType) {
+    var addEdge = function(destinationMapX, destinationMapZ, edge) {
       var i;
 
       for(i = 0; i < edges.length; i++) {
         if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
-          edges[i].edge = { distance: distance, surfaceType: surfaceType };
+          edges[i].edge = edge;
           return;
         }
       }
 
-      edges.push({ destinationMapX: destinationMapX, destinationMapZ: destinationMapZ, edge: { distance: distance, surfaceType: surfaceType }});
+      edges.push({ destinationMapX: destinationMapX, destinationMapZ: destinationMapZ, edge: edge});
     };
 
     var removeEdge = function(mapX, mapZ) {
@@ -142,6 +142,7 @@ CityTour.RoadNetwork = function(terrain) {
     var intersection1 = intersections[mapX1][mapZ1];
     var intersection2 = intersections[mapX2][mapZ2];
     var intersectionHeight, intersectionSurfaceType;
+    var edge = { distance: 1.0, surfaceType: surfaceType };
 
     if (!intersection1) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(mapX1, mapZ1) === 0.0) ? terrain.heightAtCoordinates(mapX1, mapZ1) : nonTerrainHeight;
@@ -157,8 +158,8 @@ CityTour.RoadNetwork = function(terrain) {
       intersections[mapX2][mapZ2] = intersection2;
     }
 
-    intersection1.addEdge(mapX2, mapZ2, 1.0, surfaceType);
-    intersection2.addEdge(mapX1, mapZ1, 1.0, surfaceType);
+    intersection1.addEdge(mapX2, mapZ2, edge);
+    intersection2.addEdge(mapX1, mapZ1, edge);
 
     minColumn = Math.min(minColumn, mapX1, mapX2);
     maxColumn = Math.max(maxColumn, mapX1, mapX2);
