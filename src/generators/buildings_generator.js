@@ -43,7 +43,7 @@ CityTour.BuildingsGenerator = (function() {
 
         if (lotTerrainAttributes.steepness < CityTour.Config.MIN_STORY_HEIGHT) {
           maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
-          actualStories = Math.max(1, Math.round(Math.random() * maxStories));
+          actualStories = CityTour.Math.randomInteger(1, maxStories);
 
           if (actualStories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
             roofStyle = ROOF_STYLE_ANTENNA;
