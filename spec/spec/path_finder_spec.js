@@ -28,7 +28,15 @@ describe("CityTour.PathFinder", function() {
     roadNetwork.addEdge(2, -1, 3, -1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
     it("returns undefined if either the start or end node is not an existing node", function() {
+      // Start point doesn't exist
+      expect(pathFinder.shortestPath(-1, 0, 1, 0)).toBe(undefined);
+
+      // End point doesn't exist
       expect(pathFinder.shortestPath(1, 0, 3, 0)).toBe(undefined);
+
+      // Start and end points don't exist
+      expect(pathFinder.shortestPath(-1, 0, 3, 0)).toBe(undefined);
+
     });
 
     it("returns an empty array if the start and end point the same, and a valid node", function() {

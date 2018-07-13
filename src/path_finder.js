@@ -85,6 +85,10 @@ CityTour.PathFinder = function(roadNetwork) {
     var unvisitedSet = new Set();
     var x;
 
+    if (!roadNetwork.hasIntersection(startX, startZ)) {
+      return undefined;
+    }
+
     if (targetPredicate === undefined) {
       targetPredicate = function(x, z) {
         return x === endX && z === endZ;
