@@ -77,11 +77,6 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
 
     var zoomDeltaPercentage = (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage()));
 
-    if (centerOfAction === undefined) {
-      centerOfAction = currentTouches.midpoint();
-      sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
-    }
-
     if (zoomProperties === undefined) {
       cameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
                                                        (camera.position.y - centerOfAction.y),
@@ -131,11 +126,6 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
 
   var processAzimuthRotation = function(currentTouches, azimuthAngleDelta) {
     var newCenterX, newCenterZ;
-
-    if (centerOfAction === undefined) {
-      centerOfAction = currentTouches.midpoint();
-      sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
-    }
 
     newCenterX = ((orbitalCamera.centerX() - centerOfAction.x) * Math.cos(-azimuthAngleDelta)) - ((orbitalCamera.centerZ() - centerOfAction.z) * Math.sin(-azimuthAngleDelta)) + centerOfAction.x;
     newCenterZ = ((orbitalCamera.centerX() - centerOfAction.x) * Math.sin(-azimuthAngleDelta)) + ((orbitalCamera.centerZ() - centerOfAction.z) * Math.cos(-azimuthAngleDelta)) + centerOfAction.z;
@@ -214,14 +204,16 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     }
     else if (previousTouches !== undefined) {
       orbitalCamera.setIsVelocityEnabled(false);
+      if (centerOfAction === undefined) {
+        centerOfAction = currentTouches.midpoint();
+        sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
+      }
 
       if (currentTouches.count() === 1) {
         currentGesture = PAN;
-        centerOfAction = undefined;
         zoomProperties = undefined;
         panCamera(currentTouches);
 
-        sceneView.centerOfActionMarkerMesh().position.set(0.0, 0.0, 0.0);
         sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
                                                        currentTouches.touches()[0].worldY(),
                                                        currentTouches.touches()[0].worldZ());
