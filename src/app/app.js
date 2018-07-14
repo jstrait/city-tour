@@ -49,6 +49,10 @@ CityTour.App = (function() {
     messageBroker.publish("generation.complete", {});
 
     messageBroker.addSubscriber("generation.started", function(data) {
+      console.log("Starting city generation");
+      var startTime = new Date();
+      var endTime;
+
       var emptyTerrain = CityTour.Terrain([[]], 1);
       var emptyWorldData = {
         terrain: emptyTerrain,
@@ -70,6 +74,9 @@ CityTour.App = (function() {
       newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
+
+      endTime = new Date();
+      console.log("City generation complete, total time: " + (endTime - startTime) + "ms");
 
       messageBroker.publish("generation.complete", {});
     });
