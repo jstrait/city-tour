@@ -6,6 +6,7 @@ var CityTour = CityTour || {};
 CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   var SHOW_MARKERS = false;
 
+  var centerOfCityMarkerMesh;
   var centerOfActionMarkerMesh;
   var targetOfActionMarkerMesh;
   var touchPoint1MarkerMesh;
@@ -21,7 +22,6 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     var terrainStartTime, terrainEndTime;
     var roadStartTime, roadEndTime;
     var buildingsStartTime, buildingsEndTime;
-    var markersStartTime, markersEndTime;
 
     destroyPreviousMeshes();
 
@@ -39,12 +39,8 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.roadNetwork));
     buildingsEndTime = new Date();
 
-    markersStartTime = new Date();
-    var markerMeshes = buildMarkerMeshes(newWorldData);
-    if (SHOW_MARKERS) {
-      scene.add(markerMeshes);
-    }
-    markersEndTime = new Date();
+    centerOfCityMarkerMesh.position.x = newWorldData.centerX;
+    centerOfCityMarkerMesh.position.z = newWorldData.centerZ;
 
     masterEndTime = new Date();
 
@@ -52,48 +48,43 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     console.log("  Terrain:   " + (terrainEndTime - terrainStartTime) + "ms");
     console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
     console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
-    console.log("  Markers:   " + (markersEndTime - markersStartTime) + "ms");
   };
 
-  var buildMarkerMeshes = function(newWorldData) {
-    var group = new THREE.Group();
+  var buildMarkerMeshes = function() {
+    var markersStartTime, markersEndTime;
+    var group;
+
+    markersStartTime = new Date();
+
+    group = new THREE.Group();
     group.name = "markerMeshes";
 
-    var centerOfCityMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
-                                                new THREE.MeshBasicMaterial({ color: 0xff00ff }));
-
-    centerOfCityMarkerMesh.position.x = newWorldData.centerX;
-    centerOfCityMarkerMesh.position.z = newWorldData.centerZ;
-
+    centerOfCityMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+                                            new THREE.MeshBasicMaterial({ color: 0xff00ff }));
     group.add(centerOfCityMarkerMesh);
 
     centerOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
                                               new THREE.MeshBasicMaterial({ color: 0x55ff00 }));
-
-    centerOfActionMarkerMesh.position.x = 0.0;
-    centerOfActionMarkerMesh.position.z = 0.0;
     group.add(centerOfActionMarkerMesh);
 
     targetOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
                                               new THREE.MeshBasicMaterial({ color: 0xff5a00 }));
-
-    targetOfActionMarkerMesh.position.x = 0.0;
-    targetOfActionMarkerMesh.position.z = 0.0;
     group.add(targetOfActionMarkerMesh);
 
     touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
                                            new THREE.MeshBasicMaterial({ color: 0xff0055 }));
-
-    touchPoint1MarkerMesh.position.x = 0.0;
-    touchPoint1MarkerMesh.position.z = 0.0;
     group.add(touchPoint1MarkerMesh);
 
     touchPoint2MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
                                            new THREE.MeshBasicMaterial({ color: 0x0000ff }));
-
-    touchPoint2MarkerMesh.position.x = 0.0;
-    touchPoint2MarkerMesh.position.z = 0.0;
     group.add(touchPoint2MarkerMesh);
+
+    if (SHOW_MARKERS) {
+      scene.add(group);
+    }
+
+    markersEndTime = new Date();
+    console.log("Time to generate touch debug markers:   " + (markersEndTime - markersStartTime) + "ms");
 
     return group;
   };
@@ -114,10 +105,6 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
 
     if (buildingMeshes !== undefined) {
       removeChildFromScene(buildingMeshes);
-    }
-
-    if (markerMeshes !== undefined) {
-      removeChildFromScene(markerMeshes);
     }
   };
 
@@ -149,6 +136,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
 
   window.addEventListener('resize', renderView.resize, false);
 
+  buildMarkerMeshes();
   reset(initialWorldData);
 
   return {
