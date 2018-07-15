@@ -2,14 +2,15 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageBroker) {
+CityTour.NavigationTouchController = function(sceneView, orbitalCamera, initialTerrain, messageBroker) {
   var el = sceneView.domElement();
   var camera = sceneView.camera();
   var gestureProcessor = CityTour.GestureProcessor(sceneView, orbitalCamera);
+  var terrain = initialTerrain;
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrain()));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], terrain));
   };
 
   var onTouchStart = function(e) {
@@ -20,7 +21,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
       touch = e.touches.item(i);
       touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrain()));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, terrain));
 
     e.preventDefault();
   };
@@ -34,7 +35,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
       return;
     }
 
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], sceneView.terrain()));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], terrain));
   };
 
   var onTouchMove = function(e) {
@@ -45,7 +46,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
       touch = e.touches.item(i);
       touchPoints.push({x: touch.clientX, z: touch.clientY});
     }
-    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, sceneView.terrain());
+    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, terrain);
 
     gestureProcessor.processGesture(currentTouches);
   };
@@ -99,5 +100,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, messageB
   enableEventHandlers();
 
 
-  return {};
+  return {
+    setTerrain: function(newTerrain) { terrain = newTerrain; },
+  };
 };

@@ -42,7 +42,7 @@ CityTour.App = (function() {
     var timerLoop = new CityTour.TimerLoop(initialWorldData, sceneView, orbitalCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
     var navigationController = new CityTour.NavigationController(orbitalCamera, timerLoop, messageBroker);
-    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, orbitalCamera, messageBroker);
+    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, orbitalCamera, initialWorldData.terrain, messageBroker);
 
     container.appendChild(sceneView.domElement());
 
@@ -69,11 +69,13 @@ CityTour.App = (function() {
       // temporarily be the case while creating a new city).
       timerLoop.reset(emptyWorldData);
       sceneView.reset(emptyWorldData);
+      navigationTouchController.setTerrain(emptyWorldData.terrain);
 
       // Now that old city's memory has been reclaimed, add new city
       newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
+      navigationTouchController.setTerrain(newWorldData.terrain);
 
       endTime = new Date();
       console.log("City generation complete, total time: " + (endTime - startTime) + "ms");
