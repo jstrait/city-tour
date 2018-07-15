@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 
-CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
+CityTour.SceneView = function(containerEl, messageBroker) {
   var SHOW_MARKERS = false;
 
   var centerOfCityMarkerMesh;
@@ -137,7 +137,6 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
   window.addEventListener('resize', renderView.resize, false);
 
   buildMarkerMeshes();
-  reset(initialWorldData);
 
   return {
     reset: reset,
