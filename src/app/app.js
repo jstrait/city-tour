@@ -4,6 +4,15 @@ var CityTour = CityTour || {};
 
 
 CityTour.App = (function() {
+  var EMPTY_TERRAIN = CityTour.Terrain([[]], 1);
+  var EMPTY_WORLD_DATA = {
+    terrain: EMPTY_TERRAIN,
+    roadNetwork: CityTour.RoadNetwork(EMPTY_TERRAIN),
+    buildings: [],
+    centerX: undefined,
+    centerZ: undefined,
+  };
+
   var detectWebGL = function() {
     if (!window.WebGLRenderingContext) {
       return false;
@@ -37,39 +46,27 @@ CityTour.App = (function() {
     var messageBroker = new CityTour.MessageBroker();
     var orbitalCamera = new CityTour.OrbitalCamera(messageBroker);
     var cityConfigService = new CityTour.CityConfigService();
-    var initialWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
-    var sceneView = new CityTour.SceneView(container, initialWorldData, messageBroker);
-    var timerLoop = new CityTour.TimerLoop(initialWorldData, sceneView, orbitalCamera, messageBroker);
+    var sceneView = new CityTour.SceneView(container, EMPTY_WORLD_DATA, messageBroker);
+    var timerLoop = new CityTour.TimerLoop(EMPTY_WORLD_DATA, sceneView, orbitalCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
     var navigationController = new CityTour.NavigationController(orbitalCamera, timerLoop, messageBroker);
-    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, orbitalCamera, initialWorldData.terrain, messageBroker);
+    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, orbitalCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
 
     container.appendChild(sceneView.domElement());
 
-    messageBroker.publish("generation.complete", {});
-
-    messageBroker.addSubscriber("generation.started", function(data) {
+    var resetCity = function(data) {
       console.log("Starting city generation");
       var startTime = new Date();
       var endTime;
-
-      var emptyTerrain = CityTour.Terrain([[]], 1);
-      var emptyWorldData = {
-        terrain: emptyTerrain,
-        roadNetwork: CityTour.RoadNetwork(emptyTerrain),
-        buildings: [],
-        centerX: undefined,
-        centerZ: undefined,
-      };
       var newWorldData;
 
       // Replace old scene with mostly empty scene, to reclaim memory.
       // A device with limited memory (such as a phone) might have enough
       // memory to have a single city, but not two at once (which can
       // temporarily be the case while creating a new city).
-      timerLoop.reset(emptyWorldData);
-      sceneView.reset(emptyWorldData);
-      navigationTouchController.setTerrain(emptyWorldData.terrain);
+      timerLoop.reset(EMPTY_WORLD_DATA);
+      sceneView.reset(EMPTY_WORLD_DATA);
+      navigationTouchController.setTerrain(EMPTY_WORLD_DATA.terrain);
 
       // Now that old city's memory has been reclaimed, add new city
       newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
@@ -81,7 +78,11 @@ CityTour.App = (function() {
       console.log("City generation complete, total time: " + (endTime - startTime) + "ms");
 
       messageBroker.publish("generation.complete", {});
-    });
+    };
+
+    messageBroker.addSubscriber("generation.started", resetCity);
+
+    resetCity();
   };
 
 
