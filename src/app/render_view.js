@@ -54,7 +54,6 @@ CityTour.RenderView = function(container, scene) {
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
   camera.lookAt(scene.position);
   camera.rotation.order = "YXZ";
-  scene.add(camera);
 
 
   return {
