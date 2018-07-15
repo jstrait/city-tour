@@ -41,10 +41,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var tiltVelocity = 0.0;
   var rotationVelocity = 0.0;
 
-  var terrain;
-
-  var setTerrain = function(newTerrain) { terrain = newTerrain; };
-
   var setCenterCoordinates = function(newCenterX, newCenterZ) {
     centerXVelocity = newCenterX - centerX;
     centerZVelocity = newCenterZ - centerZ;
@@ -169,7 +165,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
     }
   };
 
-  var minimumCameraHeightAtCoordinates = function(sceneX, sceneZ) {
+  var minimumCameraHeightAtCoordinates = function(terrain, sceneX, sceneZ) {
     var terrainHeight = Number.NEGATIVE_INFINITY;
 
     if (terrain !== undefined) {
@@ -197,7 +193,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
   Adjacent == X/Z distance of camera from center point
   rotationY == rotation of this triangle around y-axis of center point
   */
-  var syncToCamera = function(camera) {
+  var syncToCamera = function(camera, terrain) {
     var hypotenuse = zoomDistance;
     var adjacent = Math.cos(tiltAngle) * hypotenuse;
     var opposite = -Math.sin(tiltAngle) * hypotenuse;
@@ -206,7 +202,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
     var cameraZ = centerZ + (adjacent * Math.cos(-azimuthAngle));
 
     camera.position.x = cameraX;
-    camera.position.y = Math.max(minimumCameraHeightAtCoordinates(cameraX, cameraZ), opposite);
+    camera.position.y = Math.max(minimumCameraHeightAtCoordinates(terrain, cameraX, cameraZ), opposite);
     camera.position.z = cameraZ;
     camera.rotation.x = tiltAngle;
     camera.rotation.y = azimuthAngle;
@@ -235,7 +231,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
 
 
   return {
-    setTerrain: setTerrain,
     centerX: function() { return centerX; },
     centerZ: function() { return centerZ; },
     setCenterCoordinates: setCenterCoordinates,

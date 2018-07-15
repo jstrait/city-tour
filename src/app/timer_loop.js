@@ -19,7 +19,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
 
   var syncToCamera = function() {
     if (mode === INTERACTIVE) {
-      orbitalCamera.syncToCamera(camera);
+      orbitalCamera.syncToCamera(camera, worldData.terrain);
     }
     else if (mode === FLYTHROUGH) {
       camera.position.x = vehicleController.positionX();
@@ -58,7 +58,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
 
   var requestStopFlythrough = function() {
     orbitalCamera.syncFromCamera(camera);
-    orbitalCamera.syncToCamera(camera);
+    orbitalCamera.syncToCamera(camera, worldData.terrain);
 
     vehicleToInteractiveAnimation = new CityTour.Animation(
       new CityTour.MotionGenerator(vehicleController.positionX(), camera.position.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
@@ -86,7 +86,6 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
 
   var reset = function(newWorldData) {
     worldData = newWorldData;
-    orbitalCamera.setTerrain(worldData.terrain);
     syncToCamera();
   };
 
