@@ -58,6 +58,7 @@ CityTour.App = (function() {
       console.log("Starting city generation");
       var startTime = new Date();
       var endTime;
+      var renderStartTime, renderEndTime;
       var newWorldData;
 
       // Replace old scene with mostly empty scene, to reclaim memory.
@@ -73,6 +74,12 @@ CityTour.App = (function() {
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
       navigationTouchController.setTerrain(newWorldData.terrain);
+
+      // Force the new scene to be rendered
+      renderStartTime = new Date();
+      sceneView.resize();
+      renderEndTime = new Date();
+      console.log("Time to perform initial render: " + (renderEndTime - renderStartTime) + "ms");
 
       endTime = new Date();
       console.log("City generation complete, total time: " + (endTime - startTime) + "ms");

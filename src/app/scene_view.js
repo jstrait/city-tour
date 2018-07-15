@@ -22,7 +22,6 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     var roadStartTime, roadEndTime;
     var buildingsStartTime, buildingsEndTime;
     var markersStartTime, markersEndTime;
-    var renderResizeStartTime, renderResizeEndTime;
 
     destroyPreviousMeshes();
 
@@ -47,10 +46,6 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     }
     markersEndTime = new Date();
 
-    renderResizeStartTime = new Date();
-    renderView.resize();
-    renderResizeEndTime = new Date();
-
     masterEndTime = new Date();
 
     console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
@@ -58,7 +53,6 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     console.log("  Roads:     " + (roadEndTime - roadStartTime) + "ms");
     console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
     console.log("  Markers:   " + (markersEndTime - markersStartTime) + "ms");
-    console.log("  Render resize: " + (renderResizeEndTime - renderResizeStartTime) + "ms");
   };
 
   var buildMarkerMeshes = function(newWorldData) {
@@ -145,6 +139,10 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
     obj = null;
   };
 
+  var resize = function() {
+    renderView.resize();
+  };
+
   var render = function() {
     renderView.render();
   };
@@ -155,6 +153,7 @@ CityTour.SceneView = function(containerEl, initialWorldData, messageBroker) {
 
   return {
     reset: reset,
+    resize: resize,
     render: render,
     camera: function() { return camera; },
     domElement: function() { return renderView.domElement(); },
