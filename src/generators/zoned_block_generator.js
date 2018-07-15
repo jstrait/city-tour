@@ -199,10 +199,10 @@ CityTour.ZonedBlockGenerator = (function() {
     var blockLayout, terrainAttributes, blockSteepness, maxBlockSteepness;
     var distanceToClosestNeighborhoodCenter;
 
-    var minMapX = roadNetwork.minColumn() - 1;
-    var maxMapX = roadNetwork.maxColumn() + 1;
-    var minMapZ = roadNetwork.minRow() - 1;
-    var maxMapZ = roadNetwork.maxRow() + 1;
+    var minMapX = roadNetwork.minColumn();
+    var maxMapX = roadNetwork.maxColumn();
+    var minMapZ = roadNetwork.minRow();
+    var maxMapZ = roadNetwork.maxRow();
 
     for (mapX = minMapX; mapX <= maxMapX; mapX++) {
       for (mapZ = minMapZ; mapZ <= maxMapZ; mapZ++) {
