@@ -8,11 +8,15 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   var START_TOUR_MESSAGE = "Take a Tour";
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
+  var ZOOM_DELTA = 0.05;
+
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
   var rotationYControl = document.getElementById("rotationY");
   var rotationXControl = document.getElementById("rotationX");
   var zoomControl = document.getElementById("zoom");
+  var zoomInButton = document.getElementById("zoom-in");
+  var zoomOutButton = document.getElementById("zoom-out");
   var flythroughToggle = document.getElementById("flythrough-toggle");
 
   var navigationControlsEnabled;
@@ -27,6 +31,9 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
     rotationYControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
     rotationXControl.value = orbitalCamera.tiltPercentage();
     zoomControl.value = orbitalCamera.zoomPercentage();
+
+    zoomInButton.disabled = (orbitalCamera.zoomPercentage() >= 1.0);
+    zoomOutButton.disabled = (orbitalCamera.zoomPercentage() <= 0.0);
 
     if (navigationControlsEnabled) {
       containerToggle.innerHTML = DOWN_ARROW;
@@ -58,6 +65,16 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
+  var zoomIn = function(e) {
+    orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + ZOOM_DELTA);
+    orbitalCamera.setIsVelocityEnabled(false);
+  };
+
+  var zoomOut = function(e) {
+    orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() - ZOOM_DELTA);
+    orbitalCamera.setIsVelocityEnabled(false);
+  };
+
   var toggleFlythrough = function(e) {
     flythroughToggle.innerText = (flythroughToggle.innerText === START_TOUR_MESSAGE) ? STOP_TOUR_MESSAGE : START_TOUR_MESSAGE;
 
@@ -83,6 +100,8 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   rotationYControl.addEventListener('input', setAzimuthAngle, false);
   rotationXControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomPercentage, false);
+  zoomInButton.addEventListener('click', zoomIn, false);
+  zoomOutButton.addEventListener('click', zoomOut, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
 
   navigationControlsEnabled = !isTouchDevice();
