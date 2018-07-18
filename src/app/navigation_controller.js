@@ -12,8 +12,8 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
-  var rotationYControl = document.getElementById("rotationY");
-  var rotationXControl = document.getElementById("rotationX");
+  var azimuthAngleControl = document.getElementById("azimuth-angle");
+  var tiltAngleControl = document.getElementById("tilt-angle-percentage");
   var zoomControl = document.getElementById("zoom");
   var zoomInButton = document.getElementById("zoom-in");
   var zoomOutButton = document.getElementById("zoom-out");
@@ -28,8 +28,8 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   };
 
   var render = function(data) {
-    rotationYControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
-    rotationXControl.value = (orbitalCamera.tiltAngle() - orbitalCamera.maxTiltAngle()) / (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle());
+    azimuthAngleControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
+    tiltAngleControl.value = (orbitalCamera.tiltAngle() - orbitalCamera.maxTiltAngle()) / (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle());
     zoomControl.value = orbitalCamera.zoomPercentage();
 
     zoomInButton.disabled = (orbitalCamera.zoomPercentage() >= 1.0);
@@ -48,7 +48,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   var setAzimuthAngle = function(e) {
     // The slider uses degrees instead of radians to avoid Firefox thinking that float values are invalid,
     // seemingly due to precision issues.
-    var degrees = parseInt(rotationYControl.value, 10);
+    var degrees = parseInt(azimuthAngleControl.value, 10);
     var radians = degrees * (Math.PI / 180);
 
     orbitalCamera.setAzimuthAngle(radians);
@@ -56,7 +56,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   };
 
   var setTiltAngle = function(e) {
-    var tiltPercentage = parseFloat(rotationXControl.value);
+    var tiltPercentage = parseFloat(tiltAngleControl.value);
     var newTiltAngle = CityTour.Math.lerp(orbitalCamera.minTiltAngle(), orbitalCamera.maxTiltAngle(), 1.0 - tiltPercentage);
 
     orbitalCamera.setTiltAngle(newTiltAngle);
@@ -100,8 +100,8 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   };
 
   containerToggle.addEventListener('click', toggleNavigationControls, false);
-  rotationYControl.addEventListener('input', setAzimuthAngle, false);
-  rotationXControl.addEventListener('input', setTiltAngle, false);
+  azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
+  tiltAngleControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomPercentage, false);
   zoomInButton.addEventListener('click', zoomIn, false);
   zoomOutButton.addEventListener('click', zoomOut, false);
