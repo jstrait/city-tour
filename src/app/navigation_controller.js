@@ -29,7 +29,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
 
   var render = function(data) {
     rotationYControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
-    rotationXControl.value = orbitalCamera.tiltPercentage();
+    rotationXControl.value = (orbitalCamera.tiltAngle() - orbitalCamera.maxTiltAngle()) / (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle());
     zoomControl.value = orbitalCamera.zoomPercentage();
 
     zoomInButton.disabled = (orbitalCamera.zoomPercentage() >= 1.0);
@@ -56,7 +56,10 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   };
 
   var setTiltAngle = function(e) {
-    orbitalCamera.setTiltPercentage(parseFloat(rotationXControl.value));
+    var tiltPercentage = parseFloat(rotationXControl.value);
+    var newTiltAngle = CityTour.Math.lerp(orbitalCamera.minTiltAngle(), orbitalCamera.maxTiltAngle(), 1.0 - tiltPercentage);
+
+    orbitalCamera.setTiltAngle(newTiltAngle);
     orbitalCamera.setIsVelocityEnabled(false);
   };
 

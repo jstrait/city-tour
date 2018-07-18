@@ -30,8 +30,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var centerZ = 0.0;
   var zoomDistance;
   var zoomPercentage;
-  var tiltAngle;
-  var tiltPercentage;
+  var tiltAngle = (MIN_TILT_ANGLE - MAX_TILT_ANGLE) * 0.2;
   var azimuthAngle = 0.0;
 
   var isVelocityEnabled = false;
@@ -77,21 +76,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var setTiltAngle = function(newTiltAngle) {
     newTiltAngle = CityTour.Math.clamp(newTiltAngle, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
     tiltVelocity = newTiltAngle - tiltAngle;
-    tiltAngle = newTiltAngle;
-    tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
-
-    messageBroker.publish("camera.updated", {});
-  };
-
-  var setTiltPercentage = function(newTiltPercentage) {
-    var newTiltAngle;
-
-    tiltPercentage = CityTour.Math.clamp(newTiltPercentage, 0.0, 1.0);
-    newTiltAngle = CityTour.Math.lerp(MIN_TILT_ANGLE, MAX_TILT_ANGLE, 1.0 - tiltPercentage);
-
-    if (tiltAngle !== undefined) {
-      tiltVelocity = newTiltAngle - tiltAngle;
-    }
     tiltAngle = newTiltAngle;
 
     messageBroker.publish("camera.updated", {});
@@ -211,7 +195,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var syncFromCamera = function(camera) {
     azimuthAngle = camera.rotation.y;
     tiltAngle = Math.min(MAX_TILT_ANGLE, camera.rotation.x);
-    tiltPercentage = (tiltAngle - MAX_TILT_ANGLE) / (MIN_TILT_ANGLE - MAX_TILT_ANGLE);
 
     var opposite = camera.position.y;
     var hypotenuse = Math.max(MIN_ZOOM_DISTANCE, (1 / Math.sin(-tiltAngle)) * opposite);
@@ -227,7 +210,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
 
 
   setZoomPercentage(0.0);
-  setTiltPercentage(0.2);
 
 
   return {
@@ -237,8 +219,10 @@ CityTour.OrbitalCamera = function(messageBroker) {
     zoomPercentage: function() { return zoomPercentage; },
     setZoomPercentage: setZoomPercentage,
     zoomDistance: function() { return zoomDistance; },
-    tiltPercentage: function() { return tiltPercentage; },
-    setTiltPercentage: setTiltPercentage,
+    minTiltAngle: function() { return MIN_TILT_ANGLE; },
+    maxTiltAngle: function() { return MAX_TILT_ANGLE; },
+    tiltAngle: function() { return tiltAngle; },
+    setTiltAngle: setTiltAngle,
     azimuthAngle: function() { return azimuthAngle; },
     setAzimuthAngle: setAzimuthAngle,
     isVelocityEnabled: function() { return isVelocityEnabled; },

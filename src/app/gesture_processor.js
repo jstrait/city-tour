@@ -178,7 +178,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       centerOfAction = undefined;
       zoomProperties = undefined;
       yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
-      orbitalCamera.setTiltPercentage(orbitalCamera.tiltPercentage() + (yDistanceDelta / 100));
+      orbitalCamera.setTiltAngle(orbitalCamera.tiltAngle() + ((yDistanceDelta / 100) * (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle())));
     }
     else if (currentGesture === ROTATE) {
       zoomProperties = undefined;
