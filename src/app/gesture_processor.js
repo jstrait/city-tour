@@ -70,58 +70,71 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
   };
 
-  var processZoom = function(currentTouches, distanceBetweenTouches) {
+  var calculateZoomProperties = function() {
     var cameraToCenterOfActionVector, centerOfActionPercentageOfFullHeight, zoomEndPoint;
     var newCenterOfOrbitX, newCenterOfOrbitZ;
-    var interpolationXZTowardCenterOfZoomPercentage, maxInterpolationXZPercentage;
+    var centerXToZoomEndDistance, centerZToZoomEndDistance;
+    var centerPointMovementPerOneZoomUnitX, centerPointMovementPerOneZoomUnitZ;
+    var minZoomDistance;
 
-    var zoomDeltaPercentage = (distanceBetweenTouches / CityTour.Math.lerp(100, 1200, orbitalCamera.zoomPercentage()));
+    // Vector of camera to intersection with terrain
+    cameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
+                                                     (camera.position.y - centerOfAction.y),
+                                                     (camera.position.z - centerOfAction.z));
+    centerOfActionPercentageOfFullHeight = (camera.position.y - centerOfAction.y) / camera.position.y;
+
+    cameraToCenterOfActionVector.multiplyScalar(1 / centerOfActionPercentageOfFullHeight);
+
+    // Point where camera would intersect the XZ plane if allowed to zoom indefinately
+    zoomEndPoint = new THREE.Vector3(camera.position.x - cameraToCenterOfActionVector.x,
+                                     camera.position.y - cameraToCenterOfActionVector.y,
+                                     camera.position.z - cameraToCenterOfActionVector.z);
+
+    sceneView.targetOfActionMarkerMesh().position.set(zoomEndPoint.x, zoomEndPoint.y, zoomEndPoint.z);
+
+    // Calculate X/Z amount orbital camera center point needs to move per 1 unit of zoom
+    // in order for center point to be same as expected camera intersection point with XZ plane
+    // if zoom distance reaches 0.
+    centerXToZoomEndDistance = orbitalCamera.centerX() - zoomEndPoint.x;
+    centerZToZoomEndDistance = orbitalCamera.centerZ() - zoomEndPoint.z;
+    centerPointMovementPerOneZoomUnitX = centerXToZoomEndDistance / orbitalCamera.zoomDistance();
+    centerPointMovementPerOneZoomUnitZ = centerZToZoomEndDistance / orbitalCamera.zoomDistance();
+
+    // Calculate the zoom distance at the point the camera would hit the terrain
+    minZoomDistance = orbitalCamera.zoomDistance() * (1.0 - centerOfActionPercentageOfFullHeight);
+
+    zoomProperties = {
+      centerPointMovementPerOneZoomUnitX: centerPointMovementPerOneZoomUnitX,
+      centerPointMovementPerOneZoomUnitZ: centerPointMovementPerOneZoomUnitZ,
+      minZoomDistance: minZoomDistance,
+    };
+
+    return zoomProperties;
+  };
+
+  var processZoom = function(currentTouches, distanceBetweenTouches) {
+    var zoomDelta = (distanceBetweenTouches > 0) ? -20 : 20;
+    var newZoomDistance = orbitalCamera.zoomDistance() + zoomDelta;
+    var newCenterOfOrbitX, newCenterOfOrbitZ;
 
     if (zoomProperties === undefined) {
-      cameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
-                                                       (camera.position.y - centerOfAction.y),
-                                                       (camera.position.z - centerOfAction.z));
-      centerOfActionPercentageOfFullHeight = (camera.position.y - centerOfAction.y) / camera.position.y;
-
-      cameraToCenterOfActionVector.multiplyScalar(1 / centerOfActionPercentageOfFullHeight);
-      zoomEndPoint = new THREE.Vector3(camera.position.x - cameraToCenterOfActionVector.x,
-                                       camera.position.y - cameraToCenterOfActionVector.y,
-                                       camera.position.z - cameraToCenterOfActionVector.z);
-
-      sceneView.targetOfActionMarkerMesh().position.set(zoomEndPoint.x, zoomEndPoint.y, zoomEndPoint.z);
-
-      zoomProperties = {
-        startX: orbitalCamera.centerX(),
-        startZ: orbitalCamera.centerZ(),
-        targetX: zoomEndPoint.x,
-        targetZ: zoomEndPoint.z,
-        maxInterpolationXZPercentage: centerOfActionPercentageOfFullHeight,
-        startDistancePercentage: orbitalCamera.zoomPercentage(),
-      };
+      zoomProperties = calculateZoomProperties();
     }
 
-    if (zoomProperties.startDistancePercentage === 1.0) {
-      interpolationXZTowardCenterOfZoomPercentage = orbitalCamera.zoomPercentage();
+    if (newZoomDistance < zoomProperties.minZoomDistance) {
+      newZoomDistance = zoomProperties.minZoomDistance;
+      zoomDelta = orbitalCamera.zoomDistance() - zoomProperties.minZoomDistance;
     }
-    else {
-      interpolationXZTowardCenterOfZoomPercentage = (orbitalCamera.zoomPercentage() - zoomProperties.startDistancePercentage) / (1.0 - zoomProperties.startDistancePercentage);
-    }
-
-    if (interpolationXZTowardCenterOfZoomPercentage > zoomProperties.maxInterpolationXZPercentage && zoomDeltaPercentage > 0.0) {
-      return;
+    else if (newZoomDistance > orbitalCamera.maxZoomDistance()) {
+      newZoomDistance = orbitalCamera.maxZoomDistance();
+      zoomDelta = orbitalCamera.maxZoomDistance() - orbitalCamera.zoomDistance();
     }
 
-    if (orbitalCamera.zoomPercentage() < 1.0) {
-      newCenterOfOrbitX = CityTour.Math.lerp(zoomProperties.startX, zoomProperties.targetX, interpolationXZTowardCenterOfZoomPercentage);
-      newCenterOfOrbitZ = CityTour.Math.lerp(zoomProperties.startZ, zoomProperties.targetZ, interpolationXZTowardCenterOfZoomPercentage);
-    }
-    else {
-      newCenterOfOrbitX = zoomProperties.targetX;
-      newCenterOfOrbitZ = zoomProperties.targetZ;
-    }
+    newCenterOfOrbitX = orbitalCamera.centerX() + (zoomDelta * zoomProperties.centerPointMovementPerOneZoomUnitX);
+    newCenterOfOrbitZ = orbitalCamera.centerZ() + (zoomDelta * zoomProperties.centerPointMovementPerOneZoomUnitZ);
 
     orbitalCamera.setCenterCoordinates(newCenterOfOrbitX, newCenterOfOrbitZ);
-    orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + zoomDeltaPercentage);
+    orbitalCamera.setZoomDistance(newZoomDistance);
   };
 
   var processAzimuthRotation = function(currentTouches, azimuthAngleDelta) {
