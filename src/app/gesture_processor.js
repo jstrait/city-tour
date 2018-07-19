@@ -9,7 +9,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
   var PINCH_ZOOM = 4;
 
   var MIN_ROTATION_ANGLE =  0.01745329;  // 1 degree
-  var MIN_ZOOM_DELTA = 0.5;
+  var MIN_ZOOM_DELTA = 2.0;
   var ALLOWABLE_DELTA_FOR_TILT_GESTURE = Math.PI / 16;
   var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
   var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
@@ -57,8 +57,8 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
 
 
   var panCamera = function(currentTouches) {
-    var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.touches()[0].screenX() - previousTouches.touches()[0].screenX(),
-                                                         currentTouches.touches()[0].screenY() - previousTouches.touches()[0].screenY(),
+    var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.screenMidpoint().x - previousTouches.screenMidpoint().x,
+                                                         currentTouches.screenMidpoint().y - previousTouches.screenMidpoint().y,
                                                          0.0);
 
     var worldDragStart = new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ());
@@ -139,6 +139,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     var touchPointsAreHorizontal = screenAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
                                    screenAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
     var azimuthAngleDelta;
+    var distanceBetweenTouches;
 
     if (previousTouches.count() !== 2) {
       return undefined;
@@ -152,12 +153,16 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     }
     else {
       azimuthAngleDelta = previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches();
+      distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();
 
       if (Math.abs(azimuthAngleDelta) >= MIN_ROTATION_ANGLE) {
         return ROTATE;
       }
-      else {
+      else if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
         return PINCH_ZOOM;
+      }
+      else {
+        return PAN;
       }
     }
   };
@@ -173,7 +178,10 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       return;
     }
 
-    if (currentGesture === TILT) {
+    if (currentGesture === PAN) {
+      panCamera(currentTouches);
+    }
+    else if (currentGesture === TILT) {
       sceneView.centerOfActionMarkerMesh().position.set(0.0, 0.0, 0.0);
       centerOfAction = undefined;
       zoomProperties = undefined;
@@ -184,7 +192,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       zoomProperties = undefined;
       processAzimuthRotation(currentTouches, previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
-    else {
+    else if (currentGesture === PINCH_ZOOM) {
       distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();
       if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
         processZoom(currentTouches, distanceBetweenTouches);
