@@ -178,10 +178,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
       return;
     }
 
-    if (currentGesture === PAN) {
-      panCamera(currentTouches);
-    }
-    else if (currentGesture === TILT) {
+    if (currentGesture === TILT) {
       sceneView.centerOfActionMarkerMesh().position.set(0.0, 0.0, 0.0);
       centerOfAction = undefined;
       zoomProperties = undefined;
