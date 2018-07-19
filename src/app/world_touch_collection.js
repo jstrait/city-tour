@@ -11,7 +11,7 @@ CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrain) {
   var i;
 
   for (i = 0; i < screenTouches.length; i++) {
-    worldTouches.push(CityTour.WorldTouch(el, camera, screenTouches[i].x, screenTouches[i].z, terrain));
+    worldTouches.push(CityTour.WorldTouch(el, camera, screenTouches[i].x, screenTouches[i].y, terrain));
   }
 
   if (worldTouches.length === 1) {
@@ -29,7 +29,7 @@ CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrain) {
                                  terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(midpointX), CityTour.Coordinates.sceneZToMapZ(midpointZ)),
                                  midpointZ);
     screenMidpoint = new THREE.Vector2((worldTouches[0].screenX() + worldTouches[1].screenX()) / 2, (worldTouches[0].screenY() + worldTouches[1].screenY()) / 2);
-    angleBetweenTouches = Math.atan2(-(screenTouches[1].x - screenTouches[0].x), -(screenTouches[1].z - screenTouches[0].z));
+    angleBetweenTouches = Math.atan2(-(screenTouches[1].x - screenTouches[0].x), -(screenTouches[1].y - screenTouches[0].y));
   }
 
   return {

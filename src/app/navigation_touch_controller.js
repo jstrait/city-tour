@@ -10,7 +10,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, initialT
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], terrain));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
   };
 
   var onTouchStart = function(e) {
@@ -19,7 +19,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, initialT
     var touchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      touchPoints.push({x: touch.clientX, z: touch.clientY});
+      touchPoints.push({x: touch.clientX, y: touch.clientY});
     }
     gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, terrain));
 
@@ -35,7 +35,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, initialT
       return;
     }
 
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, z: e.clientY}], terrain));
+    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
   };
 
   var onTouchMove = function(e) {
@@ -44,7 +44,7 @@ CityTour.NavigationTouchController = function(sceneView, orbitalCamera, initialT
     var touchPoints = [];
     for (i = 0; i < e.touches.length; i++) {
       touch = e.touches.item(i);
-      touchPoints.push({x: touch.clientX, z: touch.clientY});
+      touchPoints.push({x: touch.clientX, y: touch.clientY});
     }
     var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, terrain);
 
