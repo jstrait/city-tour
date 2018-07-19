@@ -28,8 +28,7 @@ CityTour.OrbitalCamera = function(messageBroker) {
 
   var centerX = 0.0;
   var centerZ = 0.0;
-  var zoomDistance;
-  var zoomPercentage;
+  var zoomDistance = MAX_ZOOM_DISTANCE;
   var tiltAngle = (MIN_TILT_ANGLE - MAX_TILT_ANGLE) * 0.2;
   var azimuthAngle = 0.0;
 
@@ -53,21 +52,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
   var setZoomDistance = function(newZoomDistance) {
     newZoomDistance = CityTour.Math.clamp(newZoomDistance, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE);
     zoomDistanceVelocity = newZoomDistance - zoomDistance;
-    zoomDistance = newZoomDistance;
-    zoomPercentage = 1.0 - ((zoomDistance - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
-
-    messageBroker.publish("camera.updated", {});
-  };
-
-  var setZoomPercentage = function(newZoomPercentage) {
-    var newZoomDistance;
-
-    zoomPercentage = CityTour.Math.clamp(newZoomPercentage, 0.0, 1.0);
-    newZoomDistance = CityTour.Math.lerp(MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, 1.0 - zoomPercentage);
-
-    if (zoomDistance !== undefined) {
-      zoomDistanceVelocity = newZoomDistance - zoomDistance;
-    }
     zoomDistance = newZoomDistance;
 
     messageBroker.publish("camera.updated", {});
@@ -203,21 +187,15 @@ CityTour.OrbitalCamera = function(messageBroker) {
     centerX = camera.position.x - (adjacent * Math.sin(azimuthAngle));
     centerZ = camera.position.z - (adjacent * Math.cos(azimuthAngle));
     zoomDistance = hypotenuse;
-    zoomPercentage = 1.0 - ((zoomDistance - MIN_ZOOM_DISTANCE) / (MAX_ZOOM_DISTANCE - MIN_ZOOM_DISTANCE));
 
     messageBroker.publish("camera.updated", {});
   };
-
-
-  setZoomPercentage(0.0);
 
 
   return {
     centerX: function() { return centerX; },
     centerZ: function() { return centerZ; },
     setCenterCoordinates: setCenterCoordinates,
-    zoomPercentage: function() { return zoomPercentage; },
-    setZoomPercentage: setZoomPercentage,
     minZoomDistance: function() { return MIN_ZOOM_DISTANCE; },
     maxZoomDistance: function() { return MAX_ZOOM_DISTANCE; },
     zoomDistance: function() { return zoomDistance; },

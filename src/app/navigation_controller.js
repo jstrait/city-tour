@@ -8,7 +8,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   var START_TOUR_MESSAGE = "Take a Tour";
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
-  var ZOOM_DELTA = 0.05;
+  var ZOOM_DELTA = (orbitalCamera.maxZoomDistance() - orbitalCamera.minZoomDistance()) * 0.05;
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
@@ -30,10 +30,10 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   var render = function(data) {
     azimuthAngleControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
     tiltAngleControl.value = (orbitalCamera.tiltAngle() - orbitalCamera.maxTiltAngle()) / (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle());
-    zoomControl.value = orbitalCamera.zoomPercentage();
+    zoomControl.value = 1.0 - ((orbitalCamera.zoomDistance() - orbitalCamera.minZoomDistance()) / (orbitalCamera.maxZoomDistance() - orbitalCamera.minZoomDistance()));
 
-    zoomInButton.disabled = (orbitalCamera.zoomPercentage() >= 1.0);
-    zoomOutButton.disabled = (orbitalCamera.zoomPercentage() <= 0.0);
+    zoomInButton.disabled = orbitalCamera.zoomDistance() <= orbitalCamera.minZoomDistance();
+    zoomOutButton.disabled = orbitalCamera.zoomDistance() >= orbitalCamera.maxZoomDistance();
 
     if (navigationControlsEnabled) {
       containerToggle.innerHTML = DOWN_ARROW;
@@ -63,18 +63,19 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
-  var setZoomPercentage = function(e) {
-    orbitalCamera.setZoomPercentage(parseFloat(zoomControl.value));
+  var setZoomDistance = function(e) {
+    var zoomPercentage = parseFloat(zoomControl.value);
+    orbitalCamera.setZoomDistance(CityTour.Math.lerp(orbitalCamera.minZoomDistance(), orbitalCamera.maxZoomDistance(), 1.0 - zoomPercentage));
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var zoomIn = function(e) {
-    orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() + ZOOM_DELTA);
+    orbitalCamera.setZoomDistance(orbitalCamera.zoomDistance() - ZOOM_DELTA);
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
   var zoomOut = function(e) {
-    orbitalCamera.setZoomPercentage(orbitalCamera.zoomPercentage() - ZOOM_DELTA);
+    orbitalCamera.setZoomDistance(orbitalCamera.zoomDistance() + ZOOM_DELTA);
     orbitalCamera.setIsVelocityEnabled(false);
   };
 
@@ -102,7 +103,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
   containerToggle.addEventListener('click', toggleNavigationControls, false);
   azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
   tiltAngleControl.addEventListener('input', setTiltAngle, false);
-  zoomControl.addEventListener('input', setZoomPercentage, false);
+  zoomControl.addEventListener('input', setZoomDistance, false);
   zoomInButton.addEventListener('click', zoomIn, false);
   zoomOutButton.addEventListener('click', zoomOut, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
