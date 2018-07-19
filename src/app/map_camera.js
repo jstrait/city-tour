@@ -146,6 +146,22 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     orbitalCamera.setTiltAngle(orbitalCamera.tiltAngle() + tiltAngleDelta)
   };
 
+  var setIsVelocityEnabled = function(newIsVelocityEnabled) {
+    orbitalCamera.setIsVelocityEnabled(newIsVelocityEnabled);
+  };
+
+  var tickVelocity = function(frameCount) {
+    orbitalCamera.tickVelocity(frameCount);
+  };
+
+  var syncToCamera = function(camera, terrain) {
+    orbitalCamera.syncToCamera(camera, terrain);
+  };
+
+  var syncFromCamera = function(camera) {
+    orbitalCamera.syncFromCamera(camera);
+  };
+
 
   return {
     centerOfAction: function() { return centerOfAction; },
@@ -154,5 +170,11 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     rotateAzimuthAroundCenterOfAction: rotateAzimuthAroundCenterOfAction,
     zoomTowardCenterOfAction: zoomTowardCenterOfAction,
     tiltCamera: tiltCamera,
+    isVelocityEnabled: function() { return orbitalCamera.isVelocityEnabled(); },
+    setIsVelocityEnabled: setIsVelocityEnabled,
+    tickVelocity: tickVelocity,
+    syncToCamera: syncToCamera,
+    syncFromCamera: syncFromCamera,
+    orbitalCamera: function() { return orbitalCamera; },
   };
 };

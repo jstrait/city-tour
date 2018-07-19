@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 
-CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messageBroker) {
+CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
   var FLYTHROUGH_STOP = 3;
@@ -19,7 +19,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
 
   var syncToCamera = function() {
     if (mode === INTERACTIVE) {
-      orbitalCamera.syncToCamera(camera, worldData.terrain);
+      mapCamera.syncToCamera(camera, worldData.terrain);
     }
     else if (mode === FLYTHROUGH) {
       camera.position.x = vehicleController.positionX();
@@ -49,7 +49,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
     var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
     var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
 
-    orbitalCamera.setIsVelocityEnabled(false);
+    mapCamera.setIsVelocityEnabled(false);
 
     vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
     mode = FLYTHROUGH;
@@ -57,8 +57,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
   };
 
   var requestStopFlythrough = function() {
-    orbitalCamera.syncFromCamera(camera);
-    orbitalCamera.syncToCamera(camera, worldData.terrain);
+    mapCamera.syncFromCamera(camera);
+    mapCamera.syncToCamera(camera, worldData.terrain);
 
     vehicleToInteractiveAnimation = new CityTour.Animation(
       new CityTour.MotionGenerator(vehicleController.positionX(), camera.position.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
@@ -112,8 +112,8 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, orbitalCamera, messag
       }
     }
 
-    if (orbitalCamera.isVelocityEnabled()) {
-      orbitalCamera.tickVelocity(frameCount);
+    if (mapCamera.isVelocityEnabled()) {
+      mapCamera.tickVelocity(frameCount);
     }
 
     syncToCamera();

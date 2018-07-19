@@ -2,12 +2,13 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker) {
+CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   var DOWN_ARROW = "&#9660;";
   var UP_ARROW = "&#9650;";
   var START_TOUR_MESSAGE = "Take a Tour";
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
+  var orbitalCamera = mapCamera.orbitalCamera();
   var ZOOM_DELTA = (orbitalCamera.maxZoomDistance() - orbitalCamera.minZoomDistance()) * 0.05;
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
@@ -52,7 +53,7 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
     var radians = degrees * (Math.PI / 180);
 
     orbitalCamera.setAzimuthAngle(radians);
-    orbitalCamera.setIsVelocityEnabled(false);
+    mapCamera.setIsVelocityEnabled(false);
   };
 
   var setTiltAngle = function(e) {
@@ -60,23 +61,23 @@ CityTour.NavigationController = function(orbitalCamera, timerLoop, messageBroker
     var newTiltAngle = CityTour.Math.lerp(orbitalCamera.minTiltAngle(), orbitalCamera.maxTiltAngle(), 1.0 - tiltPercentage);
 
     orbitalCamera.setTiltAngle(newTiltAngle);
-    orbitalCamera.setIsVelocityEnabled(false);
+    mapCamera.setIsVelocityEnabled(false);
   };
 
   var setZoomDistance = function(e) {
     var zoomPercentage = parseFloat(zoomControl.value);
     orbitalCamera.setZoomDistance(CityTour.Math.lerp(orbitalCamera.minZoomDistance(), orbitalCamera.maxZoomDistance(), 1.0 - zoomPercentage));
-    orbitalCamera.setIsVelocityEnabled(false);
+    mapCamera.setIsVelocityEnabled(false);
   };
 
   var zoomIn = function(e) {
     orbitalCamera.setZoomDistance(orbitalCamera.zoomDistance() - ZOOM_DELTA);
-    orbitalCamera.setIsVelocityEnabled(false);
+    mapCamera.setIsVelocityEnabled(false);
   };
 
   var zoomOut = function(e) {
     orbitalCamera.setZoomDistance(orbitalCamera.zoomDistance() + ZOOM_DELTA);
-    orbitalCamera.setIsVelocityEnabled(false);
+    mapCamera.setIsVelocityEnabled(false);
   };
 
   var toggleFlythrough = function(e) {

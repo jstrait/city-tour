@@ -44,13 +44,13 @@ CityTour.App = (function() {
     var container = document.getElementById("container");
 
     var messageBroker = new CityTour.MessageBroker();
-    var orbitalCamera = new CityTour.OrbitalCamera(messageBroker);
     var cityConfigService = new CityTour.CityConfigService();
     var sceneView = new CityTour.SceneView(container, messageBroker);
-    var timerLoop = new CityTour.TimerLoop(EMPTY_WORLD_DATA, sceneView, orbitalCamera, messageBroker);
+    var mapCamera = new CityTour.MapCamera(sceneView, CityTour.OrbitalCamera(messageBroker));
+    var timerLoop = new CityTour.TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
-    var navigationController = new CityTour.NavigationController(orbitalCamera, timerLoop, messageBroker);
-    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, orbitalCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
+    var navigationController = new CityTour.NavigationController(mapCamera, timerLoop, messageBroker);
+    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
 
     container.appendChild(sceneView.domElement());
 

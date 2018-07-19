@@ -2,10 +2,10 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationTouchController = function(sceneView, orbitalCamera, initialTerrain, messageBroker) {
+CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerrain, messageBroker) {
   var el = sceneView.domElement();
   var camera = sceneView.camera();
-  var gestureProcessor = CityTour.GestureProcessor(sceneView, orbitalCamera);
+  var gestureProcessor = CityTour.GestureProcessor(sceneView, mapCamera);
   var terrain = initialTerrain;
 
   var onMouseDown = function(e) {

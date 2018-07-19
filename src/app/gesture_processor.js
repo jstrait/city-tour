@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
+CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var PAN = 1;
   var TILT = 2;
   var ROTATE = 3;
@@ -14,7 +14,7 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
   var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
   var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
 
-  var mapCamera = CityTour.MapCamera(sceneView, orbitalCamera);
+  var orbitalCamera = mapCamera.orbitalCamera();
 
   var currentGesture;
   var previousTouches;
@@ -91,12 +91,12 @@ CityTour.GestureProcessor = function(sceneView, orbitalCamera) {
     if (currentTouches === undefined) {
       currentGesture = undefined;
       mapCamera.setCenterOfAction(undefined);
-      orbitalCamera.setIsVelocityEnabled(true);
+      mapCamera.setIsVelocityEnabled(true);
       sceneView.touchPoint1MarkerMesh().position.set(0.0, 0.0, 0.0);
       sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
     }
     else if (previousTouches !== undefined) {
-      orbitalCamera.setIsVelocityEnabled(false);
+      mapCamera.setIsVelocityEnabled(false);
       if (mapCamera.centerOfAction() === undefined) {
         mapCamera.setCenterOfAction(currentTouches.midpoint());
       }
