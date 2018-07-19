@@ -16,6 +16,10 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
     ray = camera.position.clone();
     movementTowardYPlaneAmount = direction.clone().multiplyScalar(10.0);
 
+    if (movementTowardYPlaneAmount.y >= 0.0) {
+      return ray;
+    }
+
     while (ray.y > 0.0 && worldPosition === undefined) {
       ray = ray.add(movementTowardYPlaneAmount);
       mapX = CityTour.Coordinates.sceneXToMapX(ray.x);
