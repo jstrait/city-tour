@@ -80,10 +80,8 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     }
     else if (currentGesture === PINCH_ZOOM) {
       distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();
-      if (Math.abs(distanceBetweenTouches) >= MIN_ZOOM_DELTA) {
-        zoomDistanceDelta = (distanceBetweenTouches > 0) ? -20 : 20;
-        mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
-      }
+      zoomDistanceDelta = (distanceBetweenTouches > 0) ? -20 : 20;
+      mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
   };
 
