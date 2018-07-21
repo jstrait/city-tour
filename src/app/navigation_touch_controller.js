@@ -40,7 +40,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
   };
 
   var onTouchEnd = function(e) {
-    gestureProcessor.processGesture(undefined);
+    gestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
   };
 
   var onMouseOver = function(e) {

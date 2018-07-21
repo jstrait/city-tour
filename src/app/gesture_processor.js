@@ -102,13 +102,18 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
       }
 
       if (currentTouches.count() === 1) {
-        currentGesture = PAN;
-        panCamera(currentTouches);
+        if (previousTouches.count() === 1) {
+          currentGesture = PAN;
+          panCamera(currentTouches);
 
-        sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
-                                                       currentTouches.touches()[0].worldY(),
-                                                       currentTouches.touches()[0].worldZ());
-        sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
+          sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
+                                                         currentTouches.touches()[0].worldY(),
+                                                         currentTouches.touches()[0].worldZ());
+          sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
+        }
+        else {
+          mapCamera.setIsVelocityEnabled(false);
+        }
       }
       else if (currentTouches.count() === 2) {
         sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
