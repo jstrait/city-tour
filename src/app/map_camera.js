@@ -14,6 +14,10 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
   };
 
+  var resetCenterOfAction = function() {
+    setCenterOfAction(new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ()));
+  };
+
   // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
   //
   // Instead of using the camera's current position to unproject from the screen coordinate to the world coordinate,
@@ -158,12 +162,13 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
   };
 
 
-  setCenterOfAction(new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ()));
+  resetCenterOfAction();
 
 
   return {
     centerOfAction: function() { return centerOfAction; },
     setCenterOfAction: setCenterOfAction,
+    resetCenterOfAction: resetCenterOfAction,
     pan: pan,
     rotateAzimuthAroundCenterOfAction: rotateAzimuthAroundCenterOfAction,
     zoomTowardCenterOfAction: zoomTowardCenterOfAction,
@@ -173,7 +178,6 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     tickVelocity: tickVelocity,
     syncToCamera: syncToCamera,
     syncFromCamera: syncFromCamera,
-    orbitalCamera: function() { return orbitalCamera; },
     azimuthAngle: function() { return orbitalCamera.azimuthAngle(); },
     tiltAngle: function() { return orbitalCamera.tiltAngle(); },
     minTiltAngle: function() { return orbitalCamera.minTiltAngle(); },

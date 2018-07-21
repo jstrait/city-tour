@@ -14,8 +14,6 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
   var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
 
-  var orbitalCamera = mapCamera.orbitalCamera();
-
   var currentGesture;
   var previousTouches;
 
@@ -24,7 +22,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
                                                          currentTouches.screenMidpoint().y - previousTouches.screenMidpoint().y,
                                                          0.0);
     mapCamera.pan(normalizedScreenDragDistance);
-    mapCamera.setCenterOfAction(new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ()));
+    mapCamera.resetCenterOfAction();
   };
 
   var determineMultiTouchGesture = function(currentTouches) {
@@ -91,7 +89,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var processGesture = function(currentTouches) {
     if (currentTouches === undefined) {
       currentGesture = undefined;
-      mapCamera.setCenterOfAction(new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ()));
+      mapCamera.resetCenterOfAction();
       mapCamera.setIsVelocityEnabled(true);
       sceneView.touchPoint1MarkerMesh().position.set(0.0, 0.0, 0.0);
       sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
