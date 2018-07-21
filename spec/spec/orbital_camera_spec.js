@@ -10,8 +10,8 @@ describe("CityTour.OrbitalCamera", function() {
       var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
 
       orbitalCamera.setCenterCoordinates(5, -8);
-      orbitalCamera.setZoomPercentage(1.0);
-      orbitalCamera.setTiltPercentage(1.0);
+      orbitalCamera.setZoomDistance(20);
+      orbitalCamera.setTiltAngle(-Math.PI / 2);
       orbitalCamera.setAzimuthAngle(0.0);
       orbitalCamera.syncToCamera(camera);
 
@@ -21,7 +21,7 @@ describe("CityTour.OrbitalCamera", function() {
       expect(camera.rotation.x).toBe(-Math.PI / 2);
       expect(camera.rotation.y).toBe(0.0);
 
-      orbitalCamera.setZoomPercentage(0.5);
+      orbitalCamera.setZoomDistance(510);  // 50% of max zoom
       orbitalCamera.syncToCamera(camera);
 
       expect(camera.position.x).toBe(5);
@@ -37,13 +37,13 @@ describe("CityTour.OrbitalCamera", function() {
       var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
 
       orbitalCamera.setCenterCoordinates(5, 6);
-      orbitalCamera.setZoomPercentage(1.0);
-      orbitalCamera.setTiltPercentage(0.0);
+      orbitalCamera.setZoomDistance(20);
+      orbitalCamera.setTiltAngle(-0.1);
       orbitalCamera.setAzimuthAngle(0.0);
       orbitalCamera.syncToCamera(camera);
 
       expect(camera.position.x).toBe(5);
-      expect(camera.position.y).toBe(1.9966683329365646);
+      expect(camera.position.y).toBeCloseTo(1.9966683329365646);
       expect(camera.position.z).toBe(25.900083305560514);
       expect(camera.rotation.x).toBeCloseTo(-0.1);
       expect(camera.rotation.y).toBe(0.0);
@@ -55,8 +55,8 @@ describe("CityTour.OrbitalCamera", function() {
       var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
 
       orbitalCamera.setCenterCoordinates(-7, 3);
-      orbitalCamera.setZoomPercentage(0.5);
-      orbitalCamera.setTiltPercentage(0.4);
+      orbitalCamera.setZoomDistance(510);  // 50% of max zoom
+      orbitalCamera.setTiltAngle(-0.6883185307179587);  // 40% toward max tilt angle
       orbitalCamera.setAzimuthAngle(Math.PI / 3);
       orbitalCamera.syncToCamera(camera);
 
@@ -85,8 +85,8 @@ describe("CityTour.OrbitalCamera", function() {
 
       expect(orbitalCamera.centerX()).toBe(5);
       expect(orbitalCamera.centerZ()).toBe(-8);
-      expect(orbitalCamera.zoomPercentage()).toBe(1.0);
-      expect(orbitalCamera.tiltPercentage()).toBe(1.0);
+      expect(orbitalCamera.zoomDistance()).toBe(20);
+      expect(orbitalCamera.tiltAngle()).toBe(-Math.PI / 2);
       expect(orbitalCamera.azimuthAngle()).toBe(0.0);
 
       camera.position.y = 510.0;
@@ -94,8 +94,8 @@ describe("CityTour.OrbitalCamera", function() {
 
       expect(orbitalCamera.centerX()).toBe(5);
       expect(orbitalCamera.centerZ()).toBe(-8);
-      expect(orbitalCamera.zoomPercentage()).toBe(0.5);
-      expect(orbitalCamera.tiltPercentage()).toBe(1.0);
+      expect(orbitalCamera.zoomDistance()).toBe(510);
+      expect(orbitalCamera.tiltAngle()).toBe(-Math.PI / 2);
       expect(orbitalCamera.azimuthAngle()).toBe(0.0);
     });
 
@@ -113,8 +113,8 @@ describe("CityTour.OrbitalCamera", function() {
 
       expect(orbitalCamera.centerX()).toBe(5);
       expect(orbitalCamera.centerZ()).toBe(-14);
-      expect(orbitalCamera.zoomPercentage()).toBe(1);
-      expect(orbitalCamera.tiltPercentage()).toBe(0.0);
+      expect(orbitalCamera.zoomDistance()).toBe(20);
+      expect(orbitalCamera.tiltAngle()).toBe(-0.1);
       expect(orbitalCamera.azimuthAngle()).toBe(0.0);
     });
 
@@ -132,8 +132,8 @@ describe("CityTour.OrbitalCamera", function() {
 
       expect(orbitalCamera.centerX()).toBe(-7);
       expect(orbitalCamera.centerZ()).toBeCloseTo(3);
-      expect(orbitalCamera.zoomPercentage()).toBe(0.5);
-      expect(orbitalCamera.tiltPercentage()).toBe(0.4);
+      expect(orbitalCamera.zoomDistance()).toBe(510);
+      expect(orbitalCamera.tiltAngle()).toBe(-0.6883185307179586);
       expect(orbitalCamera.azimuthAngle()).toBe(Math.PI / 3);
     });
   });
