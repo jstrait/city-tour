@@ -95,8 +95,10 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
       sceneView.touchPoint1MarkerMesh().position.set(0.0, 0.0, 0.0);
       sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
     }
-    else if (previousTouches !== undefined) {
+    else if (previousTouches === undefined) {
       mapCamera.setIsVelocityEnabled(false);
+    }
+    else {
       if (mapCamera.centerOfAction() === undefined) {
         mapCamera.setCenterOfAction(currentTouches.midpoint());
       }
