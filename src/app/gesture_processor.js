@@ -67,7 +67,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
 
     if (currentGesture === TILT) {
       yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
-      tiltAngleDelta = (yDistanceDelta / 100) * (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle());
+      tiltAngleDelta = (yDistanceDelta / 100) * (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
       mapCamera.tiltCamera(tiltAngleDelta);
     }
     else if (currentGesture === ROTATE) {
