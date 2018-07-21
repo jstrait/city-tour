@@ -73,6 +73,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
 
   var stopFlythrough = function() {
     mode = INTERACTIVE;
+    mapCamera.resetCenterOfAction();
   };
 
   var toggleFlythrough = function() {
