@@ -8,8 +8,7 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   var START_TOUR_MESSAGE = "Take a Tour";
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
-  var orbitalCamera = mapCamera.orbitalCamera();
-  var ZOOM_DELTA = (orbitalCamera.maxZoomDistance() - orbitalCamera.minZoomDistance()) * 0.05;
+  var ZOOM_DELTA = (mapCamera.maxZoomDistance() - mapCamera.minZoomDistance()) * 0.05;
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
@@ -29,12 +28,12 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   };
 
   var render = function(data) {
-    azimuthAngleControl.value = orbitalCamera.azimuthAngle() * (180 / Math.PI);
-    tiltAngleControl.value = (orbitalCamera.tiltAngle() - orbitalCamera.maxTiltAngle()) / (orbitalCamera.minTiltAngle() - orbitalCamera.maxTiltAngle());
-    zoomControl.value = 1.0 - ((orbitalCamera.zoomDistance() - orbitalCamera.minZoomDistance()) / (orbitalCamera.maxZoomDistance() - orbitalCamera.minZoomDistance()));
+    azimuthAngleControl.value = mapCamera.azimuthAngle() * (180 / Math.PI);
+    tiltAngleControl.value = (mapCamera.tiltAngle() - mapCamera.maxTiltAngle()) / (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
+    zoomControl.value = 1.0 - ((mapCamera.zoomDistance() - mapCamera.minZoomDistance()) / (mapCamera.maxZoomDistance() - mapCamera.minZoomDistance()));
 
-    zoomInButton.disabled = orbitalCamera.zoomDistance() <= orbitalCamera.minZoomDistance();
-    zoomOutButton.disabled = orbitalCamera.zoomDistance() >= orbitalCamera.maxZoomDistance();
+    zoomInButton.disabled = mapCamera.zoomDistance() <= mapCamera.minZoomDistance();
+    zoomOutButton.disabled = mapCamera.zoomDistance() >= mapCamera.maxZoomDistance();
 
     if (navigationControlsEnabled) {
       containerToggle.innerHTML = DOWN_ARROW;
@@ -49,34 +48,36 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   var setAzimuthAngle = function(e) {
     // The slider uses degrees instead of radians to avoid Firefox thinking that float values are invalid,
     // seemingly due to precision issues.
-    var degrees = parseInt(azimuthAngleControl.value, 10);
-    var radians = degrees * (Math.PI / 180);
+    var newAzimuthAngleInDegrees = parseInt(azimuthAngleControl.value, 10);
+    var newAzimuthAngleInRadians = newAzimuthAngleInDegrees * (Math.PI / 180);
 
-    orbitalCamera.setAzimuthAngle(radians);
+    mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngleInRadians - mapCamera.azimuthAngle());
     mapCamera.setIsVelocityEnabled(false);
   };
 
   var setTiltAngle = function(e) {
     var tiltPercentage = parseFloat(tiltAngleControl.value);
-    var newTiltAngle = CityTour.Math.lerp(orbitalCamera.minTiltAngle(), orbitalCamera.maxTiltAngle(), 1.0 - tiltPercentage);
+    var newTiltAngle = CityTour.Math.lerp(mapCamera.minTiltAngle(), mapCamera.maxTiltAngle(), 1.0 - tiltPercentage);
 
-    orbitalCamera.setTiltAngle(newTiltAngle);
+    mapCamera.tiltCamera(newTiltAngle - mapCamera.tiltAngle());
     mapCamera.setIsVelocityEnabled(false);
   };
 
   var setZoomDistance = function(e) {
-    var zoomPercentage = parseFloat(zoomControl.value);
-    orbitalCamera.setZoomDistance(CityTour.Math.lerp(orbitalCamera.minZoomDistance(), orbitalCamera.maxZoomDistance(), 1.0 - zoomPercentage));
+    var newZoomPercentage = parseFloat(zoomControl.value);
+    var newZoomDistance = CityTour.Math.lerp(mapCamera.minZoomDistance(), mapCamera.maxZoomDistance(), 1.0 - newZoomPercentage);
+
+    mapCamera.zoomTowardCenterOfAction(newZoomDistance - mapCamera.zoomDistance());
     mapCamera.setIsVelocityEnabled(false);
   };
 
   var zoomIn = function(e) {
-    orbitalCamera.setZoomDistance(orbitalCamera.zoomDistance() - ZOOM_DELTA);
+    mapCamera.zoomTowardCenterOfAction(-ZOOM_DELTA);
     mapCamera.setIsVelocityEnabled(false);
   };
 
   var zoomOut = function(e) {
-    orbitalCamera.setZoomDistance(orbitalCamera.zoomDistance() + ZOOM_DELTA);
+    mapCamera.zoomTowardCenterOfAction(ZOOM_DELTA);
     mapCamera.setIsVelocityEnabled(false);
   };
 

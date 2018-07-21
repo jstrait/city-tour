@@ -174,5 +174,12 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     syncToCamera: syncToCamera,
     syncFromCamera: syncFromCamera,
     orbitalCamera: function() { return orbitalCamera; },
+    azimuthAngle: function() { return orbitalCamera.azimuthAngle(); },
+    tiltAngle: function() { return orbitalCamera.tiltAngle(); },
+    minTiltAngle: function() { return orbitalCamera.minTiltAngle(); },
+    maxTiltAngle: function() { return orbitalCamera.maxTiltAngle(); },
+    zoomDistance: function() { return orbitalCamera.zoomDistance(); },
+    minZoomDistance: function() { return orbitalCamera.minZoomDistance(); },
+    maxZoomDistance: function() { return orbitalCamera.maxZoomDistance(); },
   };
 };
