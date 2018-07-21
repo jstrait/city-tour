@@ -41,8 +41,8 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
   var normalizedScreenVector = new THREE.Vector3(((screenPixelX / (el.width / window.devicePixelRatio)) * 2) - 1,
                                                  (-(screenPixelY / (el.height / window.devicePixelRatio)) * 2) + 1,
                                                  0.5);
-  var screenX = normalizedScreenVector.x;
-  var screenY = normalizedScreenVector.y;
+  var normalizedScreenX = normalizedScreenVector.x;
+  var normalizedScreenY = normalizedScreenVector.y;
 
   var worldPosition = screenCoordinateToWorldPosition(camera);
   var worldX = worldPosition.x;
@@ -52,8 +52,8 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
   return {
     screenPixelX: function() { return screenPixelX; },
     screenPixelY: function() { return screenPixelY; },
-    screenX: function() { return screenX; },
-    screenY: function() { return screenY; },
+    normalizedScreenX: function() { return normalizedScreenX; },
+    normalizedScreenY: function() { return normalizedScreenY; },
     worldX: function() { return worldX; },
     worldY: function() { return worldY; },
     worldZ: function() { return worldZ; },
