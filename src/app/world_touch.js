@@ -3,8 +3,6 @@
 var CityTour = CityTour || {};
 
 CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) {
-  var normalizedScreenVector;
-
   // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
   var screenCoordinateToWorldPosition = function(camera, screenX, screenY) {
     var direction, worldPosition;
@@ -40,9 +38,9 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
     return worldPosition;
   };
 
-  normalizedScreenVector = new THREE.Vector3(((screenPixelX / (el.width / window.devicePixelRatio)) * 2) - 1,
-                                             (-(screenPixelY / (el.height / window.devicePixelRatio)) * 2) + 1,
-                                             0.5);
+  var normalizedScreenVector = new THREE.Vector3(((screenPixelX / (el.width / window.devicePixelRatio)) * 2) - 1,
+                                                 (-(screenPixelY / (el.height / window.devicePixelRatio)) * 2) + 1,
+                                                 0.5);
   var screenX = normalizedScreenVector.x;
   var screenY = normalizedScreenVector.y;
 
