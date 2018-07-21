@@ -14,15 +14,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
   };
 
   var onTouchStart = function(e) {
-    var i, touch;
-
-    var touchPoints = [];
-    for (i = 0; i < e.touches.length; i++) {
-      touch = e.touches.item(i);
-      touchPoints.push({x: touch.clientX, y: touch.clientY});
-    }
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, touchPoints, terrain));
-
+    gestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
     e.preventDefault();
   };
 
@@ -39,16 +31,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
   };
 
   var onTouchMove = function(e) {
-    var i, touch;
-
-    var touchPoints = [];
-    for (i = 0; i < e.touches.length; i++) {
-      touch = e.touches.item(i);
-      touchPoints.push({x: touch.clientX, y: touch.clientY});
-    }
-    var currentTouches = CityTour.WorldTouchCollection(el, camera, touchPoints, terrain);
-
-    gestureProcessor.processGesture(currentTouches);
+    gestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
   };
 
   var onMouseUp = function(e) {
@@ -67,6 +50,22 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
       el.classList.remove("cursor-grabbing");
       gestureProcessor.processGesture(undefined);
     }
+  };
+
+  var extractWorldTouchCollection = function(touches) {
+    var i, touch;
+    var touchPoints = [];
+
+    if (touches.length === 0) {
+      return undefined;
+    }
+
+    for (i = 0; i < touches.length; i++) {
+      touch = touches.item(i);
+      touchPoints.push({x: touch.clientX, y: touch.clientY});
+    }
+
+    return CityTour.WorldTouchCollection(el, camera, touchPoints, terrain);
   };
 
   var enableEventHandlers = function() {
