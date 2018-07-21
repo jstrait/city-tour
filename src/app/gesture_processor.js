@@ -18,8 +18,8 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var previousTouches;
 
   var panCamera = function(currentTouches) {
-    var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.screenMidpoint().x - previousTouches.screenMidpoint().x,
-                                                         currentTouches.screenMidpoint().y - previousTouches.screenMidpoint().y,
+    var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x,
+                                                         currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y,
                                                          0.0);
     mapCamera.pan(normalizedScreenDragDistance);
     mapCamera.resetCenterOfAction();
@@ -44,7 +44,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     else if (Math.abs(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches()) >= MIN_ROTATION_ANGLE) {
       return ROTATE;
     }
-    else if (Math.abs(currentTouches.distance() - previousTouches.distance()) >= MIN_ZOOM_DELTA) {
+    else if (Math.abs(currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels()) >= MIN_ZOOM_DELTA) {
       return PINCH_ZOOM;
     }
     else {
@@ -70,17 +70,17 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     }
     else if (currentGesture === ROTATE) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE) {
-        mapCamera.setCenterOfAction(currentTouches.midpoint());
+        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
       }
 
       mapCamera.rotateAzimuthAroundCenterOfAction(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
     else if (currentGesture === PINCH_ZOOM) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE) {
-        mapCamera.setCenterOfAction(currentTouches.midpoint());
+        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
       }
 
-      distanceBetweenTouches = currentTouches.distance() - previousTouches.distance();
+      distanceBetweenTouches = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
       zoomDistanceDelta = (distanceBetweenTouches > 0) ? -20 : 20;
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
