@@ -13,6 +13,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
   var worldData;
   var timer;
   var vehicleController;
+  var vehicleView;
   var vehicleToInteractiveAnimation;
   var camera = sceneView.camera();
   var mode = INTERACTIVE;
@@ -22,11 +23,11 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
       mapCamera.syncToCamera(camera, worldData.terrain);
     }
     else if (mode === FLYTHROUGH) {
-      camera.position.x = vehicleController.positionX();
-      camera.position.y = vehicleController.positionY();
-      camera.position.z = vehicleController.positionZ();
-      camera.rotation.x = vehicleController.rotationX();
-      camera.rotation.y = vehicleController.rotationY();
+      camera.position.x = vehicleView.positionX();
+      camera.position.y = vehicleView.positionY();
+      camera.position.z = vehicleView.positionZ();
+      camera.rotation.x = vehicleView.rotationX();
+      camera.rotation.y = vehicleView.rotationY();
     }
     else if (mode === FLYTHROUGH_STOP) {
       camera.position.x = vehicleToInteractiveAnimation.positionX();
@@ -52,8 +53,9 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
     mapCamera.setIsVelocityEnabled(false);
 
     vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
+    vehicleView = new CityTour.VehicleView(vehicleController);
     mode = FLYTHROUGH;
-    messageBroker.publish("flythrough.started", {});
+    messageBroker.publish("flythrough.started", { vehicleView: vehicleView });
   };
 
   var requestStopFlythrough = function() {
@@ -107,6 +109,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
         vehicleToInteractiveAnimation.tick();
         if (vehicleToInteractiveAnimation.finished()) {
           vehicleController = undefined;
+          vehicleView = undefined;
           vehicleToInteractiveAnimation = undefined;
           messageBroker.publish("flythrough.stopped", {});
         }

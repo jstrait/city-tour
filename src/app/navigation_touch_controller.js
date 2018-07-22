@@ -5,16 +5,18 @@ var CityTour = CityTour || {};
 CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerrain, messageBroker) {
   var el = sceneView.domElement();
   var camera = sceneView.camera();
-  var gestureProcessor = CityTour.GestureProcessor(sceneView, mapCamera);
+  var mapGestureProcessor = CityTour.GestureProcessor(sceneView, mapCamera);
+  var flythroughGestureProcessor = CityTour.FlythroughGestureProcessor();
+  var currentGestureProcessor = mapGestureProcessor;
   var terrain = initialTerrain;
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
+    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
   };
 
   var onTouchStart = function(e) {
-    gestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
+    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
     e.preventDefault();
   };
 
@@ -23,24 +25,24 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
   };
 
   var onMouseMove = function(e) {
-    if (gestureProcessor.previousTouches() === undefined || gestureProcessor.previousTouches().count() < 1) {
+    if (currentGestureProcessor.previousTouches() === undefined || currentGestureProcessor.previousTouches().count() < 1) {
       return;
     }
 
-    gestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
+    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
   };
 
   var onTouchMove = function(e) {
-    gestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
+    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
   };
 
   var onMouseUp = function(e) {
     el.classList.remove("cursor-grabbing");
-    gestureProcessor.processGesture(undefined);
+    currentGestureProcessor.processGesture(undefined);
   };
 
   var onTouchEnd = function(e) {
-    gestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
+    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
   };
 
   var onMouseOver = function(e) {
@@ -48,7 +50,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
     if ((e.buttons !== undefined && e.buttons === 0) ||
         (e.which !== undefined && e.which === 0)) {
       el.classList.remove("cursor-grabbing");
-      gestureProcessor.processGesture(undefined);
+      currentGestureProcessor.processGesture(undefined);
     }
   };
 
@@ -80,21 +82,18 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
     el.removeEventListener('touchstart', onTouchStartStub, false);
   };
 
-  var disableEventHandlers = function() {
-    el.removeEventListener('mousedown', onMouseDown, false);
-    el.removeEventListener('touchstart', onTouchStart, false);
-    el.removeEventListener('mousemove', onMouseMove, false);
-    el.removeEventListener('touchmove', onTouchMove, false);
-    el.removeEventListener('mouseup', onMouseUp, false);
-    el.removeEventListener('touchend', onTouchEnd, false);
-    el.removeEventListener('mouseover', onMouseOver, false);
+  var onFlythroughStarted = function(data) {
+    flythroughGestureProcessor.setVehicleView(data.vehicleView);
+    currentGestureProcessor = flythroughGestureProcessor;
+  };
 
-    el.addEventListener('touchstart', onTouchStartStub, false);
+  var onFlythroughStopped = function(data) {
+    currentGestureProcessor = mapGestureProcessor;
   };
 
 
-  var id1 = messageBroker.addSubscriber("flythrough.started", disableEventHandlers);
-  var id2 = messageBroker.addSubscriber("flythrough.stopped", enableEventHandlers);
+  var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
+  var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
 
   enableEventHandlers();
 
