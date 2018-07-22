@@ -103,6 +103,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
     for (i = 0; i < frameCount; i++) {
       if (vehicleController) {
         vehicleController.tick();
+        vehicleView.tick();
       }
 
       if (vehicleToInteractiveAnimation) {

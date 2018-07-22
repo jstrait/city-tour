@@ -12,15 +12,18 @@ CityTour.FlythroughGestureProcessor = function() {
     var normalizedDragDistanceX, normalizedDragDistanceY;
 
     if (currentTouches === undefined) {
-      vehicleView.setAzimuthAngleOffset(0.0);
-      vehicleView.setTiltAngleOffset(0.0);
+      vehicleView.enabledResetToCenterAnimation();
     }
-    else if (previousTouches !== undefined && (currentTouches.count() === 1 || currentTouches.count() === 2)) {
-      normalizedDragDistanceX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
-      normalizedDragDistanceY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
+    else {
+      vehicleView.disableResetToCenterAnimation();
 
-      vehicleView.setAzimuthAngleOffset(vehicleView.azimuthAngleOffset() - (normalizedDragDistanceX * (Math.PI / 2)));
-      vehicleView.setTiltAngleOffset(vehicleView.tiltAngleOffset() + (normalizedDragDistanceY * (Math.PI / 2)));
+      if (previousTouches !== undefined && (currentTouches.count() === 1 || currentTouches.count() === 2)) {
+        normalizedDragDistanceX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
+        normalizedDragDistanceY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
+
+        vehicleView.setAzimuthAngleOffset(vehicleView.azimuthAngleOffset() - (normalizedDragDistanceX * (Math.PI / 2)));
+        vehicleView.setTiltAngleOffset(vehicleView.tiltAngleOffset() + (normalizedDragDistanceY * (Math.PI / 2)));
+      }
     }
 
     previousTouches = currentTouches;
