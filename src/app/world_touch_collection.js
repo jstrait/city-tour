@@ -5,6 +5,7 @@ var CityTour = CityTour || {};
 CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrain) {
   var worldTouches = [];
   var distanceInScreenPixels;
+  var phantomMidpointTouch;
   var worldMidpoint, worldMidpointX, worldMidpointY, worldMidpointZ;
   var normalizedScreenMidpoint;
   var angleBetweenTouches;
@@ -27,11 +28,8 @@ CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrain) {
                                                                  worldTouches[1].screenPixelX(),
                                                                  worldTouches[1].screenPixelY());
 
-    worldMidpointX = (worldTouches[0].worldX() + worldTouches[1].worldX()) / 2;
-    worldMidpointZ = (worldTouches[0].worldZ() + worldTouches[1].worldZ()) / 2;
-    worldMidpointY = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(worldMidpointX),
-                                                 CityTour.Coordinates.sceneZToMapZ(worldMidpointZ));
-    worldMidpoint = new THREE.Vector3(worldMidpointX, worldMidpointY,worldMidpointZ);
+    phantomMidpointTouch = CityTour.WorldTouch(el, camera, (screenTouches[0].x + screenTouches[1].x) / 2, (screenTouches[0].y + screenTouches[1].y) / 2, terrain);
+    worldMidpoint = new THREE.Vector3(phantomMidpointTouch.worldX(), phantomMidpointTouch.worldY(), phantomMidpointTouch.worldZ());
 
     normalizedScreenMidpoint = new THREE.Vector2((worldTouches[0].normalizedScreenX() + worldTouches[1].normalizedScreenX()) / 2,
                                                  (worldTouches[0].normalizedScreenY() + worldTouches[1].normalizedScreenY()) / 2);
