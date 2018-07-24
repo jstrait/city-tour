@@ -15,7 +15,6 @@ CityTour.Config = (function() {
   config.ROAD_DEPTH = config.STREET_DEPTH - (config.SIDEWALK_DEPTH * 2);
   config.BLOCK_AND_STREET_WIDTH = config.BLOCK_WIDTH + config.STREET_WIDTH;
   config.BLOCK_AND_STREET_DEPTH = config.BLOCK_DEPTH + config.STREET_DEPTH;
-  config.MAX_BUILDING_MATERIALS = 50;
 
   return config;
 })();

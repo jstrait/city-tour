@@ -4,13 +4,15 @@ var CityTour = CityTour || {};
 CityTour.Meshes = CityTour.Meshes || {};
 
 CityTour.Meshes.BuildingMeshBuilder = function() {
+  var MAX_BUILDING_MATERIALS = 50;
+
   var buildMaterials = function() {
     var i;
     var random;
     var r, g, b;
     var buildingMaterials = [];
 
-    for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
+    for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
       random = Math.random() * 0.7;
       r = random;
       g = random;
@@ -26,7 +28,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var i;
     var buildingGeometries = [];
 
-    for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
+    for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
       buildingGeometries.push(new THREE.Geometry());
     }
 
@@ -46,7 +48,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var reusableBuildingMesh = new THREE.Mesh(reusableBuildingGeometry);
 
     var generateLotBuilding = function(lot) {
-      var materialIndex = Math.floor(Math.random() * CityTour.Config.MAX_BUILDING_MATERIALS);
+      var materialIndex = Math.floor(Math.random() * MAX_BUILDING_MATERIALS);
       var cylinderMesh;
 
       reusableBuildingMesh.scale.x = lot.dimensions.width * CityTour.Config.BLOCK_WIDTH;
@@ -95,7 +97,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
 
     generateBuildingGeometries(buildings, buildingGeometries, roadNetwork);
 
-    for (i = 0; i < CityTour.Config.MAX_BUILDING_MATERIALS; i++) {
+    for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
       buildingMeshes.push(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
     }
 
