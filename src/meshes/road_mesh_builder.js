@@ -1,9 +1,9 @@
 "use strict";
 
 var CityTour = CityTour || {};
-CityTour.Scene = CityTour.Scene || {};
+CityTour.Meshes = CityTour.Meshes || {};
 
-CityTour.Scene.RoadMeshBuilder = function() {
+CityTour.Meshes.RoadMeshBuilder = function() {
   var HALF_PI = Math.PI / 2;
   var SIDEWALK_X_CENTER = (CityTour.Config.STREET_WIDTH / 2) - (CityTour.Config.SIDEWALK_WIDTH / 2);
   var SIDEWALK_Z_CENTER = (CityTour.Config.STREET_DEPTH / 2) - (CityTour.Config.SIDEWALK_DEPTH / 2);

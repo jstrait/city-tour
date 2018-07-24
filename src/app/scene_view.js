@@ -12,7 +12,7 @@ CityTour.SceneView = function(containerEl, messageBroker) {
   var touchPoint1MarkerMesh;
   var touchPoint2MarkerMesh;
 
-  var sceneBuilder = new CityTour.Scene.Builder();
+  var sceneBuilder = new CityTour.Meshes.Builder();
   var scene = sceneBuilder.buildEmptyScene();
   var renderView = new CityTour.RenderView(containerEl, scene);
   var camera = renderView.camera();

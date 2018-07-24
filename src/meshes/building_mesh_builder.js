@@ -1,9 +1,9 @@
 "use strict";
 
 var CityTour = CityTour || {};
-CityTour.Scene = CityTour.Scene || {};
+CityTour.Meshes = CityTour.Meshes || {};
 
-CityTour.Scene.BuildingMeshBuilder = function() {
+CityTour.Meshes.BuildingMeshBuilder = function() {
   var buildMaterials = function() {
     var i;
     var random;
