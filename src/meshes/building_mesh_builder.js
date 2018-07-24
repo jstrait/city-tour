@@ -46,7 +46,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var reusableBuildingMesh = new THREE.Mesh(reusableBuildingGeometry);
 
     var generateLotBuilding = function(lot) {
-      var storyHeight = Math.round(CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT));
+      var storyHeight = CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT);
       var buildingHeight = storyHeight * lot.stories + (lot.ySurface - lot.yFloor);
       var materialIndex = Math.floor(Math.random() * CityTour.Config.MAX_BUILDING_MATERIALS);
       var cylinderMesh;
