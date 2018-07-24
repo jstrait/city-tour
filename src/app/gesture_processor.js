@@ -132,7 +132,6 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var processGesture = function(currentTouches) {
     if (currentTouches === undefined) {
       currentGesture = undefined;
-      mapCamera.resetCenterOfAction();
       mapCamera.setIsVelocityEnabled(true);
       sceneView.touchPoint1MarkerMesh().position.set(0.0, 0.0, 0.0);
       sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
