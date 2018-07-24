@@ -30,7 +30,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var screenCoordinateToWorldCoordinateStraightDown = function(normalizedScreenVector) {
     var straightDownEuler, straightDownPosition, straightDownQuaternion, straightDownScale, straightDownMatrix;
     var matrix;
-    var direction, distanceToYPlane, worldPosition;
+    var direction, distanceToXZPlane, worldPosition;
     var camera = sceneView.camera();
 
     // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
@@ -47,8 +47,8 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     normalizedScreenVector.applyMatrix4(matrix);
 
     direction = normalizedScreenVector.sub(straightDownPosition).normalize();
-    distanceToYPlane = -(straightDownPosition.y / direction.y);
-    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToYPlane));
+    distanceToXZPlane = -(straightDownPosition.y / direction.y);
+    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToXZPlane));
 
     return worldPosition;
   };
