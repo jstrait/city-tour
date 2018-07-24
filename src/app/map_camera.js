@@ -88,7 +88,7 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
 
     if (newZoomDistance < zoomProperties.minZoomDistance) {
       newZoomDistance = zoomProperties.minZoomDistance;
-      zoomDistanceDelta = orbitalCamera.zoomDistance() - zoomProperties.minZoomDistance;
+      zoomDistanceDelta = zoomProperties.minZoomDistance - orbitalCamera.zoomDistance();
     }
     else if (newZoomDistance > orbitalCamera.maxZoomDistance()) {
       newZoomDistance = orbitalCamera.maxZoomDistance();
