@@ -8,7 +8,7 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   var START_TOUR_MESSAGE = "Take a Tour";
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
-  var ZOOM_DELTA = (mapCamera.maxZoomDistance() - mapCamera.minZoomDistance()) * 0.05;
+  var ZOOM_DELTA_PERCENTAGE = 0.05;
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
@@ -72,12 +72,12 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   };
 
   var zoomIn = function(e) {
-    mapCamera.zoomTowardCenterOfAction(-ZOOM_DELTA);
+    mapCamera.zoomTowardCenterOfAction(mapCamera.zoomDistance() * -ZOOM_DELTA_PERCENTAGE);
     mapCamera.setIsVelocityEnabled(false);
   };
 
   var zoomOut = function(e) {
-    mapCamera.zoomTowardCenterOfAction(ZOOM_DELTA);
+    mapCamera.zoomTowardCenterOfAction(mapCamera.zoomDistance() * ZOOM_DELTA_PERCENTAGE);
     mapCamera.setIsVelocityEnabled(false);
   };
 
