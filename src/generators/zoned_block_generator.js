@@ -3,6 +3,9 @@
 var CityTour = CityTour || {};
 
 CityTour.ZonedBlockGenerator = (function() {
+  var HALF_BLOCK_COLUMNS = 32;
+  var HALF_BLOCK_ROWS = 32;
+
   var BLOCK_LAYOUTS = [
     {
       maxBlockSteepness: 1,
@@ -151,8 +154,8 @@ CityTour.ZonedBlockGenerator = (function() {
   var calculateMaxStoriesForBlock = function(mapX, mapZ, centerMapX, centerMapZ, maxBuildingStories) {
     var squareRootOfMaxBuildingStories = Math.pow(maxBuildingStories, (1/9));
 
-    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX - centerMapX) / CityTour.Config.HALF_BLOCK_COLUMNS));
-    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ - centerMapZ) / CityTour.Config.HALF_BLOCK_ROWS));
+    var multiplierX = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapX - centerMapX) / HALF_BLOCK_COLUMNS));
+    var multiplierZ = squareRootOfMaxBuildingStories * (1 - (Math.abs(mapZ - centerMapZ) / HALF_BLOCK_ROWS));
     var multiplier = Math.min(multiplierX, multiplierZ);
 
     return Math.max(1, Math.round(Math.pow(multiplier, 9)));
