@@ -26,7 +26,7 @@ CityTour.BuildingsGenerator = (function() {
 
   var generateBuildingOnLot = function(lot, zonedBlock, terrain) {
     var lotTerrainAttributes;
-    var maxStories, actualStories;
+    var maxStories, actualStories, storyHeight;
     var hasAdjacentRoad;
     var roofStyle;
     var mapX = zonedBlock.mapX;
@@ -44,6 +44,7 @@ CityTour.BuildingsGenerator = (function() {
         if (lotTerrainAttributes.steepness < CityTour.Config.MIN_STORY_HEIGHT) {
           maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
           actualStories = CityTour.Math.randomInteger(1, maxStories);
+          storyHeight = CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT);
 
           if (actualStories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
             roofStyle = ROOF_STYLE_ANTENNA;
@@ -56,8 +57,7 @@ CityTour.BuildingsGenerator = (function() {
             dimensions: lot,
             roofStyle: roofStyle,
             yFloor: zonedBlock.minimumHeight,
-            ySurface: lotTerrainAttributes.maximumHeight,
-            stories: actualStories,
+            height: (actualStories * storyHeight) + (lotTerrainAttributes.maximumHeight - zonedBlock.minimumHeight),
           };
         }
       }
