@@ -136,7 +136,6 @@ CityTour.ZonedBlockGenerator = (function() {
   });
 
   var calculateBlockProbabilityOfBuilding = function(mapX, mapZ, distanceToClosestNeighborhoodCenter, blockDistanceDecayBegins) {
-    var distanceToCityEdge = Math.min(CityTour.Config.HALF_BLOCK_COLUMNS, CityTour.Config.HALF_BLOCK_ROWS);
     var normalizedPercentageFromCenter;
 
     if (distanceToClosestNeighborhoodCenter >= blockDistanceDecayBegins) {
