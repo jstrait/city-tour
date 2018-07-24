@@ -8,26 +8,26 @@ CityTour.ZonedBlockGenerator = (function() {
 
   var BLOCK_LAYOUTS = [
     {
-      maxBlockSteepness: 1,
+      maxBlockSteepness: 0.083333333333333,
       lots: [ { left:     0.0,  right: 1.0,  top: 0.0,  bottom: 1.0, } ],
     },
 
     {
-      maxBlockSteepness: 1,
+      maxBlockSteepness: 0.083333333333333,
       lots: [ { left:     0.0,  right: 0.5,  top: 0.0,  bottom:  1.0 },
               { left:     0.5,  right: 1.0,  top: 0.0,  bottom:  1.0 } ],
     },
 
 
     {
-      maxBlockSteepness: 1,
+      maxBlockSteepness: 0.083333333333333,
       lots: [ { left:     0.0,  right: 1.0,  top: 0.0,  bottom: 0.5 },
               { left:     0.0,  right: 1.0,  top: 0.5,  bottom: 1.0 } ],
     },
 
 
     {
-      maxBlockSteepness: 1,
+      maxBlockSteepness: 0.083333333333333,
       lots: [ { left:     0.0,  right: 0.5,  top: 0.0,  bottom: 1.0 },
               { left:     0.5,  right: 1.0,  top: 0.0,  bottom: 0.5 },
               { left:     0.5,  right: 1.0,  top: 0.5,  bottom: 1.0 } ],
@@ -35,7 +35,7 @@ CityTour.ZonedBlockGenerator = (function() {
 
 
     {
-      maxBlockSteepness: 1,
+      maxBlockSteepness: 0.083333333333333,
       lots: [ { left:     0.0,  right: 0.5,  top: 0.0,  bottom: 0.5, },
               { left:     0.5,  right: 1.0,  top: 0.0,  bottom: 0.5, },
               { left:     0.0,  right: 0.5,  top: 0.5,  bottom: 1.0, },
@@ -44,7 +44,7 @@ CityTour.ZonedBlockGenerator = (function() {
 
 
     {
-      maxBlockSteepness: 6,
+      maxBlockSteepness: 0.5,
       lots: [ { left:     0.0,  right: (1 / 3),  top: 0.0,  bottom:  0.5 },
               { left: (1 / 3),  right: (2 / 3),  top: 0.0,  bottom:  0.5 },
               { left: (2 / 3),  right:     1.0,  top: 0.0,  bottom:  0.5 },

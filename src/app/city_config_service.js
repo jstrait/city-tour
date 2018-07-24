@@ -8,11 +8,11 @@ CityTour.CityConfigService = function() {
   var NEIGHBORHOOD_MAX_COLUMNS = 20;
   var NEIGHBORHOOD_MAX_ROWS = 20;
 
-  var heightJitter = 20;
+  var heightJitter = 1.666666666666667;
   var heightJitterDecay = 0.65;
   var includeRiver = true;
   var hillCount = 40;
-  var maxHillHeight = 200;
+  var maxHillHeight = 16.666666666666667;
   var safeFromDecayBlocks = 6;
   var blockDistanceDecayBegins = 6;
   var maxBuildingStories = 40;

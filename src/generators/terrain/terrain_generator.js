@@ -4,8 +4,8 @@ var CityTour = CityTour || {};
 
 CityTour.TerrainGenerator = (function() {
   var SCALE = 1;   // Should be a power of 0.5
-  var MIN_INITIAL_TERRAIN_HEIGHT = -3;
-  var MAX_INITIAL_TERRAIN_HEIGHT = 3;
+  var MIN_INITIAL_TERRAIN_HEIGHT = -0.25;
+  var MAX_INITIAL_TERRAIN_HEIGHT = 0.25;
 
   var emptyTerrain = function(columnCount, rowCount) {
     var x, z;

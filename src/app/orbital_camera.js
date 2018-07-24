@@ -5,19 +5,19 @@ var CityTour = CityTour || {};
 CityTour.OrbitalCamera = function(messageBroker) {
   var TWO_PI = Math.PI * 2;
 
-  var MIN_CENTER_X = -1000.0;
-  var MAX_CENTER_X = 1000.0;
+  var MIN_CENTER_X = -83.333333333333333;
+  var MAX_CENTER_X = 83.333333333333333;
 
-  var MIN_CENTER_Z = -1000.0;
-  var MAX_CENTER_Z = 1000.0;
+  var MIN_CENTER_Z = -83.333333333333333;
+  var MAX_CENTER_Z = 83.333333333333333;
 
   var MIN_TILT_ANGLE = -Math.PI / 2;
   var MAX_TILT_ANGLE = -0.1;
 
-  var MIN_ZOOM_DISTANCE = 20.0;
-  var MAX_ZOOM_DISTANCE = 1000.0;
+  var MIN_ZOOM_DISTANCE = 1.666666666666667;
+  var MAX_ZOOM_DISTANCE = 83.333333333333333;
 
-  var MINIMUM_HEIGHT_OFF_GROUND = 5.0;
+  var MINIMUM_HEIGHT_OFF_GROUND = 0.416666666666667;
 
   var centerX = 0.0;
   var centerZ = 0.0;

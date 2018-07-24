@@ -124,7 +124,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
       }
 
       distanceBetweenTouches = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
-      zoomDistanceDelta = (distanceBetweenTouches > 0) ? -20 : 20;
+      zoomDistanceDelta = (distanceBetweenTouches > 0) ? -1.666666666666667 : 1.666666666666667;
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
   };

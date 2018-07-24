@@ -77,11 +77,11 @@ CityTour.HydraulicErosionGenerator = (function() {
   };
 
   var erode = function(terrainCoordinates, iterationCount) {
-    var STARTING_WATER_HEIGHT = 50;
-    var WATER_CARRYING_CAPACITY = 5;
-    var WATER_EVAPORATION_RATE = 10;
-    var MAX_EROSION_HEIGHT = 5;
-    var MAX_SOIL_DEPOSIT_HEIGHT = 5;
+    var STARTING_WATER_HEIGHT = 4.166666666666667;
+    var WATER_CARRYING_CAPACITY = 0.416666666666667;
+    var WATER_EVAPORATION_RATE = 0.833333333333333;
+    var MAX_EROSION_HEIGHT = 0.416666666666667;
+    var MAX_SOIL_DEPOSIT_HEIGHT = 0.416666666666667;
 
     var lowestAdjacentLandHeight, lowestAdjacentX, lowestAdjacentZ;
     var lowestAdjacentTerrainAttributes;

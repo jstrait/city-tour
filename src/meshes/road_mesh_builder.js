@@ -58,9 +58,9 @@ CityTour.Meshes.RoadMeshBuilder = function() {
   roadMeshBuilder.build = function(terrain, roadNetwork) {
     var HALF_BLOCK_AND_STREET_WIDTH = CityTour.Config.BLOCK_AND_STREET_WIDTH / 2;
     var HALF_BLOCK_AND_STREET_DEPTH = CityTour.Config.BLOCK_AND_STREET_DEPTH / 2;
-    var BRIDGE_SUPPORT_HEIGHT = 100.0;
+    var BRIDGE_SUPPORT_HEIGHT = 8.333333333333333;
     var HALF_BRIDGE_SUPPORT_HEIGHT = BRIDGE_SUPPORT_HEIGHT / 2;
-    var BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK = 0.25;
+    var BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK = 0.020833333333333;
 
     var mapX, mapZ, sceneX, sceneZ;
 
@@ -97,8 +97,8 @@ CityTour.Meshes.RoadMeshBuilder = function() {
 
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
 
-    var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(1.0, BRIDGE_SUPPORT_HEIGHT, 1.0));
-    var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 1.0));
+    var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(0.083333333333333, BRIDGE_SUPPORT_HEIGHT, 0.083333333333333));
+    var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.083333333333333, 1.0));
 
     var northRoad, eastRoad, southRoad, westRoad;
     var selfSurfaceHeight, southSurfaceHeight, eastSurfaceHeight;

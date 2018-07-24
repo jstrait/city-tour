@@ -11,12 +11,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   var HOVERING_MODE = 'hovering';
   var BIRDSEYE_MODE = 'birdseye';
 
-  var DRIVING_HORIZONTAL_MOTION_DELTA = 0.2;
-  var FLYING_HORIZONTAL_MOTION_DELTA = 0.3;
-  var BIRDSEYE_Y = 150;
-  var HOVERING_Y = 15;
-  var POSITION_Y_DELTA = 2;
-  var HOVER_TO_DRIVING_POSITION_Y_DELTA = 0.05;
+  var DRIVING_HORIZONTAL_MOTION_DELTA = 0.016666666666667;
+  var FLYING_HORIZONTAL_MOTION_DELTA = 0.025;
+  var BIRDSEYE_Y = 12.5;
+  var HOVERING_Y = 1.25;
+  var POSITION_Y_DELTA = 0.166666666666667;
+  var HOVER_TO_DRIVING_POSITION_Y_DELTA = 0.004166666666667;
   var BIRDSEYE_X_ROTATION = -(Math.PI / 3);
   var BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
   var ROTATION_Y_DELTA = 0.03;
@@ -27,7 +27,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   MODE_TRANSITIONS[HOVERING_MODE] = DRIVING_MODE;
   MODE_TRANSITIONS[DRIVING_MODE] = BIRDSEYE_MODE;
 
-  var MINIMUM_HEIGHT_OFF_GROUND = 0.5;
+  var MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;
 
   var positionX = initial.positionX;
   var positionY = initial.positionY;

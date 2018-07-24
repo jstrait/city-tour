@@ -80,7 +80,7 @@ CityTour.RiverGenerator = (function() {
   };
 
   var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
-    var WATER_HEIGHT = 5.0;
+    var WATER_HEIGHT = 0.416666666666667;
 
     var x, z, xCoordinate;
     var topVector, bottomVector;

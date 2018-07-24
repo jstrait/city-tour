@@ -65,9 +65,9 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
       buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
 
       if (lot.roofStyle === 'antenna') {
-        cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 10, 4));
+        cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4));
         cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
-        cylinderMesh.position.y = lot.yFloor + lot.height + 5;
+        cylinderMesh.position.y = lot.yFloor + lot.height + 0.416666666666667;
         cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
         cylinderMesh.updateMatrix();
         buildingGeometries[materialIndex].merge(cylinderMesh.geometry, cylinderMesh.matrix);

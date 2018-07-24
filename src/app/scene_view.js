@@ -51,6 +51,10 @@ CityTour.SceneView = function(containerEl, messageBroker) {
   };
 
   var buildMarkerMeshes = function() {
+    var MARKER_WIDTH = 0.416666666666667;
+    var MARKER_DEPTH = 0.416666666666667;
+    var MARKER_HEIGHT = 16.666666666666667;
+
     var markersStartTime, markersEndTime;
     var group;
 
@@ -59,23 +63,23 @@ CityTour.SceneView = function(containerEl, messageBroker) {
     group = new THREE.Group();
     group.name = "markerMeshes";
 
-    centerOfCityMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+    centerOfCityMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                             new THREE.MeshBasicMaterial({ color: 0xff00ff }));
     group.add(centerOfCityMarkerMesh);
 
-    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                               new THREE.MeshBasicMaterial({ color: 0x55ff00 }));
     group.add(centerOfActionMarkerMesh);
 
-    targetOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+    targetOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                               new THREE.MeshBasicMaterial({ color: 0xff5a00 }));
     group.add(targetOfActionMarkerMesh);
 
-    touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+    touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                            new THREE.MeshBasicMaterial({ color: 0xff0055 }));
     group.add(touchPoint1MarkerMesh);
 
-    touchPoint2MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(5, 200, 5),
+    touchPoint2MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                            new THREE.MeshBasicMaterial({ color: 0x0000ff }));
     group.add(touchPoint2MarkerMesh);
 

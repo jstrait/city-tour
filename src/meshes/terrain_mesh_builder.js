@@ -16,7 +16,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
   var GRADIENT_SHADING_MODE = 2;
   var SHADING_MODE = SOLID_SHADING_MODE;
 
-  var SIDE_BOTTOM_HEIGHT = -100;
+  var SIDE_BOTTOM_HEIGHT = -8.333333333333333;
 
   var reusableTriangle = new THREE.Geometry();
   reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];

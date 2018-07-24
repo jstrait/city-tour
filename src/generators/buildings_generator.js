@@ -3,8 +3,8 @@
 var CityTour = CityTour || {};
 
 CityTour.BuildingsGenerator = (function() {
-  var MIN_STORY_HEIGHT = 1.2;
-  var MAX_STORY_HEIGHT = 1.5;
+  var MIN_STORY_HEIGHT = 0.1;
+  var MAX_STORY_HEIGHT = 0.125;
   var MIN_STORIES_FOR_ANTENNA = 25;
   var PROBABILITY_OF_TALL_BUILDING_ANTENNA = 0.3;
   var ROOF_STYLE_ANTENNA = 'antenna';
