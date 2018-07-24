@@ -23,10 +23,10 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
       mapX = CityTour.Coordinates.sceneXToMapX(ray.x);
       mapZ = CityTour.Coordinates.sceneZToMapZ(ray.z);
 
-      if (mapX >= -CityTour.Config.BLOCK_COLUMNS &&
-          mapX <= CityTour.Config.BLOCK_COLUMNS &&
-          mapZ >= -CityTour.Config.BLOCK_ROWS &&
-          mapZ <= CityTour.Config.BLOCK_ROWS) {
+      if (mapX >= terrain.minMapX() &&
+          mapX <= terrain.maxMapX() &&
+          mapZ >= terrain.minMapZ() &&
+          mapZ <= terrain.maxMapZ()) {
         if (ray.y <= terrain.heightAtCoordinates(mapX, mapZ)) {
           worldPosition = ray;
         }
