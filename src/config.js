@@ -15,8 +15,6 @@ CityTour.Config = (function() {
   config.BLOCK_DEPTH = 8;
   config.BLOCK_AND_STREET_WIDTH = config.BLOCK_WIDTH + config.STREET_WIDTH;
   config.BLOCK_AND_STREET_DEPTH = config.BLOCK_DEPTH + config.STREET_DEPTH;
-  config.MIN_STORY_HEIGHT = 1.2;
-  config.MAX_STORY_HEIGHT = 1.5;
   config.MAX_BUILDING_MATERIALS = 50;
 
   return config;

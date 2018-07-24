@@ -3,6 +3,8 @@
 var CityTour = CityTour || {};
 
 CityTour.BuildingsGenerator = (function() {
+  var MIN_STORY_HEIGHT = 1.2;
+  var MAX_STORY_HEIGHT = 1.5;
   var MIN_STORIES_FOR_ANTENNA = 25;
   var PROBABILITY_OF_TALL_BUILDING_ANTENNA = 0.3;
   var ROOF_STYLE_ANTENNA = 'antenna';
@@ -41,10 +43,10 @@ CityTour.BuildingsGenerator = (function() {
       if (hasAdjacentRoad) {
         lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
 
-        if (lotTerrainAttributes.steepness < CityTour.Config.MIN_STORY_HEIGHT) {
+        if (lotTerrainAttributes.steepness < MIN_STORY_HEIGHT) {
           maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
           actualStories = CityTour.Math.randomInteger(1, maxStories);
-          storyHeight = CityTour.Math.randomInRange(CityTour.Config.MIN_STORY_HEIGHT, CityTour.Config.MAX_STORY_HEIGHT);
+          storyHeight = CityTour.Math.randomInRange(MIN_STORY_HEIGHT, MAX_STORY_HEIGHT);
 
           if (actualStories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
             roofStyle = ROOF_STYLE_ANTENNA;
