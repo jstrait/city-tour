@@ -17,11 +17,54 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
   var currentGesture;
   var previousTouches;
 
+  // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
+  //
+  // Instead of using the camera's current position to unproject from the screen coordinate to the world coordinate,
+  // this always uses the equivalent of a camera looking straight down on the center of orbit, from the zoom distance away.
+  //
+  // The reason for doing this is so that the rate of movement is uniform regardless of the camera's tilt angle.
+  // I.e., at the same zoom level, moving your mouse/finger 10 pixels on the screen will result in the same amount
+  // of world movement if the camera is looking straight down, or straight forward. It also means that the location on
+  // the screen (i.e. top-left vs. center vs. bottom-right) won't affect the amount of world movement when the camera is
+  // tilted at an angle other than straight down.
+  var screenCoordinateToWorldCoordinateStraightDown = function(normalizedScreenVector) {
+    var straightDownEuler, straightDownPosition, straightDownQuaternion, straightDownScale, straightDownMatrix;
+    var matrix;
+    var direction, distanceToYPlane, worldPosition;
+    var camera = sceneView.camera();
+
+    // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
+    straightDownEuler = new THREE.Euler(-Math.PI / 2, camera.rotation.y, 0.0, 'YXZ');
+    straightDownPosition = new THREE.Vector3(mapCamera.centerX(), mapCamera.zoomDistance(), mapCamera.centerZ());
+    straightDownQuaternion = new THREE.Quaternion();
+    straightDownQuaternion.setFromEuler(straightDownEuler);
+    straightDownScale = camera.scale.clone();
+    straightDownMatrix = new THREE.Matrix4().compose(straightDownPosition, straightDownQuaternion, straightDownScale);
+
+    // Unproject from the simulated camera position
+    matrix = new THREE.Matrix4();
+    matrix.multiplyMatrices(straightDownMatrix, matrix.getInverse(camera.projectionMatrix));
+    normalizedScreenVector.applyMatrix4(matrix);
+
+    direction = normalizedScreenVector.sub(straightDownPosition).normalize();
+    distanceToYPlane = -(straightDownPosition.y / direction.y);
+    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToYPlane));
+
+    return worldPosition;
+  };
+
   var panCamera = function(currentTouches) {
     var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x,
                                                          currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y,
                                                          0.0);
-    mapCamera.pan(normalizedScreenDragDistance);
+
+    var worldDragStart = new THREE.Vector3(mapCamera.centerX(), 0.0, mapCamera.centerZ());
+    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance);
+    var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
+                                              worldDragEnd.y - worldDragStart.y,
+                                              worldDragEnd.z - worldDragStart.z);
+
+    mapCamera.pan(worldDragDistance.x, worldDragDistance.z);
     mapCamera.resetCenterOfAction();
   };
 

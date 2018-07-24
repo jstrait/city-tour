@@ -8,14 +8,14 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
   var TILT_ROTATION_VELOCITY_DECAY = 0.85;
   var AZIMUTH_ROTATION_VELOCITY_DECAY = 0.85;
   var MINIMUM_VELOCITY = 0.00001;
-  var EMPTY_PAN_VELOCITY = new THREE.Vector3(0.0, 0.0, 0.0);
 
   var centerOfAction;
   var zoomProperties;
   var camera = sceneView.camera();
 
   var isVelocityEnabled = false;
-  var panVelocity = EMPTY_PAN_VELOCITY;
+  var panVelocityX = 0.0;
+  var panVelocityZ = 0.0;
   var zoomVelocity = 0.0;
   var azimuthRotationVelocity = 0.0;
   var tiltRotationVelocity = 0.0;
@@ -31,51 +31,11 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     setCenterOfAction(new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ()));
   };
 
-  // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
-  //
-  // Instead of using the camera's current position to unproject from the screen coordinate to the world coordinate,
-  // this always uses the equivalent of a camera looking straight down on the center of orbit, from the zoom distance away.
-  //
-  // The reason for doing this is so that the rate of movement is uniform regardless of the camera's tilt angle.
-  // I.e., at the same zoom level, moving your mouse/finger 10 pixels on the screen will result in the same amount
-  // of world movement if the camera is looking straight down, or straight forward. It also means that the location on
-  // the screen (i.e. top-left vs. center vs. bottom-right) won't affect the amount of world movement when the camera is
-  // tilted at an angle other than straight down.
-  var screenCoordinateToWorldCoordinateStraightDown = function(normalizedScreenVector) {
-    var straightDownEuler, straightDownPosition, straightDownQuaternion, straightDownScale, straightDownMatrix;
-    var matrix;
-    var direction, distanceToYPlane, worldPosition;
+  var pan = function(distanceX, distanceZ) {
+    orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - distanceX, orbitalCamera.centerZ() - distanceZ);
 
-    // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
-    straightDownEuler = new THREE.Euler(-Math.PI / 2, camera.rotation.y, 0.0, 'YXZ');
-    straightDownPosition = new THREE.Vector3(orbitalCamera.centerX(), orbitalCamera.zoomDistance(), orbitalCamera.centerZ());
-    straightDownQuaternion = new THREE.Quaternion();
-    straightDownQuaternion.setFromEuler(straightDownEuler);
-    straightDownScale = camera.scale.clone();
-    straightDownMatrix = new THREE.Matrix4().compose(straightDownPosition, straightDownQuaternion, straightDownScale);
-
-    // Unproject from the simulated camera position
-    matrix = new THREE.Matrix4();
-    matrix.multiplyMatrices(straightDownMatrix, matrix.getInverse(camera.projectionMatrix));
-    normalizedScreenVector.applyMatrix4(matrix);
-
-    direction = normalizedScreenVector.sub(straightDownPosition).normalize();
-    distanceToYPlane = -(straightDownPosition.y / direction.y);
-    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToYPlane));
-
-    return worldPosition;
-  };
-
-  var pan = function(normalizedScreenDragDistance) {
-    var worldDragStart = new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ());
-    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance.clone());
-    var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
-                                              worldDragEnd.y - worldDragStart.y,
-                                              worldDragEnd.z - worldDragStart.z);
-
-    orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
-
-    panVelocity = normalizedScreenDragDistance.clone();
+    panVelocityX = distanceX;
+    panVelocityZ = distanceZ;
   };
 
   var calculateZoomProperties = function() {
@@ -169,13 +129,14 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     var i;
 
     for (i = 0; i < frameCount; i++) {
-      panVelocity.multiplyScalar(PAN_VELOCITY_DECAY); // *= //PAN_VELOCITY_DECAY;
+      panVelocityX *= PAN_VELOCITY_DECAY;
+      panVelocityZ *= PAN_VELOCITY_DECAY;
       zoomVelocity *= ZOOM_VELOCITY_DECAY;
       azimuthRotationVelocity *= AZIMUTH_ROTATION_VELOCITY_DECAY;
       tiltRotationVelocity *= TILT_ROTATION_VELOCITY_DECAY;
 
-      if (Math.abs(panVelocity.x) > 0.0 || Math.abs(panVelocity.z) > 0.0) {
-        pan(panVelocity);
+      if (Math.abs(panVelocityX) > 0.0 || Math.abs(panVelocityZ) > 0.0) {
+        pan(panVelocityX, panVelocityZ);
       }
 
       if (Math.abs(zoomVelocity) > 0.0) {
@@ -191,8 +152,11 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
       }
     }
 
-    if (Math.abs(panVelocity.x) < MINIMUM_VELOCITY && Math.abs(panVelocity.z) < MINIMUM_VELOCITY) {
-      panVelocity = EMPTY_PAN_VELOCITY;
+    if (Math.abs(panVelocityX) < MINIMUM_VELOCITY) {
+      panVelocityX = 0.0;
+    }
+    if (Math.abs(panVelocityZ) < MINIMUM_VELOCITY) {
+      panVelocityZ = 0.0;
     }
     if (Math.abs(zoomVelocity) < MINIMUM_VELOCITY) {
       zoomVelocity = 0.0;
@@ -204,7 +168,8 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
       tiltRotationVelocity = 0.0;
     }
 
-    if (panVelocity.x === EMPTY_PAN_VELOCITY &&
+    if (panVelocityX === 0.0 &&
+        panVelocityZ === 0.0 &&
         zoomVelocity === 0.0 &&
         azimuthRotationVelocity === 0.0 &&
         tiltRotationVelocity === 0.0) {
@@ -216,7 +181,8 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     isVelocityEnabled = newIsVelocityEnabled;
 
     if (newIsVelocityEnabled === false) {
-      panVelocity = EMPTY_PAN_VELOCITY;
+      panVelocityX = 0.0;
+      panVelocityZ = 0.0;
       zoomVelocity = 0.0;
       azimuthRotationVelocity = 0.0;
       tiltRotationVelocity = 0.0;
@@ -248,6 +214,8 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     tickVelocity: tickVelocity,
     syncToCamera: syncToCamera,
     syncFromCamera: syncFromCamera,
+    centerX: function() { return orbitalCamera.centerX(); },
+    centerZ: function() { return orbitalCamera.centerZ(); },
     azimuthAngle: function() { return orbitalCamera.azimuthAngle(); },
     tiltAngle: function() { return orbitalCamera.tiltAngle(); },
     minTiltAngle: function() { return orbitalCamera.minTiltAngle(); },
