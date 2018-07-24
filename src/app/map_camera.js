@@ -3,9 +3,22 @@
 var CityTour = CityTour || {};
 
 CityTour.MapCamera = function(sceneView, orbitalCamera) {
+  var PAN_VELOCITY_DECAY = 0.875;
+  var ZOOM_VELOCITY_DECAY = 0.85;
+  var TILT_ROTATION_VELOCITY_DECAY = 0.85;
+  var AZIMUTH_ROTATION_VELOCITY_DECAY = 0.85;
+  var MINIMUM_VELOCITY = 0.00001;
+  var EMPTY_PAN_VELOCITY = new THREE.Vector3(0.0, 0.0, 0.0);
+
   var centerOfAction;
   var zoomProperties;
   var camera = sceneView.camera();
+
+  var isVelocityEnabled = false;
+  var panVelocity = EMPTY_PAN_VELOCITY;
+  var zoomVelocity = 0.0;
+  var azimuthRotationVelocity = 0.0;
+  var tiltRotationVelocity = 0.0;
 
   var setCenterOfAction = function(newCenterOfAction) {
     centerOfAction = newCenterOfAction;
@@ -55,12 +68,14 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
 
   var pan = function(normalizedScreenDragDistance) {
     var worldDragStart = new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ());
-    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance);
+    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance.clone());
     var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
                                               worldDragEnd.y - worldDragStart.y,
                                               worldDragEnd.z - worldDragStart.z);
 
     orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - worldDragDistance.x, orbitalCamera.centerZ() - worldDragDistance.z);
+
+    panVelocity = normalizedScreenDragDistance.clone();
   };
 
   var calculateZoomProperties = function() {
@@ -125,6 +140,8 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
 
     orbitalCamera.setCenterCoordinates(newCenterOfOrbitX, newCenterOfOrbitZ);
     orbitalCamera.setZoomDistance(newZoomDistance);
+
+    zoomVelocity = zoomDistanceDelta;
   };
 
   var rotateAzimuthAroundCenterOfAction = function(azimuthAngleDelta) {
@@ -139,18 +156,71 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
 
     orbitalCamera.setCenterCoordinates(newCenterX, newCenterZ);
     orbitalCamera.setAzimuthAngle(orbitalCamera.azimuthAngle() + azimuthAngleDelta);
+
+    azimuthRotationVelocity = azimuthAngleDelta;
   };
 
   var tiltCamera = function(tiltAngleDelta) {
-    orbitalCamera.setTiltAngle(orbitalCamera.tiltAngle() + tiltAngleDelta)
-  };
-
-  var setIsVelocityEnabled = function(newIsVelocityEnabled) {
-    orbitalCamera.setIsVelocityEnabled(newIsVelocityEnabled);
+    orbitalCamera.setTiltAngle(orbitalCamera.tiltAngle() + tiltAngleDelta);
+    tiltRotationVelocity = tiltAngleDelta;
   };
 
   var tickVelocity = function(frameCount) {
-    orbitalCamera.tickVelocity(frameCount);
+    var i;
+
+    for (i = 0; i < frameCount; i++) {
+      panVelocity.multiplyScalar(PAN_VELOCITY_DECAY); // *= //PAN_VELOCITY_DECAY;
+      zoomVelocity *= ZOOM_VELOCITY_DECAY;
+      azimuthRotationVelocity *= AZIMUTH_ROTATION_VELOCITY_DECAY;
+      tiltRotationVelocity *= TILT_ROTATION_VELOCITY_DECAY;
+
+      if (Math.abs(panVelocity.x) > 0.0 || Math.abs(panVelocity.z) > 0.0) {
+        pan(panVelocity);
+      }
+
+      if (Math.abs(zoomVelocity) > 0.0) {
+        zoomTowardCenterOfAction(zoomVelocity);
+      }
+
+      if (Math.abs(azimuthRotationVelocity) > 0.0) {
+        rotateAzimuthAroundCenterOfAction(azimuthRotationVelocity);
+      }
+
+      if (Math.abs(tiltRotationVelocity) > 0.0) {
+        tiltCamera(tiltRotationVelocity);
+      }
+    }
+
+    if (Math.abs(panVelocity.x) < MINIMUM_VELOCITY && Math.abs(panVelocity.z) < MINIMUM_VELOCITY) {
+      panVelocity = EMPTY_PAN_VELOCITY;
+    }
+    if (Math.abs(zoomVelocity) < MINIMUM_VELOCITY) {
+      zoomVelocity = 0.0;
+    }
+    if (Math.abs(azimuthRotationVelocity) < MINIMUM_VELOCITY) {
+      azimuthRotationVelocity = 0.0;
+    }
+    if (Math.abs(tiltRotationVelocity) < MINIMUM_VELOCITY) {
+      tiltRotationVelocity = 0.0;
+    }
+
+    if (panVelocity.x === EMPTY_PAN_VELOCITY &&
+        zoomVelocity === 0.0 &&
+        azimuthRotationVelocity === 0.0 &&
+        tiltRotationVelocity === 0.0) {
+      isVelocityEnabled = false;
+    }
+  };
+
+  var setIsVelocityEnabled = function(newIsVelocityEnabled) {
+    isVelocityEnabled = newIsVelocityEnabled;
+
+    if (newIsVelocityEnabled === false) {
+      panVelocity = EMPTY_PAN_VELOCITY;
+      zoomVelocity = 0.0;
+      azimuthRotationVelocity = 0.0;
+      tiltRotationVelocity = 0.0;
+    }
   };
 
   var syncToCamera = function(camera, terrain) {
@@ -173,7 +243,7 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     rotateAzimuthAroundCenterOfAction: rotateAzimuthAroundCenterOfAction,
     zoomTowardCenterOfAction: zoomTowardCenterOfAction,
     tiltCamera: tiltCamera,
-    isVelocityEnabled: function() { return orbitalCamera.isVelocityEnabled(); },
+    isVelocityEnabled: function() { return isVelocityEnabled; },
     setIsVelocityEnabled: setIsVelocityEnabled,
     tickVelocity: tickVelocity,
     syncToCamera: syncToCamera,

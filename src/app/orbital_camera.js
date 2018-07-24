@@ -19,30 +19,13 @@ CityTour.OrbitalCamera = function(messageBroker) {
 
   var MINIMUM_HEIGHT_OFF_GROUND = 5.0;
 
-  var POSITION_VELOCITY_DECAY = 0.875;
-  var ZOOM_VELOCITY_DECAY = 0.85;
-  var TILT_VELOCITY_DECAY = 0.85;
-  var ROTATION_VELOCITY_DECAY = 0.85;
-
-  var MINIMUM_VELOCITY = 0.00001;
-
   var centerX = 0.0;
   var centerZ = 0.0;
   var zoomDistance = MAX_ZOOM_DISTANCE;
   var tiltAngle = (MIN_TILT_ANGLE - MAX_TILT_ANGLE) * 0.2;
   var azimuthAngle = 0.0;
 
-  var isVelocityEnabled = false;
-  var centerXVelocity = 0.0;
-  var centerZVelocity = 0.0;
-  var zoomDistanceVelocity = 0.0;
-  var tiltVelocity = 0.0;
-  var rotationVelocity = 0.0;
-
   var setCenterCoordinates = function(newCenterX, newCenterZ) {
-    centerXVelocity = newCenterX - centerX;
-    centerZVelocity = newCenterZ - centerZ;
-
     centerX = CityTour.Math.clamp(newCenterX, MIN_CENTER_X, MAX_CENTER_X);
     centerZ = CityTour.Math.clamp(newCenterZ, MIN_CENTER_Z, MAX_CENTER_Z);
 
@@ -50,23 +33,18 @@ CityTour.OrbitalCamera = function(messageBroker) {
   };
 
   var setZoomDistance = function(newZoomDistance) {
-    newZoomDistance = CityTour.Math.clamp(newZoomDistance, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE);
-    zoomDistanceVelocity = newZoomDistance - zoomDistance;
-    zoomDistance = newZoomDistance;
+    zoomDistance = CityTour.Math.clamp(newZoomDistance, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE);
 
     messageBroker.publish("camera.updated", {});
   };
 
   var setTiltAngle = function(newTiltAngle) {
-    newTiltAngle = CityTour.Math.clamp(newTiltAngle, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
-    tiltVelocity = newTiltAngle - tiltAngle;
-    tiltAngle = newTiltAngle;
+    tiltAngle = CityTour.Math.clamp(newTiltAngle, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
 
     messageBroker.publish("camera.updated", {});
   };
 
   var setAzimuthAngle = function(newAzimuthAngle) {
-    rotationVelocity = newAzimuthAngle - azimuthAngle;
     azimuthAngle = newAzimuthAngle;
 
     if (azimuthAngle < -Math.PI) {
@@ -77,60 +55,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
     }
 
     messageBroker.publish("camera.updated", {});
-  };
-
-
-  var setIsVelocityEnabled = function(newIsVelocityEnabled) {
-    isVelocityEnabled = newIsVelocityEnabled;
-
-    if (newIsVelocityEnabled === false) {
-      centerXVelocity = 0.0;
-      centerZVelocity = 0.0;
-      zoomDistanceVelocity = 0.0;
-      tiltVelocity = 0.0;
-      rotationVelocity = 0.0;
-    }
-  };
-
-  var tickVelocity = function(frameCount) {
-    var i;
-
-    for (i = 0; i < frameCount; i++) {
-      centerXVelocity *= POSITION_VELOCITY_DECAY;
-      centerZVelocity *= POSITION_VELOCITY_DECAY;
-      zoomDistanceVelocity *= ZOOM_VELOCITY_DECAY;
-      tiltVelocity *= TILT_VELOCITY_DECAY;
-      rotationVelocity *= ROTATION_VELOCITY_DECAY;
-
-      setCenterCoordinates(centerX + centerXVelocity, centerZ + centerZVelocity);
-      setZoomDistance(zoomDistance + zoomDistanceVelocity);
-      setTiltAngle(tiltAngle + tiltVelocity);
-      setAzimuthAngle(azimuthAngle + rotationVelocity);
-    }
-
-    if (Math.abs(centerXVelocity) < MINIMUM_VELOCITY) {
-      centerXVelocity = 0.0;
-    }
-    if (Math.abs(centerZVelocity) < MINIMUM_VELOCITY) {
-      centerZVelocity = 0.0;
-    }
-    if (Math.abs(zoomDistanceVelocity) < MINIMUM_VELOCITY) {
-      zoomDistanceVelocity = 0.0;
-    }
-    if (Math.abs(tiltVelocity) < MINIMUM_VELOCITY) {
-      tiltVelocity = 0.0;
-    }
-    if (Math.abs(rotationVelocity) < MINIMUM_VELOCITY) {
-      rotationVelocity = 0.0;
-    }
-
-    if (centerXVelocity === 0.0 &&
-        centerZVelocity === 0.0 &&
-        zoomDistanceVelocity === 0.0 &&
-        tiltVelocity === 0.0 &&
-        rotationVelocity === 0.0) {
-      isVelocityEnabled = false;
-    }
   };
 
   var minimumCameraHeightAtCoordinates = function(terrain, sceneX, sceneZ) {
@@ -206,9 +130,6 @@ CityTour.OrbitalCamera = function(messageBroker) {
     setTiltAngle: setTiltAngle,
     azimuthAngle: function() { return azimuthAngle; },
     setAzimuthAngle: setAzimuthAngle,
-    isVelocityEnabled: function() { return isVelocityEnabled; },
-    setIsVelocityEnabled: setIsVelocityEnabled,
-    tickVelocity: tickVelocity,
     syncToCamera: syncToCamera,
     syncFromCamera: syncFromCamera,
   };
