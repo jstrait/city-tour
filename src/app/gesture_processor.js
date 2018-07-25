@@ -97,7 +97,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
 
   var processMultiTouchGestures = function(currentTouches) {
     var yDistanceDelta, tiltAngleDelta;
-    var distanceBetweenTouches, zoomDistanceDelta;
+    var distanceBetweenTouches, baseZoomDistanceDelta, zoomDistanceDelta;
 
     var previousGesture = currentGesture;
     currentGesture = determineMultiTouchGesture(currentTouches);
@@ -124,7 +124,9 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
       }
 
       distanceBetweenTouches = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
-      zoomDistanceDelta = (distanceBetweenTouches > 0) ? -1.666666666666667 : 1.666666666666667;
+
+      baseZoomDistanceDelta = 1.666666666666667 * (mapCamera.zoomDistance() / mapCamera.maxZoomDistance());
+      zoomDistanceDelta = (distanceBetweenTouches > 0) ? -baseZoomDistanceDelta : baseZoomDistanceDelta;
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
   };
