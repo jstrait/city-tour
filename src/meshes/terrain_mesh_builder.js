@@ -235,7 +235,6 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
   terrainMeshBuilder.build = function(terrain, roadNetwork) {
     var mapX, mapZ, triangle;
-    var sceneX, sceneZ;
     var leftRoad, topRoad, bottomRoad, rightRoad;
     var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
     var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
