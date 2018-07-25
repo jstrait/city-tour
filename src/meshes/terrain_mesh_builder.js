@@ -59,17 +59,21 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var mapZ = terrain.maxMapZ();
     var sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
     var triangle;
+    var leftX, rightX;
+    var leftHeight, rightHeight;
+    var leftWaterHeight, rightWaterHeight;
+    var material;
 
     for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
-      var leftX = CityTour.Coordinates.mapXToSceneX(mapX);
-      var rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
+      leftX = CityTour.Coordinates.mapXToSceneX(mapX);
+      rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
 
-      var leftHeight = terrain.heightAtCoordinates(mapX, mapZ);
-      var rightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ);
+      leftHeight = terrain.heightAtCoordinates(mapX, mapZ);
+      rightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ);
 
-      var leftWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
-      var rightWaterHeight = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ);
-      var material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
+      leftWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
+      rightWaterHeight = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ);
+      material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
 
       triangle = buildTriangleGeometry(leftX,  leftHeight,         sceneZ, material,
                                        leftX,  SIDE_BOTTOM_HEIGHT, sceneZ, material,
@@ -90,17 +94,21 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var mapZ = terrain.minMapZ();
     var sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
     var triangle;
+    var leftX, rightX;
+    var leftHeight, rightHeight;
+    var leftWaterHeight, rightWaterHeight;
+    var material;
 
     for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
-      var leftX = CityTour.Coordinates.mapXToSceneX(mapX);
-      var rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
+      leftX = CityTour.Coordinates.mapXToSceneX(mapX);
+      rightX = CityTour.Coordinates.mapXToSceneX(mapX + triangleWidth);
 
-      var leftHeight = terrain.heightAtCoordinates(mapX, mapZ);
-      var rightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ);
+      leftHeight = terrain.heightAtCoordinates(mapX, mapZ);
+      rightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ);
 
-      var leftWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
-      var rightWaterHeight = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ);
-      var material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
+      leftWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
+      rightWaterHeight = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ);
+      material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
 
       triangle = buildTriangleGeometry(rightX, rightHeight,        sceneZ, material,
                                        leftX,  SIDE_BOTTOM_HEIGHT, sceneZ, material,
@@ -121,18 +129,22 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var mapX = terrain.minMapX();
     var sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
     var triangle;
+    var topZ, bottomZ;
+    var topLandHeight, topWaterHeight, topTotalHeight;
+    var bottomLandHeight, bottomWaterHeight, bottomTotalHeight;
+    var neighboringWaterHeight;
 
     for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
-      var topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
-      var bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
+      topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
+      bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
 
-      var topLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ);
-      var topWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
-      var topTotalHeight = topLandHeight + topWaterHeight;
-      var bottomLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ + triangleDepth);
-      var bottomWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ + triangleDepth);
-      var bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
-      var neighboringWaterHeight = terrain.waterHeightAtCoordinates(mapX + 1, mapZ);
+      topLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ);
+      topWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
+      topTotalHeight = topLandHeight + topWaterHeight;
+      bottomLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ + triangleDepth);
+      bottomWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ + triangleDepth);
+      bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
+      neighboringWaterHeight = terrain.waterHeightAtCoordinates(mapX + 1, mapZ);
 
       if (topWaterHeight === 0.0 || bottomWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         topLandHeight = topTotalHeight;
@@ -172,18 +184,22 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var mapX = terrain.maxMapX();
     var sceneX = CityTour.Coordinates.mapXToSceneX(mapX);
     var triangle;
+    var topZ, bottomZ;
+    var topLandHeight, topWaterHeight, topTotalHeight;
+    var bottomLandHeight, bottomWaterHeight, bottomTotalHeight;
+    var neighboringWaterHeight;
 
     for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
-      var topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
-      var bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
+      topZ = CityTour.Coordinates.mapZToSceneZ(mapZ);
+      bottomZ = CityTour.Coordinates.mapZToSceneZ(mapZ + triangleDepth);
 
-      var topLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ);
-      var topWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
-      var topTotalHeight = topLandHeight + topWaterHeight;
-      var bottomLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ + triangleDepth);
-      var bottomWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ + triangleDepth);
-      var bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
-      var neighboringWaterHeight = terrain.waterHeightAtCoordinates(mapX - 1, mapZ + triangleDepth);
+      topLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ);
+      topWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ);
+      topTotalHeight = topLandHeight + topWaterHeight;
+      bottomLandHeight = terrain.landHeightAtCoordinates(mapX, mapZ + triangleDepth);
+      bottomWaterHeight = terrain.waterHeightAtCoordinates(mapX, mapZ + triangleDepth);
+      bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
+      neighboringWaterHeight = terrain.waterHeightAtCoordinates(mapX - 1, mapZ + triangleDepth);
 
       if (topWaterHeight === 0.0 || bottomWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         topLandHeight = topTotalHeight;
