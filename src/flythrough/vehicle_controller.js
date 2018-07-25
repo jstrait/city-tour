@@ -27,7 +27,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   MODE_TRANSITIONS[HOVERING_MODE] = DRIVING_MODE;
   MODE_TRANSITIONS[DRIVING_MODE] = BIRDSEYE_MODE;
 
-  var MINIMUM_HEIGHT_OFF_GROUND = 0.1;
+  var MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;
 
   var positionX = initial.positionX;
   var positionY = initial.positionY;
