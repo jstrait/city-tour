@@ -147,12 +147,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    descentTargetPositionX = targetPositionX + CityTour.Coordinates.mapXToSceneX(descentTargetMapX);
-    descentTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(descentTargetMapZ);
-    descentTargetPositionY = roadNetwork.getRoadHeight(CityTour.Coordinates.sceneXToMapX(descentTargetPositionX), CityTour.Coordinates.sceneZToMapZ(descentTargetPositionZ));
+    descentTargetPositionX = targetPositionX + descentTargetMapX;
+    descentTargetPositionZ = targetPositionZ + descentTargetMapZ;
+    descentTargetPositionY = roadNetwork.getRoadHeight(descentTargetPositionX, descentTargetPositionZ);
 
-    drivingTargetPositionX = targetPositionX + CityTour.Coordinates.mapXToSceneX(drivingTargetMapX);
-    drivingTargetPositionZ = targetPositionZ + CityTour.Coordinates.mapZToSceneZ(drivingTargetMapZ);
+    drivingTargetPositionX = targetPositionX + drivingTargetMapX;
+    drivingTargetPositionZ = targetPositionZ + drivingTargetMapZ;
     drivingTargetRotationY = determineAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     diveFrameCount = 105;
@@ -372,12 +372,10 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
   var roadHeightAtCurrentPosition = function() {
-    var mapX = CityTour.Coordinates.sceneXToMapX(positionX);
-    var mapZ = CityTour.Coordinates.sceneZToMapZ(positionZ);
-    var roadHeight = roadNetwork.getRoadHeight(mapX, mapZ);
+    var roadHeight = roadNetwork.getRoadHeight(positionX, positionZ);
 
     if (roadHeight === undefined) {
-      roadHeight = terrain.heightAtCoordinates(mapX, mapZ) || 0.0;
+      roadHeight = terrain.heightAtCoordinates(positionX, positionZ) || 0.0;
     }
 
     return roadHeight;
@@ -394,20 +392,20 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
           if (verticalMode === BIRDSEYE_MODE || verticalMode === HOVERING_MODE) {
             if (aerialNavigator === undefined) {
-              navigator = new CityTour.AerialNavigator(roadNetwork, CityTour.Coordinates.sceneXToMapX(positionX), CityTour.Coordinates.sceneZToMapZ(positionZ));
+              navigator = new CityTour.AerialNavigator(roadNetwork, positionX, positionZ);
               aerialNavigator = navigator;
             }
           }
           else if (verticalMode === DRIVING_MODE) {
             aerialNavigator = undefined;
-            navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder, CityTour.Coordinates.sceneXToMapX(positionX), CityTour.Coordinates.sceneZToMapZ(positionZ));
+            navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder,positionX, positionZ);
           }
         }
 
         navigator.nextTarget();
 
-        animations = buildNextAnimations(CityTour.Coordinates.mapXToSceneX(navigator.targetMapX()),
-                                         CityTour.Coordinates.mapZToSceneZ(navigator.targetMapZ()));
+        animations = buildNextAnimations(navigator.targetMapX(),
+                                         navigator.targetMapZ());
       }
     }
 

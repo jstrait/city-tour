@@ -57,11 +57,11 @@ CityTour.OrbitalCamera = function(messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  var minimumCameraHeightAtCoordinates = function(terrain, sceneX, sceneZ) {
+  var minimumCameraHeightAtCoordinates = function(terrain, cameraX, cameraZ) {
     var terrainHeight = Number.NEGATIVE_INFINITY;
 
     if (terrain !== undefined) {
-      terrainHeight = terrain.heightAtCoordinates(CityTour.Coordinates.sceneXToMapX(sceneX), CityTour.Coordinates.sceneZToMapZ(sceneZ));
+      terrainHeight = terrain.heightAtCoordinates(cameraX, cameraZ);
       if (terrainHeight === undefined) {
         terrainHeight = Number.NEGATIVE_INFINITY;
       }

@@ -47,12 +47,9 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
       rotationY: camera.rotation.y,
     };
 
-    var targetSceneX = CityTour.Coordinates.mapXToSceneX(worldData.centerX);
-    var targetSceneZ = CityTour.Coordinates.mapZToSceneZ(worldData.centerZ);
-
     mapCamera.setIsVelocityEnabled(false);
 
-    vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, targetSceneX, targetSceneZ);
+    vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, worldData.centerX, worldData.centerZ);
     vehicleView = new CityTour.VehicleView(vehicleController);
     mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", { vehicleView: vehicleView });

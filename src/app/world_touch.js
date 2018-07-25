@@ -20,14 +20,12 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
 
     while (ray.y > 0.0 && worldPosition === undefined) {
       ray = ray.add(movementTowardXZPlaneAmount);
-      mapX = CityTour.Coordinates.sceneXToMapX(ray.x);
-      mapZ = CityTour.Coordinates.sceneZToMapZ(ray.z);
 
-      if (mapX >= terrain.minMapX() &&
-          mapX <= terrain.maxMapX() &&
-          mapZ >= terrain.minMapZ() &&
-          mapZ <= terrain.maxMapZ()) {
-        if (ray.y <= terrain.heightAtCoordinates(mapX, mapZ)) {
+      if (ray.x >= terrain.minMapX() &&
+          ray.x <= terrain.maxMapX() &&
+          ray.z >= terrain.minMapZ() &&
+          ray.z <= terrain.maxMapZ()) {
+        if (ray.y <= terrain.heightAtCoordinates(ray.x, ray.z)) {
           worldPosition = ray;
         }
       }

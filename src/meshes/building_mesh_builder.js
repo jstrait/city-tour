@@ -39,7 +39,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
 
-    var mapX, mapZ, sceneX, sceneZ;
+    var mapX, mapZ, leftX, topZ;
     var block;
 
     var reusableBuildingGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -52,13 +52,13 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
       var cylinderMesh;
 
       reusableBuildingMesh.scale.x = lot.dimensions.width * CityTour.Config.BLOCK_WIDTH;
-      reusableBuildingMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
+      reusableBuildingMesh.position.x = leftX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
 
       reusableBuildingMesh.scale.y = lot.height;
       reusableBuildingMesh.position.y = (lot.height / 2) + lot.yFloor;
 
       reusableBuildingMesh.scale.z = lot.dimensions.depth * CityTour.Config.BLOCK_DEPTH;
-      reusableBuildingMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
+      reusableBuildingMesh.position.z = topZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
 
       reusableBuildingMesh.updateMatrix();
 
@@ -66,19 +66,19 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
 
       if (lot.roofStyle === 'antenna') {
         cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4));
-        cylinderMesh.position.x = sceneX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
+        cylinderMesh.position.x = leftX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
         cylinderMesh.position.y = lot.yFloor + lot.height + 0.416666666666667;
-        cylinderMesh.position.z = sceneZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
+        cylinderMesh.position.z = topZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
         cylinderMesh.updateMatrix();
         buildingGeometries[materialIndex].merge(cylinderMesh.geometry, cylinderMesh.matrix);
       }
     };
 
     for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
-      sceneX = CityTour.Coordinates.mapXToSceneX(mapX) + HALF_STREET_WIDTH;
+      leftX = mapX + HALF_STREET_WIDTH;
 
       for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
-        sceneZ = CityTour.Coordinates.mapZToSceneZ(mapZ) + HALF_STREET_DEPTH;
+        topZ = mapZ + HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(mapX, mapZ);
         block.forEach(generateLotBuilding);
