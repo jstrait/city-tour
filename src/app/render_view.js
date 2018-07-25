@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.RenderView = function(container, scene) {
-  var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.1, FAR = 10000;
+  var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.005, FAR = 1000;
 
   var renderer;
   var camera;
