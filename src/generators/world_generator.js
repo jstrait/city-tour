@@ -96,6 +96,7 @@ CityTour.WorldGenerator = (function() {
       terrain: terrain,
       roadNetwork: roadNetwork,
       buildings: buildings,
+      neighborhoods: neighborhoods,
       centerX: (neighborhoods.length >= 1) ? neighborhoods[0].centerX : undefined,
       centerZ: (neighborhoods.length >= 1) ? neighborhoods[0].centerZ : undefined,
     };

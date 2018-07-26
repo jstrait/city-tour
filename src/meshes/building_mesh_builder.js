@@ -5,6 +5,7 @@ CityTour.Meshes = CityTour.Meshes || {};
 
 CityTour.Meshes.BuildingMeshBuilder = function() {
   var MAX_BUILDING_MATERIALS = 50;
+  var SHOW_NEIGHBORHOOD_CENTER_MARKERS = false;
 
   var buildMaterials = function() {
     var i;
@@ -92,10 +93,24 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     }
   };
 
+  var generateNeighborhoodCenterMarkersMesh = function(neighborhoods) {
+    var neighborhoodCenterGeometry = new THREE.Geometry();
+    var reusableNeighborhoodCenterMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 15, 0.5));
+    var i;
+
+    for (i = 0; i < neighborhoods.length; i++) {
+      reusableNeighborhoodCenterMesh.position.set(neighborhoods[i].centerX, 7.5, neighborhoods[i].centerZ);
+      reusableNeighborhoodCenterMesh.updateMatrix();
+      neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
+    }
+
+    return new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({ color: 0xff00ff }));
+  };
+
 
   var buildingMeshBuilder = {};
 
-  buildingMeshBuilder.build = function(buildings, roadNetwork) {
+  buildingMeshBuilder.build = function(buildings, roadNetwork, neighborhoods) {
     var i;
     var buildingMaterials = buildMaterials();
     var buildingGeometries = buildEmptyGeometriesForBuildings();
@@ -105,6 +120,10 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
 
     for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
       buildingMeshes.push(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
+    }
+
+    if (SHOW_NEIGHBORHOOD_CENTER_MARKERS === true && neighborhoods !== undefined) {
+      buildingMeshes.push(generateNeighborhoodCenterMarkersMesh(neighborhoods));
     }
 
     return buildingMeshes;

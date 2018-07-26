@@ -39,8 +39,8 @@ CityTour.Meshes.Builder = function() {
     return buildMeshGroup("roadNetworkMeshes", CityTour.Meshes.RoadMeshBuilder().build(terrain, roadNetwork));
   };
 
-  var buildBuildingMeshes = function(buildings, roadNetwork) {
-    return buildMeshGroup("buildingMeshes", CityTour.Meshes.BuildingMeshBuilder().build(buildings, roadNetwork));
+  var buildBuildingMeshes = function(buildings, roadNetwork, neighborhoods) {
+    return buildMeshGroup("buildingMeshes", CityTour.Meshes.BuildingMeshBuilder().build(buildings, roadNetwork, neighborhoods));
   };
 
 

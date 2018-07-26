@@ -36,7 +36,7 @@ CityTour.SceneView = function(containerEl, messageBroker) {
     roadEndTime = new Date();
 
     buildingsStartTime = new Date();
-    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.roadNetwork));
+    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.roadNetwork, newWorldData.neighborhoods));
     buildingsEndTime = new Date();
 
     centerOfCityMarkerMesh.position.x = newWorldData.centerX;
