@@ -67,8 +67,8 @@ CityTour.SceneView = function(containerEl, messageBroker) {
                                             new THREE.MeshBasicMaterial({ color: 0xff00ff }));
     group.add(centerOfCityMarkerMesh);
 
-    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
-                                              new THREE.MeshBasicMaterial({ color: 0x55ff00 }));
+    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(MARKER_WIDTH, 25, 25),
+                                              new THREE.MeshBasicMaterial({ color: 0xff0000 }));
     group.add(centerOfActionMarkerMesh);
 
     targetOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
