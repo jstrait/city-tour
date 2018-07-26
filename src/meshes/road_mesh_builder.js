@@ -103,8 +103,13 @@ CityTour.Meshes.RoadMeshBuilder = function() {
     var northRoad, eastRoad, southRoad, westRoad;
     var selfSurfaceHeight, southSurfaceHeight, eastSurfaceHeight;
 
-    for (mapX = roadNetwork.minColumn(); mapX <= roadNetwork.maxColumn(); mapX++) {
-      for (mapZ = roadNetwork.minRow(); mapZ <= roadNetwork.maxRow(); mapZ++) {
+    var minX = roadNetwork.minColumn();
+    var maxX = roadNetwork.maxColumn();
+    var minZ = roadNetwork.minRow();
+    var maxZ = roadNetwork.maxRow();
+
+    for (mapX = minX; mapX <= maxX; mapX++) {
+      for (mapZ = minZ; mapZ <= maxZ; mapZ++) {
         if (roadNetwork.hasIntersection(mapX, mapZ)) {
           selfSurfaceHeight = roadNetwork.getRoadHeight(mapX, mapZ);
 

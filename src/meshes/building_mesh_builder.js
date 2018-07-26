@@ -40,6 +40,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
 
     var mapX, mapZ, leftX, topZ;
+    var minX, maxX, minZ, maxZ;
     var block;
 
     var reusableBuildingGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -74,10 +75,15 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
       }
     };
 
-    for (mapX = roadNetwork.minColumn(); mapX < roadNetwork.maxColumn(); mapX++) {
+    minX = roadNetwork.minColumn();
+    maxX = roadNetwork.maxColumn();
+    minZ = roadNetwork.minRow();
+    maxZ = roadNetwork.maxRow();
+
+    for (mapX = minX; mapX < maxX; mapX++) {
       leftX = mapX + HALF_STREET_WIDTH;
 
-      for (mapZ = roadNetwork.minRow(); mapZ < roadNetwork.maxRow(); mapZ++) {
+      for (mapZ = minZ; mapZ < maxZ; mapZ++) {
         topZ = mapZ + HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(mapX, mapZ);
