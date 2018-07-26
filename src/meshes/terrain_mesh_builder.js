@@ -4,10 +4,8 @@ var CityTour = CityTour || {};
 CityTour.Meshes = CityTour.Meshes || {};
 
 CityTour.Meshes.TerrainMeshBuilder = function() {
-  var TERRAIN_COLOR_1 = new THREE.Color(0.0, 0.48, 0.0);
-  var TERRAIN_COLOR_2 = new THREE.Color(0.0, 0.48, 0.0);
-  var WATER_COLOR_1 = new THREE.Color(0.1, 0.2, 1.0);
-  var WATER_COLOR_2 = new THREE.Color(0.1, 0.2, 1.0);
+  var LAND_COLOR = new THREE.Color(0.0, 0.48, 0.0);
+  var WATER_COLOR = new THREE.Color(0.1, 0.2, 1.0);
 
   var LAND = 1;
   var WATER = 2;
@@ -21,32 +19,21 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
   var reusableTriangle = new THREE.Geometry();
   reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];
 
-  var buildTriangleGeometry = function(x1, y1, z1, material1, x2, y2, z2, material2, x3, y3, z3, material3, color_variant) {
-    var waterColor, landColor;
-
+  var buildTriangleGeometry = function(x1, y1, z1, material1, x2, y2, z2, material2, x3, y3, z3, material3) {
     reusableTriangle.vertices = [ new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2), new THREE.Vector3(x3, y3, z3) ];
-
-    if (color_variant === 1) {
-      waterColor = WATER_COLOR_1;
-      landColor = TERRAIN_COLOR_1;
-    }
-    else {
-      waterColor = WATER_COLOR_2;
-      landColor = TERRAIN_COLOR_2;
-    }
 
     if (SHADING_MODE === SOLID_SHADING_MODE) {
       if (material1 === WATER && material2 === WATER && material3 == WATER) {
-        reusableTriangle.faces[0].vertexColors = [waterColor, waterColor, waterColor];
+        reusableTriangle.faces[0].vertexColors = [WATER_COLOR, WATER_COLOR, WATER_COLOR];
       }
       else {
-        reusableTriangle.faces[0].vertexColors = [landColor, landColor, landColor];
+        reusableTriangle.faces[0].vertexColors = [LAND_COLOR, LAND_COLOR, LAND_COLOR];
       }
     }
     else {
-      reusableTriangle.faces[0].vertexColors = [(material1 === WATER) ? waterColor : landColor,
-                                                (material2 === WATER) ? waterColor : landColor,
-                                                (material3 === WATER) ? waterColor : landColor,];
+      reusableTriangle.faces[0].vertexColors = [(material1 === WATER) ? WATER_COLOR : LAND_COLOR,
+                                                (material2 === WATER) ? WATER_COLOR : LAND_COLOR,
+                                                (material3 === WATER) ? WATER_COLOR : LAND_COLOR,];
     }
 
     reusableTriangle.computeFaceNormals();
@@ -76,14 +63,12 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
       triangle = buildTriangleGeometry(leftX,  leftHeight,         mapZ, material,
                                        leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       rightX, rightHeight,        mapZ, material,
-                                       1);
+                                       rightX, rightHeight,        mapZ, material);
       terrainGeometry.merge(triangle);
 
       triangle = buildTriangleGeometry(leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
                                        rightX, SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       rightX, rightHeight,        mapZ, material,
-                                       1);
+                                       rightX, rightHeight,        mapZ, material);
       terrainGeometry.merge(triangle);
     }
   };
@@ -110,14 +95,12 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
       triangle = buildTriangleGeometry(rightX, rightHeight,        mapZ, material,
                                        leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       leftX,  leftHeight,         mapZ, material,
-                                       1);
+                                       leftX,  leftHeight,         mapZ, material);
       terrainGeometry.merge(triangle);
 
       triangle = buildTriangleGeometry(leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
                                        rightX, rightHeight,        mapZ, material,
-                                       rightX, SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       1);
+                                       rightX, SIDE_BOTTOM_HEIGHT, mapZ, material);
       terrainGeometry.merge(triangle);
     }
   };
@@ -150,27 +133,23 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
       triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
                                        mapX, bottomLandHeight,   bottomZ, LAND,
-                                       mapX, topLandHeight,      topZ,    LAND,
-                                       1);
+                                       mapX, topLandHeight,      topZ,    LAND);
       terrainGeometry.merge(triangle);
 
       triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
                                        mapX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
-                                       mapX, bottomLandHeight,   bottomZ, LAND,
-                                       1);
+                                       mapX, bottomLandHeight,   bottomZ, LAND);
       terrainGeometry.merge(triangle);
 
       if (topWaterHeight > 0.0 && bottomWaterHeight > 0.0 && neighboringWaterHeight > 0.0) {
         triangle = buildTriangleGeometry(mapX, topLandHeight,     topZ,    WATER,
                                          mapX, bottomTotalHeight, bottomZ, WATER,
-                                         mapX, topTotalHeight,    topZ,    WATER,
-                                         1);
+                                         mapX, topTotalHeight,    topZ,    WATER);
         terrainGeometry.merge(triangle);
 
         triangle = buildTriangleGeometry(mapX, topLandHeight,     topZ,    WATER,
                                          mapX, bottomLandHeight,  bottomZ, WATER,
-                                         mapX, bottomTotalHeight, bottomZ, WATER,
-                                         1);
+                                         mapX, bottomTotalHeight, bottomZ, WATER);
         terrainGeometry.merge(triangle);
       }
     }
@@ -204,27 +183,23 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
       triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
                                        mapX, topLandHeight,      topZ,    LAND,
-                                       mapX, bottomLandHeight,   bottomZ, LAND,
-                                       1);
+                                       mapX, bottomLandHeight,   bottomZ, LAND);
       terrainGeometry.merge(triangle);
 
       triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
                                        mapX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
-                                       mapX, topLandHeight,      topZ,    LAND,
-                                       1);
+                                       mapX, topLandHeight,      topZ,    LAND);
       terrainGeometry.merge(triangle);
 
       if (topWaterHeight > 0.0 && bottomWaterHeight > 0.0 && neighboringWaterHeight > 0.0) {
         triangle = buildTriangleGeometry(mapX, bottomLandHeight,  bottomZ, WATER,
                                          mapX, topTotalHeight,    topZ,    WATER,
-                                         mapX, bottomTotalHeight, bottomZ, WATER,
-                                         1);
+                                         mapX, bottomTotalHeight, bottomZ, WATER);
         terrainGeometry.merge(triangle);
 
         triangle = buildTriangleGeometry(mapX, bottomLandHeight, bottomZ, WATER,
                                          mapX, topLandHeight,    topZ,    WATER,
-                                         mapX, topTotalHeight,   topZ,    WATER,
-                                         1);
+                                         mapX, topTotalHeight,   topZ,    WATER);
         terrainGeometry.merge(triangle);
       }
     }
@@ -335,12 +310,12 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
         // Core triangles
         triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ, topLeftMaterial,
                                          bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                         topRightX,   topRightHeight,   topRightZ, topRightMaterial, 1);
+                                         topRightX,   topRightHeight,   topRightZ, topRightMaterial);
         terrainGeometry.merge(triangle);
 
         triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                          bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                         topRightX,    topRightHeight, topRightZ, topRightMaterial, 2);
+                                         topRightX,    topRightHeight, topRightZ, topRightMaterial);
         terrainGeometry.merge(triangle);
 
 
@@ -349,21 +324,21 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           if (topLeftRoad && !bottomLeftRoad) {
             triangle = buildTriangleGeometry(mapX, topLeftHeight, topLeftZ, topLeftMaterial,
                                              mapX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             topLeftX, topLeftHeight, topLeftZ, topLeftMaterial, 2);
+                                             topLeftX, topLeftHeight, topLeftZ, topLeftMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (bottomLeftRoad && !topLeftRoad) {
             triangle = buildTriangleGeometry(mapX, topLeftHeight, topLeftZ, topLeftMaterial,
                                              mapX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial, 2);
+                                             bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (topLeftRoad && bottomLeftRoad) {
             triangle = buildTriangleGeometry(bottomLeftX - CityTour.Config.STREET_WIDTH, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             topLeftX, topLeftHeight, topLeftZ, topLeftMaterial, 2);
+                                             topLeftX, topLeftHeight, topLeftZ, topLeftMaterial);
             terrainGeometry.merge(triangle);
           }
         }
@@ -374,7 +349,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           if (topRightRoad && !bottomRightRoad) {
             triangle = buildTriangleGeometry(mapX + triangleWidth, bottomRightHeight, bottomRightZ, bottomRightMaterial,
                                              mapX + triangleWidth, topRightHeight, topRightZ, topRightMaterial,
-                                             topRightX, topRightHeight, topRightZ, topRightMaterial, 1);
+                                             topRightX, topRightHeight, topRightZ, topRightMaterial);
 
             terrainGeometry.merge(triangle);
           }
@@ -382,14 +357,14 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           if (bottomRightRoad && !topRightRoad) {
             triangle = buildTriangleGeometry(bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
                                              mapX + triangleWidth, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                             mapX + triangleWidth, topRightHeight, topRightZ, topRightMaterial, 1);
+                                             mapX + triangleWidth, topRightHeight, topRightZ, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (topRightRoad && bottomRightRoad) {
             triangle = buildTriangleGeometry(topRightX,    topRightHeight, topRightZ, topRightMaterial,
                                              bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                             topRightX + CityTour.Config.STREET_WIDTH, topRightHeight, topRightZ, topRightMaterial, 1);
+                                             topRightX + CityTour.Config.STREET_WIDTH, topRightHeight, topRightZ, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
         }
@@ -399,21 +374,21 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           if (topLeftRoad && !topRightRoad) {
             triangle = buildTriangleGeometry(topLeftX,  topLeftHeight, mapZ, topLeftMaterial,
                                              topLeftX,  topLeftHeight, topLeftZ, topLeftMaterial,
-                                             mapX + triangleWidth, topRightHeight, mapZ, topRightMaterial, 2);
+                                             mapX + triangleWidth, topRightHeight, mapZ, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (topRightRoad && !topLeftRoad) {
             triangle = buildTriangleGeometry(mapX, topLeftHeight, mapZ, topLeftMaterial,
                                              topRightX, topRightHeight, topRightZ, topRightMaterial,
-                                             topRightX, topRightHeight, mapZ, topRightMaterial, 2);
+                                             topRightX, topRightHeight, mapZ, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (topLeftRoad && topRightRoad) {
             triangle = buildTriangleGeometry(topLeftX, topLeftHeight, topLeftZ, topLeftMaterial,
                                              topRightX, topRightHeight, topRightZ, topRightMaterial,
-                                             topRightX, topRightHeight, topRightZ - CityTour.Config.STREET_DEPTH, topRightMaterial, 2);
+                                             topRightX, topRightHeight, topRightZ - CityTour.Config.STREET_DEPTH, topRightMaterial);
 
             terrainGeometry.merge(triangle);
           }
@@ -425,21 +400,21 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           if (bottomLeftRoad && !bottomRightRoad) {
             triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              bottomLeftX,  bottomLeftHeight, mapZ + triangleDepth, bottomLeftMaterial,
-                                             bottomRightX, bottomRightHeight, mapZ + triangleDepth, bottomRightMaterial, 1);
+                                             bottomRightX, bottomRightHeight, mapZ + triangleDepth, bottomRightMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (bottomRightRoad && !bottomLeftRoad) {
             triangle = buildTriangleGeometry(mapX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              bottomRightX, bottomRightHeight, mapZ + triangleDepth, bottomRightMaterial,
-                                             bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial, 1);
+                                             bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial);
             terrainGeometry.merge(triangle);
           }
 
           if (bottomLeftRoad && bottomRightRoad) {
             triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              bottomLeftX,  bottomLeftHeight, bottomLeftZ + CityTour.Config.STREET_DEPTH, bottomLeftMaterial,
-                                             bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial, 1);
+                                             bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial);
 
             terrainGeometry.merge(triangle);
           }
