@@ -51,9 +51,9 @@ CityTour.SceneView = function(containerEl, messageBroker) {
   };
 
   var buildMarkerMeshes = function() {
-    var MARKER_WIDTH = 0.416666666666667;
-    var MARKER_DEPTH = 0.416666666666667;
-    var MARKER_HEIGHT = 16.666666666666667;
+    var MARKER_WIDTH = 0.2;
+    var MARKER_DEPTH = 0.2;
+    var MARKER_HEIGHT = 16;
 
     var markersStartTime, markersEndTime;
     var group;
