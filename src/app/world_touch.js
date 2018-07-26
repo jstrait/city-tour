@@ -12,7 +12,7 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
     normalizedScreenVector.unproject(camera);
     direction = normalizedScreenVector.sub(camera.position).normalize();
     ray = camera.position.clone();
-    movementTowardXZPlaneAmount = direction.clone().multiplyScalar(0.833333333333333);
+    movementTowardXZPlaneAmount = direction.clone().multiplyScalar(0.3333333333333333);
 
     if (movementTowardXZPlaneAmount.y >= 0.0) {
       return ray;
