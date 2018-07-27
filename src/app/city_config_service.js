@@ -36,6 +36,7 @@ CityTour.CityConfigService = function() {
       },
       roadNetwork: {
         present: true,
+        maxRoadAngle: Math.PI / 6,
         safeFromDecayBlocks: safeFromDecayBlocks,
       },
       zonedBlocks: {

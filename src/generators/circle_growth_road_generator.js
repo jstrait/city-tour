@@ -3,8 +3,6 @@
 var CityTour = CityTour || {};
 
 CityTour.CircleGrowthRoadGenerator = (function() {
-  var MAX_STEEPNESS = Math.PI / 6;
-
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
     var MIN_MAP_X = Math.max(terrain.minMapX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
     var MAX_MAP_X = Math.min(terrain.maxMapX(), (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
@@ -39,7 +37,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
       var heightAtPoint2 = terrain.heightAtCoordinates(targetMapX, targetMapZ);
       var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
 
-      return Math.abs(angle) > MAX_STEEPNESS;
+      return Math.abs(angle) > config.maxRoadAngle;
     };
 
     var shouldConnectIntersections = function(terrain, mapX1, mapZ1, mapX2, mapZ2) {

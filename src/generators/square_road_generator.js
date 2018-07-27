@@ -3,8 +3,6 @@
 var CityTour = CityTour || {};
 
 CityTour.SquareRoadGenerator = (function() {
-  var MAX_STEEPNESS = Math.PI / 6;
-
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
     var leftX = Math.max(terrain.minMapX(), neighborhoodCenterX - 6);
     var rightX = Math.min(terrain.maxMapX(), neighborhoodCenterX + 6);
@@ -30,7 +28,7 @@ CityTour.SquareRoadGenerator = (function() {
     var heightAtPoint2 = terrain.heightAtCoordinates(targetMapX, targetMapZ);
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
 
-    return Math.abs(angle) > MAX_STEEPNESS;
+    return Math.abs(angle) > config.maxRoadAngle;
   };
 
   var addEdge = function(terrain, roadNetwork, mapX1, mapZ1, mapX2, mapZ2) {

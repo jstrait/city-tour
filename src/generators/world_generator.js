@@ -54,6 +54,7 @@ CityTour.WorldGenerator = (function() {
           rowCount: config.neighborhoods.rowCount,
         },
         safeFromDecayBlocks: config.roadNetwork.safeFromDecayBlocks,
+        maxRoadAngle: config.roadNetwork.maxRoadAngle,
       };
 
       roadNetwork = CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, neighborhoods, roadConfig);
