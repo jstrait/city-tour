@@ -11,6 +11,7 @@ CityTour.RiverGenerator = (function() {
   var BOTTOM_BANK_OFFSET = 12 * SUB_DIVISIONS;
   var TOP_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
   var BOTTOM_BANK_MAX_JITTER = 6 * SUB_DIVISIONS;
+  var WATER_HEIGHT = 0.416666666666667;
 
   var generateBaseRiverCurvePoints = function(middleRow, columnsToGenerate) {
     var riverBendCount = CityTour.Math.randomInteger(MIN_RIVER_BENDS, MAX_RIVER_BENDS);
@@ -80,8 +81,6 @@ CityTour.RiverGenerator = (function() {
   };
 
   var addRiver = function(terrainCoordinates, middleRow, columnsToGenerate) {
-    var WATER_HEIGHT = 0.416666666666667;
-
     var x, z, xCoordinate;
     var topVector, bottomVector;
     var xStep = 1 / columnsToGenerate;
