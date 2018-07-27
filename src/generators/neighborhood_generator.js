@@ -3,7 +3,7 @@
 var CityTour = CityTour || {};
 
 CityTour.NeighborhoodGenerator = (function() {
-  var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 7;
+  var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 10;
 
   var calculateFlatnessScores = function(terrain) {
     var flatnessScores = [];
