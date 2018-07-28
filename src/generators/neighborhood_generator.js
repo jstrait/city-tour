@@ -16,10 +16,15 @@ CityTour.NeighborhoodGenerator = (function() {
     var flatnessScores = [];
     var x, z;
 
-    for (x = terrain.minMapX(); x <= terrain.maxMapX(); x++) {
+    var minX = terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN;
+    var maxX = terrain.maxMapX() - FLATNESS_WINDOW_WIDTH_MARGIN;
+    var minZ = terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
+    var maxZ = terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
+
+    for (x = minX; x <= maxX; x++) {
       flatnessScores[x] = [];
 
-      for (z = terrain.minMapZ(); z <= terrain.maxMapZ(); z++) {
+      for (z = minZ; z <= maxZ; z++) {
         if (terrain.waterHeightAtCoordinates(x, z) > 0.0) {
           flatnessScores[x][z] = Number.POSITIVE_INFINITY;
         }
@@ -78,8 +83,13 @@ CityTour.NeighborhoodGenerator = (function() {
     var distanceToClosestNeighborhood;
     var x, z;
 
-    for (x = terrain.minMapX() + 1; x < terrain.maxMapX(); x++) {
-      for (z = terrain.minMapZ() + 1; z < terrain.maxMapZ(); z++) {
+    var minX = terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN;
+    var maxX = terrain.maxMapX() - FLATNESS_WINDOW_WIDTH_MARGIN;
+    var minZ = terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
+    var maxZ = terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
+
+    for (x = minX; x < maxX; x++) {
+      for (z = minZ; z < maxZ; z++) {
         centralityScore = Math.abs(x) + Math.abs(z);
 
         flatnessScore = flatnessScores[x][z];
