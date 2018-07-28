@@ -5,6 +5,11 @@ var CityTour = CityTour || {};
 CityTour.NeighborhoodGenerator = (function() {
   var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 10;
 
+  // The size of the square that is used to calculate the terrain flatness
+  // around a given point. Each value should be an odd number.
+  var NEIGHBORHOOD_CENTER_WIDTH = 9;
+  var NEIGHBORHOOD_CENTER_DEPTH = 9;
+
   var calculateFlatnessScores = function(terrain) {
     var flatnessScores = [];
     var x, z;
@@ -29,10 +34,10 @@ CityTour.NeighborhoodGenerator = (function() {
     var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
     var pointCount = 0;
     var totalHeightDeltas = 0.0;
-    var minX = Math.max(terrain.minMapX(), centerX - 4);
-    var maxX = Math.min(terrain.maxMapX(), centerX + 4);
-    var minZ = Math.max(terrain.minMapZ(), centerZ - 4);
-    var maxZ = Math.min(terrain.maxMapZ(), centerZ + 4);
+    var minX = Math.max(terrain.minMapX(), centerX - ((NEIGHBORHOOD_CENTER_WIDTH - 1) / 2));
+    var maxX = Math.min(terrain.maxMapX(), centerX + ((NEIGHBORHOOD_CENTER_WIDTH - 1) / 2));
+    var minZ = Math.max(terrain.minMapZ(), centerZ - ((NEIGHBORHOOD_CENTER_DEPTH - 1) / 2));
+    var maxZ = Math.min(terrain.maxMapZ(), centerZ + ((NEIGHBORHOOD_CENTER_DEPTH - 1) / 2));
     var x, z;
 
     for (x = minX; x <= maxX; x++) {
