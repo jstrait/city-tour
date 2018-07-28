@@ -12,8 +12,9 @@ CityTour.NeighborhoodGenerator = (function() {
   var FLATNESS_WINDOW_WIDTH_MARGIN = (NEIGHBORHOOD_CENTER_WIDTH - 1) / 2;
   var FLATNESS_WINDOW_DEPTH_MARGIN = (NEIGHBORHOOD_CENTER_DEPTH - 1) / 2;
 
-  var calculateFlatnessScores = function(terrain) {
-    var flatnessScores = [];
+  var calculateScores = function(terrain) {
+    var scores = [];
+    var score;
     var x, z;
 
     var minX = terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN;
@@ -22,19 +23,19 @@ CityTour.NeighborhoodGenerator = (function() {
     var maxZ = terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
 
     for (x = minX; x <= maxX; x++) {
-      flatnessScores[x] = [];
+      scores[x] = [];
 
       for (z = minZ; z <= maxZ; z++) {
-        if (terrain.waterHeightAtCoordinates(x, z) > 0.0) {
-          flatnessScores[x][z] = Number.POSITIVE_INFINITY;
+        score = { flatness: Number.POSITIVE_INFINITY, centrality: Math.abs(x) + Math.abs(z) };
+        if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
+          score.flatness = averageHeightDifferenceAroundPoint(terrain, x, z);
         }
-        else {
-          flatnessScores[x][z] = averageHeightDifferenceAroundPoint(terrain, x, z);
-        }
+
+        scores[x][z] = score;
       }
     }
 
-    return flatnessScores;
+    return scores;
   };
 
   var averageHeightDifferenceAroundPoint = function(terrain, centerX, centerZ) {
@@ -76,10 +77,10 @@ CityTour.NeighborhoodGenerator = (function() {
     return minDistanceToNeighborhood;
   };
 
-  var bestNeighborhoodSite = function(terrain, flatnessScores, neighborhoods) {
+  var bestNeighborhoodSite = function(terrain, scores, neighborhoods) {
     var bestSiteCoordinates = { x: terrain.minMapX(), z: terrain.minMapZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
-    var score, centralityScore, flatnessScore;
+    var score, scoreComponents;
     var distanceToClosestNeighborhood;
     var x, z;
 
@@ -90,16 +91,14 @@ CityTour.NeighborhoodGenerator = (function() {
 
     for (x = minX; x < maxX; x++) {
       for (z = minZ; z < maxZ; z++) {
-        centralityScore = Math.abs(x) + Math.abs(z);
-
-        flatnessScore = flatnessScores[x][z];
+        scoreComponents = scores[x][z];
 
         distanceToClosestNeighborhood = closestNeighborhoodDistance(neighborhoods, x, z);
         if (distanceToClosestNeighborhood < MIN_DISTANCE_BETWEEN_NEIGHBORHOODS) {
           distanceToClosestNeighborhood = 1000;
         }
 
-        score = centralityScore + (flatnessScore * 10) + distanceToClosestNeighborhood;
+        score = scoreComponents.centrality + (scoreComponents.flatness * 10) + distanceToClosestNeighborhood;
 
         if (score < bestSiteScore) {
           bestSiteScore = score;
@@ -113,13 +112,13 @@ CityTour.NeighborhoodGenerator = (function() {
   };
 
   var generate = function(terrain, count) {
-    var flatnessScores = calculateFlatnessScores(terrain);
+    var scores = calculateScores(terrain);
     var neighborhoods = [];
     var neighborhoodCenter;
     var i;
 
     for (i = 0; i < count; i++) {
-      neighborhoodCenter = bestNeighborhoodSite(terrain, flatnessScores, neighborhoods);
+      neighborhoodCenter = bestNeighborhoodSite(terrain, scores, neighborhoods);
       neighborhoods.push({ centerX: neighborhoodCenter.x, centerZ: neighborhoodCenter.z });
     }
 
