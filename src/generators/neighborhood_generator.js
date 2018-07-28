@@ -9,6 +9,8 @@ CityTour.NeighborhoodGenerator = (function() {
   // around a given point. Each value should be an odd number.
   var NEIGHBORHOOD_CENTER_WIDTH = 9;
   var NEIGHBORHOOD_CENTER_DEPTH = 9;
+  var FLATNESS_WINDOW_WIDTH_MARGIN = (NEIGHBORHOOD_CENTER_WIDTH - 1) / 2;
+  var FLATNESS_WINDOW_DEPTH_MARGIN = (NEIGHBORHOOD_CENTER_DEPTH - 1) / 2;
 
   var calculateFlatnessScores = function(terrain) {
     var flatnessScores = [];
@@ -34,10 +36,10 @@ CityTour.NeighborhoodGenerator = (function() {
     var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
     var pointCount = 0;
     var totalHeightDeltas = 0.0;
-    var minX = Math.max(terrain.minMapX(), centerX - ((NEIGHBORHOOD_CENTER_WIDTH - 1) / 2));
-    var maxX = Math.min(terrain.maxMapX(), centerX + ((NEIGHBORHOOD_CENTER_WIDTH - 1) / 2));
-    var minZ = Math.max(terrain.minMapZ(), centerZ - ((NEIGHBORHOOD_CENTER_DEPTH - 1) / 2));
-    var maxZ = Math.min(terrain.maxMapZ(), centerZ + ((NEIGHBORHOOD_CENTER_DEPTH - 1) / 2));
+    var minX = Math.max(terrain.minMapX(), centerX - FLATNESS_WINDOW_WIDTH_MARGIN);
+    var maxX = Math.min(terrain.maxMapX(), centerX + FLATNESS_WINDOW_WIDTH_MARGIN);
+    var minZ = Math.max(terrain.minMapZ(), centerZ - FLATNESS_WINDOW_DEPTH_MARGIN);
+    var maxZ = Math.min(terrain.maxMapZ(), centerZ + FLATNESS_WINDOW_DEPTH_MARGIN);
     var x, z;
 
     for (x = minX; x <= maxX; x++) {
