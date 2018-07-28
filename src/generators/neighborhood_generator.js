@@ -77,7 +77,7 @@ CityTour.NeighborhoodGenerator = (function() {
     var x, z;
 
     for (x = terrain.minMapX() + 1; x < terrain.maxMapX(); x++) {
-      for (z = terrain.minMapX() + 1; z < terrain.maxMapZ(); z++) {
+      for (z = terrain.minMapZ() + 1; z < terrain.maxMapZ(); z++) {
         centralityScore = Math.abs(x) + Math.abs(z);
 
         flatnessScore = flatnessScores[x][z];
