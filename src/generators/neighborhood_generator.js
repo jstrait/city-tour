@@ -11,6 +11,9 @@ CityTour.NeighborhoodGenerator = (function() {
   var NEIGHBORHOOD_CENTER_DEPTH = 9;
   var FLATNESS_WINDOW_WIDTH_MARGIN = (NEIGHBORHOOD_CENTER_WIDTH - 1) / 2;
   var FLATNESS_WINDOW_DEPTH_MARGIN = (NEIGHBORHOOD_CENTER_DEPTH - 1) / 2;
+  var MAX_HILLINESS = 1.0;
+  var CENTRALITY_WEIGHT = 0.3;
+  var FLATNESS_WEIGHT = 0.7;
 
   var calculateScores = function(terrain) {
     var scores = [];
@@ -22,18 +25,26 @@ CityTour.NeighborhoodGenerator = (function() {
     var minZ = terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
     var maxZ = terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
 
+    // Manhattan distance from the center
+    var maxNeighborhoodDistanceFromCenter = Math.abs((terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN) + (terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN));
+
     for (x = minX; x <= maxX; x++) {
       scores[x] = [];
 
       for (z = minZ; z <= maxZ; z++) {
-        score = { flatness: Number.POSITIVE_INFINITY, centrality: Math.abs(x) + Math.abs(z), closeNeighborhoodPenalty: 0, };
+        score = {
+          flatness: Number.POSITIVE_INFINITY,
+          centrality: ((Math.abs(x) + Math.abs(z)) / maxNeighborhoodDistanceFromCenter) * CENTRALITY_WEIGHT,
+          closeNeighborhoodPenalty: 0,
+        };
+
         if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
-          score.flatness = averageHeightDifferenceAroundPoint(terrain, x, z);
+          score.flatness = CityTour.Math.clamp(averageHeightDifferenceAroundPoint(terrain, x, z) / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
         }
 
         scores[x][z] = score;
       }
-   }
+    }
 
     return scores;
   };
@@ -92,7 +103,7 @@ CityTour.NeighborhoodGenerator = (function() {
     for (x = minX; x < maxX; x++) {
       for (z = minZ; z < maxZ; z++) {
         scoreComponents = scores[x][z];
-        score = scoreComponents.centrality + (scoreComponents.flatness * 10) + scoreComponents.closeNeighborhoodPenalty;
+        score = scoreComponents.centrality + scoreComponents.flatness * FLATNESS_WEIGHT + scoreComponents.closeNeighborhoodPenalty;
 
         if (score < bestSiteScore) {
           bestSiteScore = score;
