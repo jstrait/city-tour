@@ -2,8 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.TerrainCandidateRoadNetwork = function(terrain) {
-  var MAX_STEEPNESS = Math.PI / 6;
+CityTour.TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
   var EMPTY_ROAD_NETWORK = CityTour.RoadNetwork(terrain);
   var BRIDGE_CONFIG = {
     centerMapX: 0,
@@ -42,14 +41,14 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain) {
     if (terrain.waterHeightAtCoordinates(mapX, mapZ - 1) > 0.0) {
       addBridgeEdge(edges, mapX, mapZ, mapX, mapZ - 1);
     }
-    else if (Math.abs(northAngle) <= MAX_STEEPNESS) {
+    else if (Math.abs(northAngle) <= maxRoadAngle) {
       edges.push({ destinationMapX: mapX, destinationMapZ: mapZ - 1, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
     if (terrain.waterHeightAtCoordinates(mapX, mapZ + 1) > 0.0) {
       addBridgeEdge(edges, mapX, mapZ, mapX, mapZ + 1);
     }
-    else if (Math.abs(southAngle) <= MAX_STEEPNESS) {
+    else if (Math.abs(southAngle) <= maxRoadAngle) {
       edges.push({ destinationMapX: mapX, destinationMapZ: mapZ + 1, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
@@ -57,14 +56,14 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain) {
     if (terrain.waterHeightAtCoordinates(mapX - 1, mapZ) > 0.0) {
       addBridgeEdge(edges, mapX, mapZ, mapX - 1, mapZ);
     }
-    else if (Math.abs(westAngle) <= MAX_STEEPNESS) {
+    else if (Math.abs(westAngle) <= maxRoadAngle) {
       edges.push({ destinationMapX: mapX - 1, destinationMapZ: mapZ, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
     if (terrain.waterHeightAtCoordinates(mapX + 1, mapZ) > 0.0) {
       addBridgeEdge(edges, mapX, mapZ, mapX + 1, mapZ);
     }
-    else if (Math.abs(eastAngle) <= MAX_STEEPNESS) {
+    else if (Math.abs(eastAngle) <= maxRoadAngle) {
       edges.push({ destinationMapX: mapX + 1, destinationMapZ: mapZ, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 

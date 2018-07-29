@@ -11,7 +11,7 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   };
 
   var buildRoadNetwork = function(terrain, neighborhoods, config) {
-    var terrainCandidateRoadNetwork = new CityTour.TerrainCandidateRoadNetwork(terrain);
+    var terrainCandidateRoadNetwork = new CityTour.TerrainCandidateRoadNetwork(terrain, config.maxRoadAngle);
     var pathFinder = new CityTour.PathFinder(terrainCandidateRoadNetwork);
     var roadNetwork = new CityTour.RoadNetwork(terrain);
     var targetPredicate = function(x, z) {
