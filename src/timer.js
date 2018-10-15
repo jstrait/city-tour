@@ -36,6 +36,10 @@ CityTour.Timer = function() {
   };
 
   var start = function() {
+    if (paused !== true) {
+      return;
+    }
+
     paused = false;
     previousFrameTimestamp = undefined;
     animationRequestID = requestAnimationFrame(tick);
