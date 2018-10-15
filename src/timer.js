@@ -3,8 +3,8 @@
 var CityTour = CityTour || {};
 
 CityTour.Timer = function() {
-  var FRAMES_PER_SECONDS = 60;
-  var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECONDS;
+  var FRAMES_PER_SECOND = 60;
+  var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECOND;
 
   var paused = true;
   var previousFrameTimestamp;
