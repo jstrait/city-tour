@@ -6,13 +6,13 @@ CityTour.Timer = function() {
   var FRAMES_PER_SECOND = 60;
   var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECOND;
 
-  var paused = true;
+  var isPaused = true;
   var previousFrameTimestamp;
 
   var animationRequestID;
 
   var tick = function() {
-    if (paused) {
+    if (isPaused) {
       return;
     }
 
@@ -36,17 +36,17 @@ CityTour.Timer = function() {
   };
 
   var start = function() {
-    if (paused !== true) {
+    if (isPaused !== true) {
       return;
     }
 
-    paused = false;
+    isPaused = false;
     previousFrameTimestamp = undefined;
     animationRequestID = requestAnimationFrame(tick);
   };
 
   var pause = function() {
-    paused = true;
+    isPaused = true;
     window.cancelAnimationFrame(animationRequestID);
   };
 
@@ -55,7 +55,7 @@ CityTour.Timer = function() {
   timer.onTick = function(frameCount) {};
   timer.start = start;
   timer.pause = pause;
-  timer.isPaused = function() { return paused; };
+  timer.isPaused = function() { return isPaused; };
 
   return timer;
 };
