@@ -1,5 +1,6 @@
 *.swp
 .DS_Store
+city_tour.css
 city_tour.js
 city_tour.js.map
 node_modules
