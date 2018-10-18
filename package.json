@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "City Tour",
   "main": "city_tour.js",
+  "private": true,
   "repository": "https://github.com/jstrait/city-tour.git",
   "author": "Joel Strait",
   "license": "MIT",
