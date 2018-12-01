@@ -53,7 +53,7 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
 
     cameraToCenterOfActionVector.multiplyScalar(1 / centerOfActionPercentageOfFullHeight);
 
-    // Point where camera would intersect the XZ plane if allowed to zoom indefinately
+    // Point where camera would intersect the XZ plane if allowed to zoom indefinitely
     zoomEndPoint = new THREE.Vector3(camera.position.x - cameraToCenterOfActionVector.x,
                                      camera.position.y - cameraToCenterOfActionVector.y,
                                      camera.position.z - cameraToCenterOfActionVector.z);
