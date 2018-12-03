@@ -10,20 +10,20 @@ var CityTour = CityTour || {};
 CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) {
   // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
   var screenCoordinateToWorldPosition = function(camera) {
+    var MAX_ITERATIONS = 1000;
+
     var direction, worldPosition;
     var ray, movementTowardXZPlaneAmount;
     var mapX, mapZ;
+    var loopCount;
 
     normalizedScreenVector.unproject(camera);
     direction = normalizedScreenVector.sub(camera.position).normalize();
     ray = camera.position.clone();
     movementTowardXZPlaneAmount = direction.clone().multiplyScalar(0.3333333333333333);
 
-    if (movementTowardXZPlaneAmount.y >= 0.0) {
-      return ray;
-    }
-
-    while (ray.y > 0.0 && worldPosition === undefined) {
+    loopCount = 0;
+    while (ray.y > 0.0 && worldPosition === undefined && loopCount < MAX_ITERATIONS) {
       ray = ray.add(movementTowardXZPlaneAmount);
 
       if (ray.x >= terrain.minMapX() &&
@@ -34,6 +34,8 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
           worldPosition = ray;
         }
       }
+
+      loopCount += 1;
     }
 
     // Ray doesn't intersect the terrain
