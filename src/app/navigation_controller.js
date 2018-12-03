@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
+CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoop, messageBroker) {
   var DOWN_ARROW = "&#9660;";
   var UP_ARROW = "&#9650;";
   var START_TOUR_MESSAGE = "Take a Tour";
@@ -43,6 +43,12 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
       containerToggle.innerHTML = UP_ARROW;
       container.classList.add("display-none");
     }
+  };
+
+  var setTargetOfAction = function(e) {
+    var el = sceneView.domElement();
+    var centerOfScreenPhantomTouch = CityTour.WorldTouch(el, sceneView.camera(), el.offsetWidth / 2, el.offsetHeight / 2, terrain);
+    mapCamera.setCenterOfAction(new THREE.Vector3(centerOfScreenPhantomTouch.worldX(), centerOfScreenPhantomTouch.worldY(), centerOfScreenPhantomTouch.worldZ()));
   };
 
   var setAzimuthAngle = function(e) {
@@ -103,6 +109,7 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   };
 
   containerToggle.addEventListener('click', toggleNavigationControls, false);
+  azimuthAngleControl.addEventListener('mousedown', setTargetOfAction, false);
   azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
   tiltAngleControl.addEventListener('input', setTiltAngle, false);
   zoomControl.addEventListener('input', setZoomDistance, false);
@@ -118,5 +125,7 @@ CityTour.NavigationController = function(mapCamera, timerLoop, messageBroker) {
   var id3 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
 
 
-  return {};
+  return {
+    setTerrain: function(newTerrain) { terrain = newTerrain; },
+  };
 };

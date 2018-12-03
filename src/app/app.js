@@ -49,7 +49,7 @@ CityTour.App = (function() {
     var mapCamera = new CityTour.MapCamera(sceneView, CityTour.OrbitalCamera(messageBroker));
     var timerLoop = new CityTour.TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
-    var navigationController = new CityTour.NavigationController(mapCamera, timerLoop, messageBroker);
+    var navigationController = new CityTour.NavigationController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, timerLoop, messageBroker);
     var navigationTouchController = new CityTour.NavigationTouchController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
 
     container.appendChild(sceneView.domElement());
@@ -67,12 +67,14 @@ CityTour.App = (function() {
       // temporarily be the case while creating a new city).
       timerLoop.reset(EMPTY_WORLD_DATA);
       sceneView.reset(EMPTY_WORLD_DATA);
+      navigationController.setTerrain(EMPTY_WORLD_DATA.terrain);
       navigationTouchController.setTerrain(EMPTY_WORLD_DATA.terrain);
 
       // Now that old city's memory has been reclaimed, add new city
       newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
+      navigationController.setTerrain(newWorldData.terrain);
       navigationTouchController.setTerrain(newWorldData.terrain);
 
       // Force the new scene to be rendered
