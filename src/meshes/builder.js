@@ -31,6 +31,15 @@ CityTour.Meshes.Builder = function() {
     return group;
   };
 
+  var buildXZPlaneMeshes = function() {
+    var planeGeometry = new THREE.PlaneGeometry(4000, 4000, 1, 1);
+    var material = new THREE.MeshBasicMaterial({color: 0xdddddd, opacity: 0.5, transparent: true});
+    var planeMesh = new THREE.Mesh(planeGeometry, material);
+    planeMesh.rotation.x = -Math.PI / 2;
+
+    return buildMeshGroup("xzPlaneMeshes", [planeMesh]);
+  };
+
   var buildTerrainMeshes = function(terrain, roadNetwork) {
     return buildMeshGroup("terrainMeshes", CityTour.Meshes.TerrainMeshBuilder().build(terrain, roadNetwork));
   };
@@ -46,6 +55,7 @@ CityTour.Meshes.Builder = function() {
 
   return {
     buildEmptyScene: buildEmptyScene,
+    buildXZPlaneMeshes: buildXZPlaneMeshes,
     buildTerrainMeshes: buildTerrainMeshes,
     buildRoadNetworkMeshes: buildRoadNetworkMeshes,
     buildBuildingMeshes: buildBuildingMeshes,

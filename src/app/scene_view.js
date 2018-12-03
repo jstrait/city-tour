@@ -27,6 +27,8 @@ CityTour.SceneView = function(containerEl, messageBroker) {
 
     masterStartTime = new Date();
 
+    scene.add(sceneBuilder.buildXZPlaneMeshes());
+
     terrainStartTime = new Date();
     scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
     terrainEndTime = new Date();
@@ -94,10 +96,15 @@ CityTour.SceneView = function(containerEl, messageBroker) {
   };
 
   var destroyPreviousMeshes = function() {
+    var xzPlaneMeshes = scene.getObjectByName("xzPlaneMeshes");
     var terrainMeshes = scene.getObjectByName("terrainMeshes");
     var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
     var buildingMeshes = scene.getObjectByName("buildingMeshes");
     var markerMeshes = scene.getObjectByName("markerMeshes");
+
+    if (xzPlaneMeshes !== undefined) {
+      removeChildFromScene(xzPlaneMeshes);
+    }
 
     if (terrainMeshes !== undefined) {
       removeChildFromScene(terrainMeshes);
