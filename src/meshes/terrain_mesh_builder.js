@@ -205,10 +205,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     }
   };
 
-
-  var terrainMeshBuilder = {};
-
-  terrainMeshBuilder.build = function(terrain, roadNetwork) {
+  var addMainTerrain = function(terrain, roadNetwork, terrainGeometry, triangleWidth, triangleDepth) {
     var mapX, mapZ, triangle;
     var leftRoad, topRoad, bottomRoad, rightRoad;
     var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
@@ -224,19 +221,6 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
     var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
 
-    var triangleWidth = terrain.scale();
-    var triangleDepth = terrain.scale();
-
-    var terrainGeometry = new THREE.Geometry();
-    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
-
-    // Vertical sides along the edges of the terrain
-    addNorthVerticalFace(terrain, terrainGeometry, triangleWidth);
-    addSouthVerticalFace(terrain, terrainGeometry, triangleWidth);
-    addWestVerticalFace(terrain, terrainGeometry, triangleDepth);
-    addEastVerticalFace(terrain, terrainGeometry, triangleDepth);
-
-    // Main terrain
     for (mapX = minMapX; mapX < maxMapX; mapX += triangleWidth) {
       bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(mapX, minMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
       bottomRightRoad = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, minMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
@@ -414,6 +398,26 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
       }
     }
+  };
+
+
+  var terrainMeshBuilder = {};
+
+  terrainMeshBuilder.build = function(terrain, roadNetwork) {
+    var triangleWidth = terrain.scale();
+    var triangleDepth = terrain.scale();
+
+    var terrainGeometry = new THREE.Geometry();
+    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
+
+    // Vertical sides along the edges of the terrain
+    addNorthVerticalFace(terrain, terrainGeometry, triangleWidth);
+    addSouthVerticalFace(terrain, terrainGeometry, triangleWidth);
+    addWestVerticalFace(terrain, terrainGeometry, triangleDepth);
+    addEastVerticalFace(terrain, terrainGeometry, triangleDepth);
+
+    // Main terrain
+    addMainTerrain(terrain, roadNetwork, terrainGeometry, triangleWidth, triangleDepth);
 
     return [new THREE.Mesh(terrainGeometry, terrainMaterial)];
   };
