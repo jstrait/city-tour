@@ -35,7 +35,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
 
     // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
     straightDownEuler = new THREE.Euler(-Math.PI / 2, camera.rotation.y, 0.0, 'YXZ');
-    straightDownPosition = new THREE.Vector3(mapCamera.centerX(), mapCamera.zoomDistance(), mapCamera.centerZ());
+    straightDownPosition = new THREE.Vector3(mapCamera.positionX(), mapCamera.positionY(), mapCamera.positionZ());
     straightDownQuaternion = new THREE.Quaternion();
     straightDownQuaternion.setFromEuler(straightDownEuler);
     straightDownScale = camera.scale.clone();
@@ -58,14 +58,13 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
                                                          currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y,
                                                          0.0);
 
-    var worldDragStart = new THREE.Vector3(mapCamera.centerX(), 0.0, mapCamera.centerZ());
+    var worldDragStart = new THREE.Vector3(mapCamera.positionX(), 0.0, mapCamera.positionZ());
     var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance);
     var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
                                               worldDragEnd.y - worldDragStart.y,
                                               worldDragEnd.z - worldDragStart.z);
 
     mapCamera.pan(worldDragDistance.x, worldDragDistance.z);
-    mapCamera.resetCenterOfAction();
   };
 
   var determineMultiTouchGesture = function(currentTouches) {
@@ -97,7 +96,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
 
   var processMultiTouchGestures = function(currentTouches) {
     var yDistanceDelta, tiltAngleDelta;
-    var distanceBetweenTouches, baseZoomDistanceDelta, zoomDistanceDelta;
+    var distanceBetweenTouchesDelta, baseZoomDistanceDelta, zoomDistanceDelta;
 
     var previousGesture = currentGesture;
     currentGesture = determineMultiTouchGesture(currentTouches);
@@ -107,26 +106,31 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     }
 
     if (currentGesture === TILT) {
+      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
+        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+      }
+
       yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
       tiltAngleDelta = (yDistanceDelta / 100) * (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
       mapCamera.tiltCamera(tiltAngleDelta);
     }
     else if (currentGesture === ROTATE) {
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE) {
+      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
         mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
       }
 
       mapCamera.rotateAzimuthAroundCenterOfAction(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
     else if (currentGesture === PINCH_ZOOM) {
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE) {
+      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
         mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
       }
 
-      distanceBetweenTouches = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
+      distanceBetweenTouchesDelta = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
 
-      baseZoomDistanceDelta = 1.666666666666667 * (mapCamera.zoomDistance() / mapCamera.maxZoomDistance());
-      zoomDistanceDelta = (distanceBetweenTouches > 0) ? -baseZoomDistanceDelta : baseZoomDistanceDelta;
+      baseZoomDistanceDelta = 0.025;
+      zoomDistanceDelta = (distanceBetweenTouchesDelta > 0) ? baseZoomDistanceDelta : -baseZoomDistanceDelta;
+
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
   };

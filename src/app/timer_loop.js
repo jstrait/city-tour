@@ -19,10 +19,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
   var mode = INTERACTIVE;
 
   var syncToCamera = function() {
-    if (mode === INTERACTIVE) {
-      mapCamera.syncToCamera(camera, worldData.terrain);
-    }
-    else if (mode === FLYTHROUGH) {
+    if (mode === FLYTHROUGH) {
       camera.position.x = vehicleView.positionX();
       camera.position.y = vehicleView.positionY();
       camera.position.z = vehicleView.positionZ();
@@ -56,9 +53,6 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
   };
 
   var requestStopFlythrough = function() {
-    mapCamera.syncFromCamera(camera);
-    mapCamera.syncToCamera(camera, worldData.terrain);
-
     vehicleToInteractiveAnimation = new CityTour.Animation(
       new CityTour.MotionGenerator(vehicleController.positionX(), camera.position.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
       new CityTour.MotionGenerator(vehicleController.positionY(), camera.position.y, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
@@ -72,7 +66,6 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
 
   var stopFlythrough = function() {
     mode = INTERACTIVE;
-    mapCamera.resetCenterOfAction();
   };
 
   var toggleFlythrough = function() {

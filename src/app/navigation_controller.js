@@ -14,7 +14,6 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
   var container = document.getElementById("navigation-controls-inner-container");
   var azimuthAngleControl = document.getElementById("azimuth-angle");
   var tiltAngleControl = document.getElementById("tilt-angle-percentage");
-  var zoomControl = document.getElementById("zoom");
   var zoomInButton = document.getElementById("zoom-in");
   var zoomOutButton = document.getElementById("zoom-out");
   var flythroughToggle = document.getElementById("flythrough-toggle");
@@ -30,10 +29,6 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
   var render = function(data) {
     azimuthAngleControl.value = mapCamera.azimuthAngle() * (180 / Math.PI);
     tiltAngleControl.value = (mapCamera.tiltAngle() - mapCamera.maxTiltAngle()) / (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
-    zoomControl.value = 1.0 - ((mapCamera.zoomDistance() - mapCamera.minZoomDistance()) / (mapCamera.maxZoomDistance() - mapCamera.minZoomDistance()));
-
-    zoomInButton.disabled = mapCamera.zoomDistance() <= mapCamera.minZoomDistance();
-    zoomOutButton.disabled = mapCamera.zoomDistance() >= mapCamera.maxZoomDistance();
 
     if (navigationControlsEnabled) {
       containerToggle.innerHTML = DOWN_ARROW;
@@ -69,21 +64,15 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
     mapCamera.setIsVelocityEnabled(false);
   };
 
-  var setZoomDistance = function(e) {
-    var newZoomPercentage = parseFloat(zoomControl.value);
-    var newZoomDistance = CityTour.Math.lerp(mapCamera.minZoomDistance(), mapCamera.maxZoomDistance(), 1.0 - newZoomPercentage);
-
-    mapCamera.zoomTowardCenterOfAction(newZoomDistance - mapCamera.zoomDistance());
-    mapCamera.setIsVelocityEnabled(false);
-  };
-
   var zoomIn = function(e) {
-    mapCamera.zoomTowardCenterOfAction(mapCamera.zoomDistance() * -ZOOM_DELTA_PERCENTAGE);
+    setTargetOfAction(e);
+    mapCamera.zoomTowardCenterOfAction(ZOOM_DELTA_PERCENTAGE);
     mapCamera.setIsVelocityEnabled(false);
   };
 
   var zoomOut = function(e) {
-    mapCamera.zoomTowardCenterOfAction(mapCamera.zoomDistance() * ZOOM_DELTA_PERCENTAGE);
+    setTargetOfAction(e);
+    mapCamera.zoomTowardCenterOfAction(-ZOOM_DELTA_PERCENTAGE);
     mapCamera.setIsVelocityEnabled(false);
   };
 
@@ -111,8 +100,8 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
   containerToggle.addEventListener('click', toggleNavigationControls, false);
   azimuthAngleControl.addEventListener('mousedown', setTargetOfAction, false);
   azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
+  tiltAngleControl.addEventListener('mousedown', setTargetOfAction, false);
   tiltAngleControl.addEventListener('input', setTiltAngle, false);
-  zoomControl.addEventListener('input', setZoomDistance, false);
   zoomInButton.addEventListener('click', zoomIn, false);
   zoomOutButton.addEventListener('click', zoomOut, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);

@@ -2,12 +2,15 @@
 
 var CityTour = CityTour || {};
 
-CityTour.MapCamera = function(sceneView, orbitalCamera) {
+CityTour.MapCamera = function(sceneView) {
   var PAN_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
   var TILT_ROTATION_VELOCITY_DECAY = 0.85;
   var AZIMUTH_ROTATION_VELOCITY_DECAY = 0.85;
   var MINIMUM_VELOCITY = 0.00001;
+
+  var MIN_TILT_ANGLE = -Math.PI / 2;
+  var MAX_TILT_ANGLE = -0.1;
 
   var centerOfAction;
   var zoomProperties;
@@ -20,6 +23,12 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
   var azimuthRotationVelocity = 0.0;
   var tiltRotationVelocity = 0.0;
 
+  camera.position.x = 0;
+  camera.position.y = 20;
+  camera.position.z = 80;
+  camera.rotation.x = -0.3559185608623119;
+  camera.rotation.y = 0;
+
   var setCenterOfAction = function(newCenterOfAction) {
     centerOfAction = newCenterOfAction;
     zoomProperties = undefined;
@@ -27,12 +36,9 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
   };
 
-  var resetCenterOfAction = function() {
-    setCenterOfAction(new THREE.Vector3(orbitalCamera.centerX(), 0.0, orbitalCamera.centerZ()));
-  };
-
   var pan = function(distanceX, distanceZ) {
-    orbitalCamera.setCenterCoordinates(orbitalCamera.centerX() - distanceX, orbitalCamera.centerZ() - distanceZ);
+    camera.position.x -= distanceX;
+    camera.position.z -= distanceZ;
 
     panVelocityX = distanceX;
     panVelocityZ = distanceZ;
@@ -40,88 +46,80 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
 
   var calculateZoomProperties = function() {
     var cameraToCenterOfActionVector, centerOfActionPercentageOfFullHeight, zoomEndPoint;
-    var newCenterOfOrbitX, newCenterOfOrbitZ;
-    var centerXToZoomEndDistance, centerZToZoomEndDistance;
-    var centerPointMovementPerOneZoomUnitX, centerPointMovementPerOneZoomUnitZ;
-    var minZoomDistance;
 
     // Vector of camera to intersection with terrain
     cameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
                                                      (camera.position.y - centerOfAction.y),
                                                      (camera.position.z - centerOfAction.z));
-    centerOfActionPercentageOfFullHeight = (camera.position.y - centerOfAction.y) / camera.position.y;
-
-    cameraToCenterOfActionVector.multiplyScalar(1 / centerOfActionPercentageOfFullHeight);
-
-    // Point where camera would intersect the XZ plane if allowed to zoom indefinitely
-    zoomEndPoint = new THREE.Vector3(camera.position.x - cameraToCenterOfActionVector.x,
-                                     camera.position.y - cameraToCenterOfActionVector.y,
-                                     camera.position.z - cameraToCenterOfActionVector.z);
-
-    sceneView.targetOfActionMarkerMesh().position.set(zoomEndPoint.x, zoomEndPoint.y, zoomEndPoint.z);
-
-    // Calculate X/Z amount orbital camera center point needs to move per 1 unit of zoom
-    // in order for center point to be same as expected camera intersection point with XZ plane
-    // if zoom distance reaches 0.
-    centerXToZoomEndDistance = orbitalCamera.centerX() - zoomEndPoint.x;
-    centerZToZoomEndDistance = orbitalCamera.centerZ() - zoomEndPoint.z;
-    centerPointMovementPerOneZoomUnitX = centerXToZoomEndDistance / orbitalCamera.zoomDistance();
-    centerPointMovementPerOneZoomUnitZ = centerZToZoomEndDistance / orbitalCamera.zoomDistance();
-
-    // Calculate the zoom distance at the point the camera would hit the terrain
-    minZoomDistance = orbitalCamera.zoomDistance() * (1.0 - centerOfActionPercentageOfFullHeight);
 
     zoomProperties = {
-      centerPointMovementPerOneZoomUnitX: centerPointMovementPerOneZoomUnitX,
-      centerPointMovementPerOneZoomUnitZ: centerPointMovementPerOneZoomUnitZ,
-      minZoomDistance: minZoomDistance,
+      cameraToCenterOfActionVector: cameraToCenterOfActionVector,
     };
   };
 
-  var zoomTowardCenterOfAction = function(zoomDistanceDelta) {
-    var newZoomDistance = orbitalCamera.zoomDistance() + zoomDistanceDelta;
-    var newCenterOfOrbitX, newCenterOfOrbitZ;
-
+  var zoomTowardCenterOfAction = function(zoomDistancePercentage) {
     if (zoomProperties === undefined) {
       calculateZoomProperties();
     }
 
-    if (newZoomDistance < zoomProperties.minZoomDistance) {
-      newZoomDistance = zoomProperties.minZoomDistance;
-      zoomDistanceDelta = zoomProperties.minZoomDistance - orbitalCamera.zoomDistance();
-    }
-    else if (newZoomDistance > orbitalCamera.maxZoomDistance()) {
-      newZoomDistance = orbitalCamera.maxZoomDistance();
-      zoomDistanceDelta = orbitalCamera.maxZoomDistance() - orbitalCamera.zoomDistance();
-    }
+    var clonedCameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone();
+    clonedCameraToCenterOfActionVector.multiplyScalar(zoomDistancePercentage);
 
-    newCenterOfOrbitX = orbitalCamera.centerX() + (zoomDistanceDelta * zoomProperties.centerPointMovementPerOneZoomUnitX);
-    newCenterOfOrbitZ = orbitalCamera.centerZ() + (zoomDistanceDelta * zoomProperties.centerPointMovementPerOneZoomUnitZ);
+    camera.position.x -= clonedCameraToCenterOfActionVector.x;
+    camera.position.y -= clonedCameraToCenterOfActionVector.y;
+    camera.position.z -= clonedCameraToCenterOfActionVector.z;
+    zoomProperties.cameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone().multiplyScalar(1.0 - zoomDistancePercentage);
 
-    orbitalCamera.setCenterCoordinates(newCenterOfOrbitX, newCenterOfOrbitZ);
-    orbitalCamera.setZoomDistance(newZoomDistance);
-
-    zoomVelocity = zoomDistanceDelta;
+    zoomVelocity = zoomDistancePercentage;
   };
 
   var rotateAzimuthAroundCenterOfAction = function(azimuthAngleDelta) {
-    var newCenterX, newCenterZ;
-    var distanceX = orbitalCamera.centerX() - centerOfAction.x;
-    var distanceZ = orbitalCamera.centerZ() - centerOfAction.z;
+    var distanceCameraToCenterOfAction = CityTour.Math.distanceBetweenPoints(camera.position.x, camera.position.z, centerOfAction.x, centerOfAction.z);
+
+    var originalCircleX = distanceCameraToCenterOfAction * Math.cos(-camera.rotation.y + (Math.PI / 2));
+    var originalCircleZ = distanceCameraToCenterOfAction * Math.sin(-camera.rotation.y + (Math.PI / 2));
+
+    var newAzimuthAngle = camera.rotation.y + azimuthAngleDelta;
+    if (newAzimuthAngle > Math.PI) {
+      newAzimuthAngle -= Math.PI * 2;
+    }
+    else if (newAzimuthAngle < -Math.PI) {
+      newAzimuthAngle += Math.PI * 2;
+    }
+
+    var baseCircleX = distanceCameraToCenterOfAction * Math.cos(-newAzimuthAngle + (Math.PI / 2));
+    var baseCircleZ = distanceCameraToCenterOfAction * Math.sin(-newAzimuthAngle + (Math.PI / 2));
 
     zoomProperties = undefined;
 
-    newCenterX = (distanceX * Math.cos(-azimuthAngleDelta)) - (distanceZ * Math.sin(-azimuthAngleDelta)) + centerOfAction.x;
-    newCenterZ = (distanceX * Math.sin(-azimuthAngleDelta)) + (distanceZ * Math.cos(-azimuthAngleDelta)) + centerOfAction.z;
-
-    orbitalCamera.setCenterCoordinates(newCenterX, newCenterZ);
-    orbitalCamera.setAzimuthAngle(orbitalCamera.azimuthAngle() + azimuthAngleDelta);
+    camera.position.x += baseCircleX - originalCircleX;
+    camera.position.z += baseCircleZ - originalCircleZ;
+    camera.rotation.y = newAzimuthAngle;
 
     azimuthRotationVelocity = azimuthAngleDelta;
   };
 
   var tiltCamera = function(tiltAngleDelta) {
-    orbitalCamera.setTiltAngle(orbitalCamera.tiltAngle() + tiltAngleDelta);
+    var distanceCameraToCenterOfAction = CityTour.Math.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
+                                                                               centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    var newTiltAngle = CityTour.Math.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
+
+    var hypotenuse = distanceCameraToCenterOfAction;
+    var adjacent = Math.cos(newTiltAngle) * hypotenuse;
+    var opposite = -Math.sin(newTiltAngle) * hypotenuse;
+
+    var cameraX = (adjacent * Math.sin(camera.rotation.y));
+    var cameraY = opposite;
+    var cameraZ = (adjacent * Math.cos(-camera.rotation.y));
+
+    zoomProperties = undefined;
+
+    camera.position.x = centerOfAction.x + cameraX;
+    camera.position.y = centerOfAction.y + cameraY;
+    camera.position.z = centerOfAction.z + cameraZ;
+    camera.rotation.x += tiltAngleDelta;
+    camera.rotation.x = newTiltAngle;
+
     tiltRotationVelocity = tiltAngleDelta;
   };
 
@@ -189,22 +187,10 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     }
   };
 
-  var syncToCamera = function(camera, terrain) {
-    orbitalCamera.syncToCamera(camera, terrain);
-  };
-
-  var syncFromCamera = function(camera) {
-    orbitalCamera.syncFromCamera(camera);
-  };
-
-
-  resetCenterOfAction();
-
 
   return {
     centerOfAction: function() { return centerOfAction; },
     setCenterOfAction: setCenterOfAction,
-    resetCenterOfAction: resetCenterOfAction,
     pan: pan,
     rotateAzimuthAroundCenterOfAction: rotateAzimuthAroundCenterOfAction,
     zoomTowardCenterOfAction: zoomTowardCenterOfAction,
@@ -212,16 +198,12 @@ CityTour.MapCamera = function(sceneView, orbitalCamera) {
     isVelocityEnabled: function() { return isVelocityEnabled; },
     setIsVelocityEnabled: setIsVelocityEnabled,
     tickVelocity: tickVelocity,
-    syncToCamera: syncToCamera,
-    syncFromCamera: syncFromCamera,
-    centerX: function() { return orbitalCamera.centerX(); },
-    centerZ: function() { return orbitalCamera.centerZ(); },
-    azimuthAngle: function() { return orbitalCamera.azimuthAngle(); },
-    tiltAngle: function() { return orbitalCamera.tiltAngle(); },
-    minTiltAngle: function() { return orbitalCamera.minTiltAngle(); },
-    maxTiltAngle: function() { return orbitalCamera.maxTiltAngle(); },
-    zoomDistance: function() { return orbitalCamera.zoomDistance(); },
-    minZoomDistance: function() { return orbitalCamera.minZoomDistance(); },
-    maxZoomDistance: function() { return orbitalCamera.maxZoomDistance(); },
+    positionX: function() { return camera.position.x; },
+    positionY: function() { return camera.position.y; },
+    positionZ: function() { return camera.position.z; },
+    azimuthAngle: function() { return camera.rotation.y; },
+    tiltAngle: function() { return camera.rotation.x; },
+    minTiltAngle: function() { return MIN_TILT_ANGLE; },
+    maxTiltAngle: function() { return MAX_TILT_ANGLE; },
   };
 };
