@@ -46,7 +46,7 @@ CityTour.App = (function() {
     var messageBroker = new CityTour.MessageBroker();
     var cityConfigService = new CityTour.CityConfigService();
     var sceneView = new CityTour.SceneView(container, messageBroker);
-    var mapCamera = new CityTour.MapCamera(sceneView);
+    var mapCamera = new CityTour.MapCamera(sceneView, EMPTY_WORLD_DATA.terrain);
     var timerLoop = new CityTour.TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
     var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
     var navigationController = new CityTour.NavigationController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, timerLoop, messageBroker);
@@ -67,6 +67,7 @@ CityTour.App = (function() {
       // temporarily be the case while creating a new city).
       timerLoop.reset(EMPTY_WORLD_DATA);
       sceneView.reset(EMPTY_WORLD_DATA);
+      mapCamera.setTerrain(EMPTY_WORLD_DATA.terrain);
       navigationController.setTerrain(EMPTY_WORLD_DATA.terrain);
       navigationTouchController.setTerrain(EMPTY_WORLD_DATA.terrain);
 
@@ -74,6 +75,7 @@ CityTour.App = (function() {
       newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
+      mapCamera.setTerrain(newWorldData.terrain);
       navigationController.setTerrain(newWorldData.terrain);
       navigationTouchController.setTerrain(newWorldData.terrain);
 

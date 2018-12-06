@@ -2,12 +2,13 @@
 
 var CityTour = CityTour || {};
 
-CityTour.MapCamera = function(sceneView) {
+CityTour.MapCamera = function(sceneView, initialTerrain) {
   var PAN_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
   var TILT_ROTATION_VELOCITY_DECAY = 0.85;
   var AZIMUTH_ROTATION_VELOCITY_DECAY = 0.85;
   var MINIMUM_VELOCITY = 0.00001;
+  var MINIMUM_HEIGHT_OFF_GROUND = 0.416666666666667;
 
   var MIN_TILT_ANGLE = -Math.PI / 2;
   var MAX_TILT_ANGLE = -0.1;
@@ -15,6 +16,7 @@ CityTour.MapCamera = function(sceneView) {
   var centerOfAction;
   var zoomProperties;
   var camera = sceneView.camera();
+  var terrain = initialTerrain;
 
   var isVelocityEnabled = false;
   var panVelocityX = 0.0;
@@ -36,9 +38,23 @@ CityTour.MapCamera = function(sceneView) {
     sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
   };
 
+  var minimumCameraHeightAtCoordinates = function(terrain, cameraX, cameraZ) {
+    var terrainHeight = Number.NEGATIVE_INFINITY;
+
+    if (terrain !== undefined) {
+      terrainHeight = terrain.heightAtCoordinates(cameraX, cameraZ);
+      if (terrainHeight === undefined) {
+        terrainHeight = Number.NEGATIVE_INFINITY;
+      }
+    }
+
+    return terrainHeight + MINIMUM_HEIGHT_OFF_GROUND;
+  };
+
   var pan = function(distanceX, distanceZ) {
     camera.position.x -= distanceX;
     camera.position.z -= distanceZ;
+    camera.position.y = Math.max(minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z), camera.position.y);
 
     panVelocityX = distanceX;
     panVelocityZ = distanceZ;
@@ -205,5 +221,6 @@ CityTour.MapCamera = function(sceneView) {
     tiltAngle: function() { return camera.rotation.x; },
     minTiltAngle: function() { return MIN_TILT_ANGLE; },
     maxTiltAngle: function() { return MAX_TILT_ANGLE; },
+    setTerrain: function(newTerrain) { terrain = newTerrain; },
   };
 };
