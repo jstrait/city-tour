@@ -112,6 +112,13 @@ CityTour.MapCamera = function(sceneView, initialTerrain) {
     camera.position.z += baseCircleZ - originalCircleZ;
     camera.rotation.y = newAzimuthAngle;
 
+    var minimumCameraY = minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z);
+    if (camera.position.y < minimumCameraY) {
+      camera.position.y = minimumCameraY;
+      centerOfAction.y = minimumCameraY;
+      setCenterOfAction(centerOfAction);
+    }
+
     azimuthRotationVelocity = azimuthAngleDelta;
   };
 
