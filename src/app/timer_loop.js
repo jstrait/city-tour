@@ -17,6 +17,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
   var vehicleToInteractiveAnimation;
   var camera = sceneView.camera();
   var mode = INTERACTIVE;
+  var zoomAmount = 0.0;
 
   var syncToCamera = function() {
     if (mode === FLYTHROUGH) {
@@ -44,6 +45,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
       rotationY: camera.rotation.y,
     };
 
+    zoomAmount = 0.0;
     mapCamera.setIsVelocityEnabled(false);
 
     vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, worldData.centerX, worldData.centerZ);
@@ -110,6 +112,9 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
     if (mapCamera.isVelocityEnabled()) {
       mapCamera.tickVelocity(frameCount);
     }
+    if (mode === INTERACTIVE && zoomAmount !== 0.0) {
+      mapCamera.zoomTowardCenterOfAction(zoomAmount);
+    }
 
     syncToCamera();
     sceneView.render();
@@ -130,6 +135,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
 
   return {
     reset: reset,
+    setZoomAmount: function(newZoomAmount) { zoomAmount = newZoomAmount; },
     toggleFlythrough: toggleFlythrough,
   };
 };

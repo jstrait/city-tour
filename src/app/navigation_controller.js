@@ -8,7 +8,7 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
   var START_TOUR_MESSAGE = "Take a Tour";
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
-  var ZOOM_DELTA_PERCENTAGE = 0.05;
+  var ZOOM_DELTA_PERCENTAGE = 0.01;
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
@@ -64,15 +64,20 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
     mapCamera.setIsVelocityEnabled(false);
   };
 
-  var zoomIn = function(e) {
+  var startZoomIn = function(e) {
     setTargetOfAction(e);
-    mapCamera.zoomTowardCenterOfAction(ZOOM_DELTA_PERCENTAGE);
+    timerLoop.setZoomAmount(ZOOM_DELTA_PERCENTAGE);
     mapCamera.setIsVelocityEnabled(false);
   };
 
-  var zoomOut = function(e) {
+  var startZoomOut = function(e) {
     setTargetOfAction(e);
-    mapCamera.zoomTowardCenterOfAction(-ZOOM_DELTA_PERCENTAGE);
+    timerLoop.setZoomAmount(-ZOOM_DELTA_PERCENTAGE);
+    mapCamera.setIsVelocityEnabled(false);
+  };
+
+  var stopZoom = function(e) {
+    timerLoop.setZoomAmount(0.0);
     mapCamera.setIsVelocityEnabled(false);
   };
 
@@ -102,8 +107,12 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
   azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
   tiltAngleControl.addEventListener('mousedown', setTargetOfAction, false);
   tiltAngleControl.addEventListener('input', setTiltAngle, false);
-  zoomInButton.addEventListener('click', zoomIn, false);
-  zoomOutButton.addEventListener('click', zoomOut, false);
+  zoomInButton.addEventListener('mousedown', startZoomIn, false);
+  zoomInButton.addEventListener('mouseup', stopZoom, false);
+  zoomInButton.addEventListener('mouseout', stopZoom, false);
+  zoomOutButton.addEventListener('mousedown', startZoomOut, false);
+  zoomOutButton.addEventListener('mouseup', stopZoom, false);
+  zoomOutButton.addEventListener('mouseout', stopZoom, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
 
   navigationControlsEnabled = !isTouchDevice();
