@@ -22,7 +22,8 @@ CityTour.WorldTouchCollection = function(el, camera, screenTouches, terrain) {
 
   if (worldTouches.length === 1) {
     distanceInScreenPixels = 0.0;
-    worldMidpoint = new THREE.Vector3(worldTouches[0].worldX(), 0.0, worldTouches[0].worldZ());
+    worldMidpoint = new THREE.Vector3(worldTouches[0].worldX(), worldTouches[0].worldY(), worldTouches[0].worldZ());
+
     normalizedScreenMidpoint = new THREE.Vector2(worldTouches[0].normalizedScreenX(),
                                                  worldTouches[0].normalizedScreenY());
     angleBetweenTouches = 0.0;
