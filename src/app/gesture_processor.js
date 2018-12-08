@@ -135,7 +135,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     }
   };
 
-  var processGesture = function(currentTouches) {
+  var processGesture = function(currentTouches, isAltKey) {
     if (currentTouches === undefined) {
       currentGesture = undefined;
       mapCamera.setIsVelocityEnabled(true);
@@ -147,13 +147,28 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     }
     else if (currentTouches.count() === 1) {
       if (previousTouches.count() === 1) {
-        currentGesture = PAN;
-        panCamera(currentTouches);
+        if (isAltKey) {
+          var previousGesture = currentGesture;
+          currentGesture = ROTATE;
 
-        sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
-                                                       currentTouches.touches()[0].worldY(),
-                                                       currentTouches.touches()[0].worldZ());
-        sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
+          if (previousGesture !== ROTATE) {
+            mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+          }
+
+          var azimuthAngleDelta = CityTour.Math.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
+          var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
+          mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
+        }
+        else {
+          currentGesture = PAN;
+          panCamera(currentTouches);
+
+          sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
+                                                         currentTouches.touches()[0].worldY(),
+                                                         currentTouches.touches()[0].worldZ());
+          sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
+        }
+
       }
       else {
         mapCamera.setIsVelocityEnabled(false);

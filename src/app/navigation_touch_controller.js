@@ -12,11 +12,11 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
+    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.altKey);
   };
 
   var onTouchStart = function(e) {
-    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
+    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.altKey);
     e.preventDefault();
   };
 
@@ -29,20 +29,20 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
       return;
     }
 
-    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain));
+    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.altKey);
   };
 
   var onTouchMove = function(e) {
-    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
+    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.altKey);
   };
 
   var onMouseUp = function(e) {
     el.classList.remove("cursor-grabbing");
-    currentGestureProcessor.processGesture(undefined);
+    currentGestureProcessor.processGesture(undefined, e.altKey);
   };
 
   var onTouchEnd = function(e) {
-    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches));
+    currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.altKey);
   };
 
   var onMouseOver = function(e) {
@@ -50,7 +50,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
     if ((e.buttons !== undefined && e.buttons === 0) ||
         (e.which !== undefined && e.which === 0)) {
       el.classList.remove("cursor-grabbing");
-      currentGestureProcessor.processGesture(undefined);
+      currentGestureProcessor.processGesture(undefined, e.altKey);
     }
   };
 
