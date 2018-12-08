@@ -149,15 +149,29 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
       if (previousTouches.count() === 1) {
         if (isAltKey) {
           var previousGesture = currentGesture;
-          currentGesture = ROTATE;
+          var distanceBetweenTouchesDeltaX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
+          var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
 
-          if (previousGesture !== ROTATE) {
+          if (previousGesture !== ROTATE && previousGesture !== TILT) {
             mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
           }
 
-          var azimuthAngleDelta = CityTour.Math.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
-          var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
-          mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
+          if (Math.abs(distanceBetweenTouchesDeltaX) > Math.abs(distanceBetweenTouchesDeltaY)) {
+            currentGesture = ROTATE;
+
+            var azimuthAngleDelta = CityTour.Math.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
+            var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
+            mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
+          }
+          else if (Math.abs(distanceBetweenTouchesDeltaX) < Math.abs(distanceBetweenTouchesDeltaY)) {
+            currentGesture = TILT;
+
+            var tiltAngleDelta = -CityTour.Math.lerp(distanceBetweenTouchesDeltaY, 0, mapCamera.maxTiltAngle() - mapCamera.minTiltAngle());
+            mapCamera.tiltCamera(tiltAngleDelta);
+          }
+          else {
+            // Mouse didn't move, so do nothing
+          }
         }
         else if (isShiftKey) {
           var previousGesture = currentGesture;
