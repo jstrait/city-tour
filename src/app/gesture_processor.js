@@ -135,7 +135,7 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     }
   };
 
-  var processGesture = function(currentTouches, isAltKey) {
+  var processGesture = function(currentTouches, isShiftKey, isAltKey) {
     if (currentTouches === undefined) {
       currentGesture = undefined;
       mapCamera.setIsVelocityEnabled(true);
@@ -158,6 +158,31 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
           var azimuthAngleDelta = CityTour.Math.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
           var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
           mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
+        }
+        else if (isShiftKey) {
+          var previousGesture = currentGesture;
+          currentGesture = PINCH_ZOOM;
+
+          if (previousGesture !== PINCH_ZOOM) {
+            mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+          }
+
+          var distanceBetweenTouchesDelta = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
+          var baseZoomDistanceDelta = 0.025;
+          var zoomDistanceDelta;
+          if (distanceBetweenTouchesDelta > 0) {
+            zoomDistanceDelta = -baseZoomDistanceDelta;
+          }
+          else if (distanceBetweenTouchesDelta < 0) {
+            zoomDistanceDelta = baseZoomDistanceDelta;
+          }
+          else {
+            zoomDistanceDelta = 0.0;
+          }
+
+          if (zoomDistanceDelta !== 0.0) {
+            mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
+          }
         }
         else {
           currentGesture = PAN;
