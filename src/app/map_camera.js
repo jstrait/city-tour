@@ -91,26 +91,20 @@ CityTour.MapCamera = function(sceneView, initialTerrain) {
 
   var rotateAzimuthAroundCenterOfAction = function(azimuthAngleDelta) {
     var distanceCameraToCenterOfAction = CityTour.Math.distanceBetweenPoints(camera.position.x, camera.position.z, centerOfAction.x, centerOfAction.z);
-
-    var originalCircleX = distanceCameraToCenterOfAction * Math.cos(-camera.rotation.y + (Math.PI / 2));
-    var originalCircleZ = distanceCameraToCenterOfAction * Math.sin(-camera.rotation.y + (Math.PI / 2));
-
-    var newAzimuthAngle = camera.rotation.y + azimuthAngleDelta;
-    if (newAzimuthAngle > Math.PI) {
-      newAzimuthAngle -= Math.PI * 2;
-    }
-    else if (newAzimuthAngle < -Math.PI) {
-      newAzimuthAngle += Math.PI * 2;
-    }
-
-    var baseCircleX = distanceCameraToCenterOfAction * Math.cos(-newAzimuthAngle + (Math.PI / 2));
-    var baseCircleZ = distanceCameraToCenterOfAction * Math.sin(-newAzimuthAngle + (Math.PI / 2));
+    var originalAngleCameraToCenterOfAction = Math.atan2(-(camera.position.z - centerOfAction.z), camera.position.x - centerOfAction.x);
+    var newAngleCameraToCenterOfAction = originalAngleCameraToCenterOfAction + azimuthAngleDelta;
 
     zoomProperties = undefined;
 
-    camera.position.x += baseCircleX - originalCircleX;
-    camera.position.z += baseCircleZ - originalCircleZ;
-    camera.rotation.y = newAzimuthAngle;
+    camera.position.x = (distanceCameraToCenterOfAction * Math.cos(newAngleCameraToCenterOfAction)) + centerOfAction.x;
+    camera.position.z = -(distanceCameraToCenterOfAction * Math.sin(newAngleCameraToCenterOfAction)) + centerOfAction.z;
+    camera.rotation.y += azimuthAngleDelta;
+    if (camera.rotation.y > Math.PI) {
+      camera.rotation.y -= Math.PI * 2;
+    }
+    else if (camera.rotation.y < -Math.PI) {
+      camera.rotation.y += Math.PI * 2;
+    }
 
     var minimumCameraY = minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z);
     if (camera.position.y < minimumCameraY) {
