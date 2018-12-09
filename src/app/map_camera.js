@@ -78,6 +78,15 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
       calculateZoomProperties();
     }
 
+    var distanceToCenterOfAction = CityTour.Math.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
+                                                                         centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    if (distanceToCenterOfAction <= 2.0 && zoomDistancePercentage > 0.0) {
+      return;
+    }
+    if (distanceToCenterOfAction >= 50.0 && zoomDistancePercentage < 0.0) {
+      return;
+    }
+
     var clonedCameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone();
     clonedCameraToCenterOfActionVector.multiplyScalar(zoomDistancePercentage);
 
