@@ -93,6 +93,7 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.position.x -= clonedCameraToCenterOfActionVector.x;
     camera.position.y -= clonedCameraToCenterOfActionVector.y;
     camera.position.z -= clonedCameraToCenterOfActionVector.z;
+    camera.position.y = Math.max(minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z), camera.position.y);
     zoomProperties.cameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone().multiplyScalar(1.0 - zoomDistancePercentage);
 
     zoomVelocity = zoomDistancePercentage;
