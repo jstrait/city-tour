@@ -136,7 +136,6 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.position.x = centerOfAction.x + cameraX;
     camera.position.y = centerOfAction.y + cameraY;
     camera.position.z = centerOfAction.z + cameraZ;
-    camera.rotation.x += tiltAngleDelta;
     camera.rotation.x = newTiltAngle;
 
     tiltRotationVelocity = tiltAngleDelta;
