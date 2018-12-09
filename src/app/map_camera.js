@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.MapCamera = function(sceneView, initialTerrain) {
+CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var PAN_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
   var TILT_ROTATION_VELOCITY_DECAY = 0.85;
@@ -114,6 +114,8 @@ CityTour.MapCamera = function(sceneView, initialTerrain) {
     }
 
     azimuthRotationVelocity = azimuthAngleDelta;
+
+    messageBroker.publish("camera.updated", {});
   };
 
   var tiltCamera = function(tiltAngleDelta) {
@@ -138,6 +140,8 @@ CityTour.MapCamera = function(sceneView, initialTerrain) {
     camera.rotation.x = newTiltAngle;
 
     tiltRotationVelocity = tiltAngleDelta;
+
+    messageBroker.publish("camera.updated", {});
   };
 
   var tickVelocity = function(frameCount) {
