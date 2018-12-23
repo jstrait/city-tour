@@ -31,8 +31,8 @@ CityTour.BuildingsGenerator = (function() {
     var maxStories, actualStories, storyHeight;
     var hasAdjacentRoad;
     var roofStyle;
-    var mapX = zonedBlock.mapX;
-    var mapZ = zonedBlock.mapZ;
+    var x = zonedBlock.x;
+    var z = zonedBlock.z;
 
     if (Math.random() < zonedBlock.probabilityOfBuilding) {
       hasAdjacentRoad = (lot.left === 0.0   && zonedBlock.hasLeftRoad) ||
@@ -41,7 +41,7 @@ CityTour.BuildingsGenerator = (function() {
                         (lot.bottom === 1.0 && zonedBlock.hasBottomRoad);
 
       if (hasAdjacentRoad) {
-        lotTerrainAttributes = blockTerrainAttributes(terrain, mapX + lot.left, mapZ + lot.top, mapX + lot.right, mapZ + lot.bottom);
+        lotTerrainAttributes = blockTerrainAttributes(terrain, x + lot.left, z + lot.top, x + lot.right, z + lot.bottom);
 
         if (lotTerrainAttributes.steepness < MIN_STORY_HEIGHT) {
           maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
@@ -70,8 +70,8 @@ CityTour.BuildingsGenerator = (function() {
     var blocks = [];
 
     zonedBlocks.forEach(function(zonedBlock) {
-      var mapX = zonedBlock.mapX;
-      var mapZ = zonedBlock.mapZ;
+      var x = zonedBlock.x;
+      var z = zonedBlock.z;
       var block = [];
       var building;
       var l;
@@ -84,10 +84,10 @@ CityTour.BuildingsGenerator = (function() {
       }
 
       if (block !== []) {
-        if (blocks[mapX] === undefined) {
-          blocks[mapX] = [];
+        if (blocks[x] === undefined) {
+          blocks[x] = [];
         }
-        blocks[mapX][mapZ] = block;
+        blocks[x][z] = block;
       }
     });
 
@@ -104,8 +104,8 @@ CityTour.BuildingsGenerator = (function() {
 
     var buildings = {};
 
-    buildings.blockAtCoordinates = function(mapX, mapZ) {
-      return (blocks[mapX] === undefined || blocks[mapX][mapZ] === undefined) ? EMPTY_ARRAY : blocks[mapX][mapZ];
+    buildings.blockAtCoordinates = function(x, z) {
+      return (blocks[x] === undefined || blocks[x][z] === undefined) ? EMPTY_ARRAY : blocks[x][z];
     };
 
     return buildings;

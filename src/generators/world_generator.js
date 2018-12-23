@@ -47,8 +47,8 @@ CityTour.WorldGenerator = (function() {
     }
     else {
       roadConfig = {
-        centerMapX: neighborhoods[0].centerX,
-        centerMapZ: neighborhoods[0].centerZ,
+        centerX: neighborhoods[0].centerX,
+        centerZ: neighborhoods[0].centerZ,
         neighborhoods: {
           columnCount: config.neighborhoods.columnCount,
           rowCount: config.neighborhoods.rowCount,

@@ -8,35 +8,35 @@ CityTour.SquareRoadGenerator = (function() {
     var rightX = Math.min(terrain.maxX(), neighborhoodCenterX + 6);
     var topZ = Math.max(terrain.minZ(), neighborhoodCenterZ - 6);
     var bottomZ = Math.min(terrain.maxZ(), neighborhoodCenterZ + 6);
-    var mapX, mapZ;
+    var x, z;
 
-    for (mapX = leftX; mapX <= rightX; mapX++) {
-      for (mapZ = topZ; mapZ <= bottomZ; mapZ++) {
-        if (mapX < rightX) {
-          addEdge(terrain, roadNetwork, mapX, mapZ, mapX + 1, mapZ);
+    for (x = leftX; x <= rightX; x++) {
+      for (z = topZ; z <= bottomZ; z++) {
+        if (x < rightX) {
+          addEdge(terrain, roadNetwork, x, z, x + 1, z);
         }
 
-        if (mapZ < bottomZ) {
-          addEdge(terrain, roadNetwork, mapX, mapZ, mapX, mapZ + 1);
+        if (z < bottomZ) {
+          addEdge(terrain, roadNetwork, x, z, x, z + 1);
         }
       }
     }
   };
 
-  var isTerrainTooSteep = function(terrain, mapX, mapZ, targetMapX, targetMapZ) {
-    var heightAtPoint1 = terrain.heightAtCoordinates(mapX, mapZ);
-    var heightAtPoint2 = terrain.heightAtCoordinates(targetMapX, targetMapZ);
+  var isTerrainTooSteep = function(terrain, x, z, targetX, targetZ) {
+    var heightAtPoint1 = terrain.heightAtCoordinates(x, z);
+    var heightAtPoint2 = terrain.heightAtCoordinates(targetX, targetZ);
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
 
     return Math.abs(angle) > config.maxRoadAngle;
   };
 
-  var addEdge = function(terrain, roadNetwork, mapX1, mapZ1, mapX2, mapZ2) {
-    var edgeIsOnLand = terrain.waterHeightAtCoordinates(mapX1, mapZ1) === 0.0 &&
-                       terrain.waterHeightAtCoordinates(mapX2, mapZ2) === 0.0;
+  var addEdge = function(terrain, roadNetwork, x1, z1, x2, z2) {
+    var edgeIsOnLand = terrain.waterHeightAtCoordinates(x1, z1) === 0.0 &&
+                       terrain.waterHeightAtCoordinates(x2, z2) === 0.0;
 
-    if (edgeIsOnLand && !isTerrainTooSteep(terrain, mapX1, mapZ1, mapX2, mapZ2)) {
-      roadNetwork.addEdge(mapX1, mapZ1, mapX2, mapZ2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    if (edgeIsOnLand && !isTerrainTooSteep(terrain, x1, z1, x2, z2)) {
+      roadNetwork.addEdge(x1, z1, x2, z2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
     }
   };
 

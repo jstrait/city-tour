@@ -4,8 +4,8 @@ var CityTour = CityTour || {};
 
 CityTour.NeighborhoodRoadNetworkGenerator = (function() {
   var BRIDGE_CONFIG = {
-    centerMapX: 0,
-    centerMapZ: 0,
+    centerX: 0,
+    centerZ: 0,
     safeFromDecayBlocks: Number.POSITIVE_INFINITY,
     probability: 1.0,
   };
@@ -23,7 +23,7 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
     CityTour.CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[0].centerX, neighborhoods[0].centerZ, config);
 
     for (i = 1; i < neighborhoods.length; i++) {
-      shortestPathToRestOfCity = pathFinder.shortestPath(neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerMapX, config.centerMapZ, targetPredicate);
+      shortestPathToRestOfCity = pathFinder.shortestPath(neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerX, config.centerZ, targetPredicate);
       if (shortestPathToRestOfCity !== undefined) {
         buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, shortestPathToRestOfCity);
         CityTour.CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
@@ -33,13 +33,13 @@ CityTour.NeighborhoodRoadNetworkGenerator = (function() {
     return roadNetwork;
   };
 
-  var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, startMapX, startMapZ, path) {
+  var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, startX, startZ, path) {
     var previousIntersectionX, previousIntersectionZ;
     var bridgeAttributes, bridgeIntersectionX, bridgeIntersectionZ;
     var i;
 
-    previousIntersectionX = startMapX;
-    previousIntersectionZ = startMapZ;
+    previousIntersectionX = startX;
+    previousIntersectionZ = startZ;
     for (i = 0; i < path.length; i++) {
       // Assumption is that a distance larger than 1 means a bridge, since normal on-surface road paths will involve steps between adjacent
       // coordinates with length 1.

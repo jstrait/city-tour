@@ -52,7 +52,7 @@ CityTour.RoadNetworkSimplifier = (function() {
   };
 
   var simplifyHelper = function(roadNetwork, buildings) {
-    var mapX, mapZ, targetMapX, targetMapZ;
+    var x, z, targetX, targetZ;
     var southWestBlock, northWestBlock, southEastBlock, northEastBlock;
     var southWestBlockHasBuildings, northWestBlockHasBuildings, southEastBlockHasBuildings, northEastBlockHasBuildings;
 
@@ -66,29 +66,29 @@ CityTour.RoadNetworkSimplifier = (function() {
     var edgesRemovedCount = 0;
 
     // Road to the east
-    for (mapX = roadNetworkMinColumn; mapX < roadNetworkMaxColumn; mapX++) {
-      for (mapZ = roadNetworkMinRow; mapZ < roadNetworkMaxRow; mapZ++) {
-        targetMapX = mapX + 1;
-        targetMapZ = mapZ;
+    for (x = roadNetworkMinColumn; x < roadNetworkMaxColumn; x++) {
+      for (z = roadNetworkMinRow; z < roadNetworkMaxRow; z++) {
+        targetX = x + 1;
+        targetZ = z;
 
-        if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
-            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
-          southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
-          northEastBlock = buildings.blockAtCoordinates(mapX, mapZ - 1);
+        if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+          southEastBlock = buildings.blockAtCoordinates(x, z);
+          northEastBlock = buildings.blockAtCoordinates(x, z - 1);
 
           southEastBlockHasBuildings = blockHasTopTouchingBuilding(southEastBlock);
           northEastBlockHasBuildings = blockHasBottomTouchingBuilding(northEastBlock);
 
           if (southEastBlockHasBuildings === false && northEastBlockHasBuildings === false) {
-            roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            roadNetwork.removeEdge(x, z, targetX, targetZ);
             edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
-            if (roadNetwork.hasIntersection(mapX, mapZ) &&
-                roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
-                pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+            if (roadNetwork.hasIntersection(x, z) &&
+                roadNetwork.hasIntersection(targetX, targetZ) &&
+                pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -97,29 +97,29 @@ CityTour.RoadNetworkSimplifier = (function() {
     }
 
     // Road to the west
-    for (mapX = roadNetworkMaxColumn; mapX > roadNetworkMinColumn; mapX--) {
-      for (mapZ = roadNetworkMinRow; mapZ < roadNetworkMaxRow; mapZ++) {
-        targetMapX = mapX - 1;
-        targetMapZ = mapZ;
+    for (x = roadNetworkMaxColumn; x > roadNetworkMinColumn; x--) {
+      for (z = roadNetworkMinRow; z < roadNetworkMaxRow; z++) {
+        targetX = x - 1;
+        targetZ = z;
 
-        if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
-            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
-          southWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ);
-          northWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ - 1);
+        if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+          southWestBlock = buildings.blockAtCoordinates(x - 1, z);
+          northWestBlock = buildings.blockAtCoordinates(x - 1, z - 1);
 
           southWestBlockHasBuildings = blockHasTopTouchingBuilding(southWestBlock);
           northWestBlockHasBuildings = blockHasBottomTouchingBuilding(northWestBlock);
 
           if (southWestBlockHasBuildings === false && northWestBlockHasBuildings === false) {
-            roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            roadNetwork.removeEdge(x, z, targetX, targetZ);
             edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
-            if (roadNetwork.hasIntersection(mapX, mapZ) &&
-                roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
-                pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+            if (roadNetwork.hasIntersection(x, z) &&
+                roadNetwork.hasIntersection(targetX, targetZ) &&
+                pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -128,29 +128,29 @@ CityTour.RoadNetworkSimplifier = (function() {
     }
 
     // Road the south
-    for (mapX = roadNetworkMinColumn; mapX < roadNetworkMaxColumn; mapX++) {
-      for (mapZ = roadNetworkMinRow; mapZ < roadNetworkMaxRow; mapZ++) {
-        targetMapX = mapX;
-        targetMapZ = mapZ + 1;
+    for (x = roadNetworkMinColumn; x < roadNetworkMaxColumn; x++) {
+      for (z = roadNetworkMinRow; z < roadNetworkMaxRow; z++) {
+        targetX = x;
+        targetZ = z + 1;
 
-        if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
-            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
-          southWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ);
-          southEastBlock = buildings.blockAtCoordinates(mapX, mapZ);
+        if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+          southWestBlock = buildings.blockAtCoordinates(x - 1, z);
+          southEastBlock = buildings.blockAtCoordinates(x, z);
 
           southWestBlockHasBuildings = blockHasRightTouchingBuilding(southWestBlock);
           southEastBlockHasBuildings = blockHasLeftTouchingBuilding(southEastBlock);
 
           if (southWestBlockHasBuildings === false && southEastBlockHasBuildings === false) {
-            roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            roadNetwork.removeEdge(x, z, targetX, targetZ);
             edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
-            if (roadNetwork.hasIntersection(mapX, mapZ) &&
-                roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
-                pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+            if (roadNetwork.hasIntersection(x, z) &&
+                roadNetwork.hasIntersection(targetX, targetZ) &&
+                pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -159,29 +159,29 @@ CityTour.RoadNetworkSimplifier = (function() {
     }
 
     // Road the north
-    for (mapX = roadNetworkMinColumn; mapX < roadNetworkMaxColumn; mapX++) {
-      for (mapZ = roadNetworkMaxRow; mapZ > roadNetworkMinRow; mapZ--) {
-        targetMapX = mapX;
-        targetMapZ = mapZ - 1;
+    for (x = roadNetworkMinColumn; x < roadNetworkMaxColumn; x++) {
+      for (z = roadNetworkMaxRow; z > roadNetworkMinRow; z--) {
+        targetX = x;
+        targetZ = z - 1;
 
-        if (roadNetwork.hasEdgeBetween(mapX, mapZ, targetMapX, targetMapZ) &&
-            roadNetwork.edgeBetween(mapX, mapZ, targetMapX, targetMapZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
-          northWestBlock = buildings.blockAtCoordinates(mapX - 1, mapZ - 1);
-          northEastBlock = buildings.blockAtCoordinates(mapX, mapZ - 1);
+        if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+          northWestBlock = buildings.blockAtCoordinates(x - 1, z - 1);
+          northEastBlock = buildings.blockAtCoordinates(x, z - 1);
 
           northWestBlockHasBuildings = blockHasRightTouchingBuilding(northWestBlock);
           northEastBlockHasBuildings = blockHasLeftTouchingBuilding(northEastBlock);
 
           if (northWestBlockHasBuildings === false && northEastBlockHasBuildings === false) {
-            roadNetwork.removeEdge(mapX, mapZ, targetMapX, targetMapZ);
+            roadNetwork.removeEdge(x, z, targetX, targetZ);
             edgesRemovedCount += 1;
 
             // If removing the edge results in a portion of the road network being cut off from the rest of the network,
             // re-add the edge to prevent this.
-            if (roadNetwork.hasIntersection(mapX, mapZ) &&
-                roadNetwork.hasIntersection(targetMapX, targetMapZ) &&
-                pathFinder.shortestPath(mapX, mapZ, targetMapX, targetMapZ) === undefined) {
-              roadNetwork.addEdge(mapX, mapZ, targetMapX, targetMapZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+            if (roadNetwork.hasIntersection(x, z) &&
+                roadNetwork.hasIntersection(targetX, targetZ) &&
+                pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }

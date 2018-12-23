@@ -9,12 +9,12 @@ CityTour.BridgeGenerator = (function() {
   var MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS = 3;
   var DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = 0.5;
 
-  var buildBridge = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetMapX, targetMapZ, config) {
+  var buildBridge = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetX, targetZ, config) {
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
     var PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = (config.probability !== undefined) ? config.probability : DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT;
 
-    var centerMapX = config.centerMapX;
-    var centerMapZ = config.centerMapZ;
+    var centerX = config.centerX;
+    var centerZ = config.centerZ;
     var xDelta, zDelta;
     var bridgeEndX, bridgeEndZ;
     var bridgeLength;
@@ -23,25 +23,25 @@ CityTour.BridgeGenerator = (function() {
     var side1WaterCount = 0;
     var side2WaterCount = 0;
 
-    var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerMapX, centerMapZ, bridgeStartX, bridgeStartZ);
+    var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerX, centerZ, bridgeStartX, bridgeStartZ);
     if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
       return;
     }
 
-    if (targetMapX === bridgeStartX) {
+    if (targetX === bridgeStartX) {
       xDelta = 0.0;
     }
     else {
-      xDelta = (targetMapX < bridgeStartX) ? -1 : 1;
+      xDelta = (targetX < bridgeStartX) ? -1 : 1;
     }
-    if (targetMapZ === bridgeStartZ) {
+    if (targetZ === bridgeStartZ) {
       zDelta = 0.0;
     }
     else {
-      zDelta = (targetMapZ < bridgeStartZ) ? -1 : 1;
+      zDelta = (targetZ < bridgeStartZ) ? -1 : 1;
     }
-    bridgeEndX = targetMapX;
-    bridgeEndZ = targetMapZ;
+    bridgeEndX = targetX;
+    bridgeEndZ = targetZ;
 
     bridgeLength = 1;
     while (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ) > 0.0) {
