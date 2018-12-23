@@ -144,14 +144,14 @@ CityTour.RoadNetwork = function(terrain) {
     var intersectionHeight, intersectionSurfaceType;
     var edge = { distance: distance, surfaceType: surfaceType };
 
-    if (!intersection1) {
+    if (intersection1 === undefined) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? terrain.heightAtCoordinates(x1, z1) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
       intersection1 = new Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
       intersections[x1][z1] = intersection1;
     }
 
-    if (!intersection2) {
+    if (intersection2 === undefined) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? terrain.heightAtCoordinates(x2, z2) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
       intersection2 = new Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
@@ -171,13 +171,13 @@ CityTour.RoadNetwork = function(terrain) {
     var intersection1 = (intersections[x1] === undefined) ? undefined : intersections[x1][z1];
     var intersection2 = (intersections[x2] === undefined) ? undefined : intersections[x2][z2];
 
-    if (intersection1) {
+    if (intersection1 !== undefined) {
       intersection1.removeEdge(x2, z2);
       if (intersection1.edgeCount() === 0) {
         intersections[x1][z1] = undefined;
       }
     }
-    if (intersection2) {
+    if (intersection2 !== undefined) {
       intersection2.removeEdge(x1, z1);
       if (intersection2.edgeCount() === 0) {
         intersections[x2][z2] = undefined;
