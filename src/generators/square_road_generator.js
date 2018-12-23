@@ -4,10 +4,10 @@ var CityTour = CityTour || {};
 
 CityTour.SquareRoadGenerator = (function() {
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
-    var leftX = Math.max(terrain.minMapX(), neighborhoodCenterX - 6);
-    var rightX = Math.min(terrain.maxMapX(), neighborhoodCenterX + 6);
-    var topZ = Math.max(terrain.minMapZ(), neighborhoodCenterZ - 6);
-    var bottomZ = Math.min(terrain.maxMapZ(), neighborhoodCenterZ + 6);
+    var leftX = Math.max(terrain.minX(), neighborhoodCenterX - 6);
+    var rightX = Math.min(terrain.maxX(), neighborhoodCenterX + 6);
+    var topZ = Math.max(terrain.minZ(), neighborhoodCenterZ - 6);
+    var bottomZ = Math.min(terrain.maxZ(), neighborhoodCenterZ + 6);
     var mapX, mapZ;
 
     for (mapX = leftX; mapX <= rightX; mapX++) {

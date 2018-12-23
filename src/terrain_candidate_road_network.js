@@ -22,7 +22,7 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
   };
 
   var hasIntersection = function(mapX, mapZ) {
-    return mapX >= terrain.minMapX() && mapX <= terrain.maxMapX() && mapZ >= terrain.minMapZ() && mapZ <= terrain.maxMapZ();
+    return mapX >= terrain.minX() && mapX <= terrain.maxX() && mapZ >= terrain.minZ() && mapZ <= terrain.maxZ();
   };
 
   var edgesFrom = function(mapX, mapZ) {
@@ -71,11 +71,11 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
   };
 
   var minColumn = function() {
-    return terrain.minMapX();
+    return terrain.minX();
   };
 
   var maxColumn = function() {
-    return terrain.maxMapX();
+    return terrain.maxX();
   };
 
   return {

@@ -11,17 +11,17 @@ CityTour.Terrain = function(coordinates, scale) {
   var rowCount = coordinates[0].length;
   var maxXIndex = columnCount - 1;
   var maxZIndex = rowCount - 1;
-  var maxMapX = maxXIndex * 0.5 * scale;
-  var minMapX = -maxMapX;
-  var maxMapZ = maxZIndex * 0.5 * scale;
-  var minMapZ = -maxMapZ;
+  var maxX = maxXIndex * 0.5 * scale;
+  var minX = -maxX;
+  var maxZ = maxZIndex * 0.5 * scale;
+  var minZ = -maxZ;
 
   var mapXToNormalizedX = function(mapX) {
-    return (mapX + maxMapX) * subDivisions;
+    return (mapX + maxX) * subDivisions;
   };
 
   var mapZToNormalizedZ = function(mapZ) {
-    return (mapZ + maxMapZ) * subDivisions;
+    return (mapZ + maxZ) * subDivisions;
   };
 
   var interpolateHeight = function(point, floor, ceiling) {
@@ -92,10 +92,10 @@ CityTour.Terrain = function(coordinates, scale) {
 
   return {
     scale: function() { return scale; },
-    minMapX: function() { return minMapX; },
-    maxMapX: function() { return maxMapX; },
-    minMapZ: function() { return minMapZ; },
-    maxMapZ: function() { return maxMapZ; },
+    minX: function() { return minX; },
+    maxX: function() { return maxX; },
+    minZ: function() { return minZ; },
+    maxZ: function() { return maxZ; },
     landHeightAtCoordinates: landHeightAtCoordinates,
     waterHeightAtCoordinates: waterHeightAtCoordinates,
     heightAtCoordinates: heightAtCoordinates,

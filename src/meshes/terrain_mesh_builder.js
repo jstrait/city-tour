@@ -43,14 +43,14 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
   var addNorthVerticalFace = function(terrain, terrainGeometry, triangleWidth) {
     var mapX;
-    var mapZ = terrain.maxMapZ();
+    var mapZ = terrain.maxZ();
     var triangle;
     var leftX, rightX;
     var leftHeight, rightHeight;
     var leftWaterHeight, rightWaterHeight;
     var material;
 
-    for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
+    for (mapX = terrain.minX(); mapX < terrain.maxX(); mapX += triangleWidth) {
       leftX = mapX;
       rightX = mapX + triangleWidth;
 
@@ -75,14 +75,14 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
   var addSouthVerticalFace = function(terrain, terrainGeometry, triangleWidth) {
     var mapX;
-    var mapZ = terrain.minMapZ();
+    var mapZ = terrain.minZ();
     var triangle;
     var leftX, rightX;
     var leftHeight, rightHeight;
     var leftWaterHeight, rightWaterHeight;
     var material;
 
-    for (mapX = terrain.minMapX(); mapX < terrain.maxMapX(); mapX += triangleWidth) {
+    for (mapX = terrain.minX(); mapX < terrain.maxX(); mapX += triangleWidth) {
       leftX = mapX;
       rightX = mapX + triangleWidth;
 
@@ -107,14 +107,14 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
   var addWestVerticalFace = function(terrain, terrainGeometry, triangleDepth) {
     var mapZ;
-    var mapX = terrain.minMapX();
+    var mapX = terrain.minX();
     var triangle;
     var topZ, bottomZ;
     var topLandHeight, topWaterHeight, topTotalHeight;
     var bottomLandHeight, bottomWaterHeight, bottomTotalHeight;
     var neighboringWaterHeight;
 
-    for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
+    for (mapZ = terrain.minZ(); mapZ < terrain.maxZ(); mapZ += triangleDepth) {
       topZ = mapZ;
       bottomZ = mapZ + triangleDepth;
 
@@ -157,14 +157,14 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
   var addEastVerticalFace = function(terrain, terrainGeometry, triangleDepth) {
     var mapZ;
-    var mapX = terrain.maxMapX();
+    var mapX = terrain.maxX();
     var triangle;
     var topZ, bottomZ;
     var topLandHeight, topWaterHeight, topTotalHeight;
     var bottomLandHeight, bottomWaterHeight, bottomTotalHeight;
     var neighboringWaterHeight;
 
-    for (mapZ = terrain.minMapZ(); mapZ < terrain.maxMapZ(); mapZ += triangleDepth) {
+    for (mapZ = terrain.minZ(); mapZ < terrain.maxZ(); mapZ += triangleDepth) {
       topZ = mapZ;
       bottomZ = mapZ + triangleDepth;
 
@@ -213,28 +213,28 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight;
     var topLeftMaterial, topRightMaterial, bottomLeftMaterial, bottomRightMaterial;
 
-    var minMapX = terrain.minMapX();
-    var maxMapX = terrain.maxMapX();
-    var minMapZ = terrain.minMapZ();
-    var maxMapZ = terrain.maxMapZ();
+    var minX = terrain.minX();
+    var maxX = terrain.maxX();
+    var minZ = terrain.minZ();
+    var maxZ = terrain.maxZ();
 
     var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
     var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
 
-    for (mapX = minMapX; mapX < maxMapX; mapX += triangleWidth) {
-      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(mapX, minMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
-      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, minMapZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+    for (mapX = minX; mapX < maxX; mapX += triangleWidth) {
+      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(mapX, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
 
-      bottomRoad = (Math.floor(minMapZ) === minMapZ) &&
-                   roadNetwork.hasEdgeBetween(Math.floor(mapX), minMapZ, Math.floor(mapX) + 1, minMapZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      bottomRoad = (Math.floor(minZ) === minZ) &&
+                   roadNetwork.hasEdgeBetween(Math.floor(mapX), minZ, Math.floor(mapX) + 1, minZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
-      bottomLeftHeight = terrain.heightAtCoordinates(mapX, minMapZ);
-      bottomRightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, minMapZ);
+      bottomLeftHeight = terrain.heightAtCoordinates(mapX, minZ);
+      bottomRightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, minZ);
 
-      bottomLeftMaterial = terrain.waterHeightAtCoordinates(mapX, minMapZ) === 0.0 ? LAND : WATER;
-      bottomRightMaterial = terrain.waterHeightAtCoordinates(mapX + triangleWidth, minMapZ) === 0.0 ? LAND : WATER;
+      bottomLeftMaterial = terrain.waterHeightAtCoordinates(mapX, minZ) === 0.0 ? LAND : WATER;
+      bottomRightMaterial = terrain.waterHeightAtCoordinates(mapX + triangleWidth, minZ) === 0.0 ? LAND : WATER;
 
-      for (mapZ = minMapZ; mapZ < maxMapZ; mapZ += triangleDepth) {
+      for (mapZ = minZ; mapZ < maxZ; mapZ += triangleDepth) {
         topLeftRoad     = bottomLeftRoad;
         topRightRoad    = bottomRightRoad;
         bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(mapX, mapZ + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;

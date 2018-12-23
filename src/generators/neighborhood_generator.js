@@ -20,13 +20,13 @@ CityTour.NeighborhoodGenerator = (function() {
     var score;
     var x, z;
 
-    var minX = terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN;
-    var maxX = terrain.maxMapX() - FLATNESS_WINDOW_WIDTH_MARGIN;
-    var minZ = terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
-    var maxZ = terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
+    var minX = terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN;
+    var maxX = terrain.maxX() - FLATNESS_WINDOW_WIDTH_MARGIN;
+    var minZ = terrain.minZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
+    var maxZ = terrain.maxZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
 
     // Manhattan distance from the center
-    var maxNeighborhoodDistanceFromCenter = Math.abs((terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN) + (terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN));
+    var maxNeighborhoodDistanceFromCenter = Math.abs((terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN) + (terrain.minZ() + FLATNESS_WINDOW_DEPTH_MARGIN));
 
     for (x = minX; x <= maxX; x++) {
       scores[x] = [];
@@ -53,10 +53,10 @@ CityTour.NeighborhoodGenerator = (function() {
     var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
     var pointCount = 0;
     var totalHeightDeltas = 0.0;
-    var minX = Math.max(terrain.minMapX(), centerX - FLATNESS_WINDOW_WIDTH_MARGIN);
-    var maxX = Math.min(terrain.maxMapX(), centerX + FLATNESS_WINDOW_WIDTH_MARGIN);
-    var minZ = Math.max(terrain.minMapZ(), centerZ - FLATNESS_WINDOW_DEPTH_MARGIN);
-    var maxZ = Math.min(terrain.maxMapZ(), centerZ + FLATNESS_WINDOW_DEPTH_MARGIN);
+    var minX = Math.max(terrain.minX(), centerX - FLATNESS_WINDOW_WIDTH_MARGIN);
+    var maxX = Math.min(terrain.maxX(), centerX + FLATNESS_WINDOW_WIDTH_MARGIN);
+    var minZ = Math.max(terrain.minZ(), centerZ - FLATNESS_WINDOW_DEPTH_MARGIN);
+    var maxZ = Math.min(terrain.maxZ(), centerZ + FLATNESS_WINDOW_DEPTH_MARGIN);
     var x, z;
 
     for (x = minX; x <= maxX; x++) {
@@ -73,10 +73,10 @@ CityTour.NeighborhoodGenerator = (function() {
     var distanceToNeighborhoodCenter;
     var x, z;
 
-    var minX = Math.max(terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN, neighborhoodCenterX - MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
-    var maxX = Math.min(terrain.maxMapX() - FLATNESS_WINDOW_WIDTH_MARGIN, neighborhoodCenterX + MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
-    var minZ = Math.max(terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN, neighborhoodCenterZ - MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
-    var maxZ = Math.min(terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN, neighborhoodCenterZ + MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
+    var minX = Math.max(terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN, neighborhoodCenterX - MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
+    var maxX = Math.min(terrain.maxX() - FLATNESS_WINDOW_WIDTH_MARGIN, neighborhoodCenterX + MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
+    var minZ = Math.max(terrain.minZ() + FLATNESS_WINDOW_DEPTH_MARGIN, neighborhoodCenterZ - MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
+    var maxZ = Math.min(terrain.maxZ() - FLATNESS_WINDOW_DEPTH_MARGIN, neighborhoodCenterZ + MIN_DISTANCE_BETWEEN_NEIGHBORHOODS);
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
@@ -89,16 +89,16 @@ CityTour.NeighborhoodGenerator = (function() {
   };
 
   var bestNeighborhoodSite = function(terrain, scores, neighborhoods) {
-    var bestSiteCoordinates = { x: terrain.minMapX(), z: terrain.minMapZ() };
+    var bestSiteCoordinates = { x: terrain.minX(), z: terrain.minZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
     var score, scoreComponents;
     var distanceToClosestNeighborhood;
     var x, z;
 
-    var minX = terrain.minMapX() + FLATNESS_WINDOW_WIDTH_MARGIN;
-    var maxX = terrain.maxMapX() - FLATNESS_WINDOW_WIDTH_MARGIN;
-    var minZ = terrain.minMapZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
-    var maxZ = terrain.maxMapZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
+    var minX = terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN;
+    var maxX = terrain.maxX() - FLATNESS_WINDOW_WIDTH_MARGIN;
+    var minZ = terrain.minZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
+    var maxZ = terrain.maxZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
 
     for (x = minX; x < maxX; x++) {
       for (z = minZ; z < maxZ; z++) {

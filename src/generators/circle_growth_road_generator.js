@@ -4,20 +4,20 @@ var CityTour = CityTour || {};
 
 CityTour.CircleGrowthRoadGenerator = (function() {
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
-    var MIN_MAP_X = Math.max(terrain.minMapX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
-    var MAX_MAP_X = Math.min(terrain.maxMapX(), (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
-    var MIN_MAP_Z = Math.max(terrain.minMapZ(), -(config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
-    var MAX_MAP_Z = Math.min(terrain.maxMapZ(), (config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
+    var MIN_X = Math.max(terrain.minX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
+    var MAX_X = Math.min(terrain.maxX(), (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
+    var MIN_Z = Math.max(terrain.minZ(), -(config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
+    var MAX_Z = Math.min(terrain.maxZ(), (config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
 
     var DISTANCE_TO_NEIGHBORHOOD_BOUNDARY = Math.min(config.neighborhoods.columnCount / 2, config.neighborhoods.rowCount / 2);
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
 
     var probabilityOfBranching = function(mapX1, mapZ1, mapX2, mapZ2) {
       // Guarantee roads along x and z axes
-      if (mapX1 === neighborhoodCenterX && mapX2 === neighborhoodCenterX && mapZ2 >= MIN_MAP_Z && mapZ2 <= MAX_MAP_Z) {
+      if (mapX1 === neighborhoodCenterX && mapX2 === neighborhoodCenterX && mapZ2 >= MIN_Z && mapZ2 <= MAX_Z) {
         return 1.0;
       }
-      else if (mapZ1 === neighborhoodCenterZ && mapZ2 === neighborhoodCenterZ && mapX2 >= MIN_MAP_X && mapX2 <= MAX_MAP_X) {
+      else if (mapZ1 === neighborhoodCenterZ && mapZ2 === neighborhoodCenterZ && mapX2 >= MIN_X && mapX2 <= MAX_X) {
         return 1.0;
       }
 
@@ -62,7 +62,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
       var bridgeIntersectionX, bridgeIntersectionZ;
       var targetIntersectionExists;
 
-      if (targetMapX < MIN_MAP_X || targetMapX > MAX_MAP_X || targetMapZ < MIN_MAP_Z || targetMapZ > MAX_MAP_Z) {
+      if (targetMapX < MIN_X || targetMapX > MAX_X || targetMapZ < MIN_Z || targetMapZ > MAX_Z) {
         return;
       }
 

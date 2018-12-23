@@ -44,37 +44,37 @@ describe("CityTour.Terrain", function() {
     it("returns the correct size bounds at default scale", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 1);
 
-      expect(terrain.minMapX()).toBe(-2);
-      expect(terrain.maxMapX()).toBe(2);
-      expect(terrain.minMapZ()).toBe(-2);
-      expect(terrain.maxMapZ()).toBe(2);
+      expect(terrain.minX()).toBe(-2);
+      expect(terrain.maxX()).toBe(2);
+      expect(terrain.minZ()).toBe(-2);
+      expect(terrain.maxZ()).toBe(2);
     });
 
     it("returns the correct size bounds at half scale", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 0.5);
 
-      expect(terrain.minMapX()).toBe(-1);
-      expect(terrain.maxMapX()).toBe(1);
-      expect(terrain.minMapZ()).toBe(-1);
-      expect(terrain.maxMapZ()).toBe(1);
+      expect(terrain.minX()).toBe(-1);
+      expect(terrain.maxX()).toBe(1);
+      expect(terrain.minZ()).toBe(-1);
+      expect(terrain.maxZ()).toBe(1);
     });
 
     it("returns the correct size bounds at quarter scale", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 0.25);
 
-      expect(terrain.minMapX()).toBe(-0.5);
-      expect(terrain.maxMapX()).toBe(0.5);
-      expect(terrain.minMapZ()).toBe(-0.5);
-      expect(terrain.maxMapZ()).toBe(0.5);
+      expect(terrain.minX()).toBe(-0.5);
+      expect(terrain.maxX()).toBe(0.5);
+      expect(terrain.minZ()).toBe(-0.5);
+      expect(terrain.maxZ()).toBe(0.5);
     });
 
     it("returns the correct size bounds at quarter scale", function() {
       var terrain = new CityTour.Terrain(terrainMesh, 2);
 
-      expect(terrain.minMapX()).toBe(-4);
-      expect(terrain.maxMapX()).toBe(4);
-      expect(terrain.minMapZ()).toBe(-4);
-      expect(terrain.maxMapZ()).toBe(4);
+      expect(terrain.minX()).toBe(-4);
+      expect(terrain.maxX()).toBe(4);
+      expect(terrain.minZ()).toBe(-4);
+      expect(terrain.maxZ()).toBe(4);
     });
   });
 
