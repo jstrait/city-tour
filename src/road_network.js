@@ -3,27 +3,27 @@
 var CityTour = CityTour || {};
 
 CityTour.RoadNetwork = function(terrain) {
-  var Intersection = function(mapX, mapZ, height, surfaceType) {
+  var Intersection = function(x, z, height, surfaceType) {
     var edges = [];
 
-    var addEdge = function(destinationMapX, destinationMapZ, edge) {
+    var addEdge = function(destinationX, destinationZ, edge) {
       var i;
 
       for(i = 0; i < edges.length; i++) {
-        if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
+        if (edges[i].destinationX === destinationX && edges[i].destinationZ === destinationZ) {
           edges[i].edge = edge;
           return;
         }
       }
 
-      edges.push({ destinationMapX: destinationMapX, destinationMapZ: destinationMapZ, edge: edge});
+      edges.push({ destinationX: destinationX, destinationZ: destinationZ, edge: edge});
     };
 
-    var removeEdge = function(mapX, mapZ) {
+    var removeEdge = function(x, z) {
       var i, indexToRemove;
 
       for (i = 0; i < edges.length; i++) {
-        if (edges[i].destinationMapX === mapX && edges[i].destinationMapZ == mapZ) {
+        if (edges[i].destinationX === x && edges[i].destinationZ == z) {
           indexToRemove = i;
         }
       }
@@ -33,11 +33,11 @@ CityTour.RoadNetwork = function(terrain) {
       }
     };
 
-    var hasEdgeTo = function(destinationMapX, destinationMapZ, surfaceType) {
+    var hasEdgeTo = function(destinationX, destinationZ, surfaceType) {
       var i;
 
       for (i = 0; i < edges.length; i++) {
-        if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
+        if (edges[i].destinationX === destinationX && edges[i].destinationZ === destinationZ) {
           if (surfaceType) {
             return edges[i].edge.surfaceType === surfaceType;
           }
@@ -50,11 +50,11 @@ CityTour.RoadNetwork = function(terrain) {
       return false;
     };
 
-    var getEdge = function(destinationMapX, destinationMapZ) {
+    var getEdge = function(destinationX, destinationZ) {
       var i;
 
       for (i = 0; i < edges.length; i++) {
-        if (edges[i].destinationMapX === destinationMapX && edges[i].destinationMapZ === destinationMapZ) {
+        if (edges[i].destinationX === destinationX && edges[i].destinationZ === destinationZ) {
           return edges[i].edge;
         }
       }
@@ -77,49 +77,49 @@ CityTour.RoadNetwork = function(terrain) {
 
   var minColumn = Number.POSITIVE_INFINITY, maxColumn = Number.NEGATIVE_INFINITY, minRow = Number.POSITIVE_INFINITY, maxRow = Number.NEGATIVE_INFINITY;
   var intersections = [];
-  for (var mapX = Math.ceil(terrain.minMapX()); mapX <= Math.floor(terrain.maxMapX()); mapX++) {
-    intersections[mapX] = [];
+  for (var x = Math.ceil(terrain.minMapX()); x <= Math.floor(terrain.maxMapX()); x++) {
+    intersections[x] = [];
   }
 
 
-  var hasIntersection = function(mapX, mapZ) {
-    return intersections[mapX] !== undefined && intersections[mapX][mapZ] !== undefined;
+  var hasIntersection = function(x, z) {
+    return intersections[x] !== undefined && intersections[x][z] !== undefined;
   };
 
-  var getIntersectionHeight = function(mapX, mapZ) {
-    if (hasIntersection(mapX, mapZ)) {
-      return intersections[mapX][mapZ].getHeight();
+  var getIntersectionHeight = function(x, z) {
+    if (hasIntersection(x, z)) {
+      return intersections[x][z].getHeight();
     }
     else {
       return undefined;
     }
   };
 
-  var getRoadHeight = function(mapX, mapZ) {
-    var xIsExact = Math.floor(mapX) === mapX;
-    var zIsExact = Math.floor(mapZ) === mapZ;
+  var getRoadHeight = function(x, z) {
+    var xIsExact = Math.floor(x) === x;
+    var zIsExact = Math.floor(z) === z;
     var floor, ceil;
 
     if (xIsExact && zIsExact) {
-      return getIntersectionHeight(mapX, mapZ);
+      return getIntersectionHeight(x, z);
     }
     else if (xIsExact) {
-      ceil = getIntersectionHeight(mapX, Math.ceil(mapZ));
-      floor = getIntersectionHeight(mapX, Math.floor(mapZ));
+      ceil = getIntersectionHeight(x, Math.ceil(z));
+      floor = getIntersectionHeight(x, Math.floor(z));
 
       if (ceil !== undefined && floor !== undefined) {
-        return CityTour.Math.lerp(floor, ceil, mapZ - Math.floor(mapZ));
+        return CityTour.Math.lerp(floor, ceil, z - Math.floor(z));
       }
       else {
         return undefined;
       }
     }
     else if (zIsExact) {
-      ceil = getIntersectionHeight(Math.ceil(mapX), mapZ);
-      floor = getIntersectionHeight(Math.floor(mapX), mapZ);
+      ceil = getIntersectionHeight(Math.ceil(x), z);
+      floor = getIntersectionHeight(Math.floor(x), z);
 
       if (ceil !== undefined && floor !== undefined) {
-        return CityTour.Math.lerp(floor, ceil, mapX - Math.floor(mapX));
+        return CityTour.Math.lerp(floor, ceil, x - Math.floor(x));
       }
       else {
         return undefined;
@@ -129,79 +129,79 @@ CityTour.RoadNetwork = function(terrain) {
     return undefined;
   };
 
-  var getIntersectionSurfaceType = function(mapX, mapZ) {
-    if (hasIntersection(mapX, mapZ)) {
-      return intersections[mapX][mapZ].getSurfaceType();
+  var getIntersectionSurfaceType = function(x, z) {
+    if (hasIntersection(x, z)) {
+      return intersections[x][z].getSurfaceType();
     }
     else {
       return false;
     }
   };
 
-  var addEdge = function(mapX1, mapZ1, mapX2, mapZ2, nonTerrainHeight, distance, surfaceType) {
-    var intersection1 = intersections[mapX1][mapZ1];
-    var intersection2 = intersections[mapX2][mapZ2];
+  var addEdge = function(x1, z1, x2, z2, nonTerrainHeight, distance, surfaceType) {
+    var intersection1 = intersections[x1][z1];
+    var intersection2 = intersections[x2][z2];
     var intersectionHeight, intersectionSurfaceType;
     var edge = { distance: distance, surfaceType: surfaceType };
 
     if (!intersection1) {
-      intersectionHeight = (terrain.waterHeightAtCoordinates(mapX1, mapZ1) === 0.0) ? terrain.heightAtCoordinates(mapX1, mapZ1) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(mapX1, mapZ1) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
-      intersection1 = new Intersection(mapX1, mapZ1, intersectionHeight, intersectionSurfaceType);
-      intersections[mapX1][mapZ1] = intersection1;
+      intersectionHeight = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? terrain.heightAtCoordinates(x1, z1) : nonTerrainHeight;
+      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
+      intersection1 = new Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
+      intersections[x1][z1] = intersection1;
     }
 
     if (!intersection2) {
-      intersectionHeight = (terrain.waterHeightAtCoordinates(mapX2, mapZ2) === 0.0) ? terrain.heightAtCoordinates(mapX2, mapZ2) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(mapX2, mapZ2) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
-      intersection2 = new Intersection(mapX2, mapZ2, intersectionHeight, intersectionSurfaceType);
-      intersections[mapX2][mapZ2] = intersection2;
+      intersectionHeight = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? terrain.heightAtCoordinates(x2, z2) : nonTerrainHeight;
+      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
+      intersection2 = new Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
+      intersections[x2][z2] = intersection2;
     }
 
-    intersection1.addEdge(mapX2, mapZ2, edge);
-    intersection2.addEdge(mapX1, mapZ1, edge);
+    intersection1.addEdge(x2, z2, edge);
+    intersection2.addEdge(x1, z1, edge);
 
-    minColumn = Math.min(minColumn, mapX1, mapX2);
-    maxColumn = Math.max(maxColumn, mapX1, mapX2);
-    minRow = Math.min(minRow, mapZ1, mapZ2);
-    maxRow = Math.max(maxRow, mapZ1, mapZ2);
+    minColumn = Math.min(minColumn, x1, x2);
+    maxColumn = Math.max(maxColumn, x1, x2);
+    minRow = Math.min(minRow, z1, z2);
+    maxRow = Math.max(maxRow, z1, z2);
   };
 
-  var removeEdge = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var intersection1 = (intersections[mapX1] === undefined) ? undefined : intersections[mapX1][mapZ1];
-    var intersection2 = (intersections[mapX2] === undefined) ? undefined : intersections[mapX2][mapZ2];
+  var removeEdge = function(x1, z1, x2, z2) {
+    var intersection1 = (intersections[x1] === undefined) ? undefined : intersections[x1][z1];
+    var intersection2 = (intersections[x2] === undefined) ? undefined : intersections[x2][z2];
 
     if (intersection1) {
-      intersection1.removeEdge(mapX2, mapZ2);
+      intersection1.removeEdge(x2, z2);
       if (intersection1.edgeCount() === 0) {
-        intersections[mapX1][mapZ1] = undefined;
+        intersections[x1][z1] = undefined;
       }
     }
     if (intersection2) {
-      intersection2.removeEdge(mapX1, mapZ1);
+      intersection2.removeEdge(x1, z1);
       if (intersection2.edgeCount() === 0) {
-        intersections[mapX2][mapZ2] = undefined;
+        intersections[x2][z2] = undefined;
       }
     }
   };
 
-  var hasEdgeBetween = function(mapX1, mapZ1, mapX2, mapZ2, surfaceType) {
-    var intersection1 = (intersections[mapX1] === undefined) ? undefined : intersections[mapX1][mapZ1];
-    var intersection2 = (intersections[mapX2] === undefined) ? undefined : intersections[mapX2][mapZ2];
+  var hasEdgeBetween = function(x1, z1, x2, z2, surfaceType) {
+    var intersection1 = (intersections[x1] === undefined) ? undefined : intersections[x1][z1];
+    var intersection2 = (intersections[x2] === undefined) ? undefined : intersections[x2][z2];
 
     return intersection1 !== undefined &&
            intersection2 !== undefined &&
-           intersection1.hasEdgeTo(mapX2, mapZ2, surfaceType) && intersection2.hasEdgeTo(mapX1, mapZ1, surfaceType);
+           intersection1.hasEdgeTo(x2, z2, surfaceType) && intersection2.hasEdgeTo(x1, z1, surfaceType);
   };
 
-  var edgeBetween = function(mapX1, mapZ1, mapX2, mapZ2) {
-    var intersection1 = (intersections[mapX1] === undefined) ? undefined : intersections[mapX1][mapZ1];
+  var edgeBetween = function(x1, z1, x2, z2) {
+    var intersection1 = (intersections[x1] === undefined) ? undefined : intersections[x1][z1];
 
-    return (intersection1 === undefined) ? undefined : intersection1.getEdge(mapX2, mapZ2);
+    return (intersection1 === undefined) ? undefined : intersection1.getEdge(x2, z2);
   };
 
-  var edgesFrom = function(mapX, mapZ) {
-    var intersection = (intersections[mapX] === undefined) ? undefined : intersections[mapX][mapZ];
+  var edgesFrom = function(x, z) {
+    var intersection = (intersections[x] === undefined) ? undefined : intersections[x][z];
 
     return (intersection === undefined) ? undefined : intersection.edgesFrom();
   };

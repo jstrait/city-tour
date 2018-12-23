@@ -42,8 +42,8 @@ CityTour.PathFinder = function(roadNetwork) {
     var adjacentNode, candidateDistance;
 
     for (i = 0; i < edgesFromNode.length; i++) {
-      adjacentX = edgesFromNode[i].destinationMapX;
-      adjacentZ = edgesFromNode[i].destinationMapZ;
+      adjacentX = edgesFromNode[i].destinationX;
+      adjacentZ = edgesFromNode[i].destinationZ;
       adjacentEdge = edgesFromNode[i].edge;
       adjacentNode = nodes[adjacentX][adjacentZ];
 

@@ -17,7 +17,7 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
 
     if (bridgeAttributes !== undefined) {
       bridgeLength = CityTour.Math.distanceBetweenPoints(mapX, mapZ, bridgeAttributes.endX, bridgeAttributes.endZ);
-      edges.push({ destinationMapX: bridgeAttributes.endX, destinationMapZ: bridgeAttributes.endZ, edge: { distance: bridgeLength, surfaceType: CityTour.RoadNetwork.BRIDGE_SURFACE }});
+      edges.push({ destinationX: bridgeAttributes.endX, destinationZ: bridgeAttributes.endZ, edge: { distance: bridgeLength, surfaceType: CityTour.RoadNetwork.BRIDGE_SURFACE }});
     }
   };
 
@@ -42,14 +42,14 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
       addBridgeEdge(edges, mapX, mapZ, mapX, mapZ - 1);
     }
     else if (Math.abs(northAngle) <= maxRoadAngle) {
-      edges.push({ destinationMapX: mapX, destinationMapZ: mapZ - 1, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: mapX, destinationZ: mapZ - 1, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
     if (terrain.waterHeightAtCoordinates(mapX, mapZ + 1) > 0.0) {
       addBridgeEdge(edges, mapX, mapZ, mapX, mapZ + 1);
     }
     else if (Math.abs(southAngle) <= maxRoadAngle) {
-      edges.push({ destinationMapX: mapX, destinationMapZ: mapZ + 1, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: mapX, destinationZ: mapZ + 1, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
 
@@ -57,14 +57,14 @@ CityTour.TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
       addBridgeEdge(edges, mapX, mapZ, mapX - 1, mapZ);
     }
     else if (Math.abs(westAngle) <= maxRoadAngle) {
-      edges.push({ destinationMapX: mapX - 1, destinationMapZ: mapZ, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: mapX - 1, destinationZ: mapZ, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
     if (terrain.waterHeightAtCoordinates(mapX + 1, mapZ) > 0.0) {
       addBridgeEdge(edges, mapX, mapZ, mapX + 1, mapZ);
     }
     else if (Math.abs(eastAngle) <= maxRoadAngle) {
-      edges.push({ destinationMapX: mapX + 1, destinationMapZ: mapZ, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: mapX + 1, destinationZ: mapZ, edge: { distance: 1.0, surfaceType: CityTour.RoadNetwork.TERRAIN_SURFACE }});
     }
 
     return edges;
