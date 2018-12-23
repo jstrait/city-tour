@@ -16,37 +16,37 @@ var CityTour = CityTour || {};
    Target points are chosen to alternate between either a point north or south of
    the previous target, or east or west of the previous target.
 */
-CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTargetMapZ) {
+CityTour.AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ) {
   var MAX_ITERATIONS = 100;
 
   var X_AXIS = 1;
   var Z_AXIS = 2;
 
-  var targetMapX = initialTargetMapX;
-  var targetMapZ = initialTargetMapZ;
+  var targetX = initialTargetX;
+  var targetZ = initialTargetZ;
   var movementAxis = X_AXIS;
 
   var searchForTargetOnAxis = function() {
     var iterationCount = 0;
-    var newTargetMapX = targetMapX;
-    var newTargetMapZ = targetMapZ;
+    var newTargetX = targetX;
+    var newTargetZ = targetZ;
 
-    while ((targetMapX === newTargetMapX && targetMapZ === newTargetMapZ) || !roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ)) {
+    while ((targetX === newTargetX && targetZ === newTargetZ) || !roadNetwork.hasIntersection(newTargetX, newTargetZ)) {
       if (iterationCount >= MAX_ITERATIONS) {
         return;
       }
 
       if (movementAxis === X_AXIS) {
-        newTargetMapX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
+        newTargetX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
       }
       else if (movementAxis === Z_AXIS) {
-        newTargetMapZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
+        newTargetZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
       }
 
       iterationCount += 1;
     }
 
-    return [newTargetMapX, newTargetMapZ];
+    return [newTargetX, newTargetZ];
   };
 
   var nextTarget = function() {
@@ -62,19 +62,19 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetMapX, initialTarge
       // If target can't be found on _either_ axis (implying road network is empty),
       // then set the target to the current position.
       if (newTargetCoordinates === undefined) {
-        newTargetCoordinates = [targetMapX, targetMapZ];
+        newTargetCoordinates = [targetX, targetZ];
       }
     }
 
-    targetMapX = newTargetCoordinates[0];
-    targetMapZ = newTargetCoordinates[1];
+    targetX = newTargetCoordinates[0];
+    targetZ = newTargetCoordinates[1];
     movementAxis = (movementAxis === X_AXIS) ? Z_AXIS : X_AXIS;
   };
 
 
   return {
-    targetMapX: function() { return targetMapX; },
-    targetMapZ: function() { return targetMapZ; },
+    targetX: function() { return targetX; },
+    targetZ: function() { return targetZ; },
     nextTarget: nextTarget,
   };
 };

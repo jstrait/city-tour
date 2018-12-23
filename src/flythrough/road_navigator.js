@@ -11,24 +11,24 @@ var CityTour = CityTour || {};
    then finds a path to that intersection. A path is a sequence of intersections
    to travel to that will ultimately end up at the target intersection.
 */
-CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, initialTargetMapZ) {
-  var targetMapX = initialTargetMapX;
-  var targetMapZ = initialTargetMapZ;
-  var subTargetMapX = initialTargetMapX;
-  var subTargetMapZ = initialTargetMapZ;
+CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTargetZ) {
+  var targetX = initialTargetX;
+  var targetZ = initialTargetZ;
+  var subTargetX = initialTargetX;
+  var subTargetZ = initialTargetZ;
 
   var path = [];
 
   var chooseNewTarget = function() {
-    var newTargetMapX;
-    var newTargetMapZ;
+    var newTargetX;
+    var newTargetZ;
 
     do {
-      newTargetMapX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
-      newTargetMapZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
-    } while (!roadNetwork.hasIntersection(newTargetMapX, newTargetMapZ));
+      newTargetX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
+      newTargetZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
+    } while (!roadNetwork.hasIntersection(newTargetX, newTargetZ));
 
-    return [newTargetMapX, newTargetMapZ];
+    return [newTargetX, newTargetZ];
   };
 
 
@@ -43,8 +43,8 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
   var simplifyPath = function(path) {
     var xRun = 0;
     var zRun = 0;
-    var previousX = subTargetMapX;
-    var previousZ = subTargetMapZ;
+    var previousX = subTargetX;
+    var previousZ = subTargetZ;
 
     var simplifiedPath = [];
 
@@ -71,22 +71,22 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetMapX, in
   var nextTarget = function() {
     if (path.length === 0) {
       var newTargetCoordinates = chooseNewTarget();
-      path = pathFinder.shortestPath(targetMapX, targetMapZ, newTargetCoordinates[0], newTargetCoordinates[1]);
+      path = pathFinder.shortestPath(targetX, targetZ, newTargetCoordinates[0], newTargetCoordinates[1]);
       path = simplifyPath(path);
 
-      targetMapX = newTargetCoordinates[0];
-      targetMapZ = newTargetCoordinates[1];
+      targetX = newTargetCoordinates[0];
+      targetZ = newTargetCoordinates[1];
     }
 
     var nextTargetPoint = path.splice(0, 1);
-    subTargetMapX = nextTargetPoint[0][0];
-    subTargetMapZ = nextTargetPoint[0][1];
+    subTargetX = nextTargetPoint[0][0];
+    subTargetZ = nextTargetPoint[0][1];
   };
 
 
   return {
-    targetMapX: function() { return subTargetMapX; },
-    targetMapZ: function() { return subTargetMapZ; },
+    targetX: function() { return subTargetX; },
+    targetZ: function() { return subTargetZ; },
     nextTarget: nextTarget,
   };
 };

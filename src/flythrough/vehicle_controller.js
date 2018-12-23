@@ -68,9 +68,9 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
-    var descentTargetMapX, descentTargetMapZ;
+    var descentTargetX, descentTargetZ;
     var descentTargetPositionX, descentTargetPositionY, descentTargetPositionZ;
-    var drivingTargetMapX, drivingTargetMapZ;
+    var drivingTargetX, drivingTargetZ;
     var drivingTargetPositionX, drivingTargetPositionZ, drivingTargetRotationY;
     var diveFrameCount;
     var newAnimations = [];
@@ -93,36 +93,36 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     }
 
     if (positiveViewAngleToCityCenter >= ((7 * Math.PI) / 4) || positiveViewAngleToCityCenter < (Math.PI / 4)) {  // Moving north-ish
-      descentTargetMapX = 0;
-      descentTargetMapZ = -3;
-      drivingTargetMapX = 0;
-      drivingTargetMapZ = -6;
+      descentTargetX = 0;
+      descentTargetZ = -3;
+      drivingTargetX = 0;
+      drivingTargetZ = -6;
     }
     else if (positiveViewAngleToCityCenter >= (Math.PI / 4) && positiveViewAngleToCityCenter < ((3 * Math.PI) / 4)) {  // Moving west-ish
-      descentTargetMapX = -3;
-      descentTargetMapZ = 0;
-      drivingTargetMapX = -6;
-      drivingTargetMapZ = 0;
+      descentTargetX = -3;
+      descentTargetZ = 0;
+      drivingTargetX = -6;
+      drivingTargetZ = 0;
     }
     else if (positiveViewAngleToCityCenter >= ((3 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((5 * Math.PI) / 4)) { // Moving south-ish
-      descentTargetMapX = 0;
-      descentTargetMapZ = 3;
-      drivingTargetMapX = 0;
-      drivingTargetMapZ = 6;
+      descentTargetX = 0;
+      descentTargetZ = 3;
+      drivingTargetX = 0;
+      drivingTargetZ = 6;
     }
     else if (positiveViewAngleToCityCenter >= ((5 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((7 * Math.PI) / 4)) { // Moving east-ish
-      descentTargetMapX = 3;
-      descentTargetMapZ = 0;
-      drivingTargetMapX = 6;
-      drivingTargetMapZ = 0;
+      descentTargetX = 3;
+      descentTargetZ = 0;
+      drivingTargetX = 6;
+      drivingTargetZ = 0;
     }
 
     // Prevent attempting to navigate to non-existent road intersection, which will cause things to blow up
-    if (!roadNetwork.hasIntersection(descentTargetMapX, descentTargetMapZ) || !roadNetwork.hasIntersection(drivingTargetMapX, drivingTargetMapZ)) {
-      descentTargetMapX = 0;
-      descentTargetMapZ = 0;
-      drivingTargetMapX = 0;
-      drivingTargetMapZ = 0;
+    if (!roadNetwork.hasIntersection(descentTargetX, descentTargetZ) || !roadNetwork.hasIntersection(drivingTargetX, drivingTargetZ)) {
+      descentTargetX = 0;
+      descentTargetZ = 0;
+      drivingTargetX = 0;
+      drivingTargetZ = 0;
     }
 
 
@@ -147,12 +147,12 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    descentTargetPositionX = targetPositionX + descentTargetMapX;
-    descentTargetPositionZ = targetPositionZ + descentTargetMapZ;
+    descentTargetPositionX = targetPositionX + descentTargetX;
+    descentTargetPositionZ = targetPositionZ + descentTargetZ;
     descentTargetPositionY = roadNetwork.getRoadHeight(descentTargetPositionX, descentTargetPositionZ);
 
-    drivingTargetPositionX = targetPositionX + drivingTargetMapX;
-    drivingTargetPositionZ = targetPositionZ + drivingTargetMapZ;
+    drivingTargetPositionX = targetPositionX + drivingTargetX;
+    drivingTargetPositionZ = targetPositionZ + drivingTargetZ;
     drivingTargetRotationY = determineAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     diveFrameCount = 105;
@@ -404,8 +404,8 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
         navigator.nextTarget();
 
-        animations = buildNextAnimations(navigator.targetMapX(),
-                                         navigator.targetMapZ());
+        animations = buildNextAnimations(navigator.targetX(),
+                                         navigator.targetZ());
       }
     }
 

@@ -49,14 +49,14 @@ describe("CityTour.AerialNavigator", function() {
     aerialNavigator = new CityTour.AerialNavigator(roadNetwork, 1, 2);
 
     it("is a no-op if road network is empty", function() {
-      expect(aerialNavigator.targetMapX()).toBe(1);
-      expect(aerialNavigator.targetMapZ()).toBe(2);
+      expect(aerialNavigator.targetX()).toBe(1);
+      expect(aerialNavigator.targetZ()).toBe(2);
 
       // This should not result in an infinite loop,
       aerialNavigator.nextTarget();
 
-      expect(aerialNavigator.targetMapX()).toBe(1);
-      expect(aerialNavigator.targetMapZ()).toBe(2);
+      expect(aerialNavigator.targetX()).toBe(1);
+      expect(aerialNavigator.targetZ()).toBe(2);
     });
   });
 
@@ -79,23 +79,23 @@ describe("CityTour.AerialNavigator", function() {
     aerialNavigator = new CityTour.AerialNavigator(roadNetwork, 0, 0);
 
     it("chooses intersection on opposing axis when no road intersection on the movement axis is available", function() {
-      var previousTargetMapX;
+      var previousTargetX;
 
-      expect(aerialNavigator.targetMapX()).toBe(0);
-      expect(aerialNavigator.targetMapZ()).toBe(0);
+      expect(aerialNavigator.targetX()).toBe(0);
+      expect(aerialNavigator.targetZ()).toBe(0);
 
       aerialNavigator.nextTarget();
 
-      expect(aerialNavigator.targetMapX()).not.toBe(0);
-      expect(aerialNavigator.targetMapZ()).toBe(0);
+      expect(aerialNavigator.targetX()).not.toBe(0);
+      expect(aerialNavigator.targetZ()).toBe(0);
 
-      previousTargetMapX = aerialNavigator.targetMapX();
+      previousTargetX = aerialNavigator.targetX();
 
       // Since there's no valid intersection on the Z-Axis to move to, an intersection
       // on the X-axis should be chosen instead.
       aerialNavigator.nextTarget();
-      expect(aerialNavigator.targetMapX()).not.toBe(previousTargetMapX);
-      expect(aerialNavigator.targetMapZ()).toBe(0);
+      expect(aerialNavigator.targetX()).not.toBe(previousTargetX);
+      expect(aerialNavigator.targetZ()).toBe(0);
     });
 
 
