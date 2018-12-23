@@ -2,7 +2,7 @@
 
 var CityTour = CityTour || {};
 
-CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTargetSceneX, initialTargetSceneZ) {
+CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -420,7 +420,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
   };
 
 
-  animations = buildNextAnimations(initialTargetSceneX, initialTargetSceneZ);
+  animations = buildNextAnimations(initialTargetX, initialTargetZ);
 
   return {
     positionX: function() { return positionX; },
