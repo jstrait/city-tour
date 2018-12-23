@@ -14,7 +14,6 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
 
     var direction, worldPosition;
     var ray, movementTowardXZPlaneAmount;
-    var mapX, mapZ;
     var loopCount;
 
     normalizedScreenVector.unproject(camera);
