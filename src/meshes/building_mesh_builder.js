@@ -40,7 +40,7 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
 
-    var mapX, mapZ, leftX, topZ;
+    var x, z, leftX, topZ;
     var minX, maxX, minZ, maxZ;
     var block;
 
@@ -81,13 +81,13 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     minZ = roadNetwork.minRow();
     maxZ = roadNetwork.maxRow();
 
-    for (mapX = minX; mapX < maxX; mapX++) {
-      leftX = mapX + HALF_STREET_WIDTH;
+    for (x = minX; x < maxX; x++) {
+      leftX = x + HALF_STREET_WIDTH;
 
-      for (mapZ = minZ; mapZ < maxZ; mapZ++) {
-        topZ = mapZ + HALF_STREET_DEPTH;
+      for (z = minZ; z < maxZ; z++) {
+        topZ = z + HALF_STREET_DEPTH;
 
-        block = buildings.blockAtCoordinates(mapX, mapZ);
+        block = buildings.blockAtCoordinates(x, z);
         block.forEach(generateLotBuilding);
       }
     }

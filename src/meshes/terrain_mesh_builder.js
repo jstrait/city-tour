@@ -42,171 +42,171 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
   };
 
   var addNorthVerticalFace = function(terrain, terrainGeometry, triangleWidth) {
-    var mapX;
-    var mapZ = terrain.maxZ();
+    var x;
+    var z = terrain.maxZ();
     var triangle;
     var leftX, rightX;
     var leftHeight, rightHeight;
     var leftWaterHeight, rightWaterHeight;
     var material;
 
-    for (mapX = terrain.minX(); mapX < terrain.maxX(); mapX += triangleWidth) {
-      leftX = mapX;
-      rightX = mapX + triangleWidth;
+    for (x = terrain.minX(); x < terrain.maxX(); x += triangleWidth) {
+      leftX = x;
+      rightX = x + triangleWidth;
 
-      leftHeight = terrain.heightAtCoordinates(leftX, mapZ);
-      rightHeight = terrain.heightAtCoordinates(rightX, mapZ);
+      leftHeight = terrain.heightAtCoordinates(leftX, z);
+      rightHeight = terrain.heightAtCoordinates(rightX, z);
 
-      leftWaterHeight = terrain.waterHeightAtCoordinates(leftX, mapZ);
-      rightWaterHeight = terrain.waterHeightAtCoordinates(rightX, mapZ);
+      leftWaterHeight = terrain.waterHeightAtCoordinates(leftX, z);
+      rightWaterHeight = terrain.waterHeightAtCoordinates(rightX, z);
       material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
 
-      triangle = buildTriangleGeometry(leftX,  leftHeight,         mapZ, material,
-                                       leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       rightX, rightHeight,        mapZ, material);
+      triangle = buildTriangleGeometry(leftX,  leftHeight,         z, material,
+                                       leftX,  SIDE_BOTTOM_HEIGHT, z, material,
+                                       rightX, rightHeight,        z, material);
       terrainGeometry.merge(triangle);
 
-      triangle = buildTriangleGeometry(leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       rightX, SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       rightX, rightHeight,        mapZ, material);
+      triangle = buildTriangleGeometry(leftX,  SIDE_BOTTOM_HEIGHT, z, material,
+                                       rightX, SIDE_BOTTOM_HEIGHT, z, material,
+                                       rightX, rightHeight,        z, material);
       terrainGeometry.merge(triangle);
     }
   };
 
   var addSouthVerticalFace = function(terrain, terrainGeometry, triangleWidth) {
-    var mapX;
-    var mapZ = terrain.minZ();
+    var x;
+    var z = terrain.minZ();
     var triangle;
     var leftX, rightX;
     var leftHeight, rightHeight;
     var leftWaterHeight, rightWaterHeight;
     var material;
 
-    for (mapX = terrain.minX(); mapX < terrain.maxX(); mapX += triangleWidth) {
-      leftX = mapX;
-      rightX = mapX + triangleWidth;
+    for (x = terrain.minX(); x < terrain.maxX(); x += triangleWidth) {
+      leftX = x;
+      rightX = x + triangleWidth;
 
-      leftHeight = terrain.heightAtCoordinates(leftX, mapZ);
-      rightHeight = terrain.heightAtCoordinates(rightX, mapZ);
+      leftHeight = terrain.heightAtCoordinates(leftX, z);
+      rightHeight = terrain.heightAtCoordinates(rightX, z);
 
-      leftWaterHeight = terrain.waterHeightAtCoordinates(leftX, mapZ);
-      rightWaterHeight = terrain.waterHeightAtCoordinates(rightX, mapZ);
+      leftWaterHeight = terrain.waterHeightAtCoordinates(leftX, z);
+      rightWaterHeight = terrain.waterHeightAtCoordinates(rightX, z);
       material = (leftWaterHeight > 0.0 && rightWaterHeight > 0.0) ? WATER : LAND;
 
-      triangle = buildTriangleGeometry(rightX, rightHeight,        mapZ, material,
-                                       leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       leftX,  leftHeight,         mapZ, material);
+      triangle = buildTriangleGeometry(rightX, rightHeight,        z, material,
+                                       leftX,  SIDE_BOTTOM_HEIGHT, z, material,
+                                       leftX,  leftHeight,         z, material);
       terrainGeometry.merge(triangle);
 
-      triangle = buildTriangleGeometry(leftX,  SIDE_BOTTOM_HEIGHT, mapZ, material,
-                                       rightX, rightHeight,        mapZ, material,
-                                       rightX, SIDE_BOTTOM_HEIGHT, mapZ, material);
+      triangle = buildTriangleGeometry(leftX,  SIDE_BOTTOM_HEIGHT, z, material,
+                                       rightX, rightHeight,        z, material,
+                                       rightX, SIDE_BOTTOM_HEIGHT, z, material);
       terrainGeometry.merge(triangle);
     }
   };
 
   var addWestVerticalFace = function(terrain, terrainGeometry, triangleDepth) {
-    var mapZ;
-    var mapX = terrain.minX();
+    var z;
+    var x = terrain.minX();
     var triangle;
     var topZ, bottomZ;
     var topLandHeight, topWaterHeight, topTotalHeight;
     var bottomLandHeight, bottomWaterHeight, bottomTotalHeight;
     var neighboringWaterHeight;
 
-    for (mapZ = terrain.minZ(); mapZ < terrain.maxZ(); mapZ += triangleDepth) {
-      topZ = mapZ;
-      bottomZ = mapZ + triangleDepth;
+    for (z = terrain.minZ(); z < terrain.maxZ(); z += triangleDepth) {
+      topZ = z;
+      bottomZ = z + triangleDepth;
 
-      topLandHeight = terrain.landHeightAtCoordinates(mapX, topZ);
-      topWaterHeight = terrain.waterHeightAtCoordinates(mapX, topZ);
+      topLandHeight = terrain.landHeightAtCoordinates(x, topZ);
+      topWaterHeight = terrain.waterHeightAtCoordinates(x, topZ);
       topTotalHeight = topLandHeight + topWaterHeight;
-      bottomLandHeight = terrain.landHeightAtCoordinates(mapX, bottomZ);
-      bottomWaterHeight = terrain.waterHeightAtCoordinates(mapX, bottomZ);
+      bottomLandHeight = terrain.landHeightAtCoordinates(x, bottomZ);
+      bottomWaterHeight = terrain.waterHeightAtCoordinates(x, bottomZ);
       bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
-      neighboringWaterHeight = terrain.waterHeightAtCoordinates(mapX + 1, topZ);
+      neighboringWaterHeight = terrain.waterHeightAtCoordinates(x + 1, topZ);
 
       if (topWaterHeight === 0.0 || bottomWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         topLandHeight = topTotalHeight;
         bottomLandHeight = bottomTotalHeight;
       }
 
-      triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
-                                       mapX, bottomLandHeight,   bottomZ, LAND,
-                                       mapX, topLandHeight,      topZ,    LAND);
+      triangle = buildTriangleGeometry(x, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
+                                       x, bottomLandHeight,   bottomZ, LAND,
+                                       x, topLandHeight,      topZ,    LAND);
       terrainGeometry.merge(triangle);
 
-      triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
-                                       mapX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
-                                       mapX, bottomLandHeight,   bottomZ, LAND);
+      triangle = buildTriangleGeometry(x, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
+                                       x, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
+                                       x, bottomLandHeight,   bottomZ, LAND);
       terrainGeometry.merge(triangle);
 
       if (topWaterHeight > 0.0 && bottomWaterHeight > 0.0 && neighboringWaterHeight > 0.0) {
-        triangle = buildTriangleGeometry(mapX, topLandHeight,     topZ,    WATER,
-                                         mapX, bottomTotalHeight, bottomZ, WATER,
-                                         mapX, topTotalHeight,    topZ,    WATER);
+        triangle = buildTriangleGeometry(x, topLandHeight,     topZ,    WATER,
+                                         x, bottomTotalHeight, bottomZ, WATER,
+                                         x, topTotalHeight,    topZ,    WATER);
         terrainGeometry.merge(triangle);
 
-        triangle = buildTriangleGeometry(mapX, topLandHeight,     topZ,    WATER,
-                                         mapX, bottomLandHeight,  bottomZ, WATER,
-                                         mapX, bottomTotalHeight, bottomZ, WATER);
+        triangle = buildTriangleGeometry(x, topLandHeight,     topZ,    WATER,
+                                         x, bottomLandHeight,  bottomZ, WATER,
+                                         x, bottomTotalHeight, bottomZ, WATER);
         terrainGeometry.merge(triangle);
       }
     }
   };
 
   var addEastVerticalFace = function(terrain, terrainGeometry, triangleDepth) {
-    var mapZ;
-    var mapX = terrain.maxX();
+    var z;
+    var x = terrain.maxX();
     var triangle;
     var topZ, bottomZ;
     var topLandHeight, topWaterHeight, topTotalHeight;
     var bottomLandHeight, bottomWaterHeight, bottomTotalHeight;
     var neighboringWaterHeight;
 
-    for (mapZ = terrain.minZ(); mapZ < terrain.maxZ(); mapZ += triangleDepth) {
-      topZ = mapZ;
-      bottomZ = mapZ + triangleDepth;
+    for (z = terrain.minZ(); z < terrain.maxZ(); z += triangleDepth) {
+      topZ = z;
+      bottomZ = z + triangleDepth;
 
-      topLandHeight = terrain.landHeightAtCoordinates(mapX, topZ);
-      topWaterHeight = terrain.waterHeightAtCoordinates(mapX, topZ);
+      topLandHeight = terrain.landHeightAtCoordinates(x, topZ);
+      topWaterHeight = terrain.waterHeightAtCoordinates(x, topZ);
       topTotalHeight = topLandHeight + topWaterHeight;
-      bottomLandHeight = terrain.landHeightAtCoordinates(mapX, bottomZ);
-      bottomWaterHeight = terrain.waterHeightAtCoordinates(mapX, bottomZ);
+      bottomLandHeight = terrain.landHeightAtCoordinates(x, bottomZ);
+      bottomWaterHeight = terrain.waterHeightAtCoordinates(x, bottomZ);
       bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
-      neighboringWaterHeight = terrain.waterHeightAtCoordinates(mapX - 1, bottomZ);
+      neighboringWaterHeight = terrain.waterHeightAtCoordinates(x - 1, bottomZ);
 
       if (topWaterHeight === 0.0 || bottomWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         topLandHeight = topTotalHeight;
         bottomLandHeight = bottomTotalHeight;
       }
 
-      triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
-                                       mapX, topLandHeight,      topZ,    LAND,
-                                       mapX, bottomLandHeight,   bottomZ, LAND);
+      triangle = buildTriangleGeometry(x, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
+                                       x, topLandHeight,      topZ,    LAND,
+                                       x, bottomLandHeight,   bottomZ, LAND);
       terrainGeometry.merge(triangle);
 
-      triangle = buildTriangleGeometry(mapX, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
-                                       mapX, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
-                                       mapX, topLandHeight,      topZ,    LAND);
+      triangle = buildTriangleGeometry(x, SIDE_BOTTOM_HEIGHT, bottomZ, LAND,
+                                       x, SIDE_BOTTOM_HEIGHT, topZ,    LAND,
+                                       x, topLandHeight,      topZ,    LAND);
       terrainGeometry.merge(triangle);
 
       if (topWaterHeight > 0.0 && bottomWaterHeight > 0.0 && neighboringWaterHeight > 0.0) {
-        triangle = buildTriangleGeometry(mapX, bottomLandHeight,  bottomZ, WATER,
-                                         mapX, topTotalHeight,    topZ,    WATER,
-                                         mapX, bottomTotalHeight, bottomZ, WATER);
+        triangle = buildTriangleGeometry(x, bottomLandHeight,  bottomZ, WATER,
+                                         x, topTotalHeight,    topZ,    WATER,
+                                         x, bottomTotalHeight, bottomZ, WATER);
         terrainGeometry.merge(triangle);
 
-        triangle = buildTriangleGeometry(mapX, bottomLandHeight, bottomZ, WATER,
-                                         mapX, topLandHeight,    topZ,    WATER,
-                                         mapX, topTotalHeight,   topZ,    WATER);
+        triangle = buildTriangleGeometry(x, bottomLandHeight, bottomZ, WATER,
+                                         x, topLandHeight,    topZ,    WATER,
+                                         x, topTotalHeight,   topZ,    WATER);
         terrainGeometry.merge(triangle);
       }
     }
   };
 
   var addMainTerrain = function(terrain, roadNetwork, terrainGeometry, triangleWidth, triangleDepth) {
-    var mapX, mapZ, triangle;
+    var x, z, triangle;
     var leftRoad, topRoad, bottomRoad, rightRoad;
     var topLeftRoad, topRightRoad, bottomLeftRoad, bottomRightRoad;
     var topLeftX, topLeftZ, topRightX, topRightZ, bottomLeftX, bottomLeftZ, bottomRightX, bottomRightZ;
@@ -221,32 +221,32 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
     var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
 
-    for (mapX = minX; mapX < maxX; mapX += triangleWidth) {
-      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(mapX, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
-      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+    for (x = minX; x < maxX; x += triangleWidth) {
+      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(x, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
 
       bottomRoad = (Math.floor(minZ) === minZ) &&
-                   roadNetwork.hasEdgeBetween(Math.floor(mapX), minZ, Math.floor(mapX) + 1, minZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
+                   roadNetwork.hasEdgeBetween(Math.floor(x), minZ, Math.floor(x) + 1, minZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
-      bottomLeftHeight = terrain.heightAtCoordinates(mapX, minZ);
-      bottomRightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, minZ);
+      bottomLeftHeight = terrain.heightAtCoordinates(x, minZ);
+      bottomRightHeight = terrain.heightAtCoordinates(x + triangleWidth, minZ);
 
-      bottomLeftMaterial = terrain.waterHeightAtCoordinates(mapX, minZ) === 0.0 ? LAND : WATER;
-      bottomRightMaterial = terrain.waterHeightAtCoordinates(mapX + triangleWidth, minZ) === 0.0 ? LAND : WATER;
+      bottomLeftMaterial = terrain.waterHeightAtCoordinates(x, minZ) === 0.0 ? LAND : WATER;
+      bottomRightMaterial = terrain.waterHeightAtCoordinates(x + triangleWidth, minZ) === 0.0 ? LAND : WATER;
 
-      for (mapZ = minZ; mapZ < maxZ; mapZ += triangleDepth) {
+      for (z = minZ; z < maxZ; z += triangleDepth) {
         topLeftRoad     = bottomLeftRoad;
         topRightRoad    = bottomRightRoad;
-        bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(mapX, mapZ + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;
-        bottomRightRoad = roadNetwork.getIntersectionSurfaceType(mapX + triangleWidth, mapZ + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+        bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(x, z + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+        bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, z + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;
 
-        leftRoad = (Math.floor(mapX) === mapX) && roadNetwork.hasEdgeBetween(mapX, Math.floor(mapZ), mapX, Math.floor(mapZ) + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
-        rightRoad = (Math.ceil(mapX + triangleWidth) === (mapX + triangleWidth)) && roadNetwork.hasEdgeBetween(mapX + triangleWidth, Math.floor(mapZ), mapX + triangleWidth, Math.floor(mapZ) + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        leftRoad = (Math.floor(x) === x) && roadNetwork.hasEdgeBetween(x, Math.floor(z), x, Math.floor(z) + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        rightRoad = (Math.ceil(x + triangleWidth) === (x + triangleWidth)) && roadNetwork.hasEdgeBetween(x + triangleWidth, Math.floor(z), x + triangleWidth, Math.floor(z) + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
         topRoad = bottomRoad;
-        bottomRoad = (Math.ceil(mapZ + triangleDepth) === (mapZ + triangleDepth)) && roadNetwork.hasEdgeBetween(Math.floor(mapX), mapZ + triangleDepth, Math.floor(mapX) + 1, mapZ + triangleDepth, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        bottomRoad = (Math.ceil(z + triangleDepth) === (z + triangleDepth)) && roadNetwork.hasEdgeBetween(Math.floor(x), z + triangleDepth, Math.floor(x) + 1, z + triangleDepth, CityTour.RoadNetwork.TERRAIN_SURFACE);
 
-        topLeftX = mapX;
-        topLeftZ = mapZ;
+        topLeftX = x;
+        topLeftZ = z;
         if (topLeftRoad || leftRoad) {
           topLeftX += halfStreetWidth;
         }
@@ -254,8 +254,8 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           topLeftZ += halfStreetDepth;
         }
 
-        topRightX = mapX + triangleWidth;
-        topRightZ = mapZ;
+        topRightX = x + triangleWidth;
+        topRightZ = z;
         if (topRightRoad || rightRoad) {
           topRightX -= halfStreetWidth;
         }
@@ -263,8 +263,8 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           topRightZ += halfStreetDepth;
         }
 
-        bottomLeftX = mapX;
-        bottomLeftZ = mapZ + triangleDepth;
+        bottomLeftX = x;
+        bottomLeftZ = z + triangleDepth;
         if (bottomLeftRoad || leftRoad) {
           bottomLeftX += halfStreetWidth;
         }
@@ -272,8 +272,8 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           bottomLeftZ -= halfStreetDepth;
         }
 
-        bottomRightX = mapX + triangleWidth;
-        bottomRightZ = mapZ + triangleDepth;
+        bottomRightX = x + triangleWidth;
+        bottomRightZ = z + triangleDepth;
         if (bottomRightRoad || rightRoad) {
           bottomRightX -= halfStreetWidth;
         }
@@ -283,13 +283,13 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
         topLeftHeight = bottomLeftHeight;
         topRightHeight = bottomRightHeight;
-        bottomLeftHeight = terrain.heightAtCoordinates(mapX, mapZ + triangleDepth);
-        bottomRightHeight = terrain.heightAtCoordinates(mapX + triangleWidth, mapZ + triangleDepth);
+        bottomLeftHeight = terrain.heightAtCoordinates(x, z + triangleDepth);
+        bottomRightHeight = terrain.heightAtCoordinates(x + triangleWidth, z + triangleDepth);
 
         topLeftMaterial = bottomLeftMaterial;
         topRightMaterial = bottomRightMaterial;
-        bottomLeftMaterial = terrain.waterHeightAtCoordinates(mapX, mapZ + triangleDepth) === 0.0 ? LAND : WATER;
-        bottomRightMaterial = terrain.waterHeightAtCoordinates(mapX + triangleWidth, mapZ + triangleDepth) === 0.0 ? LAND : WATER;
+        bottomLeftMaterial = terrain.waterHeightAtCoordinates(x, z + triangleDepth) === 0.0 ? LAND : WATER;
+        bottomRightMaterial = terrain.waterHeightAtCoordinates(x + triangleWidth, z + triangleDepth) === 0.0 ? LAND : WATER;
 
         // Core triangles
         triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ, topLeftMaterial,
@@ -306,14 +306,14 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
         // Extra left-side triangles
         if (!leftRoad) {
           if (topLeftRoad && !bottomLeftRoad) {
-            triangle = buildTriangleGeometry(mapX, topLeftHeight, topLeftZ, topLeftMaterial,
-                                             mapX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
+            triangle = buildTriangleGeometry(x, topLeftHeight, topLeftZ, topLeftMaterial,
+                                             x, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              topLeftX, topLeftHeight, topLeftZ, topLeftMaterial);
             terrainGeometry.merge(triangle);
           }
           else if (!topLeftRoad && bottomLeftRoad) {
-            triangle = buildTriangleGeometry(mapX, topLeftHeight, topLeftZ, topLeftMaterial,
-                                             mapX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
+            triangle = buildTriangleGeometry(x, topLeftHeight, topLeftZ, topLeftMaterial,
+                                             x, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial);
             terrainGeometry.merge(triangle);
           }
@@ -329,16 +329,16 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
         // Extra right-side triangles
         if (!rightRoad) {
           if (topRightRoad && !bottomRightRoad) {
-            triangle = buildTriangleGeometry(mapX + triangleWidth, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                             mapX + triangleWidth, topRightHeight, topRightZ, topRightMaterial,
+            triangle = buildTriangleGeometry(x + triangleWidth, bottomRightHeight, bottomRightZ, bottomRightMaterial,
+                                             x + triangleWidth, topRightHeight, topRightZ, topRightMaterial,
                                              topRightX, topRightHeight, topRightZ, topRightMaterial);
 
             terrainGeometry.merge(triangle);
           }
           else if (!topRightRoad && bottomRightRoad) {
             triangle = buildTriangleGeometry(bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                             mapX + triangleWidth, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                             mapX + triangleWidth, topRightHeight, topRightZ, topRightMaterial);
+                                             x + triangleWidth, bottomRightHeight, bottomRightZ, bottomRightMaterial,
+                                             x + triangleWidth, topRightHeight, topRightZ, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
           else if (topRightRoad && bottomRightRoad) {
@@ -352,15 +352,15 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
         // Extra top-side triangles
         if (!topRoad) {
           if (topLeftRoad && !topRightRoad) {
-            triangle = buildTriangleGeometry(topLeftX,  topLeftHeight, mapZ, topLeftMaterial,
+            triangle = buildTriangleGeometry(topLeftX,  topLeftHeight, z, topLeftMaterial,
                                              topLeftX,  topLeftHeight, topLeftZ, topLeftMaterial,
-                                             mapX + triangleWidth, topRightHeight, mapZ, topRightMaterial);
+                                             x + triangleWidth, topRightHeight, z, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
           else if (!topLeftRoad && topRightRoad) {
-            triangle = buildTriangleGeometry(mapX, topLeftHeight, mapZ, topLeftMaterial,
+            triangle = buildTriangleGeometry(x, topLeftHeight, z, topLeftMaterial,
                                              topRightX, topRightHeight, topRightZ, topRightMaterial,
-                                             topRightX, topRightHeight, mapZ, topRightMaterial);
+                                             topRightX, topRightHeight, z, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
           else if (topLeftRoad && topRightRoad) {
@@ -377,13 +377,13 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
         if (!bottomRoad) {
           if (bottomLeftRoad && !bottomRightRoad) {
             triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             bottomLeftX,  bottomLeftHeight, mapZ + triangleDepth, bottomLeftMaterial,
-                                             bottomRightX, bottomRightHeight, mapZ + triangleDepth, bottomRightMaterial);
+                                             bottomLeftX,  bottomLeftHeight, z + triangleDepth, bottomLeftMaterial,
+                                             bottomRightX, bottomRightHeight, z + triangleDepth, bottomRightMaterial);
             terrainGeometry.merge(triangle);
           }
           else if (!bottomLeftRoad && bottomRightRoad) {
-            triangle = buildTriangleGeometry(mapX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             bottomRightX, bottomRightHeight, mapZ + triangleDepth, bottomRightMaterial,
+            triangle = buildTriangleGeometry(x, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
+                                             bottomRightX, bottomRightHeight, z + triangleDepth, bottomRightMaterial,
                                              bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial);
             terrainGeometry.merge(triangle);
           }
