@@ -25,11 +25,10 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var azimuthRotationVelocity = 0.0;
   var tiltRotationVelocity = 0.0;
 
-  camera.position.x = 0;
-  camera.position.y = 20;
-  camera.position.z = 80;
-  camera.rotation.x = -0.3559185608623119;
-  camera.rotation.y = 0;
+  camera.position.x = -60;
+  camera.position.y = 30;
+  camera.position.z = 60;
+  camera.lookAt(new THREE.Vector3(0.0, 0.0, 0.0));
 
   var setCenterOfAction = function(newCenterOfAction) {
     centerOfAction = newCenterOfAction;
