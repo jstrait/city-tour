@@ -147,14 +147,14 @@ CityTour.RoadNetwork = function(terrain) {
     if (intersection1 === undefined) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? terrain.heightAtCoordinates(x1, z1) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
-      intersection1 = new Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
+      intersection1 = Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
       intersections[x1][z1] = intersection1;
     }
 
     if (intersection2 === undefined) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? terrain.heightAtCoordinates(x2, z2) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
-      intersection2 = new Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
+      intersection2 = Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
       intersections[x2][z2] = intersection2;
     }
 
