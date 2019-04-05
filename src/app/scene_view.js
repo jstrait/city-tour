@@ -27,8 +27,6 @@ CityTour.SceneView = function(containerEl, messageBroker) {
 
     masterStartTime = new Date();
 
-    scene.add(sceneBuilder.buildXZPlaneMeshes());
-
     terrainStartTime = new Date();
     scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
     terrainEndTime = new Date();
