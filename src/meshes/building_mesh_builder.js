@@ -4,45 +4,16 @@ var CityTour = CityTour || {};
 CityTour.Meshes = CityTour.Meshes || {};
 
 CityTour.Meshes.BuildingMeshBuilder = function() {
-  var MAX_BUILDING_MATERIALS = 50;
   var SHOW_NEIGHBORHOOD_CENTER_MARKERS = false;
 
-  var buildMaterials = function() {
-    var i;
-    var random;
-    var r, g, b;
-    var buildingMaterials = [];
-
-    for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
-      random = Math.random() * 0.7;
-      r = random;
-      g = random;
-      b = random;
-
-      buildingMaterials.push(new THREE.MeshLambertMaterial({ color: new THREE.Color(r, g, b), }));
-    }
-
-    return buildingMaterials;
-  };
-
-  var buildEmptyGeometriesForBuildings = function() {
-    var i;
-    var buildingGeometries = [];
-
-    for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
-      buildingGeometries.push(new THREE.Geometry());
-    }
-
-    return buildingGeometries;
-  };
-
-  var generateBuildingGeometries = function(buildings, buildingGeometries, roadNetwork) {
+  var generateBuildingGeometries = function(buildings, buildingsGeometry, roadNetwork) {
     var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
 
     var x, z, leftX, topZ;
     var minX, maxX, minZ, maxZ;
     var block;
+    var color = new THREE.Color();
 
     var reusableBuildingGeometry = new THREE.BoxGeometry(1, 1, 1);
     reusableBuildingGeometry.faces.splice(6, 2);   // Remove bottom faces, since they are underground and invisible
@@ -50,8 +21,10 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
     var reusableBuildingMesh = new THREE.Mesh(reusableBuildingGeometry);
 
     var generateLotBuilding = function(lot) {
-      var materialIndex = Math.floor(Math.random() * MAX_BUILDING_MATERIALS);
+      var cylinderGeometry;
       var cylinderMesh;
+      var random;
+      var i;
 
       reusableBuildingMesh.scale.x = lot.dimensions.width * CityTour.Config.BLOCK_WIDTH;
       reusableBuildingMesh.position.x = leftX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
@@ -64,15 +37,35 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
 
       reusableBuildingMesh.updateMatrix();
 
-      buildingGeometries[materialIndex].merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
+      random = Math.random();
+      color.setRGB(random, random, random);
+      reusableBuildingGeometry.faces[0].color = color;
+      reusableBuildingGeometry.faces[1].color = color;
+      reusableBuildingGeometry.faces[2].color = color;
+      reusableBuildingGeometry.faces[3].color = color;
+      reusableBuildingGeometry.faces[4].color = color;
+      reusableBuildingGeometry.faces[5].color = color;
+      reusableBuildingGeometry.faces[6].color = color;
+      reusableBuildingGeometry.faces[7].color = color;
+      reusableBuildingGeometry.faces[8].color = color;
+      reusableBuildingGeometry.faces[9].color = color;
+
+      buildingsGeometry.merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
 
       if (lot.roofStyle === 'antenna') {
-        cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4));
+        cylinderGeometry = new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4);
+        cylinderMesh = new THREE.Mesh(cylinderGeometry);
+
         cylinderMesh.position.x = leftX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
         cylinderMesh.position.y = lot.yFloor + lot.height + 0.416666666666667;
         cylinderMesh.position.z = topZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
         cylinderMesh.updateMatrix();
-        buildingGeometries[materialIndex].merge(cylinderMesh.geometry, cylinderMesh.matrix);
+
+        for (i = 0; i < cylinderGeometry.faces.length; i++) {
+          cylinderGeometry.faces[i].color = color;
+        }
+
+        buildingsGeometry.merge(cylinderMesh.geometry, cylinderMesh.matrix);
       }
     };
 
@@ -112,15 +105,13 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
 
   buildingMeshBuilder.build = function(buildings, roadNetwork, neighborhoods) {
     var i;
-    var buildingMaterials = buildMaterials();
-    var buildingGeometries = buildEmptyGeometriesForBuildings();
+    var buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
+    var buildingsGeometry = new THREE.Geometry();
     var buildingMeshes = [];
 
-    generateBuildingGeometries(buildings, buildingGeometries, roadNetwork);
+    generateBuildingGeometries(buildings, buildingsGeometry, roadNetwork);
 
-    for (i = 0; i < MAX_BUILDING_MATERIALS; i++) {
-      buildingMeshes.push(new THREE.Mesh(buildingGeometries[i], buildingMaterials[i]));
-    }
+    buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
 
     if (SHOW_NEIGHBORHOOD_CENTER_MARKERS === true && neighborhoods !== undefined) {
       buildingMeshes.push(generateNeighborhoodCenterMarkersMesh(neighborhoods));
