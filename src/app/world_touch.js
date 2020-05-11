@@ -1,13 +1,11 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
 /*
   Converts an X/Y screen pixel coordinate to a 3D point in the world, based on the current camera position.
   The calculated point takes the terrain into account. That is, you can use this to calculate where on the
   terrain the mouse pointer/finger is touching.
 */
-CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) {
+var WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) {
   // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
   var screenCoordinateToWorldPosition = function(camera) {
     var MAX_ITERATIONS = 1000;
@@ -66,3 +64,5 @@ CityTour.WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) 
     worldZ: function() { return worldZ; },
   };
 };
+
+export { WorldTouch };

@@ -1,13 +1,10 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-
 /*
    Finds shortest path between intersections in the road network,
    using Dijkstra's Algorithm.
 */
-CityTour.PathFinder = function(roadNetwork) {
+var PathFinder = function(roadNetwork) {
   var Node = function(x, z) {
     return {
       isVisited: false,
@@ -121,3 +118,5 @@ CityTour.PathFinder = function(roadNetwork) {
     shortestPath: shortestPath,
   };
 };
+
+export { PathFinder };

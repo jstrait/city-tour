@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.Math = (function() {
+var CityTourMath = (function() {
   var distanceBetweenPoints = function(x1, y1, x2, y2) {
     var xDistance = x2 - x1;
     var yDistance = y2 - y1;
@@ -42,3 +40,5 @@ CityTour.Math = (function() {
     clamp: clamp,
   };
 })();
+
+export { CityTourMath };

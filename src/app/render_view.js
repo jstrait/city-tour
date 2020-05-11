@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.RenderView = function(container, scene) {
+var RenderView = function(container, scene) {
   var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.005, FAR = 1000;
 
   var renderer;
@@ -62,3 +60,5 @@ CityTour.RenderView = function(container, scene) {
     camera: function() { return camera; },
   };
 };
+
+export { RenderView };

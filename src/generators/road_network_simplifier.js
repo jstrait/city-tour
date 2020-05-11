@@ -1,8 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { PathFinder } from "./../path_finder";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.RoadNetworkSimplifier = (function() {
+var RoadNetworkSimplifier = (function() {
   var blockHasBottomTouchingBuilding = function(block) {
     var l;
 
@@ -56,7 +57,7 @@ CityTour.RoadNetworkSimplifier = (function() {
     var southWestBlock, northWestBlock, southEastBlock, northEastBlock;
     var southWestBlockHasBuildings, northWestBlockHasBuildings, southEastBlockHasBuildings, northEastBlockHasBuildings;
 
-    var pathFinder = new CityTour.PathFinder(roadNetwork);
+    var pathFinder = new PathFinder(roadNetwork);
 
     var roadNetworkMinColumn = roadNetwork.minColumn();
     var roadNetworkMaxColumn = roadNetwork.maxColumn();
@@ -72,7 +73,7 @@ CityTour.RoadNetworkSimplifier = (function() {
         targetZ = z;
 
         if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
-            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === RoadNetwork.TERRAIN_SURFACE) {
           southEastBlock = buildings.blockAtCoordinates(x, z);
           northEastBlock = buildings.blockAtCoordinates(x, z - 1);
 
@@ -88,7 +89,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(x, z) &&
                 roadNetwork.hasIntersection(targetX, targetZ) &&
                 pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
-              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -103,7 +104,7 @@ CityTour.RoadNetworkSimplifier = (function() {
         targetZ = z;
 
         if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
-            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === RoadNetwork.TERRAIN_SURFACE) {
           southWestBlock = buildings.blockAtCoordinates(x - 1, z);
           northWestBlock = buildings.blockAtCoordinates(x - 1, z - 1);
 
@@ -119,7 +120,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(x, z) &&
                 roadNetwork.hasIntersection(targetX, targetZ) &&
                 pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
-              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -134,7 +135,7 @@ CityTour.RoadNetworkSimplifier = (function() {
         targetZ = z + 1;
 
         if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
-            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === RoadNetwork.TERRAIN_SURFACE) {
           southWestBlock = buildings.blockAtCoordinates(x - 1, z);
           southEastBlock = buildings.blockAtCoordinates(x, z);
 
@@ -150,7 +151,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(x, z) &&
                 roadNetwork.hasIntersection(targetX, targetZ) &&
                 pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
-              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -165,7 +166,7 @@ CityTour.RoadNetworkSimplifier = (function() {
         targetZ = z - 1;
 
         if (roadNetwork.hasEdgeBetween(x, z, targetX, targetZ) &&
-            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === CityTour.RoadNetwork.TERRAIN_SURFACE) {
+            roadNetwork.edgeBetween(x, z, targetX, targetZ).surfaceType === RoadNetwork.TERRAIN_SURFACE) {
           northWestBlock = buildings.blockAtCoordinates(x - 1, z - 1);
           northEastBlock = buildings.blockAtCoordinates(x, z - 1);
 
@@ -181,7 +182,7 @@ CityTour.RoadNetworkSimplifier = (function() {
             if (roadNetwork.hasIntersection(x, z) &&
                 roadNetwork.hasIntersection(targetX, targetZ) &&
                 pathFinder.shortestPath(x, z, targetX, targetZ) === undefined) {
-              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+              roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
               edgesRemovedCount -= 1;
             }
           }
@@ -205,3 +206,5 @@ CityTour.RoadNetworkSimplifier = (function() {
     simplify: simplify,
   };
 })();
+
+export { RoadNetworkSimplifier };

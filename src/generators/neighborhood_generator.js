@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
 
-CityTour.NeighborhoodGenerator = (function() {
+var NeighborhoodGenerator = (function() {
   var MIN_DISTANCE_BETWEEN_NEIGHBORHOODS = 10;
 
   // The size of the square that is used to calculate the terrain flatness
@@ -39,7 +39,7 @@ CityTour.NeighborhoodGenerator = (function() {
         };
 
         if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
-          score.flatness = CityTour.Math.clamp(averageHeightDifferenceAroundPoint(terrain, x, z) / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
+          score.flatness = CityTourMath.clamp(averageHeightDifferenceAroundPoint(terrain, x, z) / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
         }
 
         scores[x][z] = score;
@@ -80,7 +80,7 @@ CityTour.NeighborhoodGenerator = (function() {
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
-        distanceToNeighborhoodCenter = CityTour.Math.distanceBetweenPoints(x, z, neighborhoodCenterX, neighborhoodCenterZ);
+        distanceToNeighborhoodCenter = CityTourMath.distanceBetweenPoints(x, z, neighborhoodCenterX, neighborhoodCenterZ);
         if (distanceToNeighborhoodCenter < MIN_DISTANCE_BETWEEN_NEIGHBORHOODS) {
           scores[x][z].closeNeighborhoodPenalty = Number.POSITIVE_INFINITY;
         }
@@ -137,3 +137,5 @@ CityTour.NeighborhoodGenerator = (function() {
     generate: generate,
   };
 })();
+
+export { NeighborhoodGenerator };

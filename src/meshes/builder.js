@@ -1,9 +1,10 @@
 "use strict";
 
-var CityTour = CityTour || {};
-CityTour.Meshes = CityTour.Meshes || {};
+import { BuildingMeshBuilder } from "./building_mesh_builder";
+import { RoadMeshBuilder } from "./road_mesh_builder";
+import { TerrainMeshBuilder } from "./terrain_mesh_builder";
 
-CityTour.Meshes.Builder = function() {
+var Builder = function() {
   var buildEmptyScene = function() {
     var scene, light, directionalLight;
 
@@ -32,15 +33,15 @@ CityTour.Meshes.Builder = function() {
   };
 
   var buildTerrainMeshes = function(terrain, roadNetwork) {
-    return buildMeshGroup("terrainMeshes", CityTour.Meshes.TerrainMeshBuilder().build(terrain, roadNetwork));
+    return buildMeshGroup("terrainMeshes", TerrainMeshBuilder().build(terrain, roadNetwork));
   };
 
   var buildRoadNetworkMeshes = function(terrain, roadNetwork) {
-    return buildMeshGroup("roadNetworkMeshes", CityTour.Meshes.RoadMeshBuilder().build(terrain, roadNetwork));
+    return buildMeshGroup("roadNetworkMeshes", RoadMeshBuilder().build(terrain, roadNetwork));
   };
 
   var buildBuildingMeshes = function(buildings, roadNetwork, neighborhoods) {
-    return buildMeshGroup("buildingMeshes", CityTour.Meshes.BuildingMeshBuilder().build(buildings, roadNetwork, neighborhoods));
+    return buildMeshGroup("buildingMeshes", BuildingMeshBuilder().build(buildings, roadNetwork, neighborhoods));
   };
 
 
@@ -51,3 +52,5 @@ CityTour.Meshes.Builder = function() {
     buildBuildingMeshes: buildBuildingMeshes,
   };
 };
+
+export { Builder };

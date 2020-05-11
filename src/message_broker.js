@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.MessageBroker = function() {
+var MessageBroker = function() {
   var uniqueID = -1;
   var subscribers = {};
 
@@ -48,3 +46,5 @@ CityTour.MessageBroker = function() {
     publish:          publish,
   };
 };
+
+export { MessageBroker };

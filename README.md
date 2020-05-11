@@ -24,11 +24,14 @@ Next, this abstract definition is turned into a 3D model that can be rendered wi
 
 Once this is all created, you can move around the city using touch gestures (mobile) or the mouse (desktop). Navigation works similar to Google/Apple Maps. You can also click the "Take a Tour" button to go on an automatic flight/drive through the city.
 
+## Building / Running Locally
 
-## Local Development
+* If first time building, run `yarn install`
+* Run `yarn build-dev`, which will build the app in the `dist/` folder
+* Open `dist/city_tour.html` in your browser (make sure running a local server such as MAMP)
+* To automatically rebuild when source files change, run `yarn build-dev --watch` instead
 
-* `city_tour.html` requires `city_tour.js`, which is a minified and concatenated build of the source files. It's not included in this repo. You'll need to generate it locally by running `yarn install` (if this is your first build) and then `yarn run build`. Open `city_tour.html` in your browser and you should be good to go!
-* To automatically re-build when a source file changes:
-  * Install the `rb-fsevent` Ruby gem: `gem install rb-fsevent`
-  * Run `ruby build.rb --watch`. Each time a file under `/src` changes, `yarn run build` will automatically be run.
-* To run the tests, open `spec/SpecRunner.html` in your browser
+## Building for Production
+
+* Run `yarn build-prod`
+* `dist/` folder will contain the files that should be deployed to production

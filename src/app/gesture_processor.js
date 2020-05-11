@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
 
-CityTour.GestureProcessor = function(sceneView, mapCamera) {
+var GestureProcessor = function(sceneView, mapCamera) {
   var PAN = "pan";
   var TILT = "tilt";
   var ROTATE = "rotate";
@@ -159,14 +159,14 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
           if (Math.abs(distanceBetweenTouchesDeltaX) > Math.abs(distanceBetweenTouchesDeltaY)) {
             currentGesture = ROTATE;
 
-            var azimuthAngleDelta = CityTour.Math.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
+            var azimuthAngleDelta = CityTourMath.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
             var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
             mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
           }
           else if (Math.abs(distanceBetweenTouchesDeltaX) < Math.abs(distanceBetweenTouchesDeltaY)) {
             currentGesture = TILT;
 
-            var tiltAngleDelta = -CityTour.Math.lerp(distanceBetweenTouchesDeltaY, 0, mapCamera.maxTiltAngle() - mapCamera.minTiltAngle());
+            var tiltAngleDelta = -CityTourMath.lerp(distanceBetweenTouchesDeltaY, 0, mapCamera.maxTiltAngle() - mapCamera.minTiltAngle());
             mapCamera.tiltCamera(tiltAngleDelta);
           }
           else {
@@ -232,3 +232,5 @@ CityTour.GestureProcessor = function(sceneView, mapCamera) {
     previousTouches: function() { return previousTouches; },
   };
 };
+
+export { GestureProcessor };

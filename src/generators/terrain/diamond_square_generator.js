@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.DiamondSquareGenerator = (function() {
+var DiamondSquareGenerator = (function() {
   // As described at https://en.wikipedia.org/wiki/Diamond-square_algorithm and http://stevelosh.com/blog/2016/06/diamond-square/
   var generate = function(terrainCoordinates, jitterAmount, jitterDecay, top, right, bottom, left) {
     var x, y, startX = 0;
@@ -94,3 +92,5 @@ CityTour.DiamondSquareGenerator = (function() {
     generate: generate,
   };
 })();
+
+export { DiamondSquareGenerator };

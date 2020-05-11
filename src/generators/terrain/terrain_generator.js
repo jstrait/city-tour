@@ -1,8 +1,14 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../../math";
+import { Terrain } from "./../../terrain";
+import { BlurEroder } from "./blur_eroder";
+import { DiamondSquareGenerator } from "./diamond_square_generator";
+import { HydraulicErosionGenerator } from "./hydraulic_erosion_generator";
+import { RiverGenerator } from "./river_generator";
+import { TerrainShapeGenerator } from "./terrain_shape_generator";
 
-CityTour.TerrainGenerator = (function() {
+var TerrainGenerator = (function() {
   var SCALE = 1;   // Should be a power of 0.5
   var MIN_INITIAL_TERRAIN_HEIGHT = -0.25;
   var MAX_INITIAL_TERRAIN_HEIGHT = 0.25;
@@ -37,30 +43,30 @@ CityTour.TerrainGenerator = (function() {
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
     // Initial randomization of corners
-    terrainCoordinates[0][0].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[0][rowsToGenerate - 1].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columnsToGenerate - 1][0].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
-    terrainCoordinates[columnsToGenerate - 1][rowsToGenerate - 1].landHeight = CityTour.Math.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][0].landHeight = CityTourMath.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[0][rowsToGenerate - 1].landHeight = CityTourMath.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate - 1][0].landHeight = CityTourMath.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
+    terrainCoordinates[columnsToGenerate - 1][rowsToGenerate - 1].landHeight = CityTourMath.randomInteger(MIN_INITIAL_TERRAIN_HEIGHT, MAX_INITIAL_TERRAIN_HEIGHT);
 
     // City must be (2^n + 1) blocks on both x and z dimensions for this to work
-    CityTour.DiamondSquareGenerator.generate(terrainCoordinates,
-                                             config.heightJitter,
-                                             config.heightJitterDecay,
-                                             0,
-                                             columnsToGenerate - 1,
-                                             rowsToGenerate - 1,
-                                             0);
+    DiamondSquareGenerator.generate(terrainCoordinates,
+                                    config.heightJitter,
+                                    config.heightJitterDecay,
+                                    0,
+                                    columnsToGenerate - 1,
+                                    rowsToGenerate - 1,
+                                    0);
 
     addRandomPyramids(terrainCoordinates, config.hillCount, config.maxHillHeight);
 
     // Hydraulic erosion
-    CityTour.HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);
+    HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);
 
     // Blur erosion
-    CityTour.BlurEroder.erode(terrainCoordinates);
+    BlurEroder.erode(terrainCoordinates);
 
     if (config.river) {
-      CityTour.RiverGenerator.addRiver(terrainCoordinates, (rowsToGenerate - 1) * (68 / 128), columnsToGenerate - 1);
+      RiverGenerator.addRiver(terrainCoordinates, (rowsToGenerate - 1) * (68 / 128), columnsToGenerate - 1);
     }
 
     return terrainCoordinates;
@@ -79,18 +85,14 @@ CityTour.TerrainGenerator = (function() {
     var i;
 
     for (i = 0; i < pyramidCount; i++) {
-      centerX = CityTour.Math.randomInteger(0, COLUMN_COUNT - 1);
-      centerZ = CityTour.Math.randomInteger(0, ROW_COUNT - 1);
+      centerX = CityTourMath.randomInteger(0, COLUMN_COUNT - 1);
+      centerZ = CityTourMath.randomInteger(0, ROW_COUNT - 1);
       maxHeightForCenterCoordinate = Math.min(maxHillHeight, (Math.abs(centerZ - HALF_ROW_COUNT) / (HALF_ROW_COUNT * 0.75)) * maxHillHeight);
 
-      baseLength = CityTour.Math.randomInteger(MIN_BASE_LENGTH, MAX_BASE_LENGTH) * 2;
-      hillHeight = CityTour.Math.randomInteger(0, maxHeightForCenterCoordinate);
+      baseLength = CityTourMath.randomInteger(MIN_BASE_LENGTH, MAX_BASE_LENGTH) * 2;
+      hillHeight = CityTourMath.randomInteger(0, maxHeightForCenterCoordinate);
 
-      CityTour.TerrainShapeGenerator.addCone(terrainCoordinates,
-                                             centerX,
-                                             centerZ,
-                                             baseLength,
-                                             hillHeight);
+      TerrainShapeGenerator.addCone(terrainCoordinates, centerX, centerZ, baseLength, hillHeight);
     }
   };
 
@@ -113,8 +115,10 @@ CityTour.TerrainGenerator = (function() {
 
   terrainGenerator.generate = function(columns, rows, config) {
     var terrainCoordinates = buildTerrainCoordinates(columns, rows, config);
-    return new CityTour.Terrain(terrainCoordinates, SCALE);
+    return new Terrain(terrainCoordinates, SCALE);
   };
 
   return terrainGenerator;
 })();
+
+export { TerrainGenerator };

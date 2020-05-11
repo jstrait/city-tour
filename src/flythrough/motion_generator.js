@@ -1,13 +1,12 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
 
-
-CityTour.MotionGenerator = function(start, target, easingFunction) {
+var MotionGenerator = function(start, target, easingFunction) {
   var next = function() {
     var percentage = easingFunction.next();
 
-    return CityTour.Math.lerp(start, target, percentage);
+    return CityTourMath.lerp(start, target, percentage);
   };
 
   var finished = function() {
@@ -21,9 +20,11 @@ CityTour.MotionGenerator = function(start, target, easingFunction) {
   };
 };
 
-CityTour.StaticMotionGenerator = function(target) {
+var StaticMotionGenerator = function(target) {
   return {
     finished: function() { return true; },
     next: function() { return target; },
   };
 };
+
+export { MotionGenerator, StaticMotionGenerator };

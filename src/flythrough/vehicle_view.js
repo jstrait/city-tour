@@ -1,8 +1,10 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
+import { SmoothStepEasing } from "./easing";
+import { MotionGenerator } from "./motion_generator";
 
-CityTour.VehicleView = function(vehicleController) {
+var VehicleView = function(vehicleController) {
   var MIN_AZIMUTH_ANGLE_OFFSET = -Math.PI / 2;
   var MAX_AZIMUTH_ANGLE_OFFSET = Math.PI / 2;
   var MIN_TILTANGLE_OFFSET = -Math.PI / 6;
@@ -14,11 +16,11 @@ CityTour.VehicleView = function(vehicleController) {
   var resetToCenterAzimuthAngleMotionGenerator, resetToCenterTiltAngleMotionGenerator;
 
   var setAzimuthAngleOffset = function(newAzimuthAngleOffset) {
-    azimuthAngleOffset = CityTour.Math.clamp(newAzimuthAngleOffset, MIN_AZIMUTH_ANGLE_OFFSET, MAX_AZIMUTH_ANGLE_OFFSET);
+    azimuthAngleOffset = CityTourMath.clamp(newAzimuthAngleOffset, MIN_AZIMUTH_ANGLE_OFFSET, MAX_AZIMUTH_ANGLE_OFFSET);
   };
 
   var setTiltAngleOffset = function(newTiltAngleOffset) {
-    tiltAngleOffset = CityTour.Math.clamp(newTiltAngleOffset, MIN_TILTANGLE_OFFSET, MAX_TILTANGLE_OFFSET);
+    tiltAngleOffset = CityTourMath.clamp(newTiltAngleOffset, MIN_TILTANGLE_OFFSET, MAX_TILTANGLE_OFFSET);
   };
 
   var tick = function() {
@@ -38,11 +40,11 @@ CityTour.VehicleView = function(vehicleController) {
   };
 
   var enabledResetToCenterAnimation = function() {
-    var resetToCenterAzimuthAngleEasing = CityTour.SmoothStepEasing(RESET_TO_CENTER_ANIMATION_FRAME_COUNT);
-    var resetToCenterTiltAngleEasing = CityTour.SmoothStepEasing(RESET_TO_CENTER_ANIMATION_FRAME_COUNT);
+    var resetToCenterAzimuthAngleEasing = SmoothStepEasing(RESET_TO_CENTER_ANIMATION_FRAME_COUNT);
+    var resetToCenterTiltAngleEasing = SmoothStepEasing(RESET_TO_CENTER_ANIMATION_FRAME_COUNT);
 
-    resetToCenterAzimuthAngleMotionGenerator = CityTour.MotionGenerator(azimuthAngleOffset, 0.0, resetToCenterAzimuthAngleEasing);
-    resetToCenterTiltAngleMotionGenerator = CityTour.MotionGenerator(tiltAngleOffset, 0.0, resetToCenterTiltAngleEasing);
+    resetToCenterAzimuthAngleMotionGenerator = MotionGenerator(azimuthAngleOffset, 0.0, resetToCenterAzimuthAngleEasing);
+    resetToCenterTiltAngleMotionGenerator = MotionGenerator(tiltAngleOffset, 0.0, resetToCenterTiltAngleEasing);
   };
 
   var disableResetToCenterAnimation = function() {
@@ -65,3 +67,5 @@ CityTour.VehicleView = function(vehicleController) {
     disableResetToCenterAnimation: disableResetToCenterAnimation,
   };
 };
+
+export { VehicleView };

@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../../math";
 
-CityTour.TerrainShapeGenerator = (function() {
+var TerrainShapeGenerator = (function() {
   var addPlateau = function(terrainCoordinates, centerX, centerZ, width, height, depth) {
     var x, z;
 
@@ -65,7 +65,7 @@ CityTour.TerrainShapeGenerator = (function() {
 
     for (x = startX; x <= endX; x++) {
       for (z = startZ; z <= endZ; z++) {
-        distanceFromCenter = CityTour.Math.distanceBetweenPoints(x, z, centerX, centerZ);
+        distanceFromCenter = CityTourMath.distanceBetweenPoints(x, z, centerX, centerZ);
         if (distanceFromCenter <= radius) {
           pointHeight = height - ((distanceFromCenter / radius) * height);
 
@@ -89,7 +89,7 @@ CityTour.TerrainShapeGenerator = (function() {
     var numerator, denominator, distanceToLine;
     var x, z;
 
-    denominator = CityTour.Math.distanceBetweenPoints(startX, startZ, endX, endZ);
+    denominator = CityTourMath.distanceBetweenPoints(startX, startZ, endX, endZ);
 
     for (x = boundingStartX; x <= boundingEndX; x++) {
       for (z = boundingStartZ; z <= boundingEndZ; z++) {
@@ -119,7 +119,7 @@ CityTour.TerrainShapeGenerator = (function() {
     console.log("Coordinates: " + startX + ", " + startZ + " : " + endX + ", " + endZ);
     console.log("Bounding:    " + boundingStartX + ", " + boundingStartZ + " : " + boundingEndX + ", " + boundingEndZ);
 
-    denominator = CityTour.Math.distanceBetweenPoints(startX, startZ, endX, endZ);
+    denominator = CityTourMath.distanceBetweenPoints(startX, startZ, endX, endZ);
 
     for (x = boundingStartX; x <= boundingEndX; x++) {
       for (z = boundingStartZ; z <= boundingEndZ; z++) {
@@ -146,3 +146,5 @@ CityTour.TerrainShapeGenerator = (function() {
     addRidge: addRidge,
   };
 })();
+
+export { TerrainShapeGenerator };

@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.BaseEasing = function(frameCount, easingFunc, minX, maxX) {
+var BaseEasing = function(frameCount, easingFunc, minX, maxX) {
   var frame = 0;
   var deltaPerFrame;
 
@@ -31,42 +29,44 @@ CityTour.BaseEasing = function(frameCount, easingFunc, minX, maxX) {
 };
 
 
-CityTour.LinearEasing = function(frameCount) {
+var LinearEasing = function(frameCount) {
   var easingFunc = function(x) {
     return x;
   };
 
-  return CityTour.BaseEasing(frameCount, easingFunc, 0.0, 1.0);
+  return BaseEasing(frameCount, easingFunc, 0.0, 1.0);
 };
 
-CityTour.SineEasing = function(frameCount, minX, maxX) {
+var SineEasing = function(frameCount, minX, maxX) {
   var easingFunc = function(x) {
     return Math.sin(x);
   };
 
-  return CityTour.BaseEasing(frameCount, easingFunc, minX, maxX);
+  return BaseEasing(frameCount, easingFunc, minX, maxX);
 };
 
-CityTour.CosineEasing = function(frameCount, minX, maxX) {
+var CosineEasing = function(frameCount, minX, maxX) {
   var easingFunc = function(x) {
     return Math.cos(x);
   };
 
-  return CityTour.BaseEasing(frameCount, easingFunc, minX, maxX);
+  return BaseEasing(frameCount, easingFunc, minX, maxX);
 };
 
-CityTour.SmoothStepEasing = function(frameCount) {
+var SmoothStepEasing = function(frameCount) {
   var easingFunc = function(x) {
     return x * x * (3 - (2 * x));
   };
 
-  return CityTour.BaseEasing(frameCount, easingFunc, 0.0, 1.0);
+  return BaseEasing(frameCount, easingFunc, 0.0, 1.0);
 };
 
-CityTour.SteepEasing = function(frameCount, minX, maxX) {
+var SteepEasing = function(frameCount, minX, maxX) {
   var easingFunc = function(x) {
     return Math.pow(Math.min(Math.cos(Math.PI * x / 2.0), 1.0 - Math.abs(x)), 3.5);
   };
 
-  return CityTour.BaseEasing(frameCount, easingFunc, minX, maxX);
+  return BaseEasing(frameCount, easingFunc, minX, maxX);
 };
+
+export { LinearEasing, SineEasing, CosineEasing, SmoothStepEasing, SteepEasing };

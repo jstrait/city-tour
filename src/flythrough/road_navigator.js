@@ -1,7 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
+import { CityTourMath } from "./../math";
 
 /*
    Generates target points for the camera to move to, simulating the camera
@@ -11,7 +10,7 @@ var CityTour = CityTour || {};
    then finds a path to that intersection. A path is a sequence of intersections
    to travel to that will ultimately end up at the target intersection.
 */
-CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTargetZ) {
+var RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTargetZ) {
   var targetX = initialTargetX;
   var targetZ = initialTargetZ;
   var subTargetX = initialTargetX;
@@ -24,8 +23,8 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initi
     var newTargetZ;
 
     do {
-      newTargetX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
-      newTargetZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
+      newTargetX = CityTourMath.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
+      newTargetZ = CityTourMath.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
     } while (!roadNetwork.hasIntersection(newTargetX, newTargetZ));
 
     return [newTargetX, newTargetZ];
@@ -90,3 +89,5 @@ CityTour.RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initi
     nextTarget: nextTarget,
   };
 };
+
+export { RoadNavigator };

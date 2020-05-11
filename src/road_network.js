@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./math";
 
-CityTour.RoadNetwork = function(terrain) {
+var RoadNetwork = function(terrain) {
   var Intersection = function(x, z, height, surfaceType) {
     var edges = [];
 
@@ -108,7 +108,7 @@ CityTour.RoadNetwork = function(terrain) {
       floor = getIntersectionHeight(x, Math.floor(z));
 
       if (ceil !== undefined && floor !== undefined) {
-        return CityTour.Math.lerp(floor, ceil, z - Math.floor(z));
+        return CityTourMath.lerp(floor, ceil, z - Math.floor(z));
       }
       else {
         return undefined;
@@ -119,7 +119,7 @@ CityTour.RoadNetwork = function(terrain) {
       floor = getIntersectionHeight(Math.floor(x), z);
 
       if (ceil !== undefined && floor !== undefined) {
-        return CityTour.Math.lerp(floor, ceil, x - Math.floor(x));
+        return CityTourMath.lerp(floor, ceil, x - Math.floor(x));
       }
       else {
         return undefined;
@@ -146,14 +146,14 @@ CityTour.RoadNetwork = function(terrain) {
 
     if (intersection1 === undefined) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? terrain.heightAtCoordinates(x1, z1) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
+      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
       intersection1 = Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
       intersections[x1][z1] = intersection1;
     }
 
     if (intersection2 === undefined) {
       intersectionHeight = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? terrain.heightAtCoordinates(x2, z2) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? CityTour.RoadNetwork.TERRAIN_SURFACE : CityTour.RoadNetwork.BRIDGE_SURFACE;
+      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
       intersection2 = Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
       intersections[x2][z2] = intersection2;
     }
@@ -223,5 +223,7 @@ CityTour.RoadNetwork = function(terrain) {
   };
 };
 
-CityTour.RoadNetwork.TERRAIN_SURFACE = 'terrain';
-CityTour.RoadNetwork.BRIDGE_SURFACE = 'bridge';
+RoadNetwork.TERRAIN_SURFACE = 'terrain';
+RoadNetwork.BRIDGE_SURFACE = 'bridge';
+
+export { RoadNetwork };

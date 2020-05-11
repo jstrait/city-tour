@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.Timer = function() {
+var Timer = function() {
   var FRAMES_PER_SECOND = 60;
   var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECOND;
 
@@ -59,3 +57,5 @@ CityTour.Timer = function() {
 
   return timer;
 };
+
+export { Timer };

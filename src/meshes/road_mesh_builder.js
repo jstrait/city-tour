@@ -1,12 +1,13 @@
 "use strict";
 
-var CityTour = CityTour || {};
-CityTour.Meshes = CityTour.Meshes || {};
+import { Config } from "./../config";
+import { CityTourMath } from "./../math";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.Meshes.RoadMeshBuilder = function() {
+var RoadMeshBuilder = function() {
   var HALF_PI = Math.PI / 2;
-  var SIDEWALK_X_CENTER = (CityTour.Config.STREET_WIDTH / 2) - (CityTour.Config.SIDEWALK_WIDTH / 2);
-  var SIDEWALK_Z_CENTER = (CityTour.Config.STREET_DEPTH / 2) - (CityTour.Config.SIDEWALK_DEPTH / 2);
+  var SIDEWALK_X_CENTER = (Config.STREET_WIDTH / 2) - (Config.SIDEWALK_WIDTH / 2);
+  var SIDEWALK_Z_CENTER = (Config.STREET_DEPTH / 2) - (Config.SIDEWALK_DEPTH / 2);
 
   var COLOR_ROAD = 0xaaaaaa;
   var COLOR_SIDEWALK = 0xcccccc;
@@ -15,7 +16,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
   var calculateRoadSegment = function(heightAtPoint1, heightAtPoint2, mapLength) {
     var midpointHeight = (heightAtPoint1 + heightAtPoint2) / 2;
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), mapLength);
-    var length = CityTour.Math.distanceBetweenPoints(heightAtPoint1, 0, heightAtPoint2, mapLength);
+    var length = CityTourMath.distanceBetweenPoints(heightAtPoint1, 0, heightAtPoint2, mapLength);
 
     return {
       angle: angle,
@@ -25,7 +26,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
   };
 
   var buildReusableIntersectionCornerMesh = function(sidewalkMaterial) {
-    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.SIDEWALK_DEPTH));
+    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, Config.SIDEWALK_DEPTH));
     reusableIntersectionSidewalkCornerMesh.rotation.x = -HALF_PI;
 
     var intersectionSidewalkCornerGeometry = new THREE.Geometry();
@@ -56,8 +57,8 @@ CityTour.Meshes.RoadMeshBuilder = function() {
   var roadMeshBuilder = {};
 
   roadMeshBuilder.build = function(terrain, roadNetwork) {
-    var HALF_BLOCK_AND_STREET_WIDTH = CityTour.Config.BLOCK_AND_STREET_WIDTH / 2;
-    var HALF_BLOCK_AND_STREET_DEPTH = CityTour.Config.BLOCK_AND_STREET_DEPTH / 2;
+    var HALF_BLOCK_AND_STREET_WIDTH = Config.BLOCK_AND_STREET_WIDTH / 2;
+    var HALF_BLOCK_AND_STREET_DEPTH = Config.BLOCK_AND_STREET_DEPTH / 2;
     var BRIDGE_SUPPORT_HEIGHT = 8.333333333333333;
     var HALF_BRIDGE_SUPPORT_HEIGHT = BRIDGE_SUPPORT_HEIGHT / 2;
     var BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK = 0.020833333333333;
@@ -78,21 +79,21 @@ CityTour.Meshes.RoadMeshBuilder = function() {
     var guardrailGeometry = new THREE.Geometry();
     var guardrailSegmentMesh;
 
-    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.ROAD_DEPTH));
+    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.ROAD_WIDTH, Config.ROAD_DEPTH));
     reusableIntersectionMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, CityTour.Config.ROAD_DEPTH));
+    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, Config.ROAD_DEPTH));
     reusableIntersectionFillerNorthSouthMesh.rotation.x = -HALF_PI;
 
-    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, CityTour.Config.SIDEWALK_DEPTH));
+    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.ROAD_WIDTH, Config.SIDEWALK_DEPTH));
     reusableIntersectionFillerEastWestMesh.rotation.x = -HALF_PI;
 
-    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.ROAD_WIDTH, 1.0));
-    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.ROAD_DEPTH));
+    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.ROAD_WIDTH, 1.0));
+    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, Config.ROAD_DEPTH));
     reusableEastWestMesh.rotation.x = -HALF_PI;
 
-    var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(CityTour.Config.SIDEWALK_WIDTH, 1.0));
-    var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, CityTour.Config.SIDEWALK_DEPTH));
+    var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, 1.0));
+    var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, Config.SIDEWALK_DEPTH));
     reusableEastWestSidewalkMesh.rotation.x = -HALF_PI;
 
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
@@ -126,7 +127,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
           roadSegmentMesh.updateMatrix();
           roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
 
-          if (roadNetwork.getIntersectionSurfaceType(x, z) === CityTour.RoadNetwork.BRIDGE_SURFACE) {
+          if (roadNetwork.getIntersectionSurfaceType(x, z) === RoadNetwork.BRIDGE_SURFACE) {
             reusableBridgeSupportMesh.position.x = x;
             reusableBridgeSupportMesh.position.y = selfSurfaceHeight - HALF_BRIDGE_SUPPORT_HEIGHT - BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK;
             reusableBridgeSupportMesh.position.z = z;
@@ -136,7 +137,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
             // Guardrail
             if (northRoad === true && southRoad === true) {
               guardrailSegmentMesh = reusableGuardrailMesh;
-              guardrailSegmentMesh.scale.y = CityTour.Config.STREET_WIDTH;
+              guardrailSegmentMesh.scale.y = Config.STREET_WIDTH;
               guardrailSegmentMesh.position.y = selfSurfaceHeight;
               guardrailSegmentMesh.rotation.x = 0.0;
               guardrailSegmentMesh.rotation.y = HALF_PI;
@@ -144,12 +145,12 @@ CityTour.Meshes.RoadMeshBuilder = function() {
               guardrailSegmentMesh.position.z = z;
 
               // Left guardrail
-              guardrailSegmentMesh.position.x = x - (CityTour.Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x - (Config.STREET_WIDTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // Right guardrail
-              guardrailSegmentMesh.position.x = x + (CityTour.Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x + (Config.STREET_WIDTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -157,18 +158,18 @@ CityTour.Meshes.RoadMeshBuilder = function() {
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.position.x = x;
               guardrailSegmentMesh.rotation.x = 0.0;
-              guardrailSegmentMesh.scale.y = CityTour.Config.STREET_DEPTH;
+              guardrailSegmentMesh.scale.y = Config.STREET_DEPTH;
               guardrailSegmentMesh.position.y = selfSurfaceHeight;
               guardrailSegmentMesh.rotation.y = 0.0;
               guardrailSegmentMesh.rotation.z = HALF_PI;
 
               // North guardrail
-              guardrailSegmentMesh.position.z = z - (CityTour.Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z - (Config.STREET_DEPTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // South guardrail
-              guardrailSegmentMesh.position.z = z + (CityTour.Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z + (Config.STREET_DEPTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -238,7 +239,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
 
             roadSegment = calculateRoadSegment(selfSurfaceHeight,
                                                southSurfaceHeight,
-                                               CityTour.Config.BLOCK_DEPTH);
+                                               Config.BLOCK_DEPTH);
 
             roadSegmentMesh = reusableNorthSouthMesh;
             roadSegmentMesh.position.x = x;
@@ -265,7 +266,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
             sidewalkSegmentMesh.updateMatrix();
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
-            if (roadNetwork.edgeBetween(x, z, x, z + 1).surfaceType === CityTour.RoadNetwork.BRIDGE_SURFACE) {
+            if (roadNetwork.edgeBetween(x, z, x, z + 1).surfaceType === RoadNetwork.BRIDGE_SURFACE) {
               // Guardrail
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.rotation.x = roadSegment.angle;
@@ -276,12 +277,12 @@ CityTour.Meshes.RoadMeshBuilder = function() {
               guardrailSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
 
               // Left guardrail
-              guardrailSegmentMesh.position.x = x - (CityTour.Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x - (Config.STREET_WIDTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // Right guardrail
-              guardrailSegmentMesh.position.x = x + (CityTour.Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x + (Config.STREET_WIDTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -293,7 +294,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
 
             roadSegment = calculateRoadSegment(selfSurfaceHeight,
                                                eastSurfaceHeight,
-                                               CityTour.Config.BLOCK_WIDTH);
+                                               Config.BLOCK_WIDTH);
 
             roadSegmentMesh = reusableEastWestMesh;
             roadSegmentMesh.scale.x = roadSegment.length;
@@ -320,7 +321,7 @@ CityTour.Meshes.RoadMeshBuilder = function() {
             sidewalkSegmentMesh.updateMatrix();
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
-            if (roadNetwork.edgeBetween(x, z, x + 1, z).surfaceType === CityTour.RoadNetwork.BRIDGE_SURFACE) {
+            if (roadNetwork.edgeBetween(x, z, x + 1, z).surfaceType === RoadNetwork.BRIDGE_SURFACE) {
               // Guardrail
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.position.x = x + HALF_BLOCK_AND_STREET_DEPTH;
@@ -331,12 +332,12 @@ CityTour.Meshes.RoadMeshBuilder = function() {
               guardrailSegmentMesh.rotation.z = -roadSegment.angle - HALF_PI;
 
               // Left guardrail
-              guardrailSegmentMesh.position.z = z - (CityTour.Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z - (Config.STREET_DEPTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // Right guardrail
-              guardrailSegmentMesh.position.z = z + (CityTour.Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z + (Config.STREET_DEPTH / 2);
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -352,3 +353,5 @@ CityTour.Meshes.RoadMeshBuilder = function() {
 
   return roadMeshBuilder;
 };
+
+export { RoadMeshBuilder };

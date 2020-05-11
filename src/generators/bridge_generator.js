@@ -1,8 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.BridgeGenerator = (function() {
+var BridgeGenerator = (function() {
   var MAX_BRIDGE_LENGTH = Number.POSITIVE_INFINITY;
   var MIN_BRIDGE_HEIGHT_FROM_WATER = 0.416666666666667;
   var MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS = 0.416666666666667;
@@ -23,7 +24,7 @@ CityTour.BridgeGenerator = (function() {
     var side1WaterCount = 0;
     var side2WaterCount = 0;
 
-    var distanceFromCenter = CityTour.Math.distanceBetweenPoints(centerX, centerZ, bridgeStartX, bridgeStartZ);
+    var distanceFromCenter = CityTourMath.distanceBetweenPoints(centerX, centerZ, bridgeStartX, bridgeStartZ);
     if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
       return;
     }
@@ -133,7 +134,7 @@ CityTour.BridgeGenerator = (function() {
 
     for (x = xMin; x <= xMax; x++) {
       for (z = zMin; z <= zMax; z++) {
-        if (roadNetwork.hasIntersection(x, z) && roadNetwork.getIntersectionSurfaceType(x, z) === CityTour.RoadNetwork.BRIDGE_SURFACE) {
+        if (roadNetwork.hasIntersection(x, z) && roadNetwork.getIntersectionSurfaceType(x, z) === RoadNetwork.BRIDGE_SURFACE) {
           return true;
         }
       }
@@ -147,3 +148,5 @@ CityTour.BridgeGenerator = (function() {
     buildBridge: buildBridge,
   };
 })();
+
+export { BridgeGenerator };

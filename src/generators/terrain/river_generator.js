@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../../math";
 
-CityTour.RiverGenerator = (function() {
+var RiverGenerator = (function() {
   var SUB_DIVISIONS = 1;
   var MIN_RIVER_BENDS = 2;
   var MAX_RIVER_BENDS = 7;
@@ -14,7 +14,7 @@ CityTour.RiverGenerator = (function() {
   var WATER_HEIGHT = 0.416666666666667;
 
   var generateBaseRiverCurvePoints = function(middleRow, columnsToGenerate) {
-    var riverBendCount = CityTour.Math.randomInteger(MIN_RIVER_BENDS, MAX_RIVER_BENDS);
+    var riverBendCount = CityTourMath.randomInteger(MIN_RIVER_BENDS, MAX_RIVER_BENDS);
     var columnsBetweenBends = columnsToGenerate / (riverBendCount + 1);
     var column, row;
     var i;
@@ -110,3 +110,5 @@ CityTour.RiverGenerator = (function() {
     addRiver: addRiver,
   };
 })();
+
+export { RiverGenerator };

@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
 
-CityTour.BuildingsGenerator = (function() {
+var BuildingsGenerator = (function() {
   var MIN_STORY_HEIGHT = 0.1;
   var MAX_STORY_HEIGHT = 0.125;
   var MIN_STORIES_FOR_ANTENNA = 25;
@@ -45,8 +45,8 @@ CityTour.BuildingsGenerator = (function() {
 
         if (lotTerrainAttributes.steepness < MIN_STORY_HEIGHT) {
           maxStories = Math.min(zonedBlock.maxStories, lot.maxStories);
-          actualStories = CityTour.Math.randomInteger(1, maxStories);
-          storyHeight = CityTour.Math.randomInRange(MIN_STORY_HEIGHT, MAX_STORY_HEIGHT);
+          actualStories = CityTourMath.randomInteger(1, maxStories);
+          storyHeight = CityTourMath.randomInRange(MIN_STORY_HEIGHT, MAX_STORY_HEIGHT);
 
           if (actualStories > MIN_STORIES_FOR_ANTENNA && (Math.random() < PROBABILITY_OF_TALL_BUILDING_ANTENNA)) {
             roofStyle = ROOF_STYLE_ANTENNA;
@@ -113,3 +113,5 @@ CityTour.BuildingsGenerator = (function() {
 
   return buildingsGenerator;
 })();
+
+export { BuildingsGenerator };

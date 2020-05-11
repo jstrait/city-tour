@@ -1,8 +1,13 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { BuildingsGenerator } from "./buildings_generator";
+import { NeighborhoodGenerator } from "./neighborhood_generator";
+import { NeighborhoodRoadNetworkGenerator } from "./neighborhood_road_network_generator";
+import { RoadNetworkSimplifier } from "./road_network_simplifier";
+import { ZonedBlockGenerator } from "./zoned_block_generator";
+import { TerrainGenerator } from "./terrain/terrain_generator";
 
-CityTour.WorldGenerator = (function() {
+var WorldGenerator = (function() {
   var generate = function(config) {
     var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true && config.neighborhoods.count > 0);
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
@@ -29,7 +34,7 @@ CityTour.WorldGenerator = (function() {
     };
 
     terrainStartTime = new Date();
-    terrain = CityTour.TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
+    terrain = TerrainGenerator.generate(config.terrain.columnCount, config.terrain.rowCount, terrainConfig);
     terrainEndTime = new Date();
 
     neighborhoodsStartTime = new Date();
@@ -37,13 +42,13 @@ CityTour.WorldGenerator = (function() {
       neighborhoods = [];
     }
     else {
-      neighborhoods = CityTour.NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
+      neighborhoods = NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
     }
     neighborhoodsEndTime = new Date();
 
     roadStartTime = new Date();
     if (!GENERATE_ROAD_NETWORK) {
-      roadNetwork = new CityTour.RoadNetwork(terrain);
+      roadNetwork = new RoadNetwork(terrain);
     }
     else {
       roadConfig = {
@@ -57,7 +62,7 @@ CityTour.WorldGenerator = (function() {
         maxRoadAngle: config.roadNetwork.maxRoadAngle,
       };
 
-      roadNetwork = CityTour.NeighborhoodRoadNetworkGenerator.generate(terrain, neighborhoods, roadConfig);
+      roadNetwork = NeighborhoodRoadNetworkGenerator.generate(terrain, neighborhoods, roadConfig);
     }
     roadEndTime = new Date();
 
@@ -72,15 +77,15 @@ CityTour.WorldGenerator = (function() {
       zonedBlocks = [];
     }
     else {
-      zonedBlocks = CityTour.ZonedBlockGenerator.generate(terrain, neighborhoods, roadNetwork, zonedBlockConfig);
+      zonedBlocks = ZonedBlockGenerator.generate(terrain, neighborhoods, roadNetwork, zonedBlockConfig);
     }
     zonedBlocksEndTime = new Date();
     buildingsStartTime = new Date();
-    buildings = CityTour.BuildingsGenerator.generate(terrain, zonedBlocks);
+    buildings = BuildingsGenerator.generate(terrain, zonedBlocks);
     buildingsEndTime = new Date();
 
     simplifierStartTime = new Date();
-    //CityTour.RoadNetworkSimplifier.simplify(roadNetwork, buildings);
+    //RoadNetworkSimplifier.simplify(roadNetwork, buildings);
     simplifierEndTime = new Date();
 
     combinedEndTime = new Date();
@@ -107,3 +112,5 @@ CityTour.WorldGenerator = (function() {
     generate: generate,
   };
 })();
+
+export { WorldGenerator };

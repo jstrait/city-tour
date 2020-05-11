@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
 
-CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
+var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var PAN_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
   var TILT_ROTATION_VELOCITY_DECAY = 0.85;
@@ -77,8 +77,8 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
       calculateZoomProperties();
     }
 
-    var distanceToCenterOfAction = CityTour.Math.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
-                                                                         centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    var distanceToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
+                                                                        centerOfAction.x, centerOfAction.y, centerOfAction.z);
     if (distanceToCenterOfAction <= 2.0 && zoomDistancePercentage > 0.0) {
       return;
     }
@@ -99,7 +99,7 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
   };
 
   var rotateAzimuthAroundCenterOfAction = function(azimuthAngleDelta) {
-    var distanceCameraToCenterOfAction = CityTour.Math.distanceBetweenPoints(camera.position.x, camera.position.z, centerOfAction.x, centerOfAction.z);
+    var distanceCameraToCenterOfAction = CityTourMath.distanceBetweenPoints(camera.position.x, camera.position.z, centerOfAction.x, centerOfAction.z);
     var originalAngleCameraToCenterOfAction = Math.atan2(-(camera.position.z - centerOfAction.z), camera.position.x - centerOfAction.x);
     var newAngleCameraToCenterOfAction = originalAngleCameraToCenterOfAction + azimuthAngleDelta;
 
@@ -128,9 +128,9 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
   };
 
   var tiltCamera = function(tiltAngleDelta) {
-    var distanceCameraToCenterOfAction = CityTour.Math.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
-                                                                               centerOfAction.x, centerOfAction.y, centerOfAction.z);
-    var newTiltAngle = CityTour.Math.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
+    var distanceCameraToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
+                                                                              centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    var newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
 
     var hypotenuse = distanceCameraToCenterOfAction;
     var adjacent = Math.cos(newTiltAngle) * hypotenuse;
@@ -237,3 +237,5 @@ CityTour.MapCamera = function(sceneView, initialTerrain, messageBroker) {
     setTerrain: function(newTerrain) { terrain = newTerrain; },
   };
 };
+
+export { MapCamera };

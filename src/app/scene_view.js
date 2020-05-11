@@ -1,9 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { RenderView } from "./render_view";
+import { Builder } from "./../meshes/builder";
 
-
-CityTour.SceneView = function(containerEl, messageBroker) {
+var SceneView = function(containerEl, messageBroker) {
   var SHOW_MARKERS = false;
 
   var centerOfCityMarkerMesh;
@@ -12,9 +12,9 @@ CityTour.SceneView = function(containerEl, messageBroker) {
   var touchPoint1MarkerMesh;
   var touchPoint2MarkerMesh;
 
-  var sceneBuilder = new CityTour.Meshes.Builder();
+  var sceneBuilder = new Builder();
   var scene = sceneBuilder.buildEmptyScene();
-  var renderView = new CityTour.RenderView(containerEl, scene);
+  var renderView = new RenderView(containerEl, scene);
   var camera = renderView.camera();
 
   var reset = function(newWorldData) {
@@ -160,3 +160,5 @@ CityTour.SceneView = function(containerEl, messageBroker) {
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
   };
 };
+
+export { SceneView };

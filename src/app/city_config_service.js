@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.CityConfigService = function() {
+var CityConfigService = function() {
   var TERRAIN_COLUMN_COUNT = 128;
   var TERRAIN_ROW_COUNT = 128;
   var NEIGHBORHOOD_MAX_COLUMNS = 20;
@@ -68,3 +66,5 @@ CityTour.CityConfigService = function() {
     toWorldConfig: toWorldConfig,
   };
 };
+
+export { CityConfigService };

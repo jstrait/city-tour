@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.Config = (function() {
+var Config = (function() {
   var config = {};
 
   config.BLOCK_WIDTH = (2 / 3);
@@ -18,3 +16,5 @@ CityTour.Config = (function() {
 
   return config;
 })();
+
+export { Config };

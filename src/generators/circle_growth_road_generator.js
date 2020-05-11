@@ -1,8 +1,10 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { Config } from "./../config";
+import { CityTourMath } from "./../math";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.CircleGrowthRoadGenerator = (function() {
+var CircleGrowthRoadGenerator = (function() {
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
     var MIN_X = Math.max(terrain.minX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
     var MAX_X = Math.min(terrain.maxX(), (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
@@ -21,7 +23,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
         return 1.0;
       }
 
-      var distanceFromCenter = CityTour.Math.distanceBetweenPoints(neighborhoodCenterX, neighborhoodCenterZ, x1, z1);
+      var distanceFromCenter = CityTourMath.distanceBetweenPoints(neighborhoodCenterX, neighborhoodCenterZ, x1, z1);
       var normalizedPercentageFromCenter;
 
       if (distanceFromCenter <= SAFE_FROM_DECAY_DISTANCE) {
@@ -35,7 +37,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
     var isTerrainTooSteep = function(terrain, x, z, targetX, targetZ) {
       var heightAtPoint1 = terrain.heightAtCoordinates(x, z);
       var heightAtPoint2 = terrain.heightAtCoordinates(targetX, targetZ);
-      var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
+      var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), Config.BLOCK_DEPTH);
 
       return Math.abs(angle) > config.maxRoadAngle;
     };
@@ -69,7 +71,7 @@ CityTour.CircleGrowthRoadGenerator = (function() {
       if (shouldConnectIntersections(terrain, x, z, targetX, targetZ)) {
         targetIntersectionExists = roadNetwork.hasIntersection(targetX, targetZ);
 
-        roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
         if (!targetIntersectionExists) {
           branchFromIntersection(terrain, roadNetwork, targetX, targetZ);
         }
@@ -84,3 +86,5 @@ CityTour.CircleGrowthRoadGenerator = (function() {
     addNeighborhoodRoads: addNeighborhoodRoads,
   };
 })();
+
+export { CircleGrowthRoadGenerator };

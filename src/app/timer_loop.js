@@ -1,9 +1,13 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { Timer } from "./../timer";
+import { Animation } from "./../flythrough/animation";
+import { SineEasing } from "./../flythrough/easing";
+import { MotionGenerator } from "./../flythrough/motion_generator";
+import { VehicleController } from "./../flythrough/vehicle_controller";
+import { VehicleView } from "./../flythrough/vehicle_view";
 
-
-CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) {
+var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
   var FLYTHROUGH_STOP = 3;
@@ -48,19 +52,19 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
     zoomAmount = 0.0;
     mapCamera.setIsVelocityEnabled(false);
 
-    vehicleController = new CityTour.VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, worldData.centerX, worldData.centerZ);
-    vehicleView = new CityTour.VehicleView(vehicleController);
+    vehicleController = new VehicleController(worldData.terrain, worldData.roadNetwork, initialCoordinates, worldData.centerX, worldData.centerZ);
+    vehicleView = new VehicleView(vehicleController);
     mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", { vehicleView: vehicleView });
   };
 
   var requestStopFlythrough = function() {
-    vehicleToInteractiveAnimation = new CityTour.Animation(
-      new CityTour.MotionGenerator(vehicleController.positionX(), camera.position.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new CityTour.MotionGenerator(vehicleController.positionY(), camera.position.y, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new CityTour.MotionGenerator(vehicleController.positionZ(), camera.position.z, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new CityTour.MotionGenerator(vehicleController.rotationX(), camera.rotation.x, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new CityTour.MotionGenerator(vehicleController.rotationY(), camera.rotation.y, new CityTour.SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2))
+    vehicleToInteractiveAnimation = new Animation(
+      new MotionGenerator(vehicleController.positionX(), camera.position.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new MotionGenerator(vehicleController.positionY(), camera.position.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new MotionGenerator(vehicleController.positionZ(), camera.position.z, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new MotionGenerator(vehicleController.rotationX(), camera.rotation.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
+      new MotionGenerator(vehicleController.rotationY(), camera.rotation.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2))
     );
 
     mode = FLYTHROUGH_STOP;
@@ -88,7 +92,7 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
 
   reset(initialWorldData);
 
-  timer = new CityTour.Timer();
+  timer = new Timer();
   timer.onTick = function(frameCount) {
     var i;
 
@@ -139,3 +143,5 @@ CityTour.TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBro
     toggleFlythrough: toggleFlythrough,
   };
 };
+
+export { TimerLoop };

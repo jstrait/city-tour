@@ -1,7 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
+import { CityTourMath } from "./../math";
 
 /*
    Generates target points for the camera to move to, simulating the camera
@@ -16,7 +15,7 @@ var CityTour = CityTour || {};
    Target points are chosen to alternate between either a point north or south of
    the previous target, or east or west of the previous target.
 */
-CityTour.AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ) {
+var AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ) {
   var MAX_ITERATIONS = 100;
 
   var X_AXIS = 1;
@@ -37,10 +36,10 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ)
       }
 
       if (movementAxis === X_AXIS) {
-        newTargetX = CityTour.Math.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
+        newTargetX = CityTourMath.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
       }
       else if (movementAxis === Z_AXIS) {
-        newTargetZ = CityTour.Math.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
+        newTargetZ = CityTourMath.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
       }
 
       iterationCount += 1;
@@ -78,3 +77,5 @@ CityTour.AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ)
     nextTarget: nextTarget,
   };
 };
+
+export { AerialNavigator };

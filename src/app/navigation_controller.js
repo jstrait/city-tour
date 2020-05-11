@@ -1,8 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
+import { WorldTouch } from "./world_touch";
 
-CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoop, messageBroker) {
+var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, messageBroker) {
   var DOWN_ARROW = "&#9660;";
   var UP_ARROW = "&#9650;";
   var START_TOUR_MESSAGE = "Take a Tour";
@@ -42,7 +43,7 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
 
   var setTargetOfAction = function(e) {
     var el = sceneView.domElement();
-    var centerOfScreenPhantomTouch = CityTour.WorldTouch(el, sceneView.camera(), el.offsetWidth / 2, el.offsetHeight / 2, terrain);
+    var centerOfScreenPhantomTouch = WorldTouch(el, sceneView.camera(), el.offsetWidth / 2, el.offsetHeight / 2, terrain);
     mapCamera.setCenterOfAction(new THREE.Vector3(centerOfScreenPhantomTouch.worldX(), centerOfScreenPhantomTouch.worldY(), centerOfScreenPhantomTouch.worldZ()));
   };
 
@@ -58,7 +59,7 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
 
   var setTiltAngle = function(e) {
     var tiltPercentage = parseFloat(tiltAngleControl.value);
-    var newTiltAngle = CityTour.Math.lerp(mapCamera.minTiltAngle(), mapCamera.maxTiltAngle(), 1.0 - tiltPercentage);
+    var newTiltAngle = CityTourMath.lerp(mapCamera.minTiltAngle(), mapCamera.maxTiltAngle(), 1.0 - tiltPercentage);
 
     mapCamera.tiltCamera(newTiltAngle - mapCamera.tiltAngle());
     mapCamera.setIsVelocityEnabled(false);
@@ -127,3 +128,5 @@ CityTour.NavigationController = function(sceneView, mapCamera, terrain, timerLoo
     setTerrain: function(newTerrain) { terrain = newTerrain; },
   };
 };
+
+export { NavigationController };

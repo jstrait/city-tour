@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.BlurEroder = (function() {
+var BlurEroder = (function() {
   var EROSION_PERCENTAGE_FROM_PREVIOUS = 0.5;
   var EROSION_PERCENTAGE_FOR_CURRENT = 1 - EROSION_PERCENTAGE_FROM_PREVIOUS;
 
@@ -64,3 +62,5 @@ CityTour.BlurEroder = (function() {
     erode: erode,
   };
 })();
+
+export { BlurEroder };

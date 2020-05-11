@@ -1,8 +1,8 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./math";
 
-CityTour.Terrain = function(coordinates, scale) {
+var Terrain = function(coordinates, scale) {
   var LAND_HEIGHT_COMPONENT = "landHeight";
   var WATER_HEIGHT_COMPONENT = "waterHeight";
 
@@ -25,7 +25,7 @@ CityTour.Terrain = function(coordinates, scale) {
   };
 
   var interpolateHeight = function(point, floor, ceiling) {
-    return CityTour.Math.lerp(floor, ceiling, point - Math.floor(point));
+    return CityTourMath.lerp(floor, ceiling, point - Math.floor(point));
   };
 
   var componentHeightAtCoordinates = function(x, z, component) {
@@ -101,3 +101,5 @@ CityTour.Terrain = function(coordinates, scale) {
     heightAtCoordinates: heightAtCoordinates,
   };
 };
+
+export { Terrain };

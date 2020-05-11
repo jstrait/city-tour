@@ -1,9 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
-CityTour.Meshes = CityTour.Meshes || {};
+import { Config } from "./../config";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.Meshes.TerrainMeshBuilder = function() {
+var TerrainMeshBuilder = function() {
   var LAND_COLOR = new THREE.Color(0.0, 0.48, 0.0);
   var WATER_COLOR = new THREE.Color(0.1, 0.2, 1.0);
 
@@ -218,15 +218,15 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
     var minZ = terrain.minZ();
     var maxZ = terrain.maxZ();
 
-    var halfStreetWidth = CityTour.Config.STREET_WIDTH / 2;
-    var halfStreetDepth = CityTour.Config.STREET_DEPTH / 2;
+    var halfStreetWidth = Config.STREET_WIDTH / 2;
+    var halfStreetDepth = Config.STREET_DEPTH / 2;
 
     for (x = minX; x < maxX; x += triangleWidth) {
-      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(x, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
-      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, minZ) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(x, minZ) === RoadNetwork.TERRAIN_SURFACE;
+      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, minZ) === RoadNetwork.TERRAIN_SURFACE;
 
       bottomRoad = (Math.floor(minZ) === minZ) &&
-                   roadNetwork.hasEdgeBetween(Math.floor(x), minZ, Math.floor(x) + 1, minZ, CityTour.RoadNetwork.TERRAIN_SURFACE);
+                   roadNetwork.hasEdgeBetween(Math.floor(x), minZ, Math.floor(x) + 1, minZ, RoadNetwork.TERRAIN_SURFACE);
 
       bottomLeftHeight = terrain.heightAtCoordinates(x, minZ);
       bottomRightHeight = terrain.heightAtCoordinates(x + triangleWidth, minZ);
@@ -237,13 +237,13 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
       for (z = minZ; z < maxZ; z += triangleDepth) {
         topLeftRoad     = bottomLeftRoad;
         topRightRoad    = bottomRightRoad;
-        bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(x, z + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;
-        bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, z + triangleDepth) === CityTour.RoadNetwork.TERRAIN_SURFACE;
+        bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(x, z + triangleDepth) === RoadNetwork.TERRAIN_SURFACE;
+        bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, z + triangleDepth) === RoadNetwork.TERRAIN_SURFACE;
 
-        leftRoad = (Math.floor(x) === x) && roadNetwork.hasEdgeBetween(x, Math.floor(z), x, Math.floor(z) + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
-        rightRoad = (Math.ceil(x + triangleWidth) === (x + triangleWidth)) && roadNetwork.hasEdgeBetween(x + triangleWidth, Math.floor(z), x + triangleWidth, Math.floor(z) + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        leftRoad = (Math.floor(x) === x) && roadNetwork.hasEdgeBetween(x, Math.floor(z), x, Math.floor(z) + 1, RoadNetwork.TERRAIN_SURFACE);
+        rightRoad = (Math.ceil(x + triangleWidth) === (x + triangleWidth)) && roadNetwork.hasEdgeBetween(x + triangleWidth, Math.floor(z), x + triangleWidth, Math.floor(z) + 1, RoadNetwork.TERRAIN_SURFACE);
         topRoad = bottomRoad;
-        bottomRoad = (Math.ceil(z + triangleDepth) === (z + triangleDepth)) && roadNetwork.hasEdgeBetween(Math.floor(x), z + triangleDepth, Math.floor(x) + 1, z + triangleDepth, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        bottomRoad = (Math.ceil(z + triangleDepth) === (z + triangleDepth)) && roadNetwork.hasEdgeBetween(Math.floor(x), z + triangleDepth, Math.floor(x) + 1, z + triangleDepth, RoadNetwork.TERRAIN_SURFACE);
 
         topLeftX = x;
         topLeftZ = z;
@@ -318,7 +318,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
             terrainGeometry.merge(triangle);
           }
           else if (topLeftRoad && bottomLeftRoad) {
-            triangle = buildTriangleGeometry(bottomLeftX - CityTour.Config.STREET_WIDTH, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
+            triangle = buildTriangleGeometry(bottomLeftX - Config.STREET_WIDTH, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                              topLeftX, topLeftHeight, topLeftZ, topLeftMaterial);
             terrainGeometry.merge(triangle);
@@ -344,7 +344,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           else if (topRightRoad && bottomRightRoad) {
             triangle = buildTriangleGeometry(topRightX,    topRightHeight, topRightZ, topRightMaterial,
                                              bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                             topRightX + CityTour.Config.STREET_WIDTH, topRightHeight, topRightZ, topRightMaterial);
+                                             topRightX + Config.STREET_WIDTH, topRightHeight, topRightZ, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
         }
@@ -366,7 +366,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           else if (topLeftRoad && topRightRoad) {
             triangle = buildTriangleGeometry(topLeftX, topLeftHeight, topLeftZ, topLeftMaterial,
                                              topRightX, topRightHeight, topRightZ, topRightMaterial,
-                                             topRightX, topRightHeight, topRightZ - CityTour.Config.STREET_DEPTH, topRightMaterial);
+                                             topRightX, topRightHeight, topRightZ - Config.STREET_DEPTH, topRightMaterial);
 
             terrainGeometry.merge(triangle);
           }
@@ -389,7 +389,7 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
           }
           else if (bottomLeftRoad && bottomRightRoad) {
             triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             bottomLeftX,  bottomLeftHeight, bottomLeftZ + CityTour.Config.STREET_DEPTH, bottomLeftMaterial,
+                                             bottomLeftX,  bottomLeftHeight, bottomLeftZ + Config.STREET_DEPTH, bottomLeftMaterial,
                                              bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial);
 
             terrainGeometry.merge(triangle);
@@ -424,3 +424,5 @@ CityTour.Meshes.TerrainMeshBuilder = function() {
 
   return terrainMeshBuilder;
 };
+
+export { TerrainMeshBuilder };

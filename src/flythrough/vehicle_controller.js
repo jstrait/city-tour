@@ -1,8 +1,18 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
+import { PathFinder } from "./../path_finder";
+import { AerialNavigator } from "./aerial_navigator";
+import { Animation } from "./animation";
+import { LinearEasing } from "./easing";
+import { SineEasing } from "./easing";
+import { SmoothStepEasing } from "./easing";
+import { SteepEasing } from "./easing";
+import { MotionGenerator } from "./motion_generator";
+import { StaticMotionGenerator } from "./motion_generator";
+import { RoadNavigator } from "./road_navigator";
 
-CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
+var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
   var HALF_PI = Math.PI / 2.0;
   var TWO_PI = Math.PI * 2.0;
 
@@ -43,7 +53,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
   var navigator;
   var aerialNavigator;
-  var pathFinder = new CityTour.PathFinder(roadNetwork);
+  var pathFinder = new PathFinder(roadNetwork);
 
 
   var frameCount = function(start, target, delta) {
@@ -130,22 +140,22 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     targetRotationX = -Math.PI / 2;
     targetRotationY = viewAngleToCityCenter;
 
-    distanceToTarget = CityTour.Math.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
+    distanceToTarget = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
 
     frameCountPositionX = Math.ceil(distanceToTarget / DRIVING_HORIZONTAL_MOTION_DELTA);
-    frameCountPositionX = CityTour.Math.clamp(frameCountPositionX, 60, 3 * 60);
+    frameCountPositionX = CityTourMath.clamp(frameCountPositionX, 60, 3 * 60);
     frameCountPositionY = frameCountPositionX;
     frameCountPositionZ = frameCountPositionX;
     frameCountRotationX = frameCountPositionX;
-    frameCountRotationY = CityTour.Math.clamp(frameCount(initial.rotationY, targetRotationY, 0.008), 60, frameCountPositionX);
+    frameCountRotationY = CityTourMath.clamp(frameCount(initial.rotationY, targetRotationY, 0.008), 60, frameCountPositionX);
 
     // Move to point above center of the city, looking straight down
-    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
-    positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.SmoothStepEasing(frameCountPositionY));
-    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SmoothStepEasing(frameCountRotationX, -1.0, 0.0));
-    rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.SineEasing(frameCountRotationY, 0, HALF_PI));
-    newAnimations.push(new CityTour.Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
+    positionXGenerator = new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX));
+    positionYGenerator = new MotionGenerator(initial.positionY, targetPositionY, new SmoothStepEasing(frameCountPositionY));
+    positionZGenerator = new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new MotionGenerator(initial.rotationX, targetRotationX, new SmoothStepEasing(frameCountRotationX, -1.0, 0.0));
+    rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new SineEasing(frameCountRotationY, 0, HALF_PI));
+    newAnimations.push(new Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
     descentTargetPositionX = targetPositionX + descentTargetX;
     descentTargetPositionZ = targetPositionZ + descentTargetZ;
@@ -158,11 +168,11 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     diveFrameCount = 105;
 
     // Dive to ground level, and rotate to initial driving X/Y rotation
-    newAnimations.push(new CityTour.Animation(new CityTour.MotionGenerator(targetPositionX, descentTargetPositionX, new CityTour.LinearEasing(diveFrameCount)),
-                                              new CityTour.MotionGenerator(descentTargetPositionY, targetPositionY, new CityTour.SteepEasing(diveFrameCount, 0.0, 1.0)),
-                                              new CityTour.MotionGenerator(targetPositionZ, descentTargetPositionZ, new CityTour.LinearEasing(diveFrameCount)),
-                                              new CityTour.MotionGenerator(targetRotationX, 0.0, new CityTour.SineEasing(diveFrameCount, 0.0, HALF_PI)),
-                                              new CityTour.MotionGenerator(targetRotationY, drivingTargetRotationY, new CityTour.SineEasing(diveFrameCount, 0.0, HALF_PI))));
+    newAnimations.push(new Animation(new MotionGenerator(targetPositionX, descentTargetPositionX, new LinearEasing(diveFrameCount)),
+                                     new MotionGenerator(descentTargetPositionY, targetPositionY, new SteepEasing(diveFrameCount, 0.0, 1.0)),
+                                     new MotionGenerator(targetPositionZ, descentTargetPositionZ, new LinearEasing(diveFrameCount)),
+                                     new MotionGenerator(targetRotationX, 0.0, new SineEasing(diveFrameCount, 0.0, HALF_PI)),
+                                     new MotionGenerator(targetRotationY, drivingTargetRotationY, new SineEasing(diveFrameCount, 0.0, HALF_PI))));
 
     // Drive to target point
     drivingAnimations = buildDrivingAnimations({ positionX: descentTargetPositionX,
@@ -184,7 +194,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(CityTourMath.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
@@ -196,31 +206,31 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionY = frameCount(initial.positionY, targetPositionY, POSITION_Y_DELTA);
     frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
 
-    positionXStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionX);
-    positionYStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionY);
-    positionZStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionZ);
-    rotationXStationaryGenerator = new CityTour.StaticMotionGenerator(initial.rotationX);
-    rotationYStationaryGenerator = new CityTour.StaticMotionGenerator(targetRotationY);
+    positionXStationaryGenerator = new StaticMotionGenerator(initial.positionX);
+    positionYStationaryGenerator = new StaticMotionGenerator(initial.positionY);
+    positionZStationaryGenerator = new StaticMotionGenerator(initial.positionZ);
+    rotationXStationaryGenerator = new StaticMotionGenerator(initial.rotationX);
+    rotationYStationaryGenerator = new StaticMotionGenerator(targetRotationY);
 
-    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
-    positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
-    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(targetRotationX, initial.rotationX, new CityTour.SteepEasing(frameCountRotationX, 0.0, 1.0));
-    rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.LinearEasing(frameCountRotationY));
+    positionXGenerator = new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX));
+    positionYGenerator = new MotionGenerator(initial.positionY, targetPositionY, new LinearEasing(frameCountPositionY));
+    positionZGenerator = new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new MotionGenerator(targetRotationX, initial.rotationX, new SteepEasing(frameCountRotationX, 0.0, 1.0));
+    rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new LinearEasing(frameCountRotationY));
 
     // Y rotation
-    newAnimations.push(new CityTour.Animation(positionXStationaryGenerator,
-                                              positionYStationaryGenerator,
-                                              positionZStationaryGenerator,
-                                              rotationXStationaryGenerator,
-                                              rotationYGenerator));
+    newAnimations.push(new Animation(positionXStationaryGenerator,
+                                     positionYStationaryGenerator,
+                                     positionZStationaryGenerator,
+                                     rotationXStationaryGenerator,
+                                     rotationYGenerator));
 
     // Rest of the movement
-    newAnimations.push(new CityTour.Animation(positionXGenerator,
-                                              positionYGenerator,
-                                              positionZGenerator,
-                                              rotationXGenerator,
-                                              rotationYStationaryGenerator));
+    newAnimations.push(new Animation(positionXGenerator,
+                                     positionYGenerator,
+                                     positionZGenerator,
+                                     rotationXGenerator,
+                                     rotationYStationaryGenerator));
 
 
     return newAnimations;
@@ -233,7 +243,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(CityTourMath.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
@@ -245,31 +255,31 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionY = frameCount(initial.positionY, targetPositionY, POSITION_Y_DELTA);
     frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
 
-    positionXStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionX);
-    positionYStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionY);
-    positionZStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionZ);
-    rotationXStationaryGenerator = new CityTour.StaticMotionGenerator(initial.rotationX);
-    rotationYStationaryGenerator = new CityTour.StaticMotionGenerator(targetRotationY);
+    positionXStationaryGenerator = new StaticMotionGenerator(initial.positionX);
+    positionYStationaryGenerator = new StaticMotionGenerator(initial.positionY);
+    positionZStationaryGenerator = new StaticMotionGenerator(initial.positionZ);
+    rotationXStationaryGenerator = new StaticMotionGenerator(initial.rotationX);
+    rotationYStationaryGenerator = new StaticMotionGenerator(targetRotationY);
 
-    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
-    positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
-    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.SteepEasing(frameCountRotationX, -1.0, 0));
-    rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.LinearEasing(frameCountRotationY));
+    positionXGenerator = new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX));
+    positionYGenerator = new MotionGenerator(initial.positionY, targetPositionY, new LinearEasing(frameCountPositionY));
+    positionZGenerator = new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new MotionGenerator(initial.rotationX, targetRotationX, new SteepEasing(frameCountRotationX, -1.0, 0));
+    rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new LinearEasing(frameCountRotationY));
 
     // Y rotation
-    newAnimations.push(new CityTour.Animation(positionXStationaryGenerator,
-                                              positionYStationaryGenerator,
-                                              positionZStationaryGenerator,
-                                              rotationXStationaryGenerator,
-                                              rotationYGenerator));
+    newAnimations.push(new Animation(positionXStationaryGenerator,
+                                     positionYStationaryGenerator,
+                                     positionZStationaryGenerator,
+                                     rotationXStationaryGenerator,
+                                     rotationYGenerator));
 
     // Rest of the movement
-    newAnimations.push(new CityTour.Animation(positionXGenerator,
-                                              positionYGenerator,
-                                              positionZGenerator,
-                                              rotationXGenerator,
-                                              rotationYStationaryGenerator));
+    newAnimations.push(new Animation(positionXGenerator,
+                                     positionYGenerator,
+                                     positionZGenerator,
+                                     rotationXGenerator,
+                                     rotationYStationaryGenerator));
 
     return newAnimations;
   };
@@ -281,7 +291,7 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var newAnimations = [];
 
-    frameCountPositionX = Math.ceil(CityTour.Math.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / DRIVING_HORIZONTAL_MOTION_DELTA);
+    frameCountPositionX = Math.ceil(CityTourMath.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
     targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
@@ -293,31 +303,31 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     frameCountPositionY = frameCount(initial.positionY, targetPositionY, HOVER_TO_DRIVING_POSITION_Y_DELTA);
     frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
 
-    positionXStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionX);
-    positionYStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionY);
-    positionZStationaryGenerator = new CityTour.StaticMotionGenerator(initial.positionZ);
-    rotationXStationaryGenerator = new CityTour.StaticMotionGenerator(initial.rotationX);
-    rotationYStationaryGenerator = new CityTour.StaticMotionGenerator(targetRotationY);
+    positionXStationaryGenerator = new StaticMotionGenerator(initial.positionX);
+    positionYStationaryGenerator = new StaticMotionGenerator(initial.positionY);
+    positionZStationaryGenerator = new StaticMotionGenerator(initial.positionZ);
+    rotationXStationaryGenerator = new StaticMotionGenerator(initial.rotationX);
+    rotationYStationaryGenerator = new StaticMotionGenerator(targetRotationY);
 
-    positionXGenerator = new CityTour.MotionGenerator(initial.positionX, targetPositionX, new CityTour.LinearEasing(frameCountPositionX));
-    positionYGenerator = new CityTour.MotionGenerator(initial.positionY, targetPositionY, new CityTour.LinearEasing(frameCountPositionY));
-    positionZGenerator = new CityTour.MotionGenerator(initial.positionZ, targetPositionZ, new CityTour.LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new CityTour.MotionGenerator(initial.rotationX, targetRotationX, new CityTour.LinearEasing(frameCountRotationX));
-    rotationYGenerator = new CityTour.MotionGenerator(initial.rotationY, targetRotationY, new CityTour.LinearEasing(frameCountRotationY));
+    positionXGenerator = new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX));
+    positionYGenerator = new MotionGenerator(initial.positionY, targetPositionY, new LinearEasing(frameCountPositionY));
+    positionZGenerator = new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ));
+    rotationXGenerator = new MotionGenerator(initial.rotationX, targetRotationX, new LinearEasing(frameCountRotationX));
+    rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new LinearEasing(frameCountRotationY));
 
     // Y rotation
-    newAnimations.push(new CityTour.Animation(positionXStationaryGenerator,
-                                              positionYStationaryGenerator,
-                                              positionZStationaryGenerator,
-                                              rotationXStationaryGenerator,
-                                              rotationYGenerator));
+    newAnimations.push(new Animation(positionXStationaryGenerator,
+                                     positionYStationaryGenerator,
+                                     positionZStationaryGenerator,
+                                     rotationXStationaryGenerator,
+                                     rotationYGenerator));
 
     // Rest of the movement
-    newAnimations.push(new CityTour.Animation(positionXGenerator,
-                                              positionYGenerator,
-                                              positionZGenerator,
-                                              rotationXGenerator,
-                                              rotationYStationaryGenerator));
+    newAnimations.push(new Animation(positionXGenerator,
+                                     positionYGenerator,
+                                     positionZGenerator,
+                                     rotationXGenerator,
+                                     rotationYStationaryGenerator));
 
     return newAnimations;
   };
@@ -392,13 +402,13 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
 
           if (verticalMode === BIRDSEYE_MODE || verticalMode === HOVERING_MODE) {
             if (aerialNavigator === undefined) {
-              navigator = new CityTour.AerialNavigator(roadNetwork, positionX, positionZ);
+              navigator = new AerialNavigator(roadNetwork, positionX, positionZ);
               aerialNavigator = navigator;
             }
           }
           else if (verticalMode === DRIVING_MODE) {
             aerialNavigator = undefined;
-            navigator = new CityTour.RoadNavigator(roadNetwork, pathFinder,positionX, positionZ);
+            navigator = new RoadNavigator(roadNetwork, pathFinder,positionX, positionZ);
           }
         }
 
@@ -431,3 +441,5 @@ CityTour.VehicleController = function(terrain, roadNetwork, initial, initialTarg
     tick: tick,
   };
 };
+
+export { VehicleController };

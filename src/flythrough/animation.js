@@ -1,9 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-
-CityTour.Animation = function(positionXMotionGenerator, positionYMotionGenerator, positionZMotionGenerator, rotationXMotionGenerator, rotationYMotionGenerator) {
+var Animation = function(positionXMotionGenerator, positionYMotionGenerator, positionZMotionGenerator, rotationXMotionGenerator, rotationYMotionGenerator) {
   var positionX;
   var positionY;
   var positionZ;
@@ -37,3 +34,5 @@ CityTour.Animation = function(positionXMotionGenerator, positionYMotionGenerator
     rotationY: function() { return rotationY; },
   };
 };
+
+export { Animation };

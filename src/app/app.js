@@ -1,13 +1,24 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { MessageBroker } from "./../message_broker";
+import { RoadNetwork } from "./../road_network";
+import { Terrain } from "./../terrain";
 
+import { CityConfigService } from "./city_config_service";
+import { CityEditorController } from "./city_editor_controller";
+import { MapCamera } from "./map_camera";
+import { NavigationController } from "./navigation_controller";
+import { NavigationTouchController } from "./navigation_touch_controller";
+import { SceneView } from "./scene_view";
+import { TimerLoop } from "./timer_loop";
 
-CityTour.App = (function() {
-  var EMPTY_TERRAIN = CityTour.Terrain([[]], 1);
+import { WorldGenerator } from "./../generators/world_generator";
+
+var App = (function() {
+  var EMPTY_TERRAIN = Terrain([[]], 1);
   var EMPTY_WORLD_DATA = {
     terrain: EMPTY_TERRAIN,
-    roadNetwork: CityTour.RoadNetwork(EMPTY_TERRAIN),
+    roadNetwork: RoadNetwork(EMPTY_TERRAIN),
     buildings: [],
     centerX: undefined,
     centerZ: undefined,
@@ -43,14 +54,14 @@ CityTour.App = (function() {
 
     var container = document.getElementById("container");
 
-    var messageBroker = new CityTour.MessageBroker();
-    var cityConfigService = new CityTour.CityConfigService();
-    var sceneView = new CityTour.SceneView(container, messageBroker);
-    var mapCamera = new CityTour.MapCamera(sceneView, EMPTY_WORLD_DATA.terrain, messageBroker);
-    var timerLoop = new CityTour.TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
-    var cityEditorController = new CityTour.CityEditorController(cityConfigService, messageBroker);
-    var navigationController = new CityTour.NavigationController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, timerLoop, messageBroker);
-    var navigationTouchController = new CityTour.NavigationTouchController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
+    var messageBroker = new MessageBroker();
+    var cityConfigService = new CityConfigService();
+    var sceneView = new SceneView(container, messageBroker);
+    var mapCamera = new MapCamera(sceneView, EMPTY_WORLD_DATA.terrain, messageBroker);
+    var timerLoop = new TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
+    var cityEditorController = new CityEditorController(cityConfigService, messageBroker);
+    var navigationController = new NavigationController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, timerLoop, messageBroker);
+    var navigationTouchController = new NavigationTouchController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
 
     container.appendChild(sceneView.domElement());
 
@@ -72,7 +83,7 @@ CityTour.App = (function() {
       navigationTouchController.setTerrain(EMPTY_WORLD_DATA.terrain);
 
       // Now that old city's memory has been reclaimed, add new city
-      newWorldData = CityTour.WorldGenerator.generate(cityConfigService.toWorldConfig());
+      newWorldData = WorldGenerator.generate(cityConfigService.toWorldConfig());
       timerLoop.reset(newWorldData);
       sceneView.reset(newWorldData);
       mapCamera.setTerrain(newWorldData.terrain);
@@ -101,3 +112,5 @@ CityTour.App = (function() {
     init: init,
   };
 })();
+
+App.init();

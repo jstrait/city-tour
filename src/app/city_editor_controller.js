@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.CityEditorController = function(cityConfigService, messageBroker) {
+var CityEditorController = function(cityConfigService, messageBroker) {
   var EDITOR_MENU = 1;
   var ABOUT_MENU = 2;
 
@@ -126,3 +124,5 @@ CityTour.CityEditorController = function(cityConfigService, messageBroker) {
 
   return {};
 };
+
+export { CityEditorController };

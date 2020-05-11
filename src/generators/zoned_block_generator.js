@@ -1,8 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../math";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.ZonedBlockGenerator = (function() {
+var ZonedBlockGenerator = (function() {
   var HALF_BLOCK_COLUMNS = 32;
   var HALF_BLOCK_ROWS = 32;
 
@@ -183,7 +184,7 @@ CityTour.ZonedBlockGenerator = (function() {
     var i;
 
     for (i = 0; i < neighborhoods.length; i++) {
-      distanceToNeighborhoodCenter = CityTour.Math.distanceBetweenPoints(neighborhoods[i].centerX, neighborhoods[i].centerZ, x, z);
+      distanceToNeighborhoodCenter = CityTourMath.distanceBetweenPoints(neighborhoods[i].centerX, neighborhoods[i].centerZ, x, z);
 
       if (distanceToNeighborhoodCenter < nearestCenterDistance) {
         nearestCenterDistance = distanceToNeighborhoodCenter;
@@ -208,10 +209,10 @@ CityTour.ZonedBlockGenerator = (function() {
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
-        hasTopRoad = roadNetwork.hasEdgeBetween(x, z, x + 1, z, CityTour.RoadNetwork.TERRAIN_SURFACE);
-        hasRightRoad = roadNetwork.hasEdgeBetween(x + 1, z, x + 1, z + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
-        hasBottomRoad = roadNetwork.hasEdgeBetween(x, z + 1, x + 1, z + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
-        hasLeftRoad = roadNetwork.hasEdgeBetween(x, z, x, z + 1, CityTour.RoadNetwork.TERRAIN_SURFACE);
+        hasTopRoad = roadNetwork.hasEdgeBetween(x, z, x + 1, z, RoadNetwork.TERRAIN_SURFACE);
+        hasRightRoad = roadNetwork.hasEdgeBetween(x + 1, z, x + 1, z + 1, RoadNetwork.TERRAIN_SURFACE);
+        hasBottomRoad = roadNetwork.hasEdgeBetween(x, z + 1, x + 1, z + 1, RoadNetwork.TERRAIN_SURFACE);
+        hasLeftRoad = roadNetwork.hasEdgeBetween(x, z, x, z + 1, RoadNetwork.TERRAIN_SURFACE);
 
         if (hasTopRoad === true || hasRightRoad === true || hasBottomRoad === true || hasLeftRoad === true) {
           distanceToClosestNeighborhoodCenter = nearestNeighborhoodCenterDistance(neighborhoods, x, z);
@@ -252,3 +253,5 @@ CityTour.ZonedBlockGenerator = (function() {
     generate: generate,
   }
 })();
+
+export { ZonedBlockGenerator };

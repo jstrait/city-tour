@@ -1,8 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { Config } from "./../config";
+import { RoadNetwork } from "./../road_network";
 
-CityTour.SquareRoadGenerator = (function() {
+var SquareRoadGenerator = (function() {
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
     var leftX = Math.max(terrain.minX(), neighborhoodCenterX - 6);
     var rightX = Math.min(terrain.maxX(), neighborhoodCenterX + 6);
@@ -26,7 +27,7 @@ CityTour.SquareRoadGenerator = (function() {
   var isTerrainTooSteep = function(terrain, x, z, targetX, targetZ) {
     var heightAtPoint1 = terrain.heightAtCoordinates(x, z);
     var heightAtPoint2 = terrain.heightAtCoordinates(targetX, targetZ);
-    var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), CityTour.Config.BLOCK_DEPTH);
+    var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), Config.BLOCK_DEPTH);
 
     return Math.abs(angle) > config.maxRoadAngle;
   };
@@ -36,7 +37,7 @@ CityTour.SquareRoadGenerator = (function() {
                        terrain.waterHeightAtCoordinates(x2, z2) === 0.0;
 
     if (edgeIsOnLand && !isTerrainTooSteep(terrain, x1, z1, x2, z2)) {
-      roadNetwork.addEdge(x1, z1, x2, z2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(x1, z1, x2, z2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
     }
   };
 
@@ -44,3 +45,5 @@ CityTour.SquareRoadGenerator = (function() {
     addNeighborhoodRoads: addNeighborhoodRoads,
   };
 })();
+
+export { SquareRoadGenerator };

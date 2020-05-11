@@ -1,9 +1,9 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { CityTourMath } from "./../../math";
 
 // Adapted from http://ranmantaru.com/blog/2011/10/08/water-erosion-on-heightmap-terrain/
-CityTour.HydraulicErosionGenerator = (function() {
+var HydraulicErosionGenerator = (function() {
   var lowestAdjacentTerrain = function(terrainCoordinates, x, z) {
     var candidateLandHeight;
     var minAdjacentLandHeight = Number.POSITIVE_INFINITY;
@@ -95,8 +95,8 @@ CityTour.HydraulicErosionGenerator = (function() {
     var i, x, z;
 
     for (i = 0; i < iterationCount; i++) {
-      x = CityTour.Math.randomInteger(0, maxColumnIndex);
-      z = CityTour.Math.randomInteger(0, maxRowIndex);
+      x = CityTourMath.randomInteger(0, maxColumnIndex);
+      z = CityTourMath.randomInteger(0, maxRowIndex);
       waterAmount = STARTING_WATER_HEIGHT;
       soilAmount = 0.0;
 
@@ -130,3 +130,5 @@ CityTour.HydraulicErosionGenerator = (function() {
     erode: erode,
   };
 })();
+
+export { HydraulicErosionGenerator };

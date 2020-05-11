@@ -1,14 +1,13 @@
 "use strict";
 
-var CityTour = CityTour || {};
-CityTour.Meshes = CityTour.Meshes || {};
+import { Config } from "./../config";
 
-CityTour.Meshes.BuildingMeshBuilder = function() {
+var BuildingMeshBuilder = function() {
   var SHOW_NEIGHBORHOOD_CENTER_MARKERS = false;
 
   var generateBuildingGeometries = function(buildings, buildingsGeometry, roadNetwork) {
-    var HALF_STREET_WIDTH = CityTour.Config.STREET_WIDTH / 2;
-    var HALF_STREET_DEPTH = CityTour.Config.STREET_DEPTH / 2;
+    var HALF_STREET_WIDTH = Config.STREET_WIDTH / 2;
+    var HALF_STREET_DEPTH = Config.STREET_DEPTH / 2;
 
     var x, z, leftX, topZ;
     var minX, maxX, minZ, maxZ;
@@ -26,14 +25,14 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
       var random;
       var i;
 
-      reusableBuildingMesh.scale.x = lot.dimensions.width * CityTour.Config.BLOCK_WIDTH;
-      reusableBuildingMesh.position.x = leftX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
+      reusableBuildingMesh.scale.x = lot.dimensions.width * Config.BLOCK_WIDTH;
+      reusableBuildingMesh.position.x = leftX + (Config.BLOCK_WIDTH * lot.dimensions.midpointX);
 
       reusableBuildingMesh.scale.y = lot.height;
       reusableBuildingMesh.position.y = (lot.height / 2) + lot.yFloor;
 
-      reusableBuildingMesh.scale.z = lot.dimensions.depth * CityTour.Config.BLOCK_DEPTH;
-      reusableBuildingMesh.position.z = topZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
+      reusableBuildingMesh.scale.z = lot.dimensions.depth * Config.BLOCK_DEPTH;
+      reusableBuildingMesh.position.z = topZ + (Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
 
       reusableBuildingMesh.updateMatrix();
 
@@ -56,9 +55,9 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
         cylinderGeometry = new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4);
         cylinderMesh = new THREE.Mesh(cylinderGeometry);
 
-        cylinderMesh.position.x = leftX + (CityTour.Config.BLOCK_WIDTH * lot.dimensions.midpointX);
+        cylinderMesh.position.x = leftX + (Config.BLOCK_WIDTH * lot.dimensions.midpointX);
         cylinderMesh.position.y = lot.yFloor + lot.height + 0.416666666666667;
-        cylinderMesh.position.z = topZ + (CityTour.Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
+        cylinderMesh.position.z = topZ + (Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
         cylinderMesh.updateMatrix();
 
         for (i = 0; i < cylinderGeometry.faces.length; i++) {
@@ -122,3 +121,5 @@ CityTour.Meshes.BuildingMeshBuilder = function() {
 
   return buildingMeshBuilder;
 };
+
+export { BuildingMeshBuilder };

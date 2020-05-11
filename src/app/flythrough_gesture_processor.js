@@ -1,8 +1,6 @@
 "use strict";
 
-var CityTour = CityTour || {};
-
-CityTour.FlythroughGestureProcessor = function() {
+var FlythroughGestureProcessor = function() {
   var previousTouches;
   var vehicleView;
   var enabled = false;
@@ -35,3 +33,5 @@ CityTour.FlythroughGestureProcessor = function() {
     setVehicleView: function(newVehicleView) { vehicleView = newVehicleView; },
   };
 };
+
+export { FlythroughGestureProcessor };

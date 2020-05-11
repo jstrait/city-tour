@@ -1,18 +1,20 @@
 "use strict";
 
-var CityTour = CityTour || {};
+import { FlythroughGestureProcessor } from "./flythrough_gesture_processor";
+import { GestureProcessor } from "./gesture_processor";
+import { WorldTouchCollection } from "./world_touch_collection";
 
-CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerrain, messageBroker) {
+var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, messageBroker) {
   var el = sceneView.domElement();
   var camera = sceneView.camera();
-  var mapGestureProcessor = CityTour.GestureProcessor(sceneView, mapCamera);
-  var flythroughGestureProcessor = CityTour.FlythroughGestureProcessor();
+  var mapGestureProcessor = GestureProcessor(sceneView, mapCamera);
+  var flythroughGestureProcessor = FlythroughGestureProcessor();
   var currentGestureProcessor = mapGestureProcessor;
   var terrain = initialTerrain;
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
-    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
+    currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
   };
 
   var onTouchStart = function(e) {
@@ -29,7 +31,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
       return;
     }
 
-    currentGestureProcessor.processGesture(CityTour.WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
+    currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
   };
 
   var onTouchMove = function(e) {
@@ -74,7 +76,7 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
       touchPoints.push({x: touch.clientX, y: touch.clientY});
     }
 
-    return CityTour.WorldTouchCollection(el, camera, touchPoints, terrain);
+    return WorldTouchCollection(el, camera, touchPoints, terrain);
   };
 
   var enableEventHandlers = function() {
@@ -110,3 +112,5 @@ CityTour.NavigationTouchController = function(sceneView, mapCamera, initialTerra
     setTerrain: function(newTerrain) { terrain = newTerrain; },
   };
 };
+
+export { NavigationTouchController };
