@@ -1,11 +1,13 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV,
-  entry: ["./src/app/app.js"],
+  entry: ["./src/app/app.js", "./css/city_tour.css"],
   module: {
     rules: [
       {
@@ -18,15 +20,35 @@ module.exports = {
           },
         }
       },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              url: false,
+            },
+          },
+        ],
+      }
     ]
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({terserOptions: { compress: true, mangle: true }}),
+      new OptimizeCSSAssetsPlugin({}),
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: "city_tour.html" },
-      { from: "css/city_tour.css" },
       { from: "lib/*.js" },
     ], { copyUnmodified: true }),
+    new MiniCssExtractPlugin({
+      filename: "city_tour.css",
+    }),
     new TerserPlugin({
       terserOptions: {
         compress: true,
