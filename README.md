@@ -35,3 +35,7 @@ Once this is all created, you can move around the city using touch gestures (mob
 
 * Run `yarn build-prod`
 * `dist/` folder will contain the files that should be deployed to production
+
+## Running Tests
+
+* `yarn test`

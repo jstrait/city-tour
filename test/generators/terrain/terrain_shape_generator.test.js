@@ -1,6 +1,8 @@
 "use strict";
 
-describe("CityTour.TerrainShapeGenerator", function() {
+import { TerrainShapeGenerator } from "./../../../src/generators/terrain/terrain_shape_generator";
+
+describe("TerrainShapeGenerator", function() {
   var flatTerrainCoordinates = [
     [
       {landHeight: 0.0, waterHeight: 0.0},
@@ -69,7 +71,7 @@ describe("CityTour.TerrainShapeGenerator", function() {
 
   describe(".addPyramid", function() {
     it("generates a correct pyramid", function() {
-      CityTour.TerrainShapeGenerator.addPyramid(flatTerrainCoordinates, 3, 3, 4, 10);
+      TerrainShapeGenerator.addPyramid(flatTerrainCoordinates, 3, 3, 4, 10);
 
       expect(flatTerrainCoordinates[0]).toEqual([
         {landHeight: 0.0, waterHeight: 0.0},

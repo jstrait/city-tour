@@ -1,10 +1,12 @@
 "use strict";
 
+import { LinearEasing } from "./../../src/flythrough/easing";
+import { MotionGenerator } from "./../../src/flythrough/motion_generator";
 
-describe("CityTour.MotionGenerator", function() {
+describe("MotionGenerator", function() {
   it("target is larger than start", function() {
-    var linearEasing = new CityTour.LinearEasing(5);
-    var motionGenerator = new CityTour.MotionGenerator(10, 20, linearEasing);
+    var linearEasing = new LinearEasing(5);
+    var motionGenerator = new MotionGenerator(10, 20, linearEasing);
 
     expect(motionGenerator.next()).toBe(12);
     expect(motionGenerator.finished()).toBe(false);
@@ -29,8 +31,8 @@ describe("CityTour.MotionGenerator", function() {
   });
 
   it("target is smaller than start", function() {
-    var linearEasing = new CityTour.LinearEasing(5);
-    var motionGenerator = new CityTour.MotionGenerator(20, 10, linearEasing);
+    var linearEasing = new LinearEasing(5);
+    var motionGenerator = new MotionGenerator(20, 10, linearEasing);
 
     expect(motionGenerator.next()).toBe(18);
     expect(motionGenerator.finished()).toBe(false);
@@ -55,8 +57,8 @@ describe("CityTour.MotionGenerator", function() {
   });
 
   it("start and target are the same", function() {
-    var linearEasing = new CityTour.LinearEasing(5);
-    var motionGenerator = new CityTour.MotionGenerator(15, 15, linearEasing);
+    var linearEasing = new LinearEasing(5);
+    var motionGenerator = new MotionGenerator(15, 15, linearEasing);
 
     expect(motionGenerator.next()).toBe(15);
     expect(motionGenerator.finished()).toBe(false);
@@ -81,8 +83,8 @@ describe("CityTour.MotionGenerator", function() {
   });
 
   it("start and target are extremely close together", function() {
-    var linearEasing = new CityTour.LinearEasing(5);
-    var motionGenerator = new CityTour.MotionGenerator(64.67822843642034, 64.67822843642035, linearEasing);
+    var linearEasing = new LinearEasing(5);
+    var motionGenerator = new MotionGenerator(64.67822843642034, 64.67822843642035, linearEasing);
 
     expect(motionGenerator.next()).toBe(64.67822843642034);
     expect(motionGenerator.finished()).toBe(false);

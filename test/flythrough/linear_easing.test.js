@@ -1,9 +1,10 @@
 "use strict";
 
+import { LinearEasing } from "./../../src/flythrough/easing";
 
-describe("CityTour.LinearEasing", function() {
+describe("LinearEasing", function() {
   it("number of frames is a positive integer", function() {
-    var linearEasing = new CityTour.LinearEasing(5);
+    var linearEasing = new LinearEasing(5);
 
     expect(linearEasing.next()).toBe(0.2);
     expect(linearEasing.finished()).toBe(false);
@@ -28,7 +29,7 @@ describe("CityTour.LinearEasing", function() {
   });
 
   it("number of frames is zero", function() {
-    var linearEasing = new CityTour.LinearEasing(0);
+    var linearEasing = new LinearEasing(0);
 
     expect(linearEasing.next()).toBe(1.0);
     expect(linearEasing.finished()).toBe(true);

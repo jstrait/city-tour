@@ -1,6 +1,10 @@
 "use strict";
 
-describe("CityTour.PathFinder", function() {
+import { PathFinder } from "./../src/path_finder";
+import { RoadNetwork } from "./../src/road_network";
+import { Terrain } from "./../src/terrain";
+
+describe("PathFinder", function() {
   var FLAT_TERRAIN_POINT = Object.freeze({landHeight: 0.0, waterHeight: 0.0});
   var terrainMesh = [
     [ FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, ],
@@ -12,20 +16,20 @@ describe("CityTour.PathFinder", function() {
     [ FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, FLAT_TERRAIN_POINT, ],
   ];
 
-  var terrain = CityTour.Terrain(terrainMesh, 1);
+  var terrain = Terrain(terrainMesh, 1);
 
   describe(".shortestPath", function() {
-    var roadNetwork = CityTour.RoadNetwork(terrain);
-    var pathFinder = CityTour.PathFinder(roadNetwork);
+    var roadNetwork = RoadNetwork(terrain);
+    var pathFinder = PathFinder(roadNetwork);
 
-    roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(2, 0, 2, 1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(2, 1, 2, 2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(2, 2, 3, 2, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(2, 0, 2, -1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(2, -1, 2, -1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(2, -1, 3, -1, 0.0, 1.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(2, 0, 2, 1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(2, 1, 2, 2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(2, 2, 3, 2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(2, 0, 2, -1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(2, -1, 2, -1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(2, -1, 3, -1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
 
     it("returns undefined if either the start or end node is not an existing node", function() {
       // Start point doesn't exist

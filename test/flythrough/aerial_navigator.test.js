@@ -1,6 +1,10 @@
 "use strict";
 
-describe("CityTour.AerialNavigator", function() {
+import { RoadNetwork } from "./../../src/road_network";
+import { Terrain } from "./../../src/terrain";
+import { AerialNavigator } from "./../../src/flythrough/aerial_navigator";
+
+describe("AerialNavigator", function() {
   var TERRAIN_MESH = [
     [
       {landHeight: 0.0, waterHeight: 0.0},
@@ -39,14 +43,14 @@ describe("CityTour.AerialNavigator", function() {
     ],
   ];
 
-  var terrain = new CityTour.Terrain(TERRAIN_MESH, 1);
+  var terrain = new Terrain(TERRAIN_MESH, 1);
 
 
   describe("road network is empty", function() {
     var roadNetwork, aerialNavigator;
 
-    roadNetwork = new CityTour.RoadNetwork(terrain);
-    aerialNavigator = new CityTour.AerialNavigator(roadNetwork, 1, 2);
+    roadNetwork = new RoadNetwork(terrain);
+    aerialNavigator = new AerialNavigator(roadNetwork, 1, 2);
 
     it("is a no-op if road network is empty", function() {
       expect(aerialNavigator.targetX()).toBe(1);
@@ -64,19 +68,19 @@ describe("CityTour.AerialNavigator", function() {
   describe("road network doesn't fully cover terrain", function() {
     var roadNetwork, aerialNavigator;
 
-    roadNetwork = new CityTour.RoadNetwork(terrain);
+    roadNetwork = new RoadNetwork(terrain);
 
     // Road network in the shape of a plus sign
-    roadNetwork.addEdge(-2, 0,  -1,  0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(-1, 0,   0,  0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge( 0, 0,   1,  0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge( 1, 0,   2,  0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge( 0, -2,  0, -1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge( 0, -1,  0,  0, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge( 0, 0,   0,  1, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge( 0, 1,   0,  2, 0.0, CityTour.RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-2, 0,  -1,  0, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0,   0,  0, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge( 0, 0,   1,  0, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge( 1, 0,   2,  0, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge( 0, -2,  0, -1, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge( 0, -1,  0,  0, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge( 0, 0,   0,  1, 0.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge( 0, 1,   0,  2, 0.0, RoadNetwork.TERRAIN_SURFACE);
 
-    aerialNavigator = new CityTour.AerialNavigator(roadNetwork, 0, 0);
+    aerialNavigator = new AerialNavigator(roadNetwork, 0, 0);
 
     it("chooses intersection on opposing axis when no road intersection on the movement axis is available", function() {
       var previousTargetX;

@@ -1,6 +1,8 @@
 "use strict";
 
-describe("CityTour.Terrain", function() {
+import { Terrain } from "./../src/terrain";
+
+describe("Terrain", function() {
   var terrainMesh = [
     [
       {landHeight: 0.0, waterHeight: 0.0},
@@ -42,7 +44,7 @@ describe("CityTour.Terrain", function() {
 
   describe("size bounds", function() {
     it("returns the correct size bounds at default scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 1);
+      var terrain = new Terrain(terrainMesh, 1);
 
       expect(terrain.minX()).toBe(-2);
       expect(terrain.maxX()).toBe(2);
@@ -51,7 +53,7 @@ describe("CityTour.Terrain", function() {
     });
 
     it("returns the correct size bounds at half scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
+      var terrain = new Terrain(terrainMesh, 0.5);
 
       expect(terrain.minX()).toBe(-1);
       expect(terrain.maxX()).toBe(1);
@@ -60,7 +62,7 @@ describe("CityTour.Terrain", function() {
     });
 
     it("returns the correct size bounds at quarter scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
+      var terrain = new Terrain(terrainMesh, 0.25);
 
       expect(terrain.minX()).toBe(-0.5);
       expect(terrain.maxX()).toBe(0.5);
@@ -69,7 +71,7 @@ describe("CityTour.Terrain", function() {
     });
 
     it("returns the correct size bounds at quarter scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+      var terrain = new Terrain(terrainMesh, 2);
 
       expect(terrain.minX()).toBe(-4);
       expect(terrain.maxX()).toBe(4);
@@ -81,7 +83,7 @@ describe("CityTour.Terrain", function() {
 
   describe(".landHeightAtCoordinates", function() {
     describe("default scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 1);
+      var terrain = new Terrain(terrainMesh, 1);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.landHeightAtCoordinates(-2.0, -2.0)).toBe(0.0);
@@ -111,7 +113,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("half scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
+      var terrain = new Terrain(terrainMesh, 0.5);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.landHeightAtCoordinates(-1.0, -1.0)).toBe(0.0);
@@ -141,7 +143,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("quarter scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
+      var terrain = new Terrain(terrainMesh, 0.25);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.landHeightAtCoordinates(-0.5, -0.5)).toBe(0.0);
@@ -171,7 +173,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+      var terrain = new Terrain(terrainMesh, 2);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.landHeightAtCoordinates(-4.0, -4.0)).toBe(0.0);
@@ -204,7 +206,7 @@ describe("CityTour.Terrain", function() {
 
   describe(".waterHeightAtCoordinates", function() {
     describe("default scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 1);
+      var terrain = new Terrain(terrainMesh, 1);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.waterHeightAtCoordinates(-2.0, -2.0)).toBe(0.0);
@@ -234,7 +236,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("half scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
+      var terrain = new Terrain(terrainMesh, 0.5);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.waterHeightAtCoordinates(-1.0, -1.0)).toBe(0.0);
@@ -264,7 +266,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("quarter scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
+      var terrain = new Terrain(terrainMesh, 0.25);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.waterHeightAtCoordinates(-0.5, -0.5)).toBe(0.0);
@@ -294,7 +296,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+      var terrain = new Terrain(terrainMesh, 2);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.waterHeightAtCoordinates(-4.0, -4.0)).toBe(0.0);
@@ -327,7 +329,7 @@ describe("CityTour.Terrain", function() {
 
   describe(".heightAtCoordinates", function() {
     describe("default scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 1);
+      var terrain = new Terrain(terrainMesh, 1);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.heightAtCoordinates(-2.0, -2.0)).toBe(0.0);
@@ -357,7 +359,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("half scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.5);
+      var terrain = new Terrain(terrainMesh, 0.5);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.heightAtCoordinates(-1.0, -1.0)).toBe(0.0);
@@ -387,7 +389,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("quarter scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 0.25);
+      var terrain = new Terrain(terrainMesh, 0.25);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.heightAtCoordinates(-0.5, -0.5)).toBe(0.0);
@@ -417,7 +419,7 @@ describe("CityTour.Terrain", function() {
     });
 
     describe("two times scale", function() {
-      var terrain = new CityTour.Terrain(terrainMesh, 2);
+      var terrain = new Terrain(terrainMesh, 2);
 
       it("returns the correct height for coordinates on an intersection", function() {
         expect(terrain.heightAtCoordinates(-4.0, -4.0)).toBe(0.0);

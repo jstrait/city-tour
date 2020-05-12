@@ -18,8 +18,10 @@ var CityTourMath = (function() {
     return (Math.random() * (max - min)) + min;
   };
 
+  // Adapted from https://github.com/mrdoob/three.js/blob/dev/src/math/MathUtils.js
+  // This is manually inlined to prevent requiring THREE.js as a test dependency
   var randomInteger = function(min, max) {
-    return THREE.Math.randInt(min, max);
+    return min + Math.floor(Math.random() * (max - min + 1));
   };
 
   // Linearly interpolate between min and max
