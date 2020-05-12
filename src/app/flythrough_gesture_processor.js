@@ -10,7 +10,7 @@ var FlythroughGestureProcessor = function() {
     var normalizedDragDistanceX, normalizedDragDistanceY;
 
     if (currentTouches === undefined) {
-      vehicleView.enabledResetToCenterAnimation();
+      vehicleView.enableResetToCenterAnimation();
     }
     else {
       vehicleView.disableResetToCenterAnimation();

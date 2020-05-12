@@ -39,7 +39,7 @@ var VehicleView = function(vehicleController) {
     }
   };
 
-  var enabledResetToCenterAnimation = function() {
+  var enableResetToCenterAnimation = function() {
     var resetToCenterAzimuthAngleEasing = SmoothStepEasing(RESET_TO_CENTER_ANIMATION_FRAME_COUNT);
     var resetToCenterTiltAngleEasing = SmoothStepEasing(RESET_TO_CENTER_ANIMATION_FRAME_COUNT);
 
@@ -63,7 +63,7 @@ var VehicleView = function(vehicleController) {
     setAzimuthAngleOffset: setAzimuthAngleOffset,
     setTiltAngleOffset: setTiltAngleOffset,
     tick: tick,
-    enabledResetToCenterAnimation: enabledResetToCenterAnimation,
+    enableResetToCenterAnimation: enableResetToCenterAnimation,
     disableResetToCenterAnimation: disableResetToCenterAnimation,
   };
 };
