@@ -93,6 +93,7 @@ input[type="range"] {
 .center { text-align: center; }
 .no-underline { text-decoration: none; }
 
+.flex-justify-center { -webkit-justify-content: center; justify-content: center; }
 .flex-align-center { -webkit-align-items: center; align-items: center; }
 
 .top-0 { top: 0; }
