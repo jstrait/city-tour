@@ -1,5 +1,6 @@
 "use strict";
 
+import { RoadNetwork } from "./../road_network";
 import { BuildingsGenerator } from "./buildings_generator";
 import { NeighborhoodGenerator } from "./neighborhood_generator";
 import { NeighborhoodRoadNetworkGenerator } from "./neighborhood_road_network_generator";
