@@ -94,6 +94,74 @@ var GestureProcessor = function(sceneView, mapCamera) {
     }
   };
 
+  var processSingleTouchGestures = function(currentTouches, isShiftKey, isAltKey) {
+    if (previousTouches.count() === 1) {
+      if (isAltKey) {
+        var previousGesture = currentGesture;
+        var distanceBetweenTouchesDeltaX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
+        var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
+
+        if (previousGesture !== ROTATE && previousGesture !== TILT) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+
+        if (Math.abs(distanceBetweenTouchesDeltaX) > Math.abs(distanceBetweenTouchesDeltaY)) {
+          currentGesture = ROTATE;
+
+          var azimuthAngleDelta = CityTourMath.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
+          var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
+          mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
+        }
+        else if (Math.abs(distanceBetweenTouchesDeltaX) < Math.abs(distanceBetweenTouchesDeltaY)) {
+          currentGesture = TILT;
+
+          var tiltAngleDelta = -CityTourMath.lerp(distanceBetweenTouchesDeltaY, 0, mapCamera.maxTiltAngle() - mapCamera.minTiltAngle());
+          mapCamera.tiltCamera(tiltAngleDelta);
+        }
+        else {
+          // Mouse didn't move, so do nothing
+        }
+      }
+      else if (isShiftKey) {
+        var previousGesture = currentGesture;
+        currentGesture = PINCH_ZOOM;
+
+        if (previousGesture !== PINCH_ZOOM) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+
+        var distanceBetweenTouchesDelta = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
+        var baseZoomDistanceDelta = 0.025;
+        var zoomDistanceDelta;
+        if (distanceBetweenTouchesDelta > 0) {
+          zoomDistanceDelta = -baseZoomDistanceDelta;
+        }
+        else if (distanceBetweenTouchesDelta < 0) {
+          zoomDistanceDelta = baseZoomDistanceDelta;
+        }
+        else {
+          zoomDistanceDelta = 0.0;
+        }
+
+        if (zoomDistanceDelta !== 0.0) {
+          mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
+        }
+      }
+      else {
+        currentGesture = PAN;
+        panCamera(currentTouches);
+
+        sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
+                                                       currentTouches.touches()[0].worldY(),
+                                                       currentTouches.touches()[0].worldZ());
+        sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
+      }
+    }
+    else {
+      mapCamera.setIsVelocityEnabled(false);
+    }
+  };
+
   var processMultiTouchGestures = function(currentTouches) {
     var yDistanceDelta, tiltAngleDelta;
     var distanceBetweenTouchesDelta, baseZoomDistanceDelta, zoomDistanceDelta;
@@ -146,72 +214,7 @@ var GestureProcessor = function(sceneView, mapCamera) {
       mapCamera.setIsVelocityEnabled(false);
     }
     else if (currentTouches.count() === 1) {
-      if (previousTouches.count() === 1) {
-        if (isAltKey) {
-          var previousGesture = currentGesture;
-          var distanceBetweenTouchesDeltaX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
-          var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
-
-          if (previousGesture !== ROTATE && previousGesture !== TILT) {
-            mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-          }
-
-          if (Math.abs(distanceBetweenTouchesDeltaX) > Math.abs(distanceBetweenTouchesDeltaY)) {
-            currentGesture = ROTATE;
-
-            var azimuthAngleDelta = CityTourMath.lerp(0, Math.PI, (currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x));
-            var newAzimuthAngle = mapCamera.azimuthAngle() + azimuthAngleDelta;
-            mapCamera.rotateAzimuthAroundCenterOfAction(newAzimuthAngle - mapCamera.azimuthAngle());
-          }
-          else if (Math.abs(distanceBetweenTouchesDeltaX) < Math.abs(distanceBetweenTouchesDeltaY)) {
-            currentGesture = TILT;
-
-            var tiltAngleDelta = -CityTourMath.lerp(distanceBetweenTouchesDeltaY, 0, mapCamera.maxTiltAngle() - mapCamera.minTiltAngle());
-            mapCamera.tiltCamera(tiltAngleDelta);
-          }
-          else {
-            // Mouse didn't move, so do nothing
-          }
-        }
-        else if (isShiftKey) {
-          var previousGesture = currentGesture;
-          currentGesture = PINCH_ZOOM;
-
-          if (previousGesture !== PINCH_ZOOM) {
-            mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-          }
-
-          var distanceBetweenTouchesDelta = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
-          var baseZoomDistanceDelta = 0.025;
-          var zoomDistanceDelta;
-          if (distanceBetweenTouchesDelta > 0) {
-            zoomDistanceDelta = -baseZoomDistanceDelta;
-          }
-          else if (distanceBetweenTouchesDelta < 0) {
-            zoomDistanceDelta = baseZoomDistanceDelta;
-          }
-          else {
-            zoomDistanceDelta = 0.0;
-          }
-
-          if (zoomDistanceDelta !== 0.0) {
-            mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
-          }
-        }
-        else {
-          currentGesture = PAN;
-          panCamera(currentTouches);
-
-          sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
-                                                         currentTouches.touches()[0].worldY(),
-                                                         currentTouches.touches()[0].worldZ());
-          sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
-        }
-
-      }
-      else {
-        mapCamera.setIsVelocityEnabled(false);
-      }
+      processSingleTouchGestures(currentTouches, isShiftKey, isAltKey);
     }
     else if (currentTouches.count() === 2) {
       sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
