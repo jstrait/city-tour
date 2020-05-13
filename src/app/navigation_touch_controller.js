@@ -48,19 +48,20 @@ var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, m
   };
 
   var onMouseOver = function(e) {
-    // Safari, as of v11, doesn't support buttons, but it does support the non-standard `which`
-    if ((e.buttons !== undefined && e.buttons === 0) ||
-        (e.which !== undefined && e.which === 0)) {
-      onMouseOut(e);
-    }
-    else {
-      onMouseDown(e);
-    }
+    window.removeEventListener("mouseup", onMouseUp, false);
+    window.removeEventListener("mousemove", onMouseMove, false);
   };
 
   var onMouseOut = function(e) {
-    el.classList.remove("cursor-grabbing");
-    currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
+    // Safari, as of v11, doesn't support buttons, but it does support the non-standard `which`
+    if ((e.buttons !== undefined && e.buttons === 1) ||
+        (e.which !== undefined && e.which === 1)) {
+      // Allow mouse events to continue to occur while the mouse is outside the main canvas
+      // element. This is not enabled while the mouse is over the main canvas element to avoid
+      // duplicate events.
+      window.addEventListener("mouseup", onMouseUp, false);
+      window.addEventListener("mousemove", onMouseMove, false);
+    }
   };
 
   var extractWorldTouchCollection = function(touches) {
