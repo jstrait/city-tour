@@ -114,6 +114,13 @@ input[type="range"] {
 .bt-gray { border-top-color: #ddd; }
 .bt-thin { border-top-width: 1px; border-top-style: solid; }
 
+.user-select-none {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 input[type='range'] {
   -webkit-appearance: none;
   height: 1.25rem;
