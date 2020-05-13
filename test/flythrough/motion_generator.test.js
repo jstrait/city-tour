@@ -92,7 +92,7 @@ describe("MotionGenerator", function() {
     expect(motionGenerator.next()).toBe(64.67822843642034);
     expect(motionGenerator.finished()).toBe(false);
 
-    expect(motionGenerator.next()).toBe(64.67822843642035);
+    expect(motionGenerator.next()).toBe(64.67822843642034);
     expect(motionGenerator.finished()).toBe(false);
 
     expect(motionGenerator.next()).toBe(64.67822843642035);

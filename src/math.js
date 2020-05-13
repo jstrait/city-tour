@@ -26,7 +26,7 @@ var CityTourMath = (function() {
 
   // Linearly interpolate between min and max
   var lerp = function(min, max, percentage) {
-    return min + ((max - min) * percentage);
+    return ((1.0 - percentage) * min) + (percentage * max);
   };
 
   var clamp = function(value, min, max) {
