@@ -6,10 +6,10 @@ import { RoadNetwork } from "./../road_network";
 
 var CircleGrowthRoadGenerator = (function() {
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
-    var MIN_X = Math.max(terrain.minX(), -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
-    var MAX_X = Math.min(terrain.maxX(), (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
-    var MIN_Z = Math.max(terrain.minZ(), -(config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
-    var MAX_Z = Math.min(terrain.maxZ(), (config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
+    var MIN_X = Math.max(terrain.minX() + 1, -(config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
+    var MAX_X = Math.min(terrain.maxX() - 1, (config.neighborhoods.columnCount / 2) + neighborhoodCenterX);
+    var MIN_Z = Math.max(terrain.minZ() + 1, -(config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
+    var MAX_Z = Math.min(terrain.maxZ() - 1, (config.neighborhoods.rowCount / 2) + neighborhoodCenterZ);
 
     var DISTANCE_TO_NEIGHBORHOOD_BOUNDARY = Math.min(config.neighborhoods.columnCount / 2, config.neighborhoods.rowCount / 2);
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;

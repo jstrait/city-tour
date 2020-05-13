@@ -5,10 +5,10 @@ import { RoadNetwork } from "./../road_network";
 
 var SquareRoadGenerator = (function() {
   var addNeighborhoodRoads = function(terrain, roadNetwork, neighborhoodCenterX, neighborhoodCenterZ, config) {
-    var leftX = Math.max(terrain.minX(), neighborhoodCenterX - 6);
-    var rightX = Math.min(terrain.maxX(), neighborhoodCenterX + 6);
-    var topZ = Math.max(terrain.minZ(), neighborhoodCenterZ - 6);
-    var bottomZ = Math.min(terrain.maxZ(), neighborhoodCenterZ + 6);
+    var leftX = Math.max(terrain.minX() + 1, neighborhoodCenterX - 6);
+    var rightX = Math.min(terrain.maxX() - 1, neighborhoodCenterX + 6);
+    var topZ = Math.max(terrain.minZ() + 1, neighborhoodCenterZ - 6);
+    var bottomZ = Math.min(terrain.maxZ() - 1, neighborhoodCenterZ + 6);
     var x, z;
 
     for (x = leftX; x <= rightX; x++) {
