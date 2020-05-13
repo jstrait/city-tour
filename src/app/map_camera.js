@@ -13,6 +13,8 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var MIN_TILT_ANGLE = -Math.PI / 2;
   var MAX_TILT_ANGLE = -0.1;
 
+  var MAX_DISTANCE_FROM_CITY_CENTER = 200.0;
+
   var centerOfAction;
   var zoomProperties;
   var camera = sceneView.camera();
@@ -79,10 +81,12 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
     var distanceToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
                                                                         centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    var distanceToCenterOfCity = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z, 0.0, 0.0, 0.0);
+
     if (distanceToCenterOfAction <= 2.0 && zoomDistancePercentage > 0.0) {
       return;
     }
-    if (distanceToCenterOfAction >= 50.0 && zoomDistancePercentage < 0.0) {
+    if (distanceToCenterOfCity >= MAX_DISTANCE_FROM_CITY_CENTER && zoomDistancePercentage < 0.0) {
       return;
     }
 
