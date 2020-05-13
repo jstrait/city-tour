@@ -14,29 +14,29 @@ var SquareRoadGenerator = (function() {
     for (x = leftX; x <= rightX; x++) {
       for (z = topZ; z <= bottomZ; z++) {
         if (x < rightX) {
-          addEdge(terrain, roadNetwork, x, z, x + 1, z);
+          addEdge(terrain, roadNetwork, x, z, x + 1, z, config.maxRoadAngle);
         }
 
         if (z < bottomZ) {
-          addEdge(terrain, roadNetwork, x, z, x, z + 1);
+          addEdge(terrain, roadNetwork, x, z, x, z + 1, config.maxRoadAngle);
         }
       }
     }
   };
 
-  var isTerrainTooSteep = function(terrain, x, z, targetX, targetZ) {
+  var isTerrainTooSteep = function(terrain, x, z, targetX, targetZ, maxRoadAngle) {
     var heightAtPoint1 = terrain.heightAtCoordinates(x, z);
     var heightAtPoint2 = terrain.heightAtCoordinates(targetX, targetZ);
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), Config.BLOCK_DEPTH);
 
-    return Math.abs(angle) > config.maxRoadAngle;
+    return Math.abs(angle) > maxRoadAngle;
   };
 
-  var addEdge = function(terrain, roadNetwork, x1, z1, x2, z2) {
+  var addEdge = function(terrain, roadNetwork, x1, z1, x2, z2, maxRoadAngle) {
     var edgeIsOnLand = terrain.waterHeightAtCoordinates(x1, z1) === 0.0 &&
                        terrain.waterHeightAtCoordinates(x2, z2) === 0.0;
 
-    if (edgeIsOnLand && !isTerrainTooSteep(terrain, x1, z1, x2, z2)) {
+    if (edgeIsOnLand && !isTerrainTooSteep(terrain, x1, z1, x2, z2, maxRoadAngle)) {
       roadNetwork.addEdge(x1, z1, x2, z2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
     }
   };
