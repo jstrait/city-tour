@@ -77,11 +77,10 @@ var HydraulicErosionGenerator = (function() {
   };
 
   var erode = function(terrainCoordinates, iterationCount) {
-    var STARTING_WATER_HEIGHT = 4.166666666666667;
-    var WATER_CARRYING_CAPACITY = 0.416666666666667;
-    var WATER_EVAPORATION_RATE = 0.833333333333333;
-    var MAX_EROSION_HEIGHT = 0.416666666666667;
-    var MAX_SOIL_DEPOSIT_HEIGHT = 0.416666666666667;
+    var STARTING_WATER_HEIGHT = 4.0;
+    var MAX_DISSOLVED_SOIL_PERCENTAGE = 0.3;
+    var WATER_EVAPORATION_RATE = 0.1;
+    var MAX_EROSION_HEIGHT = 1.0;
 
     var lowestAdjacentLandHeight, lowestAdjacentX, lowestAdjacentZ;
     var lowestAdjacentTerrainAttributes;
@@ -89,7 +88,10 @@ var HydraulicErosionGenerator = (function() {
     var maxColumnIndex = terrainCoordinates.length - 1;
     var maxRowIndex = terrainCoordinates[0].length - 1;
     var waterAmount;
-    var soilAmount, soilDepositHeight;
+    var dissolvedSoilAmount;
+    var dissolvedSoilPercentage;
+    var maxDissolvedSoil;
+    var soilDepositHeight;
     var erosionHeight;
 
     var i, x, z;
@@ -97,8 +99,9 @@ var HydraulicErosionGenerator = (function() {
     for (i = 0; i < iterationCount; i++) {
       x = CityTourMath.randomInteger(0, maxColumnIndex);
       z = CityTourMath.randomInteger(0, maxRowIndex);
+
       waterAmount = STARTING_WATER_HEIGHT;
-      soilAmount = 0.0;
+      dissolvedSoilAmount = 0.0;
 
       do {
         lowestAdjacentTerrainAttributes = lowestAdjacentTerrain(terrainCoordinates, x, z);
@@ -106,22 +109,31 @@ var HydraulicErosionGenerator = (function() {
         lowestAdjacentX = lowestAdjacentTerrainAttributes.minAdjacentX;
         lowestAdjacentZ = lowestAdjacentTerrainAttributes.minAdjacentZ;
 
-        if (soilAmount > WATER_CARRYING_CAPACITY) {
-          soilDepositHeight = Math.min(MAX_SOIL_DEPOSIT_HEIGHT, soilAmount);
-          terrainCoordinates[x][z].landHeight += soilDepositHeight;
-          soilAmount -= soilDepositHeight;
-          waterAmount -= WATER_EVAPORATION_RATE;
+        soilDepositHeight = 0.0;
+        erosionHeight = 0.0;
+        maxDissolvedSoil = (waterAmount * MAX_DISSOLVED_SOIL_PERCENTAGE);
+
+        if (dissolvedSoilAmount > maxDissolvedSoil) {
+          soilDepositHeight = dissolvedSoilAmount - maxDissolvedSoil;
+          dissolvedSoilAmount -= soilDepositHeight;
         }
         else if (terrainCoordinates[x][z].landHeight >= lowestAdjacentLandHeight) {
-          erosionHeight = Math.min(MAX_EROSION_HEIGHT, (terrainCoordinates[x][z].landHeight - lowestAdjacentLandHeight));
-          terrainCoordinates[x][z].landHeight -= erosionHeight;
-          soilAmount += erosionHeight;
-          waterAmount -= WATER_EVAPORATION_RATE;
+          erosionHeight = Math.min(MAX_EROSION_HEIGHT, maxDissolvedSoil - dissolvedSoilAmount, (terrainCoordinates[x][z].landHeight - lowestAdjacentLandHeight));
+          dissolvedSoilAmount += erosionHeight;
         }
+
+        terrainCoordinates[x][z].landHeight += soilDepositHeight;
+        terrainCoordinates[x][z].landHeight -= erosionHeight;
+
+        waterAmount -= WATER_EVAPORATION_RATE;
 
         x = lowestAdjacentX;
         z = lowestAdjacentZ;
       } while (waterAmount > 0.0 && lowestAdjacentLandHeight <= terrainCoordinates[x][z].landHeight);
+
+      // Deposit any soil remaining after all water has evaporated
+      soilDepositHeight = dissolvedSoilAmount;
+      terrainCoordinates[x][z].landHeight += soilDepositHeight;
     }
   };
 
