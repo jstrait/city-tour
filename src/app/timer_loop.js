@@ -7,6 +7,8 @@ import { MotionGenerator } from "./../flythrough/motion_generator";
 import { VehicleController } from "./../flythrough/vehicle_controller";
 import { VehicleView } from "./../flythrough/vehicle_view";
 
+const HALF_PI = Math.PI * 0.5;
+
 var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) {
   var INTERACTIVE = 1;
   var FLYTHROUGH = 2;
@@ -60,11 +62,11 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
 
   var requestStopFlythrough = function() {
     vehicleToInteractiveAnimation = new Animation(
-      new MotionGenerator(vehicleController.positionX(), camera.position.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new MotionGenerator(vehicleController.positionY(), camera.position.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new MotionGenerator(vehicleController.positionZ(), camera.position.z, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new MotionGenerator(vehicleController.rotationX(), camera.rotation.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2)),
-      new MotionGenerator(vehicleController.rotationY(), camera.rotation.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, Math.PI / 2))
+      new MotionGenerator(vehicleController.positionX(), camera.position.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+      new MotionGenerator(vehicleController.positionY(), camera.position.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+      new MotionGenerator(vehicleController.positionZ(), camera.position.z, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+      new MotionGenerator(vehicleController.rotationX(), camera.rotation.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+      new MotionGenerator(vehicleController.rotationY(), camera.rotation.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI))
     );
 
     mode = FLYTHROUGH_STOP;

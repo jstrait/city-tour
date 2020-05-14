@@ -4,8 +4,9 @@ import { Config } from "./../config";
 import { CityTourMath } from "./../math";
 import { RoadNetwork } from "./../road_network";
 
+const HALF_PI = Math.PI * 0.5;
+
 var RoadMeshBuilder = function() {
-  var HALF_PI = Math.PI / 2;
   var SIDEWALK_X_CENTER = (Config.STREET_WIDTH / 2) - (Config.SIDEWALK_WIDTH / 2);
   var SIDEWALK_Z_CENTER = (Config.STREET_DEPTH / 2) - (Config.SIDEWALK_DEPTH / 2);
 

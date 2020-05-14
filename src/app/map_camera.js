@@ -2,6 +2,9 @@
 
 import { CityTourMath } from "./../math";
 
+const HALF_PI = Math.PI * 0.5;
+const TWO_PI = Math.PI * 2;
+
 var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var PAN_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
@@ -10,7 +13,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var MINIMUM_VELOCITY = 0.00001;
   var MINIMUM_HEIGHT_OFF_GROUND = 0.416666666666667;
 
-  var MIN_TILT_ANGLE = -Math.PI / 2;
+  var MIN_TILT_ANGLE = -HALF_PI;
   var MAX_TILT_ANGLE = -0.1;
 
   var MAX_DISTANCE_FROM_CITY_CENTER = 200.0;
@@ -113,10 +116,10 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.position.z = -(distanceCameraToCenterOfAction * Math.sin(newAngleCameraToCenterOfAction)) + centerOfAction.z;
     camera.rotation.y += azimuthAngleDelta;
     if (camera.rotation.y > Math.PI) {
-      camera.rotation.y -= Math.PI * 2;
+      camera.rotation.y -= TWO_PI;
     }
     else if (camera.rotation.y < -Math.PI) {
-      camera.rotation.y += Math.PI * 2;
+      camera.rotation.y += TWO_PI;
     }
 
     var minimumCameraY = minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z);

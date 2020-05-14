@@ -2,6 +2,8 @@
 
 import { CityTourMath } from "./../math";
 
+const HALF_PI = Math.PI * 0.5;
+
 var GestureProcessor = function(sceneView, mapCamera, terrain) {
   var PAN = "pan";
   var TILT = "tilt";
@@ -11,8 +13,8 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
   var MIN_ROTATION_ANGLE =  0.01745329;  // 1 degree
   var MIN_ZOOM_DELTA = 2.0;
   var ALLOWABLE_DELTA_FOR_TILT_GESTURE = Math.PI / 16;
-  var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
-  var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
+  var MIN_TILT_GESTURE_START_ANGLE = HALF_PI - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
+  var MAX_TILT_GESTURE_START_ANGLE = HALF_PI + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
 
   var terrainBoundingBox = new THREE.Box3(new THREE.Vector3(terrain.minX(), Number.NEGATIVE_INFINITY, terrain.minZ()),
                                           new THREE.Vector3(terrain.maxX(), Number.POSITIVE_INFINITY, terrain.maxZ()));
@@ -37,7 +39,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     var camera = sceneView.camera();
 
     // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
-    straightDownEuler = new THREE.Euler(-Math.PI / 2, camera.rotation.y, 0.0, 'YXZ');
+    straightDownEuler = new THREE.Euler(-HALF_PI, camera.rotation.y, 0.0, 'YXZ');
     straightDownPosition = new THREE.Vector3(mapCamera.positionX(), mapCamera.positionY(), mapCamera.positionZ());
     straightDownQuaternion = new THREE.Quaternion();
     straightDownQuaternion.setFromEuler(straightDownEuler);

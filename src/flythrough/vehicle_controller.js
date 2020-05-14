@@ -12,10 +12,10 @@ import { MotionGenerator } from "./motion_generator";
 import { StaticMotionGenerator } from "./motion_generator";
 import { RoadNavigator } from "./road_navigator";
 
-var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
-  var HALF_PI = Math.PI / 2.0;
-  var TWO_PI = Math.PI * 2.0;
+const HALF_PI = Math.PI * 0.5;
+const TWO_PI = Math.PI * 2.0;
 
+var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
   var INITIAL_DESCENT = 'initial_descent';
   var DRIVING_MODE = 'driving';
   var HOVERING_MODE = 'hovering';
@@ -137,7 +137,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
 
     targetPositionY = BIRDSEYE_Y;
-    targetRotationX = -Math.PI / 2;
+    targetRotationX = -HALF_PI;
     targetRotationY = viewAngleToCityCenter;
 
     distanceToTarget = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
