@@ -23,13 +23,8 @@ var WorldTouch = function(el, camera, screenPixelX, screenPixelY, terrain) {
     while (ray.y > 0.0 && worldPosition === undefined && loopCount < MAX_ITERATIONS) {
       ray = ray.add(movementTowardXZPlaneAmount);
 
-      if (ray.x >= terrain.minX() &&
-          ray.x <= terrain.maxX() &&
-          ray.z >= terrain.minZ() &&
-          ray.z <= terrain.maxZ()) {
-        if (ray.y <= terrain.heightAtCoordinates(ray.x, ray.z)) {
-          worldPosition = ray;
-        }
+      if (terrain.isPointInBounds(ray.x, ray.z) && ray.y <= terrain.heightAtCoordinates(ray.x, ray.z)) {
+        worldPosition = ray;
       }
 
       loopCount += 1;

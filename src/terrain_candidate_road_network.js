@@ -25,7 +25,7 @@ var TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
   };
 
   var hasIntersection = function(x, z) {
-    return x >= terrain.minX() && x <= terrain.maxX() && z >= terrain.minZ() && z <= terrain.maxZ();
+    return terrain.isPointInBounds(x, z);
   };
 
   var edgesFrom = function(x, z) {
