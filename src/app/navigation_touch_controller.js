@@ -7,7 +7,7 @@ import { WorldTouchCollection } from "./world_touch_collection";
 var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, messageBroker) {
   var el = sceneView.domElement();
   var camera = sceneView.camera();
-  var mapGestureProcessor = GestureProcessor(sceneView, mapCamera);
+  var mapGestureProcessor = GestureProcessor(sceneView, mapCamera, initialTerrain);
   var flythroughGestureProcessor = FlythroughGestureProcessor();
   var currentGestureProcessor = mapGestureProcessor;
   var terrain = initialTerrain;
@@ -110,7 +110,10 @@ var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, m
 
 
   return {
-    setTerrain: function(newTerrain) { terrain = newTerrain; },
+    setTerrain: function(newTerrain) {
+      terrain = newTerrain;
+      mapGestureProcessor.setTerrain(newTerrain);
+    },
   };
 };
 

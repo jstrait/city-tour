@@ -2,7 +2,7 @@
 
 import { CityTourMath } from "./../math";
 
-var GestureProcessor = function(sceneView, mapCamera) {
+var GestureProcessor = function(sceneView, mapCamera, terrain) {
   var PAN = "pan";
   var TILT = "tilt";
   var ROTATE = "rotate";
@@ -13,6 +13,9 @@ var GestureProcessor = function(sceneView, mapCamera) {
   var ALLOWABLE_DELTA_FOR_TILT_GESTURE = Math.PI / 16;
   var MIN_TILT_GESTURE_START_ANGLE = (Math.PI / 2) - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
   var MAX_TILT_GESTURE_START_ANGLE = (Math.PI / 2) + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
+
+  var terrainBoundingBox = new THREE.Box3(new THREE.Vector3(terrain.minX(), Number.NEGATIVE_INFINITY, terrain.minZ()),
+                                          new THREE.Vector3(terrain.maxX(), Number.POSITIVE_INFINITY, terrain.maxZ()));
 
   var currentGesture;
   var previousTouches;
@@ -106,7 +109,12 @@ var GestureProcessor = function(sceneView, mapCamera) {
       var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
 
       if (previousGesture !== ROTATE && previousGesture !== TILT) {
-        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+        else {
+          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
+        }
       }
 
       if (Math.abs(distanceBetweenTouchesDeltaX) > Math.abs(distanceBetweenTouchesDeltaY)) {
@@ -131,7 +139,12 @@ var GestureProcessor = function(sceneView, mapCamera) {
       currentGesture = PINCH_ZOOM;
 
       if (previousGesture !== PINCH_ZOOM) {
-        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+        else {
+          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
+        }
       }
 
       var distanceBetweenTouchesDelta = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
@@ -175,7 +188,12 @@ var GestureProcessor = function(sceneView, mapCamera) {
 
     if (currentGesture === TILT) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+        else {
+          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
+        }
       }
 
       yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
@@ -184,14 +202,24 @@ var GestureProcessor = function(sceneView, mapCamera) {
     }
     else if (currentGesture === ROTATE) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+        else {
+          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
+        }
       }
 
       mapCamera.rotateAzimuthAroundCenterOfAction(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
     else if (currentGesture === PINCH_ZOOM) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
+          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+        }
+        else {
+          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
+        }
       }
 
       distanceBetweenTouchesDelta = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
@@ -201,6 +229,27 @@ var GestureProcessor = function(sceneView, mapCamera) {
 
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
+  };
+
+  var clampedCenterOfAction = function(currentTouches) {
+    var cameraPosition = new THREE.Vector3(mapCamera.positionX(), mapCamera.positionY(), mapCamera.positionZ());
+    var direction = currentTouches.worldMidpoint().clone().sub(cameraPosition).normalize();
+    var ray = new THREE.Ray(cameraPosition, direction);
+    var intersectionPoint = ray.intersectBox(terrainBoundingBox, new THREE.Vector3());
+
+    if (intersectionPoint === null) {
+      return currentTouches.worldMidpoint();
+    }
+
+    // If camera is outside the terrain bounds, raycast again from the edge of the
+    // terrain bounding box so that we choose the farthest edge of the bounding box.
+    if (terrain.isPointInBounds(mapCamera.positionX(), mapCamera.positionZ()) === false) {
+      ray.origin = intersectionPoint;
+      ray.recast(0.00000001);
+      intersectionPoint = ray.intersectBox(terrainBoundingBox, new THREE.Vector3());
+    }
+
+    return intersectionPoint;
   };
 
   var processGesture = function(currentTouches, isShiftKey, isAltKey) {
@@ -230,9 +279,16 @@ var GestureProcessor = function(sceneView, mapCamera) {
     previousTouches = currentTouches;
   };
 
+  var setTerrain = function(newTerrain) {
+    terrain = newTerrain;
+    terrainBoundingBox = new THREE.Box3(new THREE.Vector3(terrain.minX(), Number.NEGATIVE_INFINITY, terrain.minZ()),
+                                        new THREE.Vector3(terrain.maxX(), Number.POSITIVE_INFINITY, terrain.maxZ()));
+  };
+
   return {
     processGesture: processGesture,
     previousTouches: function() { return previousTouches; },
+    setTerrain: setTerrain,
   };
 };
 

@@ -89,6 +89,10 @@ var Terrain = function(coordinates, scale) {
     return landHeight + componentHeightAtCoordinates(normalizedX, normalizedZ, WATER_HEIGHT_COMPONENT);
   };
 
+  var isPointInBounds = function(mapX, mapZ) {
+    return mapX >= minX && mapX <= maxX && mapZ >= minZ && mapZ <= maxZ;
+  };
+
 
   return {
     scale: function() { return scale; },
@@ -99,6 +103,7 @@ var Terrain = function(coordinates, scale) {
     landHeightAtCoordinates: landHeightAtCoordinates,
     waterHeightAtCoordinates: waterHeightAtCoordinates,
     heightAtCoordinates: heightAtCoordinates,
+    isPointInBounds: isPointInBounds,
   };
 };
 
