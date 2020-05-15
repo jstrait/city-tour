@@ -74,10 +74,7 @@ var BridgeGenerator = (function() {
       bridgeEndZ += zDelta;
       bridgeLength += 1;
 
-      if (bridgeEndX < terrain.minX() ||
-          bridgeEndX > terrain.maxX() ||
-          bridgeEndZ < terrain.minZ() ||
-          bridgeEndZ > terrain.maxZ()) {
+      if (!terrain.isPointInBounds(bridgeEndX, bridgeEndZ)) {
         return;
       }
     }
