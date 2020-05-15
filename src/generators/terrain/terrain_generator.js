@@ -57,7 +57,8 @@ var TerrainGenerator = (function() {
                                     rowsToGenerate - 1,
                                     0);
 
-    addRandomPyramids(terrainCoordinates, config.hillCount, config.maxHillHeight);
+    addRandomPyramids(terrainCoordinates, Math.round(config.hillCount * 0.5), config.maxHillHeight, 0, 0, columnsToGenerate - 1, 6);
+    addRandomPyramids(terrainCoordinates, Math.round(config.hillCount * 0.5), config.maxHillHeight, 0, rowsToGenerate - 6 - 1, columnsToGenerate - 1, rowsToGenerate - 1);
 
     // Hydraulic erosion
     HydraulicErosionGenerator.erode(terrainCoordinates, TOTAL_HYDRAULIC_EROSION_ITERATIONS);
@@ -72,25 +73,21 @@ var TerrainGenerator = (function() {
     return terrainCoordinates;
   };
 
-  var addRandomPyramids = function(terrainCoordinates, pyramidCount, maxHillHeight) {
+  var addRandomPyramids = function(terrainCoordinates, pyramidCount, maxHillHeight, minX, minZ, maxX, maxZ) {
     var MIN_BASE_LENGTH = 15;
     var MAX_BASE_LENGTH = 35;
-    var COLUMN_COUNT = terrainCoordinates.length;
-    var ROW_COUNT = terrainCoordinates[0].length;
-    var HALF_ROW_COUNT = ROW_COUNT / 2;
-
-    var centerX, centerZ;
-    var maxHeightForCenterCoordinate;
-    var baseLength, hillHeight;
+    var centerX;
+    var centerZ;
+    var baseLength;
+    var hillHeight;
     var i;
 
     for (i = 0; i < pyramidCount; i++) {
-      centerX = CityTourMath.randomInteger(0, COLUMN_COUNT - 1);
-      centerZ = CityTourMath.randomInteger(0, ROW_COUNT - 1);
-      maxHeightForCenterCoordinate = Math.min(maxHillHeight, (Math.abs(centerZ - HALF_ROW_COUNT) / (HALF_ROW_COUNT * 0.75)) * maxHillHeight);
+      centerX = CityTourMath.randomInteger(minX, maxX);
+      centerZ = CityTourMath.randomInteger(minZ, maxZ);
 
       baseLength = CityTourMath.randomInteger(MIN_BASE_LENGTH, MAX_BASE_LENGTH) * 2;
-      hillHeight = CityTourMath.randomInteger(0, maxHeightForCenterCoordinate);
+      hillHeight = CityTourMath.randomInteger(0, maxHillHeight);
 
       TerrainShapeGenerator.addCone(terrainCoordinates, centerX, centerZ, baseLength, hillHeight);
     }
