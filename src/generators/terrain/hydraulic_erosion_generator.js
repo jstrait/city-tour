@@ -132,8 +132,7 @@ var HydraulicErosionGenerator = (function() {
       } while (waterAmount > 0.0 && lowestAdjacentLandHeight <= terrainCoordinates[x][z].landHeight);
 
       // Deposit any soil remaining after all water has evaporated
-      soilDepositHeight = dissolvedSoilAmount;
-      terrainCoordinates[x][z].landHeight += soilDepositHeight;
+      terrainCoordinates[x][z].landHeight += dissolvedSoilAmount;
     }
   };
 
