@@ -14,6 +14,9 @@ var TerrainMeshBuilder = function() {
   var GRADIENT_SHADING_MODE = 2;
   var SHADING_MODE = SOLID_SHADING_MODE;
 
+  var WATER_VERTEX_COLORS = [WATER_COLOR, WATER_COLOR, WATER_COLOR];
+  var LAND_VERTEX_COLORS = [LAND_COLOR, LAND_COLOR, LAND_COLOR];
+
   var SIDE_BOTTOM_HEIGHT = -8.333333333333333;
 
   var reusableTriangle = new THREE.Geometry();
@@ -24,10 +27,10 @@ var TerrainMeshBuilder = function() {
 
     if (SHADING_MODE === SOLID_SHADING_MODE) {
       if (material1 === WATER && material2 === WATER && material3 == WATER) {
-        reusableTriangle.faces[0].vertexColors = [WATER_COLOR, WATER_COLOR, WATER_COLOR];
+        reusableTriangle.faces[0].vertexColors = WATER_VERTEX_COLORS;
       }
       else {
-        reusableTriangle.faces[0].vertexColors = [LAND_COLOR, LAND_COLOR, LAND_COLOR];
+        reusableTriangle.faces[0].vertexColors = LAND_VERTEX_COLORS;
       }
     }
     else {
