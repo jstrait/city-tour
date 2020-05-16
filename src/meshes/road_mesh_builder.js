@@ -99,8 +99,8 @@ var RoadMeshBuilder = function() {
 
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
 
-    var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(0.083333333333333, BRIDGE_SUPPORT_HEIGHT, 0.083333333333333));
-    var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.083333333333333, 1.0));
+    var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(0.075, BRIDGE_SUPPORT_HEIGHT, 0.075));
+    var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 1.0));
 
     var northRoad, eastRoad, southRoad, westRoad;
     var selfSurfaceHeight, southSurfaceHeight, eastSurfaceHeight;
