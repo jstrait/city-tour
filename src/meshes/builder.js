@@ -4,7 +4,7 @@ import { BuildingMeshBuilder } from "./building_mesh_builder";
 import { RoadMeshBuilder } from "./road_mesh_builder";
 import { TerrainMeshBuilder } from "./terrain_mesh_builder";
 
-var Builder = function() {
+var Builder = function(gridTexture) {
   var buildEmptyScene = function() {
     var scene, light, directionalLight;
 
@@ -32,6 +32,17 @@ var Builder = function() {
     return group;
   };
 
+  var buildGridPlaneMeshes = function() {
+    var gridPlaneGeometry = new THREE.PlaneGeometry(320, 320, 1, 1);
+    var gridPlaneMaterial = new THREE.MeshBasicMaterial({map: gridTexture});
+    var gridPlaneMesh = new THREE.Mesh(gridPlaneGeometry, gridPlaneMaterial);
+
+    gridPlaneMesh.position.y = -8.333333333333333;
+    gridPlaneMesh.rotation.x = -Math.PI / 2;
+
+    return buildMeshGroup("gridPlaneMeshes", [gridPlaneMesh]);
+  };
+
   var buildTerrainMeshes = function(terrain, roadNetwork) {
     return buildMeshGroup("terrainMeshes", TerrainMeshBuilder().build(terrain, roadNetwork));
   };
@@ -47,6 +58,7 @@ var Builder = function() {
 
   return {
     buildEmptyScene: buildEmptyScene,
+    buildGridPlaneMeshes: buildGridPlaneMeshes,
     buildTerrainMeshes: buildTerrainMeshes,
     buildRoadNetworkMeshes: buildRoadNetworkMeshes,
     buildBuildingMeshes: buildBuildingMeshes,

@@ -45,6 +45,7 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: "city_tour.html" },
       { from: "lib/*.js" },
+      { from: "textures/*.png" },
     ], { copyUnmodified: true }),
     new MiniCssExtractPlugin({
       filename: "city_tour.css",

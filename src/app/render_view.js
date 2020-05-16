@@ -57,6 +57,7 @@ var RenderView = function(container, scene) {
     render: render,
     resize: resize,
     domElement: function() { return renderer.domElement; },
+    renderer: function() { return renderer; },
     camera: function() { return camera; },
   };
 };

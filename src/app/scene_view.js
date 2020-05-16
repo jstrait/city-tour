@@ -3,7 +3,7 @@
 import { RenderView } from "./render_view";
 import { Builder } from "./../meshes/builder";
 
-var SceneView = function(containerEl, messageBroker) {
+var SceneView = function(containerEl, gridTexture, messageBroker) {
   var SHOW_MARKERS = false;
 
   var centerOfCityMarkerMesh;
@@ -12,7 +12,7 @@ var SceneView = function(containerEl, messageBroker) {
   var touchPoint1MarkerMesh;
   var touchPoint2MarkerMesh;
 
-  var sceneBuilder = new Builder();
+  var sceneBuilder = new Builder(gridTexture);
   var scene = sceneBuilder.buildEmptyScene();
   var renderView = new RenderView(containerEl, scene);
   var camera = renderView.camera();
@@ -26,6 +26,8 @@ var SceneView = function(containerEl, messageBroker) {
     destroyPreviousMeshes();
 
     masterStartTime = new Date();
+
+    scene.add(sceneBuilder.buildGridPlaneMeshes());
 
     terrainStartTime = new Date();
     scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
@@ -94,14 +96,14 @@ var SceneView = function(containerEl, messageBroker) {
   };
 
   var destroyPreviousMeshes = function() {
-    var xzPlaneMeshes = scene.getObjectByName("xzPlaneMeshes");
+    var gridPlaneMeshes = scene.getObjectByName("gridPlaneMeshes");
     var terrainMeshes = scene.getObjectByName("terrainMeshes");
     var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
     var buildingMeshes = scene.getObjectByName("buildingMeshes");
     var markerMeshes = scene.getObjectByName("markerMeshes");
 
-    if (xzPlaneMeshes !== undefined) {
-      removeChildFromScene(xzPlaneMeshes);
+    if (gridPlaneMeshes !== undefined) {
+      removeChildFromScene(gridPlaneMeshes);
     }
 
     if (terrainMeshes !== undefined) {
@@ -142,6 +144,11 @@ var SceneView = function(containerEl, messageBroker) {
   var render = function() {
     renderView.render();
   };
+
+  gridTexture.anisotropy = Math.min(16, renderView.renderer().capabilities.getMaxAnisotropy());
+  gridTexture.repeat = new THREE.Vector2(40, 40);
+  gridTexture.wrapS = THREE.RepeatWrapping;
+  gridTexture.wrapT = THREE.RepeatWrapping;
 
   window.addEventListener('resize', renderView.resize, false);
 
