@@ -92,6 +92,19 @@ var TerrainGenerator = (function() {
     }
   };
 
+  var floodTerrain = function(terrainCoordinates, floodWaterHeight) {
+    var x;
+    var z;
+
+    for (x = 0; x < terrainCoordinates.length; x++) {
+      for(z = 0; z < terrainCoordinates[x].length; z++) {
+        if (terrainCoordinates[x][z].landHeight < floodWaterHeight) {
+          terrainCoordinates[x][z].waterHeight = floodWaterHeight - terrainCoordinates[x][z].landHeight;
+        }
+      }
+    }
+  };
+
   var flattenLowTerrain = function(terrainCoordinates, minHeightThreshold, top, right, bottom, left) {
     var x, z;
 
