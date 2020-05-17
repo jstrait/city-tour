@@ -56,7 +56,7 @@ var App = (function() {
 
     var messageBroker = new MessageBroker();
     var cityConfigService = new CityConfigService();
-    var sceneView = new SceneView(container, gridTexture, messageBroker);
+    var sceneView = new SceneView(container, gridTexture);
     var mapCamera = new MapCamera(sceneView, EMPTY_WORLD_DATA.terrain, messageBroker);
     var timerLoop = new TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
     var cityEditorController = new CityEditorController(cityConfigService, messageBroker);

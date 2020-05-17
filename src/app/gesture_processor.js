@@ -76,7 +76,6 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     var screenAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
     var touchPointsAreHorizontal = screenAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
                                    screenAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
-    var distanceBetweenTouches;
 
     if (previousTouches.count() !== 2) {
       return undefined;

@@ -12,7 +12,7 @@ var WorldTouchCollection = function(el, camera, screenTouches, terrain) {
   var worldTouches = [];
   var distanceInScreenPixels;
   var phantomMidpointTouch;
-  var worldMidpoint, worldMidpointX, worldMidpointY, worldMidpointZ;
+  var worldMidpoint;
   var normalizedScreenMidpoint;
   var angleBetweenTouches;
   var i;

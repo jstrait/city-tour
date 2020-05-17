@@ -3,10 +3,8 @@
 var FlythroughGestureProcessor = function() {
   var previousTouches;
   var vehicleView;
-  var enabled = false;
 
   var processGesture = function(currentTouches) {
-    var newAzimuthAngleOffset, newTiltAngleOffset;
     var normalizedDragDistanceX, normalizedDragDistanceY;
 
     if (currentTouches === undefined) {

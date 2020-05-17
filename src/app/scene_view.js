@@ -3,7 +3,7 @@
 import { RenderView } from "./render_view";
 import { Builder } from "./../meshes/builder";
 
-var SceneView = function(containerEl, gridTexture, messageBroker) {
+var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
 
   var centerOfCityMarkerMesh;
@@ -100,7 +100,6 @@ var SceneView = function(containerEl, gridTexture, messageBroker) {
     var terrainMeshes = scene.getObjectByName("terrainMeshes");
     var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
     var buildingMeshes = scene.getObjectByName("buildingMeshes");
-    var markerMeshes = scene.getObjectByName("markerMeshes");
 
     if (gridPlaneMeshes !== undefined) {
       removeChildFromScene(gridPlaneMeshes);

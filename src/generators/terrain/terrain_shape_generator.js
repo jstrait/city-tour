@@ -53,8 +53,6 @@ var TerrainShapeGenerator = (function() {
   };
 
   var addCone = function(terrainCoordinates, centerX, centerZ, radius, height) {
-    var heightDifference = height / radius;
-
     var startX = Math.max(0, centerX - radius);
     var endX = Math.min(terrainCoordinates.length - 1, centerX + radius);
     var startZ = Math.max(0, centerZ - radius);

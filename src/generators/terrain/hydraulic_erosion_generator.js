@@ -89,7 +89,6 @@ var HydraulicErosionGenerator = (function() {
     var maxRowIndex = terrainCoordinates[0].length - 1;
     var waterAmount;
     var dissolvedSoilAmount;
-    var dissolvedSoilPercentage;
     var maxDissolvedSoil;
     var soilDepositHeight;
     var erosionHeight;

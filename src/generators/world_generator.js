@@ -13,7 +13,7 @@ var WorldGenerator = (function() {
     var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true && config.neighborhoods.count > 0);
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
-    var terrain, neighborhoods, cityCenter, roadNetwork, zonedBlocks, buildings;
+    var terrain, neighborhoods, roadNetwork, zonedBlocks, buildings;
     var terrainConfig, roadConfig, zonedBlockConfig;
 
     var combinedStartTime, combinedEndTime;

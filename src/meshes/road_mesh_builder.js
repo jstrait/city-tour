@@ -26,7 +26,7 @@ var RoadMeshBuilder = function() {
     };
   };
 
-  var buildReusableIntersectionCornerMesh = function(sidewalkMaterial) {
+  var buildReusableIntersectionCornerMesh = function() {
     var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, Config.SIDEWALK_DEPTH));
     reusableIntersectionSidewalkCornerMesh.rotation.x = -HALF_PI;
 
@@ -97,7 +97,7 @@ var RoadMeshBuilder = function() {
     var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, Config.SIDEWALK_DEPTH));
     reusableEastWestSidewalkMesh.rotation.x = -HALF_PI;
 
-    var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh(sidewalkMaterial);
+    var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh();
 
     var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(0.075, BRIDGE_SUPPORT_HEIGHT, 0.075));
     var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 1.0));

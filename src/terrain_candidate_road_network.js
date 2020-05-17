@@ -39,7 +39,6 @@ var TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
     var westAngle = Math.atan2((heightAtCurrentPoint - westHeight), Config.BLOCK_WIDTH);
     var eastHeight = terrain.heightAtCoordinates(x + 1, z);
     var eastAngle = Math.atan2((heightAtCurrentPoint - eastHeight), Config.BLOCK_WIDTH);
-    var bridgeAttributes, bridgeLength;
 
     if (terrain.waterHeightAtCoordinates(x, z - 1) > 0.0) {
       addBridgeEdge(edges, x, z, x, z - 1);

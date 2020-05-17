@@ -88,11 +88,10 @@ var NeighborhoodGenerator = (function() {
     }
   };
 
-  var bestNeighborhoodSite = function(terrain, scores, neighborhoods) {
+  var bestNeighborhoodSite = function(terrain, scores) {
     var bestSiteCoordinates = { x: terrain.minX(), z: terrain.minZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
     var score, scoreComponents;
-    var distanceToClosestNeighborhood;
     var x, z;
 
     var minX = terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN;
@@ -120,11 +119,10 @@ var NeighborhoodGenerator = (function() {
     var scores = calculateScores(terrain);
     var neighborhoods = [];
     var neighborhoodCenter;
-    var distanceToClosestNeighborhood;
-    var i, x, z;
+    var i;
 
     for (i = 0; i < count; i++) {
-      neighborhoodCenter = bestNeighborhoodSite(terrain, scores, neighborhoods);
+      neighborhoodCenter = bestNeighborhoodSite(terrain, scores);
       neighborhoods.push({ centerX: neighborhoodCenter.x, centerZ: neighborhoodCenter.z });
 
       setCloseNeighborhoodPenalties(neighborhoodCenter.x, neighborhoodCenter.z, terrain, scores);

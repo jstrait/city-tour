@@ -60,8 +60,6 @@ var CircleGrowthRoadGenerator = (function() {
 
 
     var connectIntersections = function(terrain, roadNetwork, x, z, targetX, targetZ) {
-      var bridgeAttributes;
-      var bridgeIntersectionX, bridgeIntersectionZ;
       var targetIntersectionExists;
 
       if (targetX < MIN_X || targetX > MAX_X || targetZ < MIN_Z || targetZ > MAX_Z) {

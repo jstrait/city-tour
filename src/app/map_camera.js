@@ -65,7 +65,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   };
 
   var calculateZoomProperties = function() {
-    var cameraToCenterOfActionVector, centerOfActionPercentageOfFullHeight, zoomEndPoint;
+    var cameraToCenterOfActionVector;
 
     // Vector of camera to intersection with terrain
     cameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
