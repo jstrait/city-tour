@@ -40,28 +40,35 @@ var NeighborhoodRoadNetworkGenerator = (function() {
 
   var buildRoadBetweenNeighborhoods = function(terrain, roadNetwork, startX, startZ, path) {
     var previousIntersectionX, previousIntersectionZ;
+    var nextIntersectionX, nextIntersectionZ;
+    var isBridge;
     var bridgeAttributes, bridgeIntersectionX, bridgeIntersectionZ;
     var i;
 
     previousIntersectionX = startX;
     previousIntersectionZ = startZ;
     for (i = 0; i < path.length; i++) {
+      nextIntersectionX = path[i][0];
+      nextIntersectionZ = path[i][1];
+
       // Assumption is that a distance larger than 1 means a bridge, since normal on-surface road paths will involve steps between adjacent
       // coordinates with length 1.
-      if (CityTourMath.distanceBetweenPoints(previousIntersectionX, previousIntersectionZ, path[i][0], path[i][1]) > 1.0) {
-        if (path[i][1] > previousIntersectionZ) {
+      isBridge = CityTourMath.distanceBetweenPoints(previousIntersectionX, previousIntersectionZ, nextIntersectionX, nextIntersectionZ) > 1.0;
+
+      if (isBridge === true) {
+        if (nextIntersectionZ > previousIntersectionZ) {
           // North -> South
           bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ + 1, BRIDGE_CONFIG);
         }
-        else if (path[i][1] < previousIntersectionZ) {
+        else if (nextIntersectionZ < previousIntersectionZ) {
           // South -> North
           bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ - 1, BRIDGE_CONFIG);
         }
-        else if (path[i][0] > previousIntersectionX) {
+        else if (nextIntersectionX > previousIntersectionX) {
           // West -> East
           bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX + 1, previousIntersectionZ, BRIDGE_CONFIG);
         }
-        else if (path[i][0] < previousIntersectionX) {
+        else if (nextIntersectionX < previousIntersectionX) {
           // East -> West
           bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX - 1, previousIntersectionZ, BRIDGE_CONFIG);
         }
@@ -83,11 +90,11 @@ var NeighborhoodRoadNetworkGenerator = (function() {
         }
       }
       else {
-        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, path[i][0], path[i][1], 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, nextIntersectionX, nextIntersectionZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
       }
 
-      previousIntersectionX = path[i][0];
-      previousIntersectionZ = path[i][1];
+      previousIntersectionX = nextIntersectionX;
+      previousIntersectionZ = nextIntersectionZ;
     }
   };
 
