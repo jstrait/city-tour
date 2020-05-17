@@ -53,8 +53,6 @@ var WorldGenerator = (function() {
     }
     else {
       roadConfig = {
-        centerX: neighborhoods[0].centerX,
-        centerZ: neighborhoods[0].centerZ,
         neighborhoods: {
           columnCount: config.neighborhoods.columnCount,
           rowCount: config.neighborhoods.rowCount,

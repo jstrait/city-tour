@@ -28,7 +28,7 @@ var NeighborhoodRoadNetworkGenerator = (function() {
     CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[0].centerX, neighborhoods[0].centerZ, config);
 
     for (i = 1; i < neighborhoods.length; i++) {
-      shortestPathToRestOfCity = pathFinder.shortestPath(neighborhoods[i].centerX, neighborhoods[i].centerZ, config.centerX, config.centerZ, targetPredicate);
+      shortestPathToRestOfCity = pathFinder.shortestPath(neighborhoods[i].centerX, neighborhoods[i].centerZ, neighborhoods[0].centerX, neighborhoods[0].centerZ, targetPredicate);
       if (shortestPathToRestOfCity !== undefined) {
         buildRoadBetweenNeighborhoods(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, shortestPathToRestOfCity);
         CircleGrowthRoadGenerator.addNeighborhoodRoads(terrain, roadNetwork, neighborhoods[i].centerX, neighborhoods[i].centerZ, config);
