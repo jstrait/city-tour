@@ -105,20 +105,6 @@ var TerrainGenerator = (function() {
     }
   };
 
-  var flattenLowTerrain = function(terrainCoordinates, minHeightThreshold, top, right, bottom, left) {
-    var x, z;
-
-    for (x = left; x <= right; x++) {
-      for (z = top; z <= bottom; z++) {
-        if (terrainCoordinates[x][z].landHeight < minHeightThreshold) {
-          terrainCoordinates[x][z].landHeight = minHeightThreshold;
-        }
-      }
-    }
-
-    return terrainCoordinates;
-  };
-
 
   var terrainGenerator = {};
 
