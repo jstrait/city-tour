@@ -38,7 +38,7 @@ var SceneView = function(containerEl, gridTexture) {
     roadEndTime = new Date();
 
     buildingsStartTime = new Date();
-    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.roadNetwork, newWorldData.neighborhoods));
+    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.terrain, newWorldData.roadNetwork, newWorldData.neighborhoods));
     buildingsEndTime = new Date();
 
     centerOfCityMarkerMesh.position.x = newWorldData.centerX;

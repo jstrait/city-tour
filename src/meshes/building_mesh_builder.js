@@ -85,13 +85,20 @@ var BuildingMeshBuilder = function() {
     }
   };
 
-  var generateNeighborhoodCenterMarkersMesh = function(neighborhoods) {
+  var generateNeighborhoodCenterMarkersMesh = function(terrain, neighborhoods) {
     var neighborhoodCenterGeometry = new THREE.Geometry();
     var reusableNeighborhoodCenterMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 15, 0.5));
+    var neighborhoodCenterX;
+    var neighborhoodCenterY;
+    var neighborhoodCenterZ;
     var i;
 
     for (i = 0; i < neighborhoods.length; i++) {
-      reusableNeighborhoodCenterMesh.position.set(neighborhoods[i].centerX, 7.5, neighborhoods[i].centerZ);
+      neighborhoodCenterX = neighborhoods[i].centerX;
+      neighborhoodCenterZ = neighborhoods[i].centerZ;
+      neighborhoodCenterY = terrain.landHeightAtCoordinates(neighborhoodCenterX, neighborhoodCenterZ);
+
+      reusableNeighborhoodCenterMesh.position.set(neighborhoodCenterX, neighborhoodCenterY, neighborhoodCenterZ);
       reusableNeighborhoodCenterMesh.updateMatrix();
       neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
     }
@@ -102,7 +109,7 @@ var BuildingMeshBuilder = function() {
 
   var buildingMeshBuilder = {};
 
-  buildingMeshBuilder.build = function(buildings, roadNetwork, neighborhoods) {
+  buildingMeshBuilder.build = function(buildings, terrain, roadNetwork, neighborhoods) {
     var buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
     var buildingsGeometry = new THREE.Geometry();
     var buildingMeshes = [];
@@ -112,7 +119,7 @@ var BuildingMeshBuilder = function() {
     buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
 
     if (SHOW_NEIGHBORHOOD_CENTER_MARKERS === true && neighborhoods !== undefined) {
-      buildingMeshes.push(generateNeighborhoodCenterMarkersMesh(neighborhoods));
+      buildingMeshes.push(generateNeighborhoodCenterMarkersMesh(terrain, neighborhoods));
     }
 
     return buildingMeshes;
