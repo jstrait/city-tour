@@ -8,12 +8,6 @@ import { BridgeGenerator } from "./bridge_generator";
 import { CircleGrowthRoadGenerator } from "./circle_growth_road_generator";
 
 var NeighborhoodRoadNetworkGenerator = (function() {
-  var BRIDGE_CONFIG = {
-    centerX: 0,
-    centerZ: 0,
-    safeFromDecayBlocks: Number.POSITIVE_INFINITY,
-  };
-
   var buildRoadNetwork = function(terrain, neighborhoods, config) {
     var roadNetwork = new RoadNetwork(terrain);
     var terrainCandidateRoadNetwork = new TerrainCandidateRoadNetwork(terrain, roadNetwork, config.maxRoadAngle);
@@ -57,19 +51,19 @@ var NeighborhoodRoadNetworkGenerator = (function() {
       if (isBridge === true) {
         if (nextIntersectionZ > previousIntersectionZ) {
           // North -> South
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ + 1, BRIDGE_CONFIG);
+          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ + 1);
         }
         else if (nextIntersectionZ < previousIntersectionZ) {
           // South -> North
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ - 1, BRIDGE_CONFIG);
+          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ - 1);
         }
         else if (nextIntersectionX > previousIntersectionX) {
           // West -> East
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX + 1, previousIntersectionZ, BRIDGE_CONFIG);
+          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX + 1, previousIntersectionZ);
         }
         else if (nextIntersectionX < previousIntersectionX) {
           // East -> West
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX - 1, previousIntersectionZ, BRIDGE_CONFIG);
+          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX - 1, previousIntersectionZ);
         }
 
         if (bridgeAttributes !== undefined) {
