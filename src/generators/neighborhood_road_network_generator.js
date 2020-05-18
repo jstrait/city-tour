@@ -16,9 +16,9 @@ var NeighborhoodRoadNetworkGenerator = (function() {
   };
 
   var buildRoadNetwork = function(terrain, neighborhoods, config) {
-    var terrainCandidateRoadNetwork = new TerrainCandidateRoadNetwork(terrain, config.maxRoadAngle);
-    var pathFinder = new PathFinder(terrainCandidateRoadNetwork);
     var roadNetwork = new RoadNetwork(terrain);
+    var terrainCandidateRoadNetwork = new TerrainCandidateRoadNetwork(terrain, roadNetwork, config.maxRoadAngle);
+    var pathFinder = new PathFinder(terrainCandidateRoadNetwork);
     var targetPredicate = function(x, z) {
       return roadNetwork.hasIntersection(x, z);
     };

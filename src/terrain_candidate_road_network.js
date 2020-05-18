@@ -5,8 +5,7 @@ import { CityTourMath } from "./math";
 import { RoadNetwork } from "./road_network";
 import { BridgeGenerator } from "./generators/bridge_generator";
 
-var TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
-  var EMPTY_ROAD_NETWORK = RoadNetwork(terrain);
+var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
   var BRIDGE_CONFIG = {
     centerX: 0,
     centerZ: 0,
@@ -16,7 +15,7 @@ var TerrainCandidateRoadNetwork = function(terrain, maxRoadAngle) {
 
   var addBridgeEdge = function(edges, x, z, targetX, targetZ) {
     var bridgeLength;
-    var bridgeAttributes = BridgeGenerator.buildBridge(terrain, EMPTY_ROAD_NETWORK, x, z, targetX, targetZ, BRIDGE_CONFIG);
+    var bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, x, z, targetX, targetZ, BRIDGE_CONFIG);
 
     if (bridgeAttributes !== undefined) {
       bridgeLength = CityTourMath.distanceBetweenPoints(x, z, bridgeAttributes.endX, bridgeAttributes.endZ);
