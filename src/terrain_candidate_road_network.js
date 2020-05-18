@@ -10,7 +10,6 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
     centerX: 0,
     centerZ: 0,
     safeFromDecayBlocks: Number.POSITIVE_INFINITY,
-    probability: 1.0,
   };
 
   var addBridgeEdge = function(edges, x, z, targetX, targetZ) {

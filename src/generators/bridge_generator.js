@@ -7,11 +7,9 @@ var BridgeGenerator = (function() {
   var MAX_BRIDGE_LENGTH = Number.POSITIVE_INFINITY;
   var MIN_BRIDGE_HEIGHT_FROM_WATER = 0.1;
   var MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS = 0.416666666666667;
-  var DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = 0.5;
 
   var buildBridge = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetX, targetZ, config) {
     var SAFE_FROM_DECAY_DISTANCE = config.safeFromDecayBlocks;
-    var PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = (config.probability !== undefined) ? config.probability : DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT;
 
     var centerX = config.centerX;
     var centerZ = config.centerZ;
@@ -69,10 +67,6 @@ var BridgeGenerator = (function() {
       return;
     }
     roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2, waterHeight + MIN_BRIDGE_HEIGHT_FROM_WATER);
-
-    if (Math.random() > PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT) {
-      return;
-    }
 
     return {
       roadDeckHeight: roadDeckHeight,

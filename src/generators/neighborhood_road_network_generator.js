@@ -12,7 +12,6 @@ var NeighborhoodRoadNetworkGenerator = (function() {
     centerX: 0,
     centerZ: 0,
     safeFromDecayBlocks: Number.POSITIVE_INFINITY,
-    probability: 1.0,
   };
 
   var buildRoadNetwork = function(terrain, neighborhoods, config) {
