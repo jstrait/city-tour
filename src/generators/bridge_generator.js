@@ -7,7 +7,6 @@ var BridgeGenerator = (function() {
   var MAX_BRIDGE_LENGTH = Number.POSITIVE_INFINITY;
   var MIN_BRIDGE_HEIGHT_FROM_WATER = 0.1;
   var MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS = 0.416666666666667;
-  var MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS = 3;
   var DEFAULT_PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT = 0.5;
 
   var buildBridge = function(terrain, roadNetwork, bridgeStartX, bridgeStartZ, targetX, targetZ, config) {
@@ -95,10 +94,6 @@ var BridgeGenerator = (function() {
     }
     roadDeckHeight = Math.max(heightAtTerminal1, heightAtTerminal2, waterHeight + MIN_BRIDGE_HEIGHT_FROM_WATER);
 
-    if (parallelBridgeExistsNearby(roadNetwork, bridgeStartX, bridgeStartZ, bridgeEndX, bridgeEndZ)) {
-      return;
-    }
-
     if (Math.random() > PROBABILITY_OF_VALID_BRIDGE_BEING_BUILT) {
       return;
     }
@@ -110,34 +105,6 @@ var BridgeGenerator = (function() {
       xDelta: xDelta,
       zDelta: zDelta,
     };
-  };
-
-  var parallelBridgeExistsNearby = function(roadNetwork, startX, startZ, endX, endZ) {
-    var x, z;
-
-    var xMin = Math.min(startX, endX);
-    var xMax = Math.max(startX, endX);
-    var zMin = Math.min(startZ, endZ);
-    var zMax = Math.max(startZ, endZ);
-
-    if (startZ !== endZ) {  // North/south bridge
-      xMin = xMin - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-      xMax = xMax + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-    }
-    else {  // West/east bridge
-      zMin = zMin - MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-      zMax = zMax + MINIMUM_DISTANCE_BETWEEN_BRIDGES_IN_BLOCKS;
-    }
-
-    for (x = xMin; x <= xMax; x++) {
-      for (z = zMin; z <= zMax; z++) {
-        if (roadNetwork.hasIntersection(x, z) && roadNetwork.getIntersectionSurfaceType(x, z) === RoadNetwork.BRIDGE_SURFACE) {
-          return true;
-        }
-      }
-    }
-
-    return false;
   };
 
 
