@@ -20,8 +20,6 @@ var BridgeGenerator = (function() {
     var bridgeLength;
     var heightAtTerminal1, heightAtTerminal2;
     var waterHeight, roadDeckHeight;
-    var side1WaterCount = 0;
-    var side2WaterCount = 0;
 
     var distanceFromCenter = CityTourMath.distanceBetweenPoints(centerX, centerZ, bridgeStartX, bridgeStartZ);
     if (distanceFromCenter > SAFE_FROM_DECAY_DISTANCE) {
@@ -52,23 +50,6 @@ var BridgeGenerator = (function() {
         return;
       }
 
-      if (xDelta === 0.0) {  // North/south bridge
-        if (terrain.waterHeightAtCoordinates(bridgeEndX - 1, bridgeEndZ) > 0.0) {
-          side1WaterCount += 1;
-        }
-        if (terrain.waterHeightAtCoordinates(bridgeEndX + 1, bridgeEndZ) > 0.0) {
-          side2WaterCount += 1;
-        }
-      }
-      else if (zDelta === 0.0) {  // West/east bridge
-        if (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ - 1) > 0.0) {
-          side1WaterCount += 1;
-        }
-        if (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ + 1) > 0.0) {
-          side2WaterCount += 1;
-        }
-      }
-
       bridgeEndX += xDelta;
       bridgeEndZ += zDelta;
       bridgeLength += 1;
@@ -79,11 +60,6 @@ var BridgeGenerator = (function() {
     }
 
     if (bridgeLength > MAX_BRIDGE_LENGTH) {
-      return;
-    }
-
-    // Don't build the bridge if either only borders land
-    if (side1WaterCount === 0 || side2WaterCount === 0) {
       return;
     }
 
