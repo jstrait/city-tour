@@ -3,6 +3,13 @@
 import { RenderView } from "./render_view";
 import { Builder } from "./../meshes/builder";
 
+const GRID_PLANE_MESH_GROUP_NAME = "gridPlaneMeshes";
+const TERRAIN_MESH_GROUP_NAME = "terrainMeshes";
+const ROAD_NETWORK_MESH_GROUP_NAME = "roadNetworkMeshes";
+const BUILDINGS_MESH_GROUP_NAME = "buildingMeshes";
+const DEBUG_MARKERS_MESH_GROUP_NAME = "markerMeshes";
+const DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "debugNeighborhoodCentersMeshes";
+
 var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
   var SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS = false;
@@ -23,25 +30,30 @@ var SceneView = function(containerEl, gridTexture) {
     var terrainStartTime, terrainEndTime;
     var roadStartTime, roadEndTime;
     var buildingsStartTime, buildingsEndTime;
+    var meshes;
 
     destroyPreviousMeshes();
 
     masterStartTime = new Date();
 
     terrainStartTime = new Date();
-    scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
+    meshes = sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork);
+    scene.add(buildMeshGroup(TERRAIN_MESH_GROUP_NAME, meshes));
     terrainEndTime = new Date();
 
     roadStartTime = new Date();
-    scene.add(sceneBuilder.buildRoadNetworkMeshes(newWorldData.terrain, newWorldData.roadNetwork));
+    meshes = sceneBuilder.buildRoadNetworkMeshes(newWorldData.terrain, newWorldData.roadNetwork);
+    scene.add(buildMeshGroup(ROAD_NETWORK_MESH_GROUP_NAME, meshes));
     roadEndTime = new Date();
 
     buildingsStartTime = new Date();
-    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.terrain, newWorldData.roadNetwork));
+    meshes = sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.terrain, newWorldData.roadNetwork);
+    scene.add(buildMeshGroup(BUILDINGS_MESH_GROUP_NAME, meshes));
     buildingsEndTime = new Date();
 
     if (SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS === true) {
-      scene.add(sceneBuilder.buildDebugNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods));
+      meshes = sceneBuilder.buildDebugNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods);
+      scene.add(buildMeshGroup(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME, meshes));
     }
 
     centerOfCityMarkerMesh.position.x = newWorldData.centerX;
@@ -55,6 +67,19 @@ var SceneView = function(containerEl, gridTexture) {
     console.log("  Buildings: " + (buildingsEndTime - buildingsStartTime) + "ms");
   };
 
+  var buildMeshGroup = function(groupName, meshes) {
+    var group = new THREE.Group();
+    var mesh;
+
+    group.name = groupName;
+
+    for (mesh of meshes) {
+      group.add(mesh);
+    };
+
+    return group;
+  };
+
   var buildMarkerMeshes = function() {
     var MARKER_WIDTH = 0.2;
     var MARKER_DEPTH = 0.2;
@@ -66,7 +91,7 @@ var SceneView = function(containerEl, gridTexture) {
     markersStartTime = new Date();
 
     group = new THREE.Group();
-    group.name = "markerMeshes";
+    group.name = DEBUG_MARKERS_MESH_GROUP_NAME;
 
     centerOfCityMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                             new THREE.MeshBasicMaterial({ color: 0xff00ff }));
@@ -99,10 +124,10 @@ var SceneView = function(containerEl, gridTexture) {
   };
 
   var destroyPreviousMeshes = function() {
-    var terrainMeshes = scene.getObjectByName("terrainMeshes");
-    var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
-    var buildingMeshes = scene.getObjectByName("buildingMeshes");
-    var neighborhoodCentersDebugMeshes = scene.getObjectByName("debugNeighborhoodCentersMeshes");
+    var terrainMeshes = scene.getObjectByName(TERRAIN_MESH_GROUP_NAME);
+    var roadNetworkMeshes = scene.getObjectByName(ROAD_NETWORK_MESH_GROUP_NAME);
+    var buildingMeshes = scene.getObjectByName(BUILDINGS_MESH_GROUP_NAME);
+    var neighborhoodCentersDebugMeshes = scene.getObjectByName(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME);
 
     if (terrainMeshes !== undefined) {
       removeChildFromScene(terrainMeshes);
@@ -155,7 +180,7 @@ var SceneView = function(containerEl, gridTexture) {
   window.addEventListener('resize', renderView.resize, false);
 
   buildMarkerMeshes();
-  scene.add(sceneBuilder.buildGridPlaneMeshes());
+  scene.add(sceneBuilder.buildGridPlaneMeshes()[0]);
 
   return {
     reset: reset,

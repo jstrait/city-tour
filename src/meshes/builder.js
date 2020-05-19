@@ -21,17 +21,6 @@ var Builder = function(gridTexture) {
     return scene;
   };
 
-  var buildMeshGroup = function(groupName, meshes) {
-    var group = new THREE.Group();
-    group.name = groupName;
-
-    meshes.forEach(function(mesh) {
-      group.add(mesh);
-    });
-
-    return group;
-  };
-
   var buildGridPlaneMeshes = function() {
     var gridPlaneGeometry = new THREE.PlaneGeometry(320, 320, 1, 1);
     var gridPlaneMaterial = new THREE.MeshBasicMaterial({map: gridTexture});
@@ -40,19 +29,19 @@ var Builder = function(gridTexture) {
     gridPlaneMesh.position.y = -8.333333333333333;
     gridPlaneMesh.rotation.x = -Math.PI / 2;
 
-    return buildMeshGroup("gridPlaneMeshes", [gridPlaneMesh]);
+    return [gridPlaneMesh];
   };
 
   var buildTerrainMeshes = function(terrain, roadNetwork) {
-    return buildMeshGroup("terrainMeshes", TerrainMeshBuilder().build(terrain, roadNetwork));
+    return TerrainMeshBuilder().build(terrain, roadNetwork);
   };
 
   var buildRoadNetworkMeshes = function(terrain, roadNetwork) {
-    return buildMeshGroup("roadNetworkMeshes", RoadMeshBuilder().build(terrain, roadNetwork));
+    return RoadMeshBuilder().build(terrain, roadNetwork);
   };
 
   var buildBuildingMeshes = function(buildings, terrain, roadNetwork) {
-    return buildMeshGroup("buildingMeshes", BuildingMeshBuilder().build(buildings, terrain, roadNetwork));
+    return BuildingMeshBuilder().build(buildings, terrain, roadNetwork);
   };
 
   var buildDebugNeighborhoodCentersMeshes = function(terrain, neighborhoods) {
@@ -73,7 +62,7 @@ var Builder = function(gridTexture) {
       neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
     }
 
-    return buildMeshGroup("debugNeighborhoodCentersMeshes", [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({color: 0xff00ff}))]);
+    return [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({color: 0xff00ff}))];
   };
 
   return {
