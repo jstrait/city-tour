@@ -124,25 +124,21 @@ var SceneView = function(containerEl, gridTexture) {
   };
 
   var destroyPreviousMeshes = function() {
-    var terrainMeshes = scene.getObjectByName(TERRAIN_MESH_GROUP_NAME);
-    var roadNetworkMeshes = scene.getObjectByName(ROAD_NETWORK_MESH_GROUP_NAME);
-    var buildingMeshes = scene.getObjectByName(BUILDINGS_MESH_GROUP_NAME);
-    var neighborhoodCentersDebugMeshes = scene.getObjectByName(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME);
+    var meshGroupNames = [
+      TERRAIN_MESH_GROUP_NAME,
+      ROAD_NETWORK_MESH_GROUP_NAME,
+      BUILDINGS_MESH_GROUP_NAME,
+      DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME,
+    ];
 
-    if (terrainMeshes !== undefined) {
-      removeChildFromScene(terrainMeshes);
-    }
+    var meshGroupName;
+    var meshGroup;
 
-    if (roadNetworkMeshes !== undefined) {
-      removeChildFromScene(roadNetworkMeshes);
-    }
-
-    if (buildingMeshes !== undefined) {
-      removeChildFromScene(buildingMeshes);
-    }
-
-    if (neighborhoodCentersDebugMeshes !== undefined) {
-      removeChildFromScene(neighborhoodCentersDebugMeshes);
+    for (meshGroupName of meshGroupNames) {
+      meshGroup = scene.getObjectByName(meshGroupName);
+      if (meshGroup !== undefined) {
+        removeChildFromScene(meshGroup);
+      }
     }
   };
 
