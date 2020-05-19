@@ -20,6 +20,7 @@ var App = (function() {
     terrain: EMPTY_TERRAIN,
     roadNetwork: RoadNetwork(EMPTY_TERRAIN),
     buildings: [],
+    neighborhoods: [],
     centerX: undefined,
     centerZ: undefined,
   };

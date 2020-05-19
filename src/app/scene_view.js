@@ -5,6 +5,7 @@ import { Builder } from "./../meshes/builder";
 
 var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
+  var SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS = false;
 
   var centerOfCityMarkerMesh;
   var centerOfActionMarkerMesh;
@@ -36,8 +37,12 @@ var SceneView = function(containerEl, gridTexture) {
     roadEndTime = new Date();
 
     buildingsStartTime = new Date();
-    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.terrain, newWorldData.roadNetwork, newWorldData.neighborhoods));
+    scene.add(sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.terrain, newWorldData.roadNetwork));
     buildingsEndTime = new Date();
+
+    if (SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS === true) {
+      scene.add(sceneBuilder.buildDebugNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods));
+    }
 
     centerOfCityMarkerMesh.position.x = newWorldData.centerX;
     centerOfCityMarkerMesh.position.z = newWorldData.centerZ;
@@ -97,6 +102,7 @@ var SceneView = function(containerEl, gridTexture) {
     var terrainMeshes = scene.getObjectByName("terrainMeshes");
     var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
     var buildingMeshes = scene.getObjectByName("buildingMeshes");
+    var neighborhoodCentersDebugMeshes = scene.getObjectByName("debugNeighborhoodCentersMeshes");
 
     if (terrainMeshes !== undefined) {
       removeChildFromScene(terrainMeshes);
@@ -108,6 +114,10 @@ var SceneView = function(containerEl, gridTexture) {
 
     if (buildingMeshes !== undefined) {
       removeChildFromScene(buildingMeshes);
+    }
+
+    if (neighborhoodCentersDebugMeshes !== undefined) {
+      removeChildFromScene(neighborhoodCentersDebugMeshes);
     }
   };
 

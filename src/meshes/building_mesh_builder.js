@@ -3,8 +3,6 @@
 import { Config } from "./../config";
 
 var BuildingMeshBuilder = function() {
-  var SHOW_NEIGHBORHOOD_CENTER_MARKERS = false;
-
   var generateBuildingGeometries = function(buildings, buildingsGeometry, roadNetwork) {
     var HALF_STREET_WIDTH = Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = Config.STREET_DEPTH / 2;
@@ -85,31 +83,10 @@ var BuildingMeshBuilder = function() {
     }
   };
 
-  var generateNeighborhoodCenterMarkersMesh = function(terrain, neighborhoods) {
-    var neighborhoodCenterGeometry = new THREE.Geometry();
-    var reusableNeighborhoodCenterMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 15, 0.5));
-    var neighborhoodCenterX;
-    var neighborhoodCenterY;
-    var neighborhoodCenterZ;
-    var i;
-
-    for (i = 0; i < neighborhoods.length; i++) {
-      neighborhoodCenterX = neighborhoods[i].centerX;
-      neighborhoodCenterZ = neighborhoods[i].centerZ;
-      neighborhoodCenterY = terrain.landHeightAtCoordinates(neighborhoodCenterX, neighborhoodCenterZ);
-
-      reusableNeighborhoodCenterMesh.position.set(neighborhoodCenterX, neighborhoodCenterY, neighborhoodCenterZ);
-      reusableNeighborhoodCenterMesh.updateMatrix();
-      neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
-    }
-
-    return new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({ color: 0xff00ff }));
-  };
-
 
   var buildingMeshBuilder = {};
 
-  buildingMeshBuilder.build = function(buildings, terrain, roadNetwork, neighborhoods) {
+  buildingMeshBuilder.build = function(buildings, terrain, roadNetwork) {
     var buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
     var buildingsGeometry = new THREE.Geometry();
     var buildingMeshes = [];
@@ -117,10 +94,6 @@ var BuildingMeshBuilder = function() {
     generateBuildingGeometries(buildings, buildingsGeometry, roadNetwork);
 
     buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
-
-    if (SHOW_NEIGHBORHOOD_CENTER_MARKERS === true && neighborhoods !== undefined) {
-      buildingMeshes.push(generateNeighborhoodCenterMarkersMesh(terrain, neighborhoods));
-    }
 
     return buildingMeshes;
   };

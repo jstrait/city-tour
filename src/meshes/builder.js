@@ -51,10 +51,30 @@ var Builder = function(gridTexture) {
     return buildMeshGroup("roadNetworkMeshes", RoadMeshBuilder().build(terrain, roadNetwork));
   };
 
-  var buildBuildingMeshes = function(buildings, terrain, roadNetwork, neighborhoods) {
-    return buildMeshGroup("buildingMeshes", BuildingMeshBuilder().build(buildings, terrain, roadNetwork, neighborhoods));
+  var buildBuildingMeshes = function(buildings, terrain, roadNetwork) {
+    return buildMeshGroup("buildingMeshes", BuildingMeshBuilder().build(buildings, terrain, roadNetwork));
   };
 
+  var buildDebugNeighborhoodCentersMeshes = function(terrain, neighborhoods) {
+    var neighborhoodCenterGeometry = new THREE.Geometry();
+    var reusableNeighborhoodCenterMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 15, 0.5));
+    var neighborhoodCenterX;
+    var neighborhoodCenterY;
+    var neighborhoodCenterZ;
+    var i;
+
+    for (i = 0; i < neighborhoods.length; i++) {
+      neighborhoodCenterX = neighborhoods[i].centerX;
+      neighborhoodCenterZ = neighborhoods[i].centerZ;
+      neighborhoodCenterY = terrain.landHeightAtCoordinates(neighborhoodCenterX, neighborhoodCenterZ);
+
+      reusableNeighborhoodCenterMesh.position.set(neighborhoodCenterX, neighborhoodCenterY, neighborhoodCenterZ);
+      reusableNeighborhoodCenterMesh.updateMatrix();
+      neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
+    }
+
+    return buildMeshGroup("debugNeighborhoodCentersMeshes", [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({color: 0xff00ff}))]);
+  };
 
   return {
     buildEmptyScene: buildEmptyScene,
@@ -62,6 +82,7 @@ var Builder = function(gridTexture) {
     buildTerrainMeshes: buildTerrainMeshes,
     buildRoadNetworkMeshes: buildRoadNetworkMeshes,
     buildBuildingMeshes: buildBuildingMeshes,
+    buildDebugNeighborhoodCentersMeshes: buildDebugNeighborhoodCentersMeshes,
   };
 };
 
