@@ -4,6 +4,7 @@ import { CityTourMath } from "./../math";
 import { PathFinder } from "./../path_finder";
 import { AerialNavigator } from "./aerial_navigator";
 import { Animation } from "./animation";
+import { CurveAnimation } from "./curve_animation";
 import { LinearEasing } from "./easing";
 import { SineEasing } from "./easing";
 import { SmoothStepEasing } from "./easing";
@@ -175,13 +176,13 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
                                      new MotionGenerator(targetRotationY, drivingTargetRotationY, new SineEasing(diveFrameCount, 0.0, HALF_PI))));
 
     // Drive to target point
-    drivingAnimations = buildDrivingAnimations({ positionX: descentTargetPositionX,
-                                                 positionY: descentTargetPositionY,
-                                                 positionZ: descentTargetPositionZ,
-                                                 rotationX: 0.0,
-                                                 rotationY: drivingTargetRotationY, },
-                                               drivingTargetPositionX,
-                                               drivingTargetPositionZ);
+    drivingAnimations = buildDrivingAnimationsLegacy({ positionX: descentTargetPositionX,
+                                                       positionY: descentTargetPositionY,
+                                                       positionZ: descentTargetPositionZ,
+                                                       rotationX: 0.0,
+                                                       rotationY: drivingTargetRotationY, },
+                                                     drivingTargetPositionX,
+                                                     drivingTargetPositionZ);
 
 
     return newAnimations.concat(drivingAnimations);
@@ -284,7 +285,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     return newAnimations;
   };
 
-  var buildDrivingAnimations = function(initial, targetPositionX, targetPositionZ) {
+  var buildDrivingAnimationsLegacy = function(initial, targetPositionX, targetPositionZ) {
     var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
@@ -330,6 +331,109 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
                                      rotationYStationaryGenerator));
 
     return newAnimations;
+  };
+
+  var buildDrivingAnimations = function(initial, targetPositionX, targetPositionZ) {
+    var totalPathLength = 0.0;
+    var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * VERTICAL_MODE_DURATION_IN_FRAMES;
+    var path = [[initial.positionX, initial.positionZ]];
+    var roadNavigator = RoadNavigator(roadNetwork, pathFinder, targetPositionX, targetPositionZ);
+
+    var curvePositionX;
+    var curvePositionZ;
+    var i;
+    var isFinalPathSegment;
+    var curve;
+    var currentX;
+    var currentZ;
+    var nextX;
+    var nextZ;
+    var curvePath = new THREE.CurvePath();
+    var lineStartVector;
+    var controlPointVector;
+    var lineEndVector;
+
+    // Build driving path
+    currentX = initial.positionX;
+    currentZ = initial.positionZ;
+    while (totalPathLength < minPathLength) {
+      totalPathLength += CityTourMath.distanceBetweenPoints(currentX, currentZ, roadNavigator.targetX(), roadNavigator.targetZ());
+      path.push([roadNavigator.targetX(), roadNavigator.targetZ()]);
+
+      currentX = roadNavigator.targetX();
+      currentZ = roadNavigator.targetZ();
+
+      roadNavigator.nextTarget();
+    }
+
+
+    // Convert driving path into a curve path
+    curvePositionX = path[0][0];
+    curvePositionZ = path[0][1];
+    for (i = 0; i < path.length - 1; i++) {
+      isFinalPathSegment = (i === path.length - 2);
+      currentX = path[i][0];
+      currentZ = path[i][1];
+      nextX = path[i + 1][0];
+      nextZ = path[i + 1][1];
+
+      lineStartVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+      controlPointVector = new THREE.Vector3(currentX, -1000, currentZ);
+
+      // Curve to next straight segment
+      if (i > 0) {
+        if (curvePositionX > nextX && curvePositionZ > nextZ) {
+          curvePositionX = curvePositionX - 0.5;
+          curvePositionZ = curvePositionZ - 0.5;
+        }
+        else if (curvePositionX < nextX && curvePositionZ > nextZ) {
+          curvePositionX = curvePositionX + 0.5;
+          curvePositionZ = curvePositionZ - 0.5;
+        }
+        else if (curvePositionX > nextX && curvePositionZ < nextZ) {
+          curvePositionX = curvePositionX - 0.5;
+          curvePositionZ = curvePositionZ + 0.5;
+        }
+        else if (curvePositionX < nextX && curvePositionZ < nextZ) {
+          curvePositionX = curvePositionX + 0.5;
+          curvePositionZ = curvePositionZ + 0.5;
+        }
+      }
+
+      lineEndVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+
+      curve = new THREE.QuadraticBezierCurve3(lineStartVector, controlPointVector, lineEndVector);
+      curvePath.curves.push(curve);
+
+
+      // Straight segment
+      lineStartVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+
+      if (curvePositionZ > nextZ) {
+        curvePositionX = nextX;
+        curvePositionZ = (isFinalPathSegment ? nextZ : nextZ + 0.5);
+      }
+      else if (curvePositionZ < nextZ) {
+        curvePositionX = nextX;
+        curvePositionZ = (isFinalPathSegment ? nextZ : nextZ - 0.5);
+      }
+      else if (curvePositionX < nextX) {
+        curvePositionX = (isFinalPathSegment ? nextX : nextX - 0.5);
+        curvePositionZ = nextZ;
+      }
+      else if (curvePositionX > nextX) {
+        curvePositionX = (isFinalPathSegment ? nextX : nextX + 0.5);
+        curvePositionZ = nextZ;
+      }
+
+      lineEndVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+
+      curve = new THREE.LineCurve3(lineStartVector, lineEndVector);
+      curvePath.curves.push(curve);
+    }
+
+
+    return [CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA)];
   };
 
   var buildNextAnimations = function(targetPositionX, targetPositionZ) {
