@@ -9,6 +9,7 @@ const ROAD_NETWORK_MESH_GROUP_NAME = "roadNetworkMeshes";
 const BUILDINGS_MESH_GROUP_NAME = "buildingMeshes";
 const DEBUG_MARKERS_MESH_GROUP_NAME = "markerMeshes";
 const DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "debugNeighborhoodCentersMeshes";
+const DEBUG_CURVE_MESH_GROUP_NAME = "debugCurveMeshes";
 
 var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
@@ -129,6 +130,7 @@ var SceneView = function(containerEl, gridTexture) {
       ROAD_NETWORK_MESH_GROUP_NAME,
       BUILDINGS_MESH_GROUP_NAME,
       DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME,
+      DEBUG_CURVE_MESH_GROUP_NAME,
     ];
 
     var meshGroupName;
@@ -160,6 +162,20 @@ var SceneView = function(containerEl, gridTexture) {
     obj = null;
   };
 
+  var setDebugCurves = function(newCurves) {
+    var previousMeshGroup = scene.getObjectByName(DEBUG_CURVE_MESH_GROUP_NAME);
+    var newCurveMeshes;
+
+    if (previousMeshGroup !== undefined) {
+      removeChildFromScene(previousMeshGroup);
+    }
+
+    if (newCurves.length > 0) {
+      newCurveMeshes = sceneBuilder.buildDebugCurveMeshes(newCurves);
+      scene.add(buildMeshGroup(DEBUG_CURVE_MESH_GROUP_NAME, newCurveMeshes));
+    }
+  };
+
   var resize = function() {
     renderView.resize();
   };
@@ -189,6 +205,7 @@ var SceneView = function(containerEl, gridTexture) {
     targetOfActionMarkerMesh: function() { return targetOfActionMarkerMesh; },
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
+    setDebugCurves: setDebugCurves,
   };
 };
 

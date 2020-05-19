@@ -65,6 +65,19 @@ var Builder = function(gridTexture) {
     return [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({color: 0xff00ff}))];
   };
 
+  var buildDebugCurveMeshes = function(curves) {
+    var tubeGeometry;
+    var tubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+    var meshes = [];
+    var curve;
+
+    for (curve of curves) {
+      tubeGeometry = new THREE.TubeGeometry(curve, Math.ceil(curve.getLength()) * 10, 0.05, 4, false);
+      meshes.push(new THREE.Mesh(tubeGeometry, tubeMaterial));
+    }
+    return meshes;
+  };
+
   return {
     buildEmptyScene: buildEmptyScene,
     buildGridPlaneMeshes: buildGridPlaneMeshes,
@@ -72,6 +85,7 @@ var Builder = function(gridTexture) {
     buildRoadNetworkMeshes: buildRoadNetworkMeshes,
     buildBuildingMeshes: buildBuildingMeshes,
     buildDebugNeighborhoodCentersMeshes: buildDebugNeighborhoodCentersMeshes,
+    buildDebugCurveMeshes: buildDebugCurveMeshes,
   };
 };
 
