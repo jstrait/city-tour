@@ -27,8 +27,6 @@ var SceneView = function(containerEl, gridTexture) {
 
     masterStartTime = new Date();
 
-    scene.add(sceneBuilder.buildGridPlaneMeshes());
-
     terrainStartTime = new Date();
     scene.add(sceneBuilder.buildTerrainMeshes(newWorldData.terrain, newWorldData.roadNetwork));
     terrainEndTime = new Date();
@@ -96,14 +94,9 @@ var SceneView = function(containerEl, gridTexture) {
   };
 
   var destroyPreviousMeshes = function() {
-    var gridPlaneMeshes = scene.getObjectByName("gridPlaneMeshes");
     var terrainMeshes = scene.getObjectByName("terrainMeshes");
     var roadNetworkMeshes = scene.getObjectByName("roadNetworkMeshes");
     var buildingMeshes = scene.getObjectByName("buildingMeshes");
-
-    if (gridPlaneMeshes !== undefined) {
-      removeChildFromScene(gridPlaneMeshes);
-    }
 
     if (terrainMeshes !== undefined) {
       removeChildFromScene(terrainMeshes);
@@ -152,6 +145,7 @@ var SceneView = function(containerEl, gridTexture) {
   window.addEventListener('resize', renderView.resize, false);
 
   buildMarkerMeshes();
+  scene.add(sceneBuilder.buildGridPlaneMeshes());
 
   return {
     reset: reset,
