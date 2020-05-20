@@ -79,26 +79,26 @@ describe("RoadNetwork", function() {
     it("returns the correct heights for an X-axis road edge", function() {
       // {-1,0} -> {0,0}
       expect(roadNetwork.getRoadHeight(-1, 0)).toBe(4.3);
-      expect(roadNetwork.getRoadHeight(-0.95, 0)).toBe(4.405);
-      expect(roadNetwork.getRoadHeight(-(5 / 6), 0)).toBe(4.65);
-      expect(roadNetwork.getRoadHeight(-0.75, 0)).toBe(4.824999999999999);
+      expect(roadNetwork.getRoadHeight(-0.95, 0)).toBe(4.3);
+      expect(roadNetwork.getRoadHeight(-(5 / 6), 0)).toBe(4.3);
+      expect(roadNetwork.getRoadHeight(-0.75, 0)).toBe(4.5625);
       expect(roadNetwork.getRoadHeight(-0.5, 0)).toBe(5.35);
-      expect(roadNetwork.getRoadHeight(-0.25, 0)).toBe(5.875000000000001);
-      expect(roadNetwork.getRoadHeight(-(1 / 6), 0)).toBe(6.050000000000001);
-      expect(roadNetwork.getRoadHeight(-0.05, 0)).toBe(6.295);
+      expect(roadNetwork.getRoadHeight(-0.25, 0)).toBe(6.1375);
+      expect(roadNetwork.getRoadHeight(-(1 / 6), 0)).toBe(6.4);
+      expect(roadNetwork.getRoadHeight(-0.05, 0)).toBe(6.4);
       expect(roadNetwork.getRoadHeight(0, 0)).toBe(6.4);
     });
 
     it("returns the correct heights for a Z-axis road edge", function() {
       // {-1,0} -> {-1,-1}
       expect(roadNetwork.getRoadHeight(-1, 0)).toBe(4.3);
-      expect(roadNetwork.getRoadHeight(-1, -0.05)).toBe(4.085);
-      expect(roadNetwork.getRoadHeight(-1, -(1 / 6))).toBe(3.5833333333333335);
-      expect(roadNetwork.getRoadHeight(-1, -0.25)).toBe(3.2249999999999996);
+      expect(roadNetwork.getRoadHeight(-1, -0.05)).toBe(4.3);
+      expect(roadNetwork.getRoadHeight(-1, -(1 / 6))).toBe(4.3);
+      expect(roadNetwork.getRoadHeight(-1, -0.25)).toBe(3.7624999999999997);
       expect(roadNetwork.getRoadHeight(-1, -0.5)).toBe(2.15);
-      expect(roadNetwork.getRoadHeight(-1, -0.75)).toBe(1.075);
-      expect(roadNetwork.getRoadHeight(-1, -(5 / 6))).toBe(0.7166666666666665);
-      expect(roadNetwork.getRoadHeight(-1, -0.95)).toBe(0.2150000000000002);
+      expect(roadNetwork.getRoadHeight(-1, -0.75)).toBe(0.5375);
+      expect(roadNetwork.getRoadHeight(-1, -(5 / 6))).toBe(0);
+      expect(roadNetwork.getRoadHeight(-1, -0.95)).toBe(0);
       expect(roadNetwork.getRoadHeight(-1, -1)).toBe(0);
     });
 

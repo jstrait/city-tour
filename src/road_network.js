@@ -1,6 +1,7 @@
 "use strict";
 
 import { CityTourMath } from "./math";
+import { Config } from "./config";
 
 var RoadNetwork = function(terrain) {
   var Intersection = function(x, z, height, surfaceType) {
@@ -99,6 +100,8 @@ var RoadNetwork = function(terrain) {
     var xIsExact = Math.floor(x) === x;
     var zIsExact = Math.floor(z) === z;
     var floor, ceil;
+    var xEdge;
+    var zEdge;
 
     if (xIsExact && zIsExact) {
       return getIntersectionHeight(x, z);
@@ -108,7 +111,16 @@ var RoadNetwork = function(terrain) {
       floor = getIntersectionHeight(x, Math.floor(z));
 
       if (ceil !== undefined && floor !== undefined) {
-        return CityTourMath.lerp(floor, ceil, z - Math.floor(z));
+        zEdge = z - Math.floor(z);
+
+        if (zEdge <= Config.HALF_STREET_DEPTH) {
+          return floor;
+        }
+        else if (zEdge >= (1.0 - Config.HALF_STREET_DEPTH)) {
+          return ceil;
+        }
+
+        return CityTourMath.lerp(floor, ceil, (zEdge - Config.HALF_STREET_DEPTH) / (1.0 - Config.STREET_DEPTH));
       }
       else {
         return undefined;
@@ -119,7 +131,16 @@ var RoadNetwork = function(terrain) {
       floor = getIntersectionHeight(Math.floor(x), z);
 
       if (ceil !== undefined && floor !== undefined) {
-        return CityTourMath.lerp(floor, ceil, x - Math.floor(x));
+        xEdge = x - Math.floor(x);
+
+        if (xEdge <= Config.HALF_STREET_WIDTH) {
+          return floor;
+        }
+        else if (xEdge >= (1.0 - Config.HALF_STREET_WIDTH)) {
+          return ceil;
+        }
+
+        return CityTourMath.lerp(floor, ceil, (xEdge - Config.HALF_STREET_WIDTH) / (1.0 - Config.STREET_WIDTH));
       }
       else {
         return undefined;
