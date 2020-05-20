@@ -1,6 +1,7 @@
 "use strict";
 
 import { CityTourMath } from "./../math";
+import { Config } from "./../config";
 import { PathFinder } from "./../path_finder";
 import { AerialNavigator } from "./aerial_navigator";
 import { Animation } from "./animation";
@@ -343,11 +344,15 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     var curvePositionZ;
     var i;
     var isFinalPathSegment;
+    var isStraightIntersectionSegmentRequired;
+    var isCurvedIntersectionSegmentRequired;
     var curve;
     var currentX;
     var currentZ;
     var nextX;
     var nextZ;
+    var subsequentX;
+    var subsequentZ;
     var curvePath = new THREE.CurvePath();
     var lineStartVector;
     var controlPointVector;
@@ -377,61 +382,101 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
       nextX = path[i + 1][0];
       nextZ = path[i + 1][1];
 
-      lineStartVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
-      controlPointVector = new THREE.Vector3(currentX, -1000, currentZ);
-
-      // Curve to next straight segment
-      if (i > 0) {
-        if (curvePositionX > nextX && curvePositionZ > nextZ) {
-          curvePositionX = curvePositionX - 0.5;
-          curvePositionZ = curvePositionZ - 0.5;
-        }
-        else if (curvePositionX < nextX && curvePositionZ > nextZ) {
-          curvePositionX = curvePositionX + 0.5;
-          curvePositionZ = curvePositionZ - 0.5;
-        }
-        else if (curvePositionX > nextX && curvePositionZ < nextZ) {
-          curvePositionX = curvePositionX - 0.5;
-          curvePositionZ = curvePositionZ + 0.5;
-        }
-        else if (curvePositionX < nextX && curvePositionZ < nextZ) {
-          curvePositionX = curvePositionX + 0.5;
-          curvePositionZ = curvePositionZ + 0.5;
-        }
+      if (isFinalPathSegment === true) {
+        subsequentX = path[i + 1][0];
+        subsequentZ = path[i + 1][1];
+      }
+      else {
+        subsequentX = path[i + 2][0];
+        subsequentZ = path[i + 2][1];
       }
 
-      lineEndVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+      isCurvedIntersectionSegmentRequired = !isFinalPathSegment &&
+                                            !((Math.sign(nextX - currentX) === 0.0 && Math.sign(subsequentX - nextX) === 0.0) ||
+                                              (Math.sign(nextZ - currentZ) === 0.0 && Math.sign(subsequentZ - nextZ) === 0.0));
 
-      curve = new THREE.QuadraticBezierCurve3(lineStartVector, controlPointVector, lineEndVector);
-      curvePath.curves.push(curve);
+      isStraightIntersectionSegmentRequired = !isCurvedIntersectionSegmentRequired;
 
 
-      // Straight segment
-      lineStartVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+      // Main straight segment
+      lineStartVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
       if (curvePositionZ > nextZ) {
         curvePositionX = nextX;
-        curvePositionZ = (isFinalPathSegment ? nextZ : nextZ + 0.5);
+        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (nextZ + 0.5) : (nextZ + Config.HALF_STREET_DEPTH));
       }
       else if (curvePositionZ < nextZ) {
         curvePositionX = nextX;
-        curvePositionZ = (isFinalPathSegment ? nextZ : nextZ - 0.5);
+        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (nextZ - 0.5) : (nextZ - Config.HALF_STREET_DEPTH));
       }
       else if (curvePositionX < nextX) {
-        curvePositionX = (isFinalPathSegment ? nextX : nextX - 0.5);
+        curvePositionX = (isCurvedIntersectionSegmentRequired ? (nextX - 0.5) : (nextX - Config.HALF_STREET_WIDTH));
         curvePositionZ = nextZ;
       }
       else if (curvePositionX > nextX) {
-        curvePositionX = (isFinalPathSegment ? nextX : nextX + 0.5);
+        curvePositionX = (isCurvedIntersectionSegmentRequired ? (nextX + 0.5) : (nextX + Config.HALF_STREET_WIDTH));
         curvePositionZ = nextZ;
       }
 
-      lineEndVector = new THREE.Vector3(curvePositionX, -1000, curvePositionZ);
+      lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
       curve = new THREE.LineCurve3(lineStartVector, lineEndVector);
       curvePath.curves.push(curve);
-    }
 
+
+      // Straight segment through intersection
+      if (isStraightIntersectionSegmentRequired === true) {
+        lineStartVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
+
+        if (curvePositionZ > nextZ) {
+          curvePositionX = nextX;
+          curvePositionZ = (isFinalPathSegment ? nextZ : (curvePositionZ - Config.STREET_DEPTH));
+        }
+        else if (curvePositionZ < nextZ) {
+          curvePositionX = nextX;
+          curvePositionZ = (isFinalPathSegment ? nextZ : (curvePositionZ + Config.STREET_DEPTH));
+        }
+        else if (curvePositionX < nextX) {
+          curvePositionX = (isFinalPathSegment ? nextX : (curvePositionX + Config.STREET_WIDTH));
+          curvePositionZ = nextZ;
+        }
+        else if (curvePositionX > nextX) {
+          curvePositionX = (isFinalPathSegment ? nextX : (curvePositionX - Config.STREET_WIDTH));
+          curvePositionZ = nextZ;
+        }
+
+        lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
+
+        curve = new THREE.LineCurve3(lineStartVector, lineEndVector);
+        curvePath.curves.push(curve);
+      }
+
+
+      // Curve to next straight segment
+      if (isCurvedIntersectionSegmentRequired === true) {
+        lineStartVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
+        controlPointVector = new THREE.Vector3(nextX, roadNetwork.getRoadHeight(nextX, nextZ) + MINIMUM_HEIGHT_OFF_GROUND, nextZ);
+
+        if (currentX < subsequentX) {
+          curvePositionX += 0.5;
+        }
+        else if (currentX > subsequentX) {
+          curvePositionX -= 0.5;
+        }
+
+        if (currentZ < subsequentZ) {
+          curvePositionZ += 0.5;
+        }
+        else if (currentZ > subsequentZ) {
+          curvePositionZ -= 0.5;
+        }
+
+        lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
+
+        curve = new THREE.QuadraticBezierCurve3(lineStartVector, controlPointVector, lineEndVector);
+        curvePath.curves.push(curve);
+      }
+    }
 
     return [CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA)];
   };
