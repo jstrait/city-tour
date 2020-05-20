@@ -63,6 +63,59 @@ describe("RoadNetwork", function() {
     expect(roadNetwork.hasIntersection("a", "b")).toBe(false);
   });
 
+  describe(".getRoadHeight", function() {
+    var roadNetwork = new RoadNetwork(terrain);
+
+    roadNetwork.addEdge(-1, 0, 0, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, -1, -1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, -1, -1, -2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+
+    it("returns `undefined` for coordinates not on a road edge", function() {
+      expect(roadNetwork.getRoadHeight(1, 0)).toBe(undefined);
+      expect(roadNetwork.getRoadHeight(0.5, 0)).toBe(undefined);
+      expect(roadNetwork.getRoadHeight(0, 0.5)).toBe(undefined);
+    });
+
+    it("returns the correct heights for an X-axis road edge", function() {
+      // {-1,0} -> {0,0}
+      expect(roadNetwork.getRoadHeight(-1, 0)).toBe(4.3);
+      expect(roadNetwork.getRoadHeight(-0.95, 0)).toBe(4.405);
+      expect(roadNetwork.getRoadHeight(-(5 / 6), 0)).toBe(4.65);
+      expect(roadNetwork.getRoadHeight(-0.75, 0)).toBe(4.824999999999999);
+      expect(roadNetwork.getRoadHeight(-0.5, 0)).toBe(5.35);
+      expect(roadNetwork.getRoadHeight(-0.25, 0)).toBe(5.875000000000001);
+      expect(roadNetwork.getRoadHeight(-(1 / 6), 0)).toBe(6.050000000000001);
+      expect(roadNetwork.getRoadHeight(-0.05, 0)).toBe(6.295);
+      expect(roadNetwork.getRoadHeight(0, 0)).toBe(6.4);
+    });
+
+    it("returns the correct heights for a Z-axis road edge", function() {
+      // {-1,0} -> {-1,-1}
+      expect(roadNetwork.getRoadHeight(-1, 0)).toBe(4.3);
+      expect(roadNetwork.getRoadHeight(-1, -0.05)).toBe(4.085);
+      expect(roadNetwork.getRoadHeight(-1, -(1 / 6))).toBe(3.5833333333333335);
+      expect(roadNetwork.getRoadHeight(-1, -0.25)).toBe(3.2249999999999996);
+      expect(roadNetwork.getRoadHeight(-1, -0.5)).toBe(2.15);
+      expect(roadNetwork.getRoadHeight(-1, -0.75)).toBe(1.075);
+      expect(roadNetwork.getRoadHeight(-1, -(5 / 6))).toBe(0.7166666666666665);
+      expect(roadNetwork.getRoadHeight(-1, -0.95)).toBe(0.2150000000000002);
+      expect(roadNetwork.getRoadHeight(-1, -1)).toBe(0);
+    });
+
+    it("returns the correct heights for a flat road edge", function() {
+      // {-1,-1} -> {-1,-2}
+      expect(roadNetwork.getRoadHeight(-1, -1)).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -1.05)).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -(7 / 6))).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -1.25)).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -1.5)).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -1.75)).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -(11 / 6))).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -1.95)).toBe(0.0);
+      expect(roadNetwork.getRoadHeight(-1, -2)).toBe(0.0);
+    });
+  });
+
   it(".hasEdgeBetween", function() {
     var roadNetwork = new RoadNetwork(terrain);
 
