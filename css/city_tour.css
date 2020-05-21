@@ -53,6 +53,12 @@ h3 {
   background: #2a2b2b;
 }
 
+.menu {
+  max-height: calc(100% - 2.5rem);
+  overflow-y: scroll;
+  box-sizing: border-box;
+}
+
 .section {
   margin-bottom: 1.5rem;
 }
