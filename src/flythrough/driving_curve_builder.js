@@ -55,8 +55,7 @@ let DrivingCurveBuilder = (function() {
       segment2DirectionX = Math.sign(endX - middleX);
       segment2DirectionZ = Math.sign(endZ - middleZ);
 
-      isCurvedIntersectionSegmentRequired = !isFinalPathSegment &&
-                                            !((segment1DirectionX === 0.0 && segment2DirectionX === 0.0) ||
+      isCurvedIntersectionSegmentRequired = !((segment1DirectionX === 0.0 && segment2DirectionX === 0.0) ||
                                               (segment1DirectionZ === 0.0 && segment2DirectionZ === 0.0));
 
       isStraightIntersectionSegmentRequired = !isCurvedIntersectionSegmentRequired;
