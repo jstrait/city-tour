@@ -4,6 +4,10 @@ import { Config } from "./../config";
 
 const MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;
 
+// The distance from the next intersection that a curved turn begins.
+// This indirectly determines the turning curve radius.
+const CURVE_START_DISTANCE = 0.5;
+
 let DrivingCurveBuilder = (function() {
   let build = function(roadNetwork, path) {
     let curvePositionX;
@@ -54,18 +58,18 @@ let DrivingCurveBuilder = (function() {
 
       if (curvePositionZ > middleZ) {
         curvePositionX = middleX;
-        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (middleZ + 0.5) : (middleZ + Config.HALF_STREET_DEPTH));
+        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (middleZ + CURVE_START_DISTANCE) : (middleZ + Config.HALF_STREET_DEPTH));
       }
       else if (curvePositionZ < middleZ) {
         curvePositionX = middleX;
-        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (middleZ - 0.5) : (middleZ - Config.HALF_STREET_DEPTH));
+        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (middleZ - CURVE_START_DISTANCE) : (middleZ - Config.HALF_STREET_DEPTH));
       }
       else if (curvePositionX < middleX) {
-        curvePositionX = (isCurvedIntersectionSegmentRequired ? (middleX - 0.5) : (middleX - Config.HALF_STREET_WIDTH));
+        curvePositionX = (isCurvedIntersectionSegmentRequired ? (middleX - CURVE_START_DISTANCE) : (middleX - Config.HALF_STREET_WIDTH));
         curvePositionZ = middleZ;
       }
       else if (curvePositionX > middleX) {
-        curvePositionX = (isCurvedIntersectionSegmentRequired ? (middleX + 0.5) : (middleX + Config.HALF_STREET_WIDTH));
+        curvePositionX = (isCurvedIntersectionSegmentRequired ? (middleX + CURVE_START_DISTANCE) : (middleX + Config.HALF_STREET_WIDTH));
         curvePositionZ = middleZ;
       }
 
@@ -109,17 +113,17 @@ let DrivingCurveBuilder = (function() {
         controlPointVector = new THREE.Vector3(middleX, roadNetwork.getRoadHeight(middleX, middleZ) + MINIMUM_HEIGHT_OFF_GROUND, middleZ);
 
         if (startX < endX) {
-          curvePositionX += 0.5;
+          curvePositionX += CURVE_START_DISTANCE;
         }
         else if (startX > endX) {
-          curvePositionX -= 0.5;
+          curvePositionX -= CURVE_START_DISTANCE;
         }
 
         if (startZ < endZ) {
-          curvePositionZ += 0.5;
+          curvePositionZ += CURVE_START_DISTANCE;
         }
         else if (startZ > endZ) {
-          curvePositionZ -= 0.5;
+          curvePositionZ -= CURVE_START_DISTANCE;
         }
 
         lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
