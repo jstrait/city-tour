@@ -23,6 +23,10 @@ let DrivingCurveBuilder = (function() {
     let middleZ;
     let endX;
     let endZ;
+    let segment1DirectionX;
+    let segment1DirectionZ;
+    let segment2DirectionX;
+    let segment2DirectionZ;
     let curvePath = new THREE.CurvePath();
     let lineStartVector;
     let controlPointVector;
@@ -46,9 +50,14 @@ let DrivingCurveBuilder = (function() {
         endZ = path[i + 2][1];
       }
 
+      segment1DirectionX = Math.sign(middleX - startX);
+      segment1DirectionZ = Math.sign(middleZ - startZ);
+      segment2DirectionX = Math.sign(endX - middleX);
+      segment2DirectionZ = Math.sign(endZ - middleZ);
+
       isCurvedIntersectionSegmentRequired = !isFinalPathSegment &&
-                                            !((Math.sign(middleX - startX) === 0.0 && Math.sign(endX - middleX) === 0.0) ||
-                                              (Math.sign(middleZ - startZ) === 0.0 && Math.sign(endZ - middleZ) === 0.0));
+                                            !((segment1DirectionX === 0.0 && segment2DirectionX === 0.0) ||
+                                              (segment1DirectionZ === 0.0 && segment2DirectionZ === 0.0));
 
       isStraightIntersectionSegmentRequired = !isCurvedIntersectionSegmentRequired;
 
