@@ -130,7 +130,8 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     }
 
     // Prevent attempting to navigate to non-existent road intersection, which will cause things to blow up
-    if (!roadNetwork.hasIntersection(descentTargetX, descentTargetZ) || !roadNetwork.hasIntersection(drivingTargetX, drivingTargetZ)) {
+    if (!roadNetwork.hasIntersection(targetPositionX + descentTargetX, targetPositionZ + descentTargetZ) ||
+        !roadNetwork.hasIntersection(targetPositionX + drivingTargetX, targetPositionZ + drivingTargetZ)) {
       descentTargetX = 0;
       descentTargetZ = 0;
       drivingTargetX = 0;
