@@ -335,24 +335,24 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
   };
 
   var buildDrivingAnimations = function(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ) {
-    var totalPathLength = 0.0;
+    var totalPathLength = CityTourMath.distanceBetweenPoints(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
     var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * VERTICAL_MODE_DURATION_IN_FRAMES;
-    var path = [[initialPositionX, initialPositionZ]];
-    var roadNavigator = RoadNavigator(roadNetwork, pathFinder, targetPositionX, targetPositionZ);
+    var path = [[initialPositionX, initialPositionZ], [targetPositionX, targetPositionZ]];
     var currentX;
     var currentZ;
     var curvePath;
 
     currentX = initialPositionX;
     currentZ = initialPositionZ;
+
     while (totalPathLength < minPathLength) {
-      totalPathLength += CityTourMath.distanceBetweenPoints(currentX, currentZ, roadNavigator.targetX(), roadNavigator.targetZ());
-      path.push([roadNavigator.targetX(), roadNavigator.targetZ()]);
+      navigator.nextTarget();
 
-      currentX = roadNavigator.targetX();
-      currentZ = roadNavigator.targetZ();
+      totalPathLength += CityTourMath.distanceBetweenPoints(currentX, currentZ, navigator.targetX(), navigator.targetZ());
+      path.push([navigator.targetX(), navigator.targetZ()]);
 
-      roadNavigator.nextTarget();
+      currentX = navigator.targetX();
+      currentZ = navigator.targetZ();
     }
 
     curvePath = DrivingCurveBuilder.build(roadNetwork, path);
