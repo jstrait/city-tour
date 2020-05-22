@@ -338,7 +338,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
   var buildDrivingAnimations = function(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ) {
     var totalPathLength = CityTourMath.distanceBetweenPoints(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
     var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * VERTICAL_MODE_DURATION_IN_FRAMES;
-    var path = [[initialPositionX, initialPositionZ], [targetPositionX, targetPositionZ]];
+    var path = [{x: initialPositionX, z: initialPositionZ}, {x: targetPositionX, z: targetPositionZ}];
     var currentX;
     var currentZ;
     var curvePath;
@@ -350,7 +350,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
       navigator.nextTarget();
 
       totalPathLength += CityTourMath.distanceBetweenPoints(currentX, currentZ, navigator.targetX(), navigator.targetZ());
-      path.push([navigator.targetX(), navigator.targetZ()]);
+      path.push({x: navigator.targetX(), z: navigator.targetZ()});
 
       currentX = navigator.targetX();
       currentZ = navigator.targetZ();

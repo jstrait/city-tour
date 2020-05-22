@@ -21,7 +21,7 @@ var PathFinder = function(roadNetwork) {
     var previous;
 
     while (currentNode.previous !== undefined) {
-      path.unshift([currentNode.x, currentNode.z]);
+      path.unshift({x: currentNode.x, z: currentNode.z});
 
       previous = currentNode.previous;
       currentNode = nodes[previous[0]][previous[1]];

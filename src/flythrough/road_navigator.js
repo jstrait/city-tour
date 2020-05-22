@@ -40,8 +40,8 @@ var RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTar
     }
 
     var nextTargetPoint = path.splice(0, 1);
-    subTargetX = nextTargetPoint[0][0];
-    subTargetZ = nextTargetPoint[0][1];
+    subTargetX = nextTargetPoint[0].x;
+    subTargetZ = nextTargetPoint[0].z;
   };
 
 

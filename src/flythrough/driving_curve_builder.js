@@ -34,22 +34,22 @@ let DrivingCurveBuilder = (function() {
     let controlPointVector;
     let lineEndVector;
 
-    curvePositionX = path[0][0];
-    curvePositionZ = path[0][1];
+    curvePositionX = path[0].x;
+    curvePositionZ = path[0].z;
     for (i = 0; i < path.length - 1; i++) {
       isFinalPathSegment = (i === path.length - 2);
-      startX = path[i][0];
-      startZ = path[i][1];
-      middleX = path[i + 1][0];
-      middleZ = path[i + 1][1];
+      startX = path[i].x;
+      startZ = path[i].z;
+      middleX = path[i + 1].x;
+      middleZ = path[i + 1].z;
 
       if (isFinalPathSegment === true) {
-        endX = path[i + 1][0];
-        endZ = path[i + 1][1];
+        endX = path[i + 1].x;
+        endZ = path[i + 1].z;
       }
       else {
-        endX = path[i + 2][0];
-        endZ = path[i + 2][1];
+        endX = path[i + 2].x;
+        endZ = path[i + 2].z;
       }
 
       segment1DirectionX = Math.sign(middleX - startX);

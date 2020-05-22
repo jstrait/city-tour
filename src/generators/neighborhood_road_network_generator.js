@@ -41,8 +41,8 @@ var NeighborhoodRoadNetworkGenerator = (function() {
     previousIntersectionX = startX;
     previousIntersectionZ = startZ;
     for (i = 0; i < path.length; i++) {
-      nextIntersectionX = path[i][0];
-      nextIntersectionZ = path[i][1];
+      nextIntersectionX = path[i].x;
+      nextIntersectionZ = path[i].z;
 
       // Assumption is that a distance larger than 1 means a bridge, since normal on-surface road paths will involve steps between adjacent
       // coordinates with length 1.

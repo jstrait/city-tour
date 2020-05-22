@@ -48,8 +48,8 @@ describe("PathFinder", function() {
     });
 
     it("returns a valid path if a path exists", function() {
-      expect(pathFinder.shortestPath(0, 0, 1, 0)).toEqual([[1, 0]]);
-      expect(pathFinder.shortestPath(0, 0, 2, -1)).toEqual([[1, 0], [2, 0], [2, -1]]);
+      expect(pathFinder.shortestPath(0, 0, 1, 0)).toEqual([{x: 1, z: 0}]);
+      expect(pathFinder.shortestPath(0, 0, 2, -1)).toEqual([{x: 1, z: 0}, {x: 2, z: 0}, {x: 2, z: -1}]);
     });
   });
 });
