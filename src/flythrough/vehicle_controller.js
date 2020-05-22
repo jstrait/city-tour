@@ -334,17 +334,17 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     return newAnimations;
   };
 
-  var buildDrivingAnimations = function(initial, targetPositionX, targetPositionZ) {
+  var buildDrivingAnimations = function(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ) {
     var totalPathLength = 0.0;
     var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * VERTICAL_MODE_DURATION_IN_FRAMES;
-    var path = [[initial.positionX, initial.positionZ]];
+    var path = [[initialPositionX, initialPositionZ]];
     var roadNavigator = RoadNavigator(roadNetwork, pathFinder, targetPositionX, targetPositionZ);
     var currentX;
     var currentZ;
     var curvePath;
 
-    currentX = initial.positionX;
-    currentZ = initial.positionZ;
+    currentX = initialPositionX;
+    currentZ = initialPositionZ;
     while (totalPathLength < minPathLength) {
       totalPathLength += CityTourMath.distanceBetweenPoints(currentX, currentZ, roadNavigator.targetX(), roadNavigator.targetZ());
       path.push([roadNavigator.targetX(), roadNavigator.targetZ()]);
@@ -379,7 +379,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
       return buildHoveringAnimations(initial, targetPositionX, targetPositionZ);
     }
     else if (verticalMode === DRIVING_MODE) {
-      return buildDrivingAnimations(initial, targetPositionX, targetPositionZ);
+      return buildDrivingAnimations(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ);
     }
 
     return [];
