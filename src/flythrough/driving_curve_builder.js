@@ -98,19 +98,8 @@ let DrivingCurveBuilder = (function() {
         lineStartVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
         controlPointVector = new THREE.Vector3(middleX, roadNetwork.getRoadHeight(middleX, middleZ) + MINIMUM_HEIGHT_OFF_GROUND, middleZ);
 
-        if (startX < endX) {
-          curvePositionX += CURVE_START_DISTANCE;
-        }
-        else if (startX > endX) {
-          curvePositionX -= CURVE_START_DISTANCE;
-        }
-
-        if (startZ < endZ) {
-          curvePositionZ += CURVE_START_DISTANCE;
-        }
-        else if (startZ > endZ) {
-          curvePositionZ -= CURVE_START_DISTANCE;
-        }
+        curvePositionX += ((CURVE_START_DISTANCE * segment1DirectionX) + (CURVE_START_DISTANCE * segment2DirectionX));
+        curvePositionZ += ((CURVE_START_DISTANCE * segment1DirectionZ) + (CURVE_START_DISTANCE * segment2DirectionZ));
 
         lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
