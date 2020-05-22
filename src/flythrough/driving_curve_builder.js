@@ -28,6 +28,8 @@ let DrivingCurveBuilder = (function() {
     let segment2DirectionX;
     let segment2DirectionZ;
     let curvePath = new THREE.CurvePath();
+    let distanceFromMiddleIntersectionX;
+    let distanceFromMiddleIntersectionZ;
     let lineStartVector;
     let controlPointVector;
     let lineEndVector;
@@ -64,22 +66,10 @@ let DrivingCurveBuilder = (function() {
       // Main straight segment
       lineStartVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
-      if (curvePositionZ > middleZ) {
-        curvePositionX = middleX;
-        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (middleZ + CURVE_START_DISTANCE) : (middleZ + Config.HALF_STREET_DEPTH));
-      }
-      else if (curvePositionZ < middleZ) {
-        curvePositionX = middleX;
-        curvePositionZ = (isCurvedIntersectionSegmentRequired ? (middleZ - CURVE_START_DISTANCE) : (middleZ - Config.HALF_STREET_DEPTH));
-      }
-      else if (curvePositionX < middleX) {
-        curvePositionX = (isCurvedIntersectionSegmentRequired ? (middleX - CURVE_START_DISTANCE) : (middleX - Config.HALF_STREET_WIDTH));
-        curvePositionZ = middleZ;
-      }
-      else if (curvePositionX > middleX) {
-        curvePositionX = (isCurvedIntersectionSegmentRequired ? (middleX + CURVE_START_DISTANCE) : (middleX + Config.HALF_STREET_WIDTH));
-        curvePositionZ = middleZ;
-      }
+      distanceFromMiddleIntersectionX = (isCurvedIntersectionSegmentRequired === true) ? CURVE_START_DISTANCE : Config.HALF_STREET_WIDTH;
+      distanceFromMiddleIntersectionZ = (isCurvedIntersectionSegmentRequired === true) ? CURVE_START_DISTANCE : Config.HALF_STREET_DEPTH;
+      curvePositionX = middleX - (distanceFromMiddleIntersectionX * segment1DirectionX);
+      curvePositionZ = middleZ - (distanceFromMiddleIntersectionZ * segment1DirectionZ);
 
       lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
@@ -91,22 +81,10 @@ let DrivingCurveBuilder = (function() {
       if (isStraightIntersectionSegmentRequired === true) {
         lineStartVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
-        if (curvePositionZ > middleZ) {
-          curvePositionX = middleX;
-          curvePositionZ = (isFinalPathSegment ? middleZ : (curvePositionZ - Config.STREET_DEPTH));
-        }
-        else if (curvePositionZ < middleZ) {
-          curvePositionX = middleX;
-          curvePositionZ = (isFinalPathSegment ? middleZ : (curvePositionZ + Config.STREET_DEPTH));
-        }
-        else if (curvePositionX < middleX) {
-          curvePositionX = (isFinalPathSegment ? middleX : (curvePositionX + Config.STREET_WIDTH));
-          curvePositionZ = middleZ;
-        }
-        else if (curvePositionX > middleX) {
-          curvePositionX = (isFinalPathSegment ? middleX : (curvePositionX - Config.STREET_WIDTH));
-          curvePositionZ = middleZ;
-        }
+        distanceFromMiddleIntersectionX = ((isFinalPathSegment === true) ? 0 : Config.HALF_STREET_WIDTH);
+        distanceFromMiddleIntersectionZ = ((isFinalPathSegment === true) ? 0 : Config.HALF_STREET_DEPTH);
+        curvePositionX = middleX + (distanceFromMiddleIntersectionX * segment1DirectionX);
+        curvePositionZ = middleZ + (distanceFromMiddleIntersectionZ * segment1DirectionZ);
 
         lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
