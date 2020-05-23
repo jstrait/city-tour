@@ -14,8 +14,11 @@ var RenderView = function(container, scene) {
   var dirtyFromResize = false;
 
   var resize = function() {
-    var width = container.clientWidth;
-    var height = container.clientHeight;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
+    container.style.width = `${width}px`;
+    container.style.height = `${height}px`;
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
