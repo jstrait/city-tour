@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
     <title>City Tour</title>
     <link rel="stylesheet" type="text/css" media="all" href="city_tour.css" />
 </head>
@@ -12,7 +12,7 @@
       <div class="block">
         <a id="menu-editor-title" href="javascript:void(0);" class="menu-title inline-block no-underline">New City</a><a id="menu-about-title" href="javascript:void(0);" class="menu-title inline-block no-underline">About</a>
       </div>
-      <div id="menu-editor" class="display-none menu bg-white bt-thin bt-gray" style="padding: 1.5rem;">
+      <div id="menu-editor" class="display-none menu bg-white bt-thin bt-gray">
         <div class="section">
           <h3>Terrain</h3>
           <span class="display-none">
@@ -82,7 +82,7 @@
         </span>
       </div>
 
-      <div id="menu-about" class="display-none menu bg-white bt-thin bt-gray center" style="padding: 3.0rem;">
+      <div id="menu-about" class="display-none menu bg-white bt-thin bt-gray center">
         <h1 class="mt0">City Tour</h1>
         <p class="mb0">Code available <a href="https://github.com/jstrait/city-tour/">at GitHub</a></p>
         <p class="mt0 mb0">Made using <a href="http://threejs.org">three.js</a> and WebGL</p>
@@ -93,7 +93,7 @@
 
     <div id="navigation-controls-container" class="absolute bottom-0 right-0 bg-white">
       <a id="navigation-controls-toggle" href="javascript:void(0);" class="block full-width center no-underline">&#9650;</a>
-      <div id="navigation-controls-inner-container" class="display-none" style="padding: 0.5rem 1.0rem;">
+      <div id="navigation-controls-inner-container" class="display-none navigation-controls-container">
         <span class="flex flex-align-center">
           <label>Rotation</label>
           <span class="control-legend">&orarr;</span>
@@ -111,7 +111,7 @@
           <button id="zoom-out" class="user-select-none">Zoom Out</button>
         </span>
       </div>
-      <div class="center" style="padding: 0.5rem 1.0rem;">
+      <div class="center navigation-controls-container">
         <button id="flythrough-toggle">Take a Tour</button>
       </div>
     </div>

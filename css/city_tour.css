@@ -59,6 +59,14 @@ h3 {
   box-sizing: border-box;
 }
 
+#menu-editor {
+  padding: 1.5rem;
+}
+
+#menu-about {
+  padding: 3.0rem;
+}
+
 .section {
   margin-bottom: 1.5rem;
 }
@@ -82,9 +90,31 @@ input[type="range"] {
   background: #c1c1c1;
 }
 
+.navigation-controls-container {
+  padding: 0.5rem 1.0rem;
+}
+
 @media (max-width: 768px) {
   #loading-message {
     font-size: 2.0rem;
+  }
+}
+
+@supports(padding: max(0px)) {
+  .navigation-controls-container {
+    padding-right: max(1.0rem, env(safe-area-inset-right));
+  }
+
+  .menu-title:last-child {
+    padding-right: max(1.0rem, env(safe-area-inset-right));
+  }
+
+  #menu-editor {
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
+
+  #menu-about {
+    padding-right: max(3.0rem, env(safe-area-inset-right));
   }
 }
 
