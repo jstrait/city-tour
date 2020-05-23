@@ -23,6 +23,8 @@ let DrivingCurveBuilder = (function() {
     let middleZ;
     let endX;
     let endZ;
+    let controlPointX;
+    let controlPointZ;
     let segment1DirectionX;
     let segment1DirectionZ;
     let segment2DirectionX;
@@ -31,7 +33,8 @@ let DrivingCurveBuilder = (function() {
     let distanceFromMiddleIntersectionX;
     let distanceFromMiddleIntersectionZ;
     let lineStartVector;
-    let controlPointVector;
+    let controlPointVector1;
+    let controlPointVector2;
     let lineEndVector;
 
     curvePositionX = path[0].x;
@@ -96,14 +99,25 @@ let DrivingCurveBuilder = (function() {
       // Curve to next straight segment
       if (isCurvedIntersectionSegmentRequired === true) {
         lineStartVector = lineEndVector;
-        controlPointVector = new THREE.Vector3(middleX, roadNetwork.getRoadHeight(middleX, middleZ) + MINIMUM_HEIGHT_OFF_GROUND, middleZ);
+
+        controlPointX = middleX - (Config.HALF_STREET_WIDTH * segment1DirectionX);
+        controlPointZ = middleZ - (Config.HALF_STREET_DEPTH * segment1DirectionZ);
+        controlPointVector1 = new THREE.Vector3(controlPointX,
+                                                roadNetwork.getRoadHeight(controlPointX, controlPointZ) + MINIMUM_HEIGHT_OFF_GROUND,
+                                                controlPointZ);
+
+        controlPointX = middleX + (Config.HALF_STREET_WIDTH * segment2DirectionX);
+        controlPointZ = middleZ + (Config.HALF_STREET_DEPTH * segment2DirectionZ);
+        controlPointVector2 = new THREE.Vector3(controlPointX,
+                                                roadNetwork.getRoadHeight(controlPointX, controlPointZ) + MINIMUM_HEIGHT_OFF_GROUND,
+                                                controlPointZ);
 
         curvePositionX += ((CURVE_START_DISTANCE * segment1DirectionX) + (CURVE_START_DISTANCE * segment2DirectionX));
         curvePositionZ += ((CURVE_START_DISTANCE * segment1DirectionZ) + (CURVE_START_DISTANCE * segment2DirectionZ));
 
         lineEndVector = new THREE.Vector3(curvePositionX, roadNetwork.getRoadHeight(curvePositionX, curvePositionZ) + MINIMUM_HEIGHT_OFF_GROUND, curvePositionZ);
 
-        curve = new THREE.QuadraticBezierCurve3(lineStartVector, controlPointVector, lineEndVector);
+        curve = new THREE.CubicBezierCurve3(lineStartVector, controlPointVector1, controlPointVector2, lineEndVector);
         curvePath.curves.push(curve);
       }
     }
