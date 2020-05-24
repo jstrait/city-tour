@@ -108,7 +108,7 @@ var CityEditorController = function(cityConfigService, messageBroker) {
   maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
   neighborhoodCount.addEventListener('change', function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
 
-  container.addEventListener('click', hideMenus);
+  container.addEventListener('click', hideMenus, false);
   editorMenuTitle.addEventListener('click', toggleEditMenu, false);
   aboutMenuTitle.addEventListener('click', toggleAboutMenu, false);
   editorMenu.addEventListener('click', preventClickThru, false);

@@ -130,13 +130,13 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
 
   window.addEventListener("blur", function(e) {
     timer.pause();
-  });
+  }, false);
 
   window.addEventListener("focus", function(e) {
     if (timer.isPaused()) {
       timer.start();
     }
-  });
+  }, false);
 
 
   return {
