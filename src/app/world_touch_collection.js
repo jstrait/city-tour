@@ -10,39 +10,40 @@ import { WorldTouch } from "./world_touch";
 */
 var WorldTouchCollection = function(el, camera, screenTouches, terrain) {
   var worldTouches = [];
+  var normalizedScreenVector;
   var distanceInScreenPixels;
-  var phantomMidpointTouch;
+  var worldMidpointTouch;
   var worldMidpoint;
   var normalizedScreenMidpoint;
   var angleBetweenTouches;
   var i;
 
   for (i = 0; i < screenTouches.length; i++) {
-    worldTouches.push(WorldTouch(el, camera, screenTouches[i].x, screenTouches[i].y, terrain));
+    normalizedScreenVector = new THREE.Vector3(((screenTouches[i].x / (el.width / window.devicePixelRatio)) * 2) - 1,
+                                               (-(screenTouches[i].y / (el.height / window.devicePixelRatio)) * 2) + 1,
+                                               0.5);
+    worldTouches.push(WorldTouch(camera, normalizedScreenVector, terrain));
   }
 
   if (worldTouches.length === 1) {
     distanceInScreenPixels = 0.0;
     worldMidpoint = new THREE.Vector3(worldTouches[0].worldX(), worldTouches[0].worldY(), worldTouches[0].worldZ());
 
-    normalizedScreenMidpoint = new THREE.Vector2(worldTouches[0].normalizedScreenX(),
-                                                 worldTouches[0].normalizedScreenY());
+    normalizedScreenMidpoint = new THREE.Vector3(worldTouches[0].normalizedScreenX(),
+                                                 worldTouches[0].normalizedScreenY(),
+                                                 0.0);
     angleBetweenTouches = 0.0;
   }
   else {
-    distanceInScreenPixels = CityTourMath.distanceBetweenPoints(worldTouches[0].screenPixelX(),
-                                                                worldTouches[0].screenPixelY(),
-                                                                worldTouches[1].screenPixelX(),
-                                                                worldTouches[1].screenPixelY());
+    distanceInScreenPixels = CityTourMath.distanceBetweenPoints(screenTouches[0].x, screenTouches[0].y,
+                                                                screenTouches[1].x, screenTouches[1].y);
 
-    // Simulate a touch in the middle of the actual touchpoints, so that we can determine the
-    // terrain-aware world position in that spot. This will be the target point that actions
-    // such as zooming or rotating are based around.
-    phantomMidpointTouch = WorldTouch(el, camera, (screenTouches[0].x + screenTouches[1].x) / 2, (screenTouches[0].y + screenTouches[1].y) / 2, terrain);
-    worldMidpoint = new THREE.Vector3(phantomMidpointTouch.worldX(), phantomMidpointTouch.worldY(), phantomMidpointTouch.worldZ());
+    normalizedScreenMidpoint = new THREE.Vector3((worldTouches[0].normalizedScreenX() + worldTouches[1].normalizedScreenX()) / 2,
+                                                 (worldTouches[0].normalizedScreenY() + worldTouches[1].normalizedScreenY()) / 2,
+                                                 0.0);
 
-    normalizedScreenMidpoint = new THREE.Vector2((worldTouches[0].normalizedScreenX() + worldTouches[1].normalizedScreenX()) / 2,
-                                                 (worldTouches[0].normalizedScreenY() + worldTouches[1].normalizedScreenY()) / 2);
+    worldMidpointTouch = WorldTouch(camera, normalizedScreenMidpoint, terrain);
+    worldMidpoint = new THREE.Vector3(worldMidpointTouch.worldX(), worldMidpointTouch.worldY(), worldMidpointTouch.worldZ());
 
     angleBetweenTouches = Math.atan2(-(screenTouches[1].x - screenTouches[0].x),
                                      -(screenTouches[1].y - screenTouches[0].y));

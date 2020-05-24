@@ -10,6 +10,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
   var ZOOM_DELTA_PERCENTAGE = 0.01;
+  var SCREEN_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
@@ -42,9 +43,9 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   };
 
   var setTargetOfAction = function(e) {
-    var el = sceneView.domElement();
-    var centerOfScreenPhantomTouch = WorldTouch(el, sceneView.camera(), el.offsetWidth / 2, el.offsetHeight / 2, terrain);
-    mapCamera.setCenterOfAction(new THREE.Vector3(centerOfScreenPhantomTouch.worldX(), centerOfScreenPhantomTouch.worldY(), centerOfScreenPhantomTouch.worldZ()));
+    var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
+
+    mapCamera.setCenterOfAction(new THREE.Vector3(centerOfScreenWorldTouch.worldX(), centerOfScreenWorldTouch.worldY(), centerOfScreenWorldTouch.worldZ()));
   };
 
   var setAzimuthAngle = function(e) {

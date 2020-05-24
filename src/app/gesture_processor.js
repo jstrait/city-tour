@@ -197,8 +197,8 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
         }
       }
 
-      yDistanceDelta = currentTouches.touches()[0].screenPixelY() - previousTouches.touches()[0].screenPixelY();
-      tiltAngleDelta = (yDistanceDelta / 100) * (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
+      yDistanceDelta = currentTouches.touches()[0].normalizedScreenY() - previousTouches.touches()[0].normalizedScreenY();
+      tiltAngleDelta = -yDistanceDelta * (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
       mapCamera.tiltCamera(tiltAngleDelta);
     }
     else if (currentGesture === ROTATE) {
