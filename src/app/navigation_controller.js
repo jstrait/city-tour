@@ -105,8 +105,10 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
 
   containerToggle.addEventListener('click', toggleNavigationControls, false);
   azimuthAngleControl.addEventListener('mousedown', setTargetOfAction, false);
+  azimuthAngleControl.addEventListener('touchstart', setTargetOfAction, false);
   azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
   tiltAngleControl.addEventListener('mousedown', setTargetOfAction, false);
+  tiltAngleControl.addEventListener('touchstart', setTargetOfAction, false);
   tiltAngleControl.addEventListener('input', setTiltAngle, false);
   zoomInButton.addEventListener('mousedown', startZoomIn, false);
   zoomInButton.addEventListener('mouseup', stopZoom, false);
