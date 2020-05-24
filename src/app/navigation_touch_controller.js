@@ -19,6 +19,28 @@ var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, m
 
   var onTouchStart = function(e) {
     currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.shiftKey, e.altKey);
+
+    // This is here to prevent the renderer from being frozen and not being updated
+    // in response to touch events when a tab loses and then regains focus in iOS.
+    // `TimerLoop` responds to this message by restarting the timer if it is stopped.
+    //
+    // When the browser tab loses focus, the main app timer is paused, and it is
+    // restarted again when the tab regains focus. (This is implemented in `TimerLoop`
+    // via listeners for "focus" on "blur" events on the `window` object). However, on
+    // iOS Safari the "focus" event does not fire immediately when the tab is shown - it
+    // requires the user to interact with it first. However, touch events on the main
+    // <canvas> element do _not_ seem to cause the "focus" event to fire for some reason,
+    // unlike interactions with other elements. I suspect the real issue is that touch
+    // events in general do not cause the "focus" event to be fired.
+    //
+    // The end result is that without the fix below, when coming back to a tab, the canvas
+    // will not be re-rendered in response to touch events, and the page will appear to be
+    // frozen. However, this is only a rendering problem, and behind the scenes the camera
+    // will be updated. When the user then interacts with another page element, the app
+    // timer will be reactivated and the main canvas will be re-rendered, with the camera
+    // possibly suddenly making a big jump.
+    messageBroker.publish("touch.focus", {});
+
     e.preventDefault();
   };
 

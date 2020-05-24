@@ -90,7 +90,14 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     syncToCamera();
   };
 
+  var restartTimer = function() {
+    if (timer.isPaused()) {
+      timer.start();
+    }
+  };
+
   var id1 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
+  var id2 = messageBroker.addSubscriber("touch.focus", function(data) { restartTimer(); });
 
   reset(initialWorldData);
 
@@ -132,11 +139,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     timer.pause();
   }, false);
 
-  window.addEventListener("focus", function(e) {
-    if (timer.isPaused()) {
-      timer.start();
-    }
-  }, false);
+  window.addEventListener("focus", function(e) { restartTimer(); }, false);
 
 
   return {
