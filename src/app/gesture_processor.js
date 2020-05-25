@@ -105,11 +105,10 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     }
 
     if (isAltKey) {
-      var previousGesture = currentGesture;
       var distanceBetweenTouchesDeltaX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
       var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
 
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
+      if (mapCamera.centerOfAction() === undefined) {
         setCenterOfAction(currentTouches);
       }
 
@@ -131,10 +130,9 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       }
     }
     else if (isShiftKey) {
-      var previousGesture = currentGesture;
       currentGesture = PINCH_ZOOM;
 
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
+      if (mapCamera.centerOfAction() === undefined) {
         setCenterOfAction(currentTouches);
       }
 
@@ -170,7 +168,6 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     var yDistanceDelta, tiltAngleDelta;
     var distanceBetweenTouchesDelta, baseZoomDistanceDelta, zoomDistanceDelta;
 
-    var previousGesture = currentGesture;
     currentGesture = determineMultiTouchGesture(currentTouches);
 
     if (currentGesture === undefined) {
@@ -178,7 +175,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     }
 
     if (currentGesture === TILT) {
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
+      if (mapCamera.centerOfAction() === undefined) {
         setCenterOfAction(currentTouches);
       }
 
@@ -187,14 +184,14 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       mapCamera.tiltCamera(tiltAngleDelta);
     }
     else if (currentGesture === ROTATE) {
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
+      if (mapCamera.centerOfAction() === undefined) {
         setCenterOfAction(currentTouches);
       }
 
       mapCamera.rotateAzimuthAroundCenterOfAction(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
     else if (currentGesture === PINCH_ZOOM) {
-      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
+      if (mapCamera.centerOfAction() === undefined) {
         setCenterOfAction(currentTouches);
       }
 
@@ -245,6 +242,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
     }
     else if (previousTouches === undefined) {
+      mapCamera.setCenterOfAction(undefined);
       mapCamera.setIsVelocityEnabled(false);
     }
     else if (currentTouches.count() === 1) {

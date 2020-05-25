@@ -39,7 +39,12 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     centerOfAction = newCenterOfAction;
     zoomProperties = undefined;
 
-    sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    if (newCenterOfAction === undefined) {
+      sceneView.centerOfActionMarkerMesh().position.set(0.0, -100000.0, 0.0);
+    }
+    else {
+      sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
+    }
   };
 
   var minimumCameraHeightAtCoordinates = function(terrain, cameraX, cameraZ) {
