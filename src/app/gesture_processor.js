@@ -110,12 +110,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
 
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
-          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-        }
-        else {
-          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
-        }
+        setCenterOfAction(currentTouches);
       }
 
       if (Math.abs(distanceBetweenTouchesDeltaX) > Math.abs(distanceBetweenTouchesDeltaY)) {
@@ -140,12 +135,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       currentGesture = PINCH_ZOOM;
 
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
-          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-        }
-        else {
-          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
-        }
+        setCenterOfAction(currentTouches);
       }
 
       var distanceBetweenTouchesDelta = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
@@ -189,12 +179,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
 
     if (currentGesture === TILT) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
-          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-        }
-        else {
-          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
-        }
+        setCenterOfAction(currentTouches);
       }
 
       yDistanceDelta = currentTouches.touches()[0].normalizedScreenY() - previousTouches.touches()[0].normalizedScreenY();
@@ -203,24 +188,14 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     }
     else if (currentGesture === ROTATE) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
-          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-        }
-        else {
-          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
-        }
+        setCenterOfAction(currentTouches);
       }
 
       mapCamera.rotateAzimuthAroundCenterOfAction(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches());
     }
     else if (currentGesture === PINCH_ZOOM) {
       if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
-        if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
-          mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
-        }
-        else {
-          mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
-        }
+        setCenterOfAction(currentTouches);
       }
 
       distanceBetweenTouchesDelta = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
@@ -229,6 +204,15 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       zoomDistanceDelta = (distanceBetweenTouchesDelta > 0) ? baseZoomDistanceDelta : -baseZoomDistanceDelta;
 
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
+    }
+  };
+
+  var setCenterOfAction = function(currentTouches) {
+    if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
+      mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
+    }
+    else {
+      mapCamera.setCenterOfAction(clampedCenterOfAction(currentTouches));
     }
   };
 
