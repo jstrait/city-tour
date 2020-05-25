@@ -109,7 +109,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       var distanceBetweenTouchesDeltaX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
       var distanceBetweenTouchesDeltaY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
 
-      if (previousGesture !== ROTATE && previousGesture !== TILT) {
+      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
         if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
           mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
         }
@@ -139,7 +139,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       var previousGesture = currentGesture;
       currentGesture = PINCH_ZOOM;
 
-      if (previousGesture !== PINCH_ZOOM) {
+      if (previousGesture !== PINCH_ZOOM && previousGesture !== ROTATE && previousGesture !== TILT) {
         if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
           mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
         }
