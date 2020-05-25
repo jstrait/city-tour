@@ -149,17 +149,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       }
 
       var distanceBetweenTouchesDelta = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
-      var baseZoomDistanceDelta = 0.025;
-      var zoomDistanceDelta;
-      if (distanceBetweenTouchesDelta > 0) {
-        zoomDistanceDelta = -baseZoomDistanceDelta;
-      }
-      else if (distanceBetweenTouchesDelta < 0) {
-        zoomDistanceDelta = baseZoomDistanceDelta;
-      }
-      else {
-        zoomDistanceDelta = 0.0;
-      }
+      var zoomDistanceDelta = -1.25 * distanceBetweenTouchesDelta;
 
       if (zoomDistanceDelta !== 0.0) {
         mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
@@ -179,7 +169,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
   var processMultiTouchGestures = function(currentTouches) {
     var centerOfScreenTouch;
     var yDistanceDelta, tiltAngleDelta;
-    var distanceBetweenTouchesDelta, baseZoomDistanceDelta, zoomDistanceDelta;
+    var distanceBetweenTouchesDelta, zoomDistanceDelta;
 
     currentGesture = determineMultiTouchGesture(currentTouches);
 
@@ -210,9 +200,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       }
 
       distanceBetweenTouchesDelta = currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels();
-
-      baseZoomDistanceDelta = 0.025;
-      zoomDistanceDelta = (distanceBetweenTouchesDelta > 0) ? baseZoomDistanceDelta : -baseZoomDistanceDelta;
+      zoomDistanceDelta = 0.01 * distanceBetweenTouchesDelta;
 
       mapCamera.zoomTowardCenterOfAction(zoomDistanceDelta);
     }
