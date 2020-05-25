@@ -132,7 +132,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
 
         if (mapCamera.centerOfTilt() === undefined) {
           centerOfScreenTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
-          mapCamera.setCenterOfTilt(new THREE.Vector3(centerOfScreenTouch.worldX(), centerOfScreenTouch.worldY(), centerOfScreenTouch.worldZ()));
+          mapCamera.setCenterOfTilt(centerOfScreenTouch.worldPosition());
         }
 
         mapCamera.tiltCamera(tiltAngleDelta);
@@ -160,9 +160,9 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       currentGesture = PAN;
       panCamera(currentTouches);
 
-      sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
-                                                     currentTouches.touches()[0].worldY(),
-                                                     currentTouches.touches()[0].worldZ());
+      sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldPosition().x,
+                                                     currentTouches.touches()[0].worldPosition().y,
+                                                     currentTouches.touches()[0].worldPosition().z);
       sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
     }
   };
@@ -181,7 +181,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     if (currentGesture === TILT) {
       if (mapCamera.centerOfTilt() === undefined) {
         centerOfScreenTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
-        mapCamera.setCenterOfTilt(new THREE.Vector3(centerOfScreenTouch.worldX(), centerOfScreenTouch.worldY(), centerOfScreenTouch.worldZ()));
+        mapCamera.setCenterOfTilt(centerOfScreenTouch.worldPosition());
       }
 
       yDistanceDelta = currentTouches.touches()[0].normalizedScreenY() - previousTouches.touches()[0].normalizedScreenY();
@@ -252,12 +252,12 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       processSingleTouchGestures(currentTouches, isShiftKey, isAltKey);
     }
     else if (currentTouches.count() === 2) {
-      sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldX(),
-                                                     currentTouches.touches()[0].worldY(),
-                                                     currentTouches.touches()[0].worldZ());
-      sceneView.touchPoint2MarkerMesh().position.set(currentTouches.touches()[1].worldX(),
-                                                     currentTouches.touches()[1].worldY(),
-                                                     currentTouches.touches()[1].worldZ());
+      sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldPosition().x,
+                                                     currentTouches.touches()[0].worldPosition().y,
+                                                     currentTouches.touches()[0].worldPosition().z);
+      sceneView.touchPoint2MarkerMesh().position.set(currentTouches.touches()[1].worldPosition().x,
+                                                     currentTouches.touches()[1].worldPosition().y,
+                                                     currentTouches.touches()[1].worldPosition().z);
 
       processMultiTouchGestures(currentTouches);
     }

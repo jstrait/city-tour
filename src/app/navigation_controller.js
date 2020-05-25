@@ -45,13 +45,13 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   var setTargetOfAction = function(e) {
     var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
 
-    mapCamera.setCenterOfAction(new THREE.Vector3(centerOfScreenWorldTouch.worldX(), centerOfScreenWorldTouch.worldY(), centerOfScreenWorldTouch.worldZ()));
+    mapCamera.setCenterOfAction(centerOfScreenWorldTouch.worldPosition());
   };
 
   var setCenterOfTilt = function(e) {
     var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
 
-    mapCamera.setCenterOfTilt(new THREE.Vector3(centerOfScreenWorldTouch.worldX(), centerOfScreenWorldTouch.worldY(), centerOfScreenWorldTouch.worldZ()));
+    mapCamera.setCenterOfTilt(centerOfScreenWorldTouch.worldPosition());
   };
 
   var setAzimuthAngle = function(e) {

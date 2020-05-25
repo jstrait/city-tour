@@ -42,18 +42,12 @@ var WorldTouch = function(camera, normalizedScreenVector, terrain) {
 
   var normalizedScreenX = normalizedScreenVector.x;
   var normalizedScreenY = normalizedScreenVector.y;
-
   var worldPosition = screenCoordinateToWorldPosition(camera);
-  var worldX = worldPosition.x;
-  var worldY = worldPosition.y;
-  var worldZ = worldPosition.z;
 
   return {
     normalizedScreenX: function() { return normalizedScreenX; },
     normalizedScreenY: function() { return normalizedScreenY; },
-    worldX: function() { return worldX; },
-    worldY: function() { return worldY; },
-    worldZ: function() { return worldZ; },
+    worldPosition: function() { return worldPosition; },
   };
 };
 

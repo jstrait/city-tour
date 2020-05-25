@@ -27,7 +27,7 @@ var WorldTouchCollection = function(el, camera, screenTouches, terrain) {
 
   if (worldTouches.length === 1) {
     distanceInScreenPixels = 0.0;
-    worldMidpoint = new THREE.Vector3(worldTouches[0].worldX(), worldTouches[0].worldY(), worldTouches[0].worldZ());
+    worldMidpoint = worldTouches[0].worldPosition();
 
     normalizedScreenMidpoint = new THREE.Vector3(worldTouches[0].normalizedScreenX(),
                                                  worldTouches[0].normalizedScreenY(),
@@ -43,7 +43,7 @@ var WorldTouchCollection = function(el, camera, screenTouches, terrain) {
                                                  0.0);
 
     worldMidpointTouch = WorldTouch(camera, normalizedScreenMidpoint, terrain);
-    worldMidpoint = new THREE.Vector3(worldMidpointTouch.worldX(), worldMidpointTouch.worldY(), worldMidpointTouch.worldZ());
+    worldMidpoint = worldMidpointTouch.worldPosition();
 
     angleBetweenTouches = Math.atan2(-(screenTouches[1].x - screenTouches[0].x),
                                      -(screenTouches[1].y - screenTouches[0].y));
