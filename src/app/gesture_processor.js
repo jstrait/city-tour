@@ -25,80 +25,32 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
   var currentGesture;
   var previousTouches;
 
-  // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
-  //
-  // Instead of using the camera's current position to unproject from the screen coordinate to the world coordinate,
-  // this always uses the equivalent of a camera looking straight down on the center of orbit, from the zoom distance away.
-  //
-  // The reason for doing this is so that the rate of movement is uniform regardless of the camera's tilt angle.
-  // I.e., at the same zoom level, moving your mouse/finger 10 pixels on the screen will result in the same amount
-  // of world movement if the camera is looking straight down, or straight forward. It also means that the location on
-  // the screen (i.e. top-left vs. center vs. bottom-right) won't affect the amount of world movement when the camera is
-  // tilted at an angle other than straight down.
-  var screenCoordinateToWorldCoordinateStraightDown = function(normalizedScreenVector) {
-    var straightDownEuler, straightDownPosition, straightDownQuaternion, straightDownScale, straightDownMatrix;
-    var matrix;
-    var direction, distanceToXZPlane, worldPosition;
-    var camera = sceneView.camera();
+  var processGesture = function(currentTouches, isShiftKey, isAltKey) {
+    if (currentTouches === undefined) {
+      currentGesture = undefined;
+      mapCamera.setIsVelocityEnabled(true);
+      sceneView.touchPoint1MarkerMesh().position.set(0.0, 0.0, 0.0);
+      sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
+    }
+    else if (previousTouches === undefined) {
+      mapCamera.setCenterOfAction(undefined);
+      mapCamera.setIsVelocityEnabled(false);
+    }
+    else if (currentTouches.count() === 1) {
+      processSingleTouchGestures(currentTouches, isShiftKey, isAltKey);
+    }
+    else if (currentTouches.count() === 2) {
+      sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldPosition().x,
+                                                     currentTouches.touches()[0].worldPosition().y,
+                                                     currentTouches.touches()[0].worldPosition().z);
+      sceneView.touchPoint2MarkerMesh().position.set(currentTouches.touches()[1].worldPosition().x,
+                                                     currentTouches.touches()[1].worldPosition().y,
+                                                     currentTouches.touches()[1].worldPosition().z);
 
-    // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
-    straightDownEuler = new THREE.Euler(-HALF_PI, camera.rotation.y, 0.0, 'YXZ');
-    straightDownPosition = new THREE.Vector3(mapCamera.positionX(), mapCamera.positionY(), mapCamera.positionZ());
-    straightDownQuaternion = new THREE.Quaternion();
-    straightDownQuaternion.setFromEuler(straightDownEuler);
-    straightDownScale = camera.scale.clone();
-    straightDownMatrix = new THREE.Matrix4().compose(straightDownPosition, straightDownQuaternion, straightDownScale);
-
-    // Unproject from the simulated camera position
-    matrix = new THREE.Matrix4();
-    matrix.multiplyMatrices(straightDownMatrix, matrix.getInverse(camera.projectionMatrix));
-    normalizedScreenVector.applyMatrix4(matrix);
-
-    direction = normalizedScreenVector.sub(straightDownPosition).normalize();
-    distanceToXZPlane = -(straightDownPosition.y / direction.y);
-    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToXZPlane));
-
-    return worldPosition;
-  };
-
-  var panCamera = function(currentTouches) {
-    var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x,
-                                                         currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y,
-                                                         0.0);
-
-    var worldDragStart = new THREE.Vector3(mapCamera.positionX(), 0.0, mapCamera.positionZ());
-    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance);
-    var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
-                                              worldDragEnd.y - worldDragStart.y,
-                                              worldDragEnd.z - worldDragStart.z);
-
-    mapCamera.pan(worldDragDistance.x, worldDragDistance.z);
-  };
-
-  var determineMultiTouchGesture = function(currentTouches) {
-    var screenAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
-    var touchPointsAreHorizontal = screenAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
-                                   screenAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
-
-    if (previousTouches.count() !== 2) {
-      return undefined;
+      processMultiTouchGestures(currentTouches);
     }
 
-    if (currentGesture === TILT) {
-      return TILT;
-    }
-    else if (currentGesture === undefined && touchPointsAreHorizontal) {
-      return TILT;
-    }
-    else if (Math.abs(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches()) >= MIN_ROTATION_ANGLE) {
-      return ROTATE;
-    }
-    else if (Math.abs(currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels()) >= MIN_ZOOM_DELTA) {
-      return PINCH_ZOOM;
-    }
-    else {
-      return currentGesture;
-    }
+    previousTouches = currentTouches;
   };
 
   var processSingleTouchGestures = function(currentTouches, isShiftKey, isAltKey) {
@@ -207,6 +159,32 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     }
   };
 
+  var determineMultiTouchGesture = function(currentTouches) {
+    var screenAngleBetweenTouches = Math.abs(currentTouches.angleBetweenTouches());
+    var touchPointsAreHorizontal = screenAngleBetweenTouches >= MIN_TILT_GESTURE_START_ANGLE &&
+                                   screenAngleBetweenTouches <= MAX_TILT_GESTURE_START_ANGLE;
+
+    if (previousTouches.count() !== 2) {
+      return undefined;
+    }
+
+    if (currentGesture === TILT) {
+      return TILT;
+    }
+    else if (currentGesture === undefined && touchPointsAreHorizontal) {
+      return TILT;
+    }
+    else if (Math.abs(previousTouches.angleBetweenTouches() - currentTouches.angleBetweenTouches()) >= MIN_ROTATION_ANGLE) {
+      return ROTATE;
+    }
+    else if (Math.abs(currentTouches.distanceInScreenPixels() - previousTouches.distanceInScreenPixels()) >= MIN_ZOOM_DELTA) {
+      return PINCH_ZOOM;
+    }
+    else {
+      return currentGesture;
+    }
+  };
+
   var setCenterOfAction = function(currentTouches) {
     if (terrain.isPointInBounds(currentTouches.worldMidpoint().x, currentTouches.worldMidpoint().z)) {
       mapCamera.setCenterOfAction(currentTouches.worldMidpoint());
@@ -237,32 +215,54 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     return intersectionPoint;
   };
 
-  var processGesture = function(currentTouches, isShiftKey, isAltKey) {
-    if (currentTouches === undefined) {
-      currentGesture = undefined;
-      mapCamera.setIsVelocityEnabled(true);
-      sceneView.touchPoint1MarkerMesh().position.set(0.0, 0.0, 0.0);
-      sceneView.touchPoint2MarkerMesh().position.set(0.0, 0.0, 0.0);
-    }
-    else if (previousTouches === undefined) {
-      mapCamera.setCenterOfAction(undefined);
-      mapCamera.setIsVelocityEnabled(false);
-    }
-    else if (currentTouches.count() === 1) {
-      processSingleTouchGestures(currentTouches, isShiftKey, isAltKey);
-    }
-    else if (currentTouches.count() === 2) {
-      sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldPosition().x,
-                                                     currentTouches.touches()[0].worldPosition().y,
-                                                     currentTouches.touches()[0].worldPosition().z);
-      sceneView.touchPoint2MarkerMesh().position.set(currentTouches.touches()[1].worldPosition().x,
-                                                     currentTouches.touches()[1].worldPosition().y,
-                                                     currentTouches.touches()[1].worldPosition().z);
+  var panCamera = function(currentTouches) {
+    var normalizedScreenDragDistance = new THREE.Vector3(currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x,
+                                                         currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y,
+                                                         0.0);
 
-      processMultiTouchGestures(currentTouches);
-    }
+    var worldDragStart = new THREE.Vector3(mapCamera.positionX(), 0.0, mapCamera.positionZ());
+    var worldDragEnd = screenCoordinateToWorldCoordinateStraightDown(normalizedScreenDragDistance);
+    var worldDragDistance = new THREE.Vector3(worldDragEnd.x - worldDragStart.x,
+                                              worldDragEnd.y - worldDragStart.y,
+                                              worldDragEnd.z - worldDragStart.z);
 
-    previousTouches = currentTouches;
+    mapCamera.pan(worldDragDistance.x, worldDragDistance.z);
+  };
+
+  // Adapted from https://stackoverflow.com/questions/13055214/mouse-canvas-x-y-to-three-js-world-x-y-z#13091694
+  //
+  // Instead of using the camera's current position to unproject from the screen coordinate to the world coordinate,
+  // this always uses the equivalent of a camera looking straight down on the center of orbit, from the zoom distance away.
+  //
+  // The reason for doing this is so that the rate of movement is uniform regardless of the camera's tilt angle.
+  // I.e., at the same zoom level, moving your mouse/finger 10 pixels on the screen will result in the same amount
+  // of world movement if the camera is looking straight down, or straight forward. It also means that the location on
+  // the screen (i.e. top-left vs. center vs. bottom-right) won't affect the amount of world movement when the camera is
+  // tilted at an angle other than straight down.
+  var screenCoordinateToWorldCoordinateStraightDown = function(normalizedScreenVector) {
+    var straightDownEuler, straightDownPosition, straightDownQuaternion, straightDownScale, straightDownMatrix;
+    var matrix;
+    var direction, distanceToXZPlane, worldPosition;
+    var camera = sceneView.camera();
+
+    // Similar camera world matrix from a "looking straight down on center of orbit" position/rotation
+    straightDownEuler = new THREE.Euler(-HALF_PI, camera.rotation.y, 0.0, 'YXZ');
+    straightDownPosition = new THREE.Vector3(mapCamera.positionX(), mapCamera.positionY(), mapCamera.positionZ());
+    straightDownQuaternion = new THREE.Quaternion();
+    straightDownQuaternion.setFromEuler(straightDownEuler);
+    straightDownScale = camera.scale.clone();
+    straightDownMatrix = new THREE.Matrix4().compose(straightDownPosition, straightDownQuaternion, straightDownScale);
+
+    // Unproject from the simulated camera position
+    matrix = new THREE.Matrix4();
+    matrix.multiplyMatrices(straightDownMatrix, matrix.getInverse(camera.projectionMatrix));
+    normalizedScreenVector.applyMatrix4(matrix);
+
+    direction = normalizedScreenVector.sub(straightDownPosition).normalize();
+    distanceToXZPlane = -(straightDownPosition.y / direction.y);
+    worldPosition = straightDownPosition.clone().add(direction.multiplyScalar(distanceToXZPlane));
+
+    return worldPosition;
   };
 
   var setTerrain = function(newTerrain) {
