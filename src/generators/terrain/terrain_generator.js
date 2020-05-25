@@ -69,6 +69,8 @@ var TerrainGenerator = (function() {
       RiverGenerator.addRiver(terrainCoordinates, (rowsToGenerate - 1) * (68 / 128), columnsToGenerate - 1);
     }
 
+    normalizeTerrainHeights(terrainCoordinates);
+
     return terrainCoordinates;
   };
 
@@ -101,6 +103,31 @@ var TerrainGenerator = (function() {
         if (terrainCoordinates[x][z].landHeight < floodWaterHeight) {
           terrainCoordinates[x][z].waterHeight = floodWaterHeight - terrainCoordinates[x][z].landHeight;
         }
+      }
+    }
+  };
+
+  var normalizeTerrainHeights = function(terrainCoordinates) {
+    var x;
+    var z;
+    var minimumHeightBeforeNormalization = Number.POSITIVE_INFINITY;
+    var heightAtCoordinates;
+
+    // Find lowest height in terrain
+    for (x = 0; x < terrainCoordinates.length; x++) {
+      for(z = 0; z < terrainCoordinates[x].length; z++) {
+        heightAtCoordinates = terrainCoordinates[x][z].landHeight + terrainCoordinates[x][z].waterHeight;
+        if (heightAtCoordinates < minimumHeightBeforeNormalization) {
+          minimumHeightBeforeNormalization = heightAtCoordinates;
+        }
+      }
+    }
+
+    // Adjust terrain heights so the lowest point is set to 0.0,
+    // and heights at other places are adjusted accordingly.
+    for (x = 0; x < terrainCoordinates.length; x++) {
+      for(z = 0; z < terrainCoordinates[x].length; z++) {
+        terrainCoordinates[x][z].landHeight -= minimumHeightBeforeNormalization;
       }
     }
   };
