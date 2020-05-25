@@ -143,6 +143,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     }
     else if (isShiftKey) {
       currentGesture = PINCH_ZOOM;
+      mapCamera.setCenterOfTilt(undefined);
 
       if (mapCamera.centerOfAction() === undefined) {
         setCenterOfAction(currentTouches);
