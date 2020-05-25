@@ -48,6 +48,12 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
     mapCamera.setCenterOfAction(new THREE.Vector3(centerOfScreenWorldTouch.worldX(), centerOfScreenWorldTouch.worldY(), centerOfScreenWorldTouch.worldZ()));
   };
 
+  var setCenterOfTilt = function(e) {
+    var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
+
+    mapCamera.setCenterOfTilt(new THREE.Vector3(centerOfScreenWorldTouch.worldX(), centerOfScreenWorldTouch.worldY(), centerOfScreenWorldTouch.worldZ()));
+  };
+
   var setAzimuthAngle = function(e) {
     // The slider uses degrees instead of radians to avoid Firefox thinking that float values are invalid,
     // seemingly due to precision issues.
@@ -108,8 +114,8 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   azimuthAngleControl.addEventListener('mousedown', setTargetOfAction, false);
   azimuthAngleControl.addEventListener('touchstart', setTargetOfAction, false);
   azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
-  tiltAngleControl.addEventListener('mousedown', setTargetOfAction, false);
-  tiltAngleControl.addEventListener('touchstart', setTargetOfAction, false);
+  tiltAngleControl.addEventListener('mousedown', setCenterOfTilt, false);
+  tiltAngleControl.addEventListener('touchstart', setCenterOfTilt, false);
   tiltAngleControl.addEventListener('input', setTiltAngle, false);
   zoomInButton.addEventListener('mousedown', startZoomIn, false);
   zoomInButton.addEventListener('mouseup', stopZoom, false);

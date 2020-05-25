@@ -19,6 +19,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var MAX_DISTANCE_FROM_CITY_CENTER = 200.0;
 
   var centerOfAction;
+  var centerOfTilt;
   var zoomProperties;
   var camera = sceneView.camera();
   var terrain = initialTerrain;
@@ -37,6 +38,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
   var setCenterOfAction = function(newCenterOfAction) {
     centerOfAction = newCenterOfAction;
+    centerOfTilt = undefined;
     zoomProperties = undefined;
 
     if (newCenterOfAction === undefined) {
@@ -45,6 +47,10 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     else {
       sceneView.centerOfActionMarkerMesh().position.set(centerOfAction.x, centerOfAction.y, centerOfAction.z);
     }
+  };
+
+  var setCenterOfTilt = function(newCenterOfTilt) {
+    centerOfTilt = newCenterOfTilt;
   };
 
   var minimumCameraHeightAtCoordinates = function(terrain, cameraX, cameraZ) {
@@ -135,13 +141,16 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     }
 
     azimuthRotationVelocity = azimuthAngleDelta;
+    tiltRotationVelocity = 0.0;
+
+    camera.updateMatrixWorld();
 
     messageBroker.publish("camera.updated", {});
   };
 
   var tiltCamera = function(tiltAngleDelta) {
     var distanceCameraToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
-                                                                              centerOfAction.x, centerOfAction.y, centerOfAction.z);
+                                                                              centerOfTilt.x, centerOfTilt.y, centerOfTilt.z);
     var newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
 
     var hypotenuse = distanceCameraToCenterOfAction;
@@ -154,12 +163,15 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
     zoomProperties = undefined;
 
-    camera.position.x = centerOfAction.x + cameraX;
-    camera.position.y = centerOfAction.y + cameraY;
-    camera.position.z = centerOfAction.z + cameraZ;
+    camera.position.x = centerOfTilt.x + cameraX;
+    camera.position.y = centerOfTilt.y + cameraY;
+    camera.position.z = centerOfTilt.z + cameraZ;
     camera.rotation.x = newTiltAngle;
 
+    azimuthRotationVelocity = 0.0;
     tiltRotationVelocity = tiltAngleDelta;
+
+    camera.updateMatrixWorld();
 
     messageBroker.publish("camera.updated", {});
   };
@@ -232,6 +244,8 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   return {
     centerOfAction: function() { return centerOfAction; },
     setCenterOfAction: setCenterOfAction,
+    centerOfTilt: function() { return centerOfTilt; },
+    setCenterOfTilt: setCenterOfTilt,
     pan: pan,
     rotateAzimuthAroundCenterOfAction: rotateAzimuthAroundCenterOfAction,
     zoomTowardCenterOfAction: zoomTowardCenterOfAction,
