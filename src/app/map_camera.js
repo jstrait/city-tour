@@ -73,6 +73,8 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
     panVelocityX = distanceX;
     panVelocityZ = distanceZ;
+
+    camera.updateMatrixWorld();
   };
 
   var calculateZoomProperties = function() {
@@ -114,6 +116,8 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     zoomProperties.cameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone().multiplyScalar(1.0 - zoomDistancePercentage);
 
     zoomVelocity = zoomDistancePercentage;
+
+    camera.updateMatrixWorld();
   };
 
   var rotateAzimuthAroundCenterOfAction = function(azimuthAngleDelta) {
