@@ -73,6 +73,8 @@ var App = (function() {
       var renderStartTime, renderEndTime;
       var newWorldData;
 
+      mapCamera.reset();
+
       // Replace old scene with mostly empty scene, to reclaim memory.
       // A device with limited memory (such as a phone) might have enough
       // memory to have a single city, but not two at once (which can

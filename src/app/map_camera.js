@@ -24,17 +24,25 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var camera = sceneView.camera();
   var terrain = initialTerrain;
 
-  var isVelocityEnabled = false;
-  var panVelocityX = 0.0;
-  var panVelocityZ = 0.0;
-  var zoomVelocity = 0.0;
-  var azimuthRotationVelocity = 0.0;
-  var tiltRotationVelocity = 0.0;
+  var isVelocityEnabled;
+  var panVelocityX;
+  var panVelocityZ;
+  var zoomVelocity;
+  var azimuthRotationVelocity;
+  var tiltRotationVelocity;
 
-  camera.position.x = -60;
-  camera.position.y = 30;
-  camera.position.z = 60;
-  camera.lookAt(new THREE.Vector3(0.0, 0.0, 0.0));
+  var reset = function() {
+    camera.position.x = -60;
+    camera.position.y = 30;
+    camera.position.z = 60;
+    camera.lookAt(new THREE.Vector3(0.0, 0.0, 0.0));
+
+    centerOfAction = undefined;
+    centerOfTilt = undefined;
+    zoomProperties = undefined;
+
+    setIsVelocityEnabled(false);
+  };
 
   var setCenterOfAction = function(newCenterOfAction) {
     centerOfAction = newCenterOfAction;
@@ -237,8 +245,11 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     }
   };
 
+  reset();
+
 
   return {
+    reset: reset,
     centerOfAction: function() { return centerOfAction; },
     setCenterOfAction: setCenterOfAction,
     centerOfTilt: function() { return centerOfTilt; },
