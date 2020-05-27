@@ -110,6 +110,8 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     }
     else {
       currentGesture = PAN;
+      mapCamera.setCenterOfAction(undefined);
+
       panCamera(currentTouches);
 
       sceneView.touchPoint1MarkerMesh().position.set(currentTouches.touches()[0].worldPosition().x,
