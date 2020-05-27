@@ -79,19 +79,11 @@ var App = (function() {
       // A device with limited memory (such as a phone) might have enough
       // memory to have a single city, but not two at once (which can
       // temporarily be the case while creating a new city).
-      timerLoop.reset(EMPTY_WORLD_DATA);
-      sceneView.reset(EMPTY_WORLD_DATA);
-      mapCamera.setTerrain(EMPTY_WORLD_DATA.terrain);
-      navigationController.setTerrain(EMPTY_WORLD_DATA.terrain);
-      navigationTouchController.setTerrain(EMPTY_WORLD_DATA.terrain);
+      setWorldData(EMPTY_WORLD_DATA);
 
       // Now that old city's memory has been reclaimed, add new city
       newWorldData = WorldGenerator.generate(cityConfigService.toWorldConfig());
-      timerLoop.reset(newWorldData);
-      sceneView.reset(newWorldData);
-      mapCamera.setTerrain(newWorldData.terrain);
-      navigationController.setTerrain(newWorldData.terrain);
-      navigationTouchController.setTerrain(newWorldData.terrain);
+      setWorldData(newWorldData);
 
       // Force the new scene to be rendered
       renderStartTime = new Date();
@@ -103,6 +95,14 @@ var App = (function() {
       console.log("City generation complete, total time: " + (endTime - startTime) + "ms");
 
       messageBroker.publish("generation.complete", {});
+    };
+
+    var setWorldData = function(newWorldData) {
+      timerLoop.reset(newWorldData);
+      sceneView.reset(newWorldData);
+      mapCamera.setTerrain(newWorldData.terrain);
+      navigationController.setTerrain(newWorldData.terrain);
+      navigationTouchController.setTerrain(newWorldData.terrain);
     };
 
     messageBroker.addSubscriber("generation.started", resetCity);
