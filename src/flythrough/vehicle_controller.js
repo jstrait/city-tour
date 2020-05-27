@@ -139,7 +139,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     }
 
 
-    targetPositionY = BIRDSEYE_Y;
+    targetPositionY = BIRDSEYE_Y + roadNetwork.getRoadHeight(targetPositionX, targetPositionZ);
     targetRotationX = -HALF_PI;
     targetRotationY = viewAngleToCityCenter;
 
