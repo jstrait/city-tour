@@ -157,19 +157,12 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
                                                                               centerOfTilt.x, centerOfTilt.y, centerOfTilt.z);
     var newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
 
-    var hypotenuse = distanceCameraToCenterOfAction;
-    var adjacent = Math.cos(newTiltAngle) * hypotenuse;
-    var opposite = -Math.sin(newTiltAngle) * hypotenuse;
-
-    var cameraX = (adjacent * Math.sin(camera.rotation.y));
-    var cameraY = opposite;
-    var cameraZ = (adjacent * Math.cos(-camera.rotation.y));
-
     zoomProperties = undefined;
 
-    camera.position.x = centerOfTilt.x + cameraX;
-    camera.position.y = centerOfTilt.y + cameraY;
-    camera.position.z = centerOfTilt.z + cameraZ;
+    camera.position.setFromSphericalCoords(distanceCameraToCenterOfAction, newTiltAngle + HALF_PI, camera.rotation.y);
+    camera.position.x += centerOfTilt.x;
+    camera.position.y += centerOfTilt.y;
+    camera.position.z += centerOfTilt.z;
     camera.rotation.x = newTiltAngle;
 
     azimuthRotationVelocity = 0.0;
