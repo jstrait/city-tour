@@ -13,7 +13,10 @@ var FlythroughGestureProcessor = function() {
     else {
       vehicleView.disableResetToCenterAnimation();
 
-      if (previousTouches !== undefined && (currentTouches.count() === 1 || currentTouches.count() === 2)) {
+      if (previousTouches === undefined) {
+        vehicleView.setBaseAngles();
+      }
+      else if (currentTouches.count() === 1 || currentTouches.count() === 2) {
         normalizedDragDistanceX = currentTouches.normalizedScreenMidpoint().x - previousTouches.normalizedScreenMidpoint().x;
         normalizedDragDistanceY = currentTouches.normalizedScreenMidpoint().y - previousTouches.normalizedScreenMidpoint().y;
 
