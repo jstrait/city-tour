@@ -25,8 +25,8 @@ var VehicleView = function(vehicleController) {
   var rotationY = vehicleController.rotationY();
 
   var lockAngles = function() {
-    lockedRotationX = vehicleController.rotationX();
-    lockedRotationY = vehicleController.rotationY();
+    lockedRotationX = rotationX;
+    lockedRotationY = rotationY;
     lockedRotationOffsetX = 0.0;
     lockedRotationOffsetY = 0.0;
   };
