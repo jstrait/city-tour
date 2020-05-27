@@ -55,6 +55,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
 
   var processSingleTouchGestures = function(currentTouches, isShiftKey, isAltKey) {
     var centerOfScreenTouch;
+    var tiltAngleDelta;
 
     if (previousTouches.count() !== 1) {
       mapCamera.setIsVelocityEnabled(false);
@@ -80,13 +81,12 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
       else if (Math.abs(distanceBetweenTouchesDeltaX) < Math.abs(distanceBetweenTouchesDeltaY)) {
         currentGesture = TILT;
 
-        var tiltAngleDelta = -CityTourMath.lerp(distanceBetweenTouchesDeltaY, 0, mapCamera.maxTiltAngle() - mapCamera.minTiltAngle());
-
         if (mapCamera.centerOfTilt() === undefined) {
           centerOfScreenTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
           mapCamera.setCenterOfTilt(centerOfScreenTouch.worldPosition());
         }
 
+        tiltAngleDelta = -(distanceBetweenTouchesDeltaY * 0.5) * (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
         mapCamera.tiltCamera(tiltAngleDelta);
       }
       else {
