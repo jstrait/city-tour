@@ -160,10 +160,17 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  var tiltCamera = function(tiltAngleDelta) {
+  var tiltCamera = function(tiltAngleDelta, isTiltAngleClamped) {
     var distanceCameraToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
                                                                               centerOfTilt.x, centerOfTilt.y, centerOfTilt.z);
-    var newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
+    var newTiltAngle;
+
+    if (isTiltAngleClamped === false) {
+      newTiltAngle = camera.rotation.x + tiltAngleDelta;
+    }
+    else {
+      newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
+    }
 
     zoomProperties = undefined;
 
