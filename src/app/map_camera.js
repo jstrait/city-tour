@@ -79,6 +79,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.position.z -= distanceZ;
     camera.position.y = Math.max(minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z), camera.position.y);
 
+    resetVelocities();
     panVelocityX = distanceX;
     panVelocityZ = distanceZ;
 
@@ -123,6 +124,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.position.y = Math.max(minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z), camera.position.y);
     zoomProperties.cameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone().multiplyScalar(1.0 - zoomDistancePercentage);
 
+    resetVelocities();
     zoomVelocity = zoomDistancePercentage;
 
     camera.updateMatrixWorld();
@@ -152,8 +154,8 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
       setCenterOfAction(centerOfAction);
     }
 
+    resetVelocities();
     azimuthRotationVelocity = azimuthAngleDelta;
-    tiltRotationVelocity = 0.0;
 
     camera.updateMatrixWorld();
 
@@ -180,7 +182,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.position.z += centerOfTilt.z;
     camera.rotation.x = newTiltAngle;
 
-    azimuthRotationVelocity = 0.0;
+    resetVelocities();
     tiltRotationVelocity = tiltAngleDelta;
 
     camera.updateMatrixWorld();
@@ -240,15 +242,19 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     }
   };
 
+  var resetVelocities = function() {
+    panVelocityX = 0.0;
+    panVelocityZ = 0.0;
+    zoomVelocity = 0.0;
+    azimuthRotationVelocity = 0.0;
+    tiltRotationVelocity = 0.0;
+  };
+
   var setIsVelocityEnabled = function(newIsVelocityEnabled) {
     isVelocityEnabled = newIsVelocityEnabled;
 
     if (newIsVelocityEnabled === false) {
-      panVelocityX = 0.0;
-      panVelocityZ = 0.0;
-      zoomVelocity = 0.0;
-      azimuthRotationVelocity = 0.0;
-      tiltRotationVelocity = 0.0;
+      resetVelocities();
     }
   };
 
