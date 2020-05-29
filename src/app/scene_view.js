@@ -189,7 +189,7 @@ var SceneView = function(containerEl, gridTexture) {
   gridTexture.wrapS = THREE.RepeatWrapping;
   gridTexture.wrapT = THREE.RepeatWrapping;
 
-  window.addEventListener('resize', renderView.resize, false);
+  window.addEventListener("resize", renderView.resize, false);
 
   buildMarkerMeshes();
   scene.add(sceneBuilder.buildGridPlaneMeshes()[0]);

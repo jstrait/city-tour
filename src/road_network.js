@@ -244,7 +244,7 @@ var RoadNetwork = function(terrain) {
   };
 };
 
-RoadNetwork.TERRAIN_SURFACE = 'terrain';
-RoadNetwork.BRIDGE_SURFACE = 'bridge';
+RoadNetwork.TERRAIN_SURFACE = "terrain";
+RoadNetwork.BRIDGE_SURFACE = "bridge";
 
 export { RoadNetwork };

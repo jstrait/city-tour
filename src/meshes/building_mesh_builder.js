@@ -49,7 +49,7 @@ var BuildingMeshBuilder = function() {
 
       buildingsGeometry.merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
 
-      if (lot.roofStyle === 'antenna') {
+      if (lot.roofStyle === "antenna") {
         cylinderGeometry = new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4);
         cylinderMesh = new THREE.Mesh(cylinderGeometry);
 

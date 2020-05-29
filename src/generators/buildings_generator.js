@@ -7,8 +7,8 @@ var BuildingsGenerator = (function() {
   var MAX_STORY_HEIGHT = 0.125;
   var MIN_STORIES_FOR_ANTENNA = 25;
   var PROBABILITY_OF_TALL_BUILDING_ANTENNA = 0.3;
-  var ROOF_STYLE_ANTENNA = 'antenna';
-  var ROOF_STYLE_FLAT = 'flat';
+  var ROOF_STYLE_ANTENNA = "antenna";
+  var ROOF_STYLE_FLAT = "flat";
 
   var blockTerrainAttributes = function(terrain, left, top, right, bottom) {
     var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight, minimumHeight, maximumHeight;

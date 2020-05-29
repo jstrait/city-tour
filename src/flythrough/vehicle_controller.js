@@ -18,10 +18,10 @@ const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2.0;
 
 var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
-  var INITIAL_DESCENT = 'initial_descent';
-  var DRIVING_MODE = 'driving';
-  var HOVERING_MODE = 'hovering';
-  var BIRDSEYE_MODE = 'birdseye';
+  var INITIAL_DESCENT = "initial_descent";
+  var DRIVING_MODE = "driving";
+  var HOVERING_MODE = "hovering";
+  var BIRDSEYE_MODE = "birdseye";
 
   var DRIVING_HORIZONTAL_MOTION_DELTA = 0.016666666666667;
   var FLYING_HORIZONTAL_MOTION_DELTA = 0.025;

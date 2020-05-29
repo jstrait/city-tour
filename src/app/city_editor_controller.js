@@ -98,22 +98,22 @@ var CityEditorController = function(cityConfigService, messageBroker) {
     aboutMenu.classList.toggle("inline-block", currentMenu === ABOUT_MENU);
   };
 
-  terrainJitter.addEventListener('change', function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
-  heightJitterDecay.addEventListener('change', function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
-  hillCount.addEventListener('change', function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
-  maxHillHeight.addEventListener('change', function(e) { cityConfigService.setMaxHillHeight(parseInt(e.target.value, 10)); }, false);
-  includeRiver.addEventListener('change', function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
-  safeFromDecayBlocks.addEventListener('change', function(e) { cityConfigService.setSafeFromDecayBlocks(parseInt(e.target.value, 10)); }, false);
-  blockDistanceDecayBegins.addEventListener('change', function(e) { cityConfigService.setBlockDistanceDecayBegins(parseInt(e.target.value, 10)); }, false);
-  maxBuildingStories.addEventListener('change', function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
-  neighborhoodCount.addEventListener('change', function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
+  terrainJitter.addEventListener("change", function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
+  heightJitterDecay.addEventListener("change", function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
+  hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
+  maxHillHeight.addEventListener("change", function(e) { cityConfigService.setMaxHillHeight(parseInt(e.target.value, 10)); }, false);
+  includeRiver.addEventListener("change", function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
+  safeFromDecayBlocks.addEventListener("change", function(e) { cityConfigService.setSafeFromDecayBlocks(parseInt(e.target.value, 10)); }, false);
+  blockDistanceDecayBegins.addEventListener("change", function(e) { cityConfigService.setBlockDistanceDecayBegins(parseInt(e.target.value, 10)); }, false);
+  maxBuildingStories.addEventListener("change", function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
+  neighborhoodCount.addEventListener("change", function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
 
-  container.addEventListener('click', hideMenus, false);
-  editorMenuTitle.addEventListener('click', toggleEditMenu, false);
-  aboutMenuTitle.addEventListener('click', toggleAboutMenu, false);
-  editorMenu.addEventListener('click', preventClickThru, false);
-  aboutMenu.addEventListener('click', preventClickThru, false);
-  resetButton.addEventListener('click', reset, false);
+  container.addEventListener("click", hideMenus, false);
+  editorMenuTitle.addEventListener("click", toggleEditMenu, false);
+  aboutMenuTitle.addEventListener("click", toggleAboutMenu, false);
+  editorMenu.addEventListener("click", preventClickThru, false);
+  aboutMenu.addEventListener("click", preventClickThru, false);
+  resetButton.addEventListener("click", reset, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);

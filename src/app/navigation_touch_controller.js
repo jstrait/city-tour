@@ -103,16 +103,16 @@ var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, m
   };
 
   var enableEventHandlers = function() {
-    el.addEventListener('mousedown', onMouseDown, false);
-    el.addEventListener('touchstart', onTouchStart, false);
-    el.addEventListener('mousemove', onMouseMove, false);
-    el.addEventListener('touchmove', onTouchMove, false);
-    el.addEventListener('mouseup', onMouseUp, false);
-    el.addEventListener('touchend', onTouchEnd, false);
-    el.addEventListener('mouseover', onMouseOver, false);
-    el.addEventListener('mouseout', onMouseOut, false);
+    el.addEventListener("mousedown", onMouseDown, false);
+    el.addEventListener("touchstart", onTouchStart, false);
+    el.addEventListener("mousemove", onMouseMove, false);
+    el.addEventListener("touchmove", onTouchMove, false);
+    el.addEventListener("mouseup", onMouseUp, false);
+    el.addEventListener("touchend", onTouchEnd, false);
+    el.addEventListener("mouseover", onMouseOver, false);
+    el.addEventListener("mouseout", onMouseOut, false);
 
-    el.removeEventListener('touchstart', onTouchStartStub, false);
+    el.removeEventListener("touchstart", onTouchStartStub, false);
   };
 
   var onFlythroughStarted = function(data) {

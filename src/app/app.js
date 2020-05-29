@@ -31,8 +31,8 @@ var App = (function() {
     }
 
     // Adapted from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/webgl-extensions.js
-    var canvas = document.createElement('canvas');
-    var webgl_context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    var canvas = document.createElement("canvas");
+    var webgl_context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     if (webgl_context === null) {
       return false;
     }

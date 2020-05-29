@@ -24,7 +24,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
 
   var isTouchDevice = function() {
     // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
-    return 'ontouchstart' in window        // works on most browsers
+    return "ontouchstart" in window        // works on most browsers
         || navigator.maxTouchPoints;       // works on IE10/11 and Surface
   };
 
@@ -110,24 +110,24 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
     render({});
   };
 
-  containerToggle.addEventListener('click', toggleNavigationControls, false);
-  azimuthAngleControl.addEventListener('mousedown', setTargetOfAction, false);
-  azimuthAngleControl.addEventListener('touchstart', setTargetOfAction, false);
-  azimuthAngleControl.addEventListener('input', setAzimuthAngle, false);
-  tiltAngleControl.addEventListener('mousedown', setCenterOfTilt, false);
-  tiltAngleControl.addEventListener('touchstart', setCenterOfTilt, false);
-  tiltAngleControl.addEventListener('input', setTiltAngle, false);
-  zoomInButton.addEventListener('mousedown', startZoomIn, false);
-  zoomInButton.addEventListener('mouseup', stopZoom, false);
-  zoomInButton.addEventListener('mouseout', stopZoom, false);
-  zoomInButton.addEventListener('touchstart', startZoomIn, false);
-  zoomInButton.addEventListener('touchend', stopZoom, false);
-  zoomOutButton.addEventListener('mousedown', startZoomOut, false);
-  zoomOutButton.addEventListener('mouseup', stopZoom, false);
-  zoomOutButton.addEventListener('mouseout', stopZoom, false);
-  zoomOutButton.addEventListener('touchstart', startZoomOut, false);
-  zoomOutButton.addEventListener('touchend', stopZoom, false);
-  flythroughToggle.addEventListener('click', toggleFlythrough, false);
+  containerToggle.addEventListener("click", toggleNavigationControls, false);
+  azimuthAngleControl.addEventListener("mousedown", setTargetOfAction, false);
+  azimuthAngleControl.addEventListener("touchstart", setTargetOfAction, false);
+  azimuthAngleControl.addEventListener("input", setAzimuthAngle, false);
+  tiltAngleControl.addEventListener("mousedown", setCenterOfTilt, false);
+  tiltAngleControl.addEventListener("touchstart", setCenterOfTilt, false);
+  tiltAngleControl.addEventListener("input", setTiltAngle, false);
+  zoomInButton.addEventListener("mousedown", startZoomIn, false);
+  zoomInButton.addEventListener("mouseup", stopZoom, false);
+  zoomInButton.addEventListener("mouseout", stopZoom, false);
+  zoomInButton.addEventListener("touchstart", startZoomIn, false);
+  zoomInButton.addEventListener("touchend", stopZoom, false);
+  zoomOutButton.addEventListener("mousedown", startZoomOut, false);
+  zoomOutButton.addEventListener("mouseup", stopZoom, false);
+  zoomOutButton.addEventListener("mouseout", stopZoom, false);
+  zoomOutButton.addEventListener("touchstart", startZoomOut, false);
+  zoomOutButton.addEventListener("touchend", stopZoom, false);
+  flythroughToggle.addEventListener("click", toggleFlythrough, false);
 
   isNavigationControlsVisible = !isTouchDevice();
   render({});
