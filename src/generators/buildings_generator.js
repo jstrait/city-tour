@@ -72,12 +72,13 @@ var BuildingsGenerator = (function() {
     zonedBlocks.forEach(function(zonedBlock) {
       var x = zonedBlock.x;
       var z = zonedBlock.z;
+      var lots = zonedBlock.layout.lots;
       var block = [];
       var building;
       var l;
 
-      for (l = 0; l < zonedBlock.layout.lots.length; l++) {
-        building = generateBuildingOnLot(zonedBlock.layout.lots[l], zonedBlock, terrain);
+      for (l = 0; l < lots.length; l++) {
+        building = generateBuildingOnLot(lots[l], zonedBlock, terrain);
         if (building !== undefined) {
           block.push(building);
         }
