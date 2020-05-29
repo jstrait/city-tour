@@ -21,8 +21,6 @@ var App = (function() {
     roadNetwork: RoadNetwork(EMPTY_TERRAIN),
     buildings: [],
     neighborhoods: [],
-    centerX: undefined,
-    centerZ: undefined,
   };
 
   var detectWebGL = function() {
