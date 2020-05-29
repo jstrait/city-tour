@@ -169,17 +169,17 @@ input[type="range"] {
   background-color: transparent;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+input[type="range"]::-webkit-slider-runnable-track {
   height: 1px;
   background-color: #aaa;
 }
 
-input[type=range]::-moz-range-track {
+input[type="range"]::-moz-range-track {
   height: 1px;
   background-color: #aaa;
 }
 
-input[type=range]::-ms-track {
+input[type="range"]::-ms-track {
   height: 1px;
   background-color: #aaa;
 }
@@ -249,6 +249,6 @@ input[type="range"]:disabled::-ms-thumb:active
   background: #444;
 }
 
-input[type=range]::-moz-focus-outer {
+input[type="range"]::-moz-focus-outer {
   border: 0;
 }
