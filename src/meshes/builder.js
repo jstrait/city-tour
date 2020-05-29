@@ -50,7 +50,13 @@ var Builder = function(gridTexture) {
     var neighborhoodCenterX;
     var neighborhoodCenterY;
     var neighborhoodCenterZ;
+    var color = new THREE.Color(0xffff00);
+    var face;
     var i;
+
+    for (face of reusableNeighborhoodCenterMesh.geometry.faces) {
+      face.color = color;
+    }
 
     for (i = 0; i < neighborhoods.length; i++) {
       neighborhoodCenterX = neighborhoods[i].centerX;
@@ -60,9 +66,16 @@ var Builder = function(gridTexture) {
       reusableNeighborhoodCenterMesh.position.set(neighborhoodCenterX, neighborhoodCenterY, neighborhoodCenterZ);
       reusableNeighborhoodCenterMesh.updateMatrix();
       neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
+
+      if (i === 0) {
+        color.set(0xff00ff);
+        for (face of reusableNeighborhoodCenterMesh.geometry.faces) {
+          face.color = color;
+        }
+      }
     }
 
-    return [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({color: 0xff00ff}))];
+    return [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors}))];
   };
 
   var buildDebugCurveMeshes = function(curves) {

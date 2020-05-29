@@ -15,7 +15,6 @@ var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
   var SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS = false;
 
-  var centerOfCityMarkerMesh;
   var centerOfActionMarkerMesh;
   var targetOfActionMarkerMesh;
   var touchPoint1MarkerMesh;
@@ -57,9 +56,6 @@ var SceneView = function(containerEl, gridTexture) {
       scene.add(buildMeshGroup(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME, meshes));
     }
 
-    centerOfCityMarkerMesh.position.x = newWorldData.centerX;
-    centerOfCityMarkerMesh.position.z = newWorldData.centerZ;
-
     masterEndTime = new Date();
 
     console.log("Time to generate scene geometry: " + (masterEndTime - masterStartTime) + "ms");
@@ -93,10 +89,6 @@ var SceneView = function(containerEl, gridTexture) {
 
     group = new THREE.Group();
     group.name = DEBUG_MARKERS_MESH_GROUP_NAME;
-
-    centerOfCityMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
-                                            new THREE.MeshBasicMaterial({ color: 0xff00ff }));
-    group.add(centerOfCityMarkerMesh);
 
     centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(MARKER_WIDTH, 25, 25),
                                               new THREE.MeshBasicMaterial({ color: 0xff0000 }));
