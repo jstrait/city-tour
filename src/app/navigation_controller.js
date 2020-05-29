@@ -20,7 +20,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   var zoomOutButton = document.getElementById("zoom-out");
   var flythroughToggle = document.getElementById("flythrough-toggle");
 
-  var navigationControlsEnabled;
+  var isNavigationControlsVisible;
 
   var isTouchDevice = function() {
     // https://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
@@ -32,7 +32,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
     azimuthAngleControl.value = mapCamera.azimuthAngle() * (180 / Math.PI);
     tiltAngleControl.value = (mapCamera.tiltAngle() - mapCamera.maxTiltAngle()) / (mapCamera.minTiltAngle() - mapCamera.maxTiltAngle());
 
-    if (navigationControlsEnabled) {
+    if (isNavigationControlsVisible === true) {
       containerToggle.innerHTML = DOWN_ARROW;
       container.classList.remove("display-none");
     }
@@ -106,7 +106,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   };
 
   var toggleNavigationControls = function(e) {
-    navigationControlsEnabled = !navigationControlsEnabled;
+    isNavigationControlsVisible = !isNavigationControlsVisible;
     render({});
   };
 
@@ -129,7 +129,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   zoomOutButton.addEventListener('touchend', stopZoom, false);
   flythroughToggle.addEventListener('click', toggleFlythrough, false);
 
-  navigationControlsEnabled = !isTouchDevice();
+  isNavigationControlsVisible = !isTouchDevice();
   render({});
 
   var id1 = messageBroker.addSubscriber("camera.updated", render);
