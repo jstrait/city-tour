@@ -41,8 +41,8 @@ var Builder = function(gridTexture) {
     return RoadMeshBuilder().build(terrain, roadNetwork);
   };
 
-  var buildBuildingMeshes = function(buildings, terrain, roadNetwork) {
-    return BuildingMeshBuilder().build(buildings, terrain, roadNetwork);
+  var buildBuildingMeshes = function(buildings, roadNetwork) {
+    return BuildingMeshBuilder().build(buildings, roadNetwork);
   };
 
   var buildDebugNeighborhoodCentersMeshes = function(terrain, neighborhoods) {

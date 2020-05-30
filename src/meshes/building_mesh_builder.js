@@ -86,7 +86,7 @@ var BuildingMeshBuilder = function() {
 
   var buildingMeshBuilder = {};
 
-  buildingMeshBuilder.build = function(buildings, terrain, roadNetwork) {
+  buildingMeshBuilder.build = function(buildings, roadNetwork) {
     var buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
     var buildingsGeometry = new THREE.Geometry();
     var buildingMeshes = [];

@@ -47,7 +47,7 @@ var SceneView = function(containerEl, gridTexture) {
     roadEndTime = new Date();
 
     buildingsStartTime = new Date();
-    meshes = sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.terrain, newWorldData.roadNetwork);
+    meshes = sceneBuilder.buildBuildingMeshes(newWorldData.buildings, newWorldData.roadNetwork);
     scene.add(buildMeshGroup(BUILDINGS_MESH_GROUP_NAME, meshes));
     buildingsEndTime = new Date();
 
