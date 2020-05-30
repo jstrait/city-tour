@@ -15,6 +15,7 @@ var Config = (function() {
   config.ROAD_DEPTH = config.STREET_DEPTH - (config.SIDEWALK_DEPTH * 2);
   config.BLOCK_AND_STREET_WIDTH = config.BLOCK_WIDTH + config.STREET_WIDTH;
   config.BLOCK_AND_STREET_DEPTH = config.BLOCK_DEPTH + config.STREET_DEPTH;
+  config.SIDEWALL_BOTTOM = -8.333333333333333;
 
   return config;
 })();

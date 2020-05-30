@@ -1,5 +1,6 @@
 "use strict";
 
+import { Config } from "./../config";
 import { BuildingMeshBuilder } from "./building_mesh_builder";
 import { RoadMeshBuilder } from "./road_mesh_builder";
 import { TerrainMeshBuilder } from "./terrain_mesh_builder";
@@ -26,7 +27,7 @@ var Builder = function(gridTexture) {
     var gridPlaneMaterial = new THREE.MeshBasicMaterial({map: gridTexture});
     var gridPlaneMesh = new THREE.Mesh(gridPlaneGeometry, gridPlaneMaterial);
 
-    gridPlaneMesh.position.y = -8.333333333333333;
+    gridPlaneMesh.position.y = Config.SIDEWALL_BOTTOM;
     gridPlaneMesh.rotation.x = -Math.PI / 2;
 
     return [gridPlaneMesh];
