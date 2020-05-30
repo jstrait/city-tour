@@ -1,6 +1,7 @@
 "use strict";
 
 import { CityTourMath } from "./../math";
+import { Config } from "./../config";
 import { WorldTouch } from "./world_touch";
 
 const HALF_PI = Math.PI * 0.5;
@@ -202,7 +203,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     var ray = new THREE.Ray(cameraPosition, direction);
     var intersectionPoint = ray.intersectBox(terrainBoundingBox, new THREE.Vector3());
 
-    if (intersectionPoint === null) {
+    if (intersectionPoint === null || intersectionPoint.y < Config.SIDEWALL_BOTTOM) {
       return currentTouches.worldMidpoint();
     }
 

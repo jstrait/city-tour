@@ -1,5 +1,7 @@
 "use strict";
 
+import { Config } from "./../config";
+
 /*
   Converts a normalized screen vector to a 3D point in the world, based on the current camera position.
   The calculated point takes the terrain into account. That is, you can use this to calculate where on the
@@ -22,7 +24,7 @@ var WorldTouch = function(camera, normalizedScreenVector, terrain) {
     movementTowardXZPlaneAmount = direction.clone().multiplyScalar(0.3333333333333333);
 
     loopCount = 0;
-    while (ray.y > 0.0 && worldPosition === undefined && loopCount < MAX_ITERATIONS) {
+    while (ray.y > Config.SIDEWALL_BOTTOM && worldPosition === undefined && loopCount < MAX_ITERATIONS) {
       ray = ray.add(movementTowardXZPlaneAmount);
 
       if (terrain.isPointInBounds(ray.x, ray.z) && ray.y <= terrain.heightAtCoordinates(ray.x, ray.z)) {
