@@ -62,7 +62,7 @@ var Builder = function(gridTexture) {
     for (i = 0; i < neighborhoods.length; i++) {
       neighborhoodCenterX = neighborhoods[i].centerX;
       neighborhoodCenterZ = neighborhoods[i].centerZ;
-      neighborhoodCenterY = terrain.landHeightAtCoordinates(neighborhoodCenterX, neighborhoodCenterZ);
+      neighborhoodCenterY = terrain.landHeightAt(neighborhoodCenterX, neighborhoodCenterZ);
 
       reusableNeighborhoodCenterMesh.position.set(neighborhoodCenterX, neighborhoodCenterY, neighborhoodCenterZ);
       reusableNeighborhoodCenterMesh.updateMatrix();

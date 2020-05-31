@@ -30,9 +30,9 @@ var BridgeGenerator = (function() {
     bridgeEndZ = targetZ;
 
     bridgeLength = 1;
-    while (terrain.waterHeightAtCoordinates(bridgeEndX, bridgeEndZ) > 0.0) {
+    while (terrain.waterHeightAt(bridgeEndX, bridgeEndZ) > 0.0) {
       if (waterHeight === undefined) {
-        waterHeight = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
+        waterHeight = terrain.heightAt(bridgeEndX, bridgeEndZ);
       }
       if (roadNetwork.hasIntersection(bridgeEndX, bridgeEndZ)) {
         return;
@@ -51,8 +51,8 @@ var BridgeGenerator = (function() {
       return;
     }
 
-    heightAtTerminal1 = terrain.heightAtCoordinates(bridgeStartX, bridgeStartZ);
-    heightAtTerminal2 = terrain.heightAtCoordinates(bridgeEndX, bridgeEndZ);
+    heightAtTerminal1 = terrain.heightAt(bridgeStartX, bridgeStartZ);
+    heightAtTerminal2 = terrain.heightAt(bridgeEndX, bridgeEndZ);
     if (Math.abs(heightAtTerminal1 - heightAtTerminal2) > MAX_HEIGHT_DIFFERENCE_BETWEEN_BRIDGE_TERMINALS) {
       return;
     }

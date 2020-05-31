@@ -166,15 +166,15 @@ var RoadNetwork = function(terrain) {
     var edge = { distance: distance, surfaceType: surfaceType };
 
     if (intersection1 === undefined) {
-      intersectionHeight = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? terrain.heightAtCoordinates(x1, z1) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x1, z1) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
+      intersectionHeight = (terrain.waterHeightAt(x1, z1) === 0.0) ? terrain.heightAt(x1, z1) : nonTerrainHeight;
+      intersectionSurfaceType = (terrain.waterHeightAt(x1, z1) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
       intersection1 = Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
       intersections[x1][z1] = intersection1;
     }
 
     if (intersection2 === undefined) {
-      intersectionHeight = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? terrain.heightAtCoordinates(x2, z2) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAtCoordinates(x2, z2) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
+      intersectionHeight = (terrain.waterHeightAt(x2, z2) === 0.0) ? terrain.heightAt(x2, z2) : nonTerrainHeight;
+      intersectionSurfaceType = (terrain.waterHeightAt(x2, z2) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
       intersection2 = Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
       intersections[x2][z2] = intersection2;
     }

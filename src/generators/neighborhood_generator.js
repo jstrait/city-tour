@@ -38,7 +38,7 @@ var NeighborhoodGenerator = (function() {
           closeNeighborhoodPenalty: 0,
         };
 
-        if (terrain.waterHeightAtCoordinates(x, z) === 0.0) {
+        if (terrain.waterHeightAt(x, z) === 0.0) {
           score.flatness = CityTourMath.clamp(averageHeightDifferenceAroundPoint(terrain, x, z) / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
         }
 
@@ -50,7 +50,7 @@ var NeighborhoodGenerator = (function() {
   };
 
   var averageHeightDifferenceAroundPoint = function(terrain, centerX, centerZ) {
-    var centerHeight = terrain.landHeightAtCoordinates(centerX, centerZ);
+    var centerHeight = terrain.landHeightAt(centerX, centerZ);
     var pointCount = 0;
     var totalHeightDeltas = 0.0;
     var minX = Math.max(terrain.minX(), centerX - FLATNESS_WINDOW_WIDTH_MARGIN);
@@ -61,7 +61,7 @@ var NeighborhoodGenerator = (function() {
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
-        totalHeightDeltas += Math.abs(centerHeight - terrain.landHeightAtCoordinates(x, z));
+        totalHeightDeltas += Math.abs(centerHeight - terrain.landHeightAt(x, z));
         pointCount += 1;
       }
     }

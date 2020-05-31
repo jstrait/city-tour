@@ -13,10 +13,10 @@ var BuildingsGenerator = (function() {
   var blockTerrainAttributes = function(terrain, left, top, right, bottom) {
     var topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight, minimumHeight, maximumHeight;
 
-    topLeftHeight     = terrain.heightAtCoordinates(left, top);
-    topRightHeight    = terrain.heightAtCoordinates(right, top);
-    bottomLeftHeight  = terrain.heightAtCoordinates(left, bottom);
-    bottomRightHeight = terrain.heightAtCoordinates(right, bottom);
+    topLeftHeight     = terrain.heightAt(left, top);
+    topRightHeight    = terrain.heightAt(right, top);
+    bottomLeftHeight  = terrain.heightAt(left, bottom);
+    bottomRightHeight = terrain.heightAt(right, bottom);
 
     minimumHeight = Math.min(topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight);
     maximumHeight = Math.max(topLeftHeight, topRightHeight, bottomLeftHeight, bottomRightHeight);

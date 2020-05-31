@@ -35,16 +35,16 @@ var CircleGrowthRoadGenerator = (function() {
     };
 
     var isTerrainTooSteep = function(terrain, x, z, targetX, targetZ) {
-      var heightAtPoint1 = terrain.heightAtCoordinates(x, z);
-      var heightAtPoint2 = terrain.heightAtCoordinates(targetX, targetZ);
+      var heightAtPoint1 = terrain.heightAt(x, z);
+      var heightAtPoint2 = terrain.heightAt(targetX, targetZ);
       var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), Config.BLOCK_DEPTH);
 
       return Math.abs(angle) > config.maxRoadAngle;
     };
 
     var shouldConnectIntersections = function(terrain, x1, z1, x2, z2) {
-      var edgeIsOnLand = terrain.waterHeightAtCoordinates(x1, z1) === 0.0 &&
-                         terrain.waterHeightAtCoordinates(x2, z2) === 0.0;
+      var edgeIsOnLand = terrain.waterHeightAt(x1, z1) === 0.0 &&
+                         terrain.waterHeightAt(x2, z2) === 0.0;
 
       return edgeIsOnLand &&
              (Math.random() < probabilityOfBranching(x1, z1, x2, z2)) &&

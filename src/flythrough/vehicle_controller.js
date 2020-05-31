@@ -414,7 +414,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     var roadHeight = roadNetwork.getRoadHeight(positionX, positionZ);
 
     if (roadHeight === undefined) {
-      roadHeight = terrain.heightAtCoordinates(positionX, positionZ) || 0.0;
+      roadHeight = terrain.heightAt(positionX, positionZ) || 0.0;
     }
 
     return roadHeight;

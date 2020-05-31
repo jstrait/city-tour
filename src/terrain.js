@@ -28,7 +28,7 @@ var Terrain = function(coordinates, scale) {
     return CityTourMath.lerp(floor, ceiling, point - Math.floor(point));
   };
 
-  var componentHeightAtCoordinates = function(x, z, component) {
+  var componentHeightAt = function(x, z, component) {
     var leftHeight, rightHeight, topHeight, bottomHeight;
     var topRowInterpolatedHeight, bottomRowInterpolatedHeight;
     var xIsExact, zIsExact;
@@ -69,24 +69,24 @@ var Terrain = function(coordinates, scale) {
     }
   };
 
-  var landHeightAtCoordinates = function(mapX, mapZ) {
-    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), LAND_HEIGHT_COMPONENT);
+  var landHeightAt = function(mapX, mapZ) {
+    return componentHeightAt(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), LAND_HEIGHT_COMPONENT);
   };
 
-  var waterHeightAtCoordinates = function(mapX, mapZ) {
-    return componentHeightAtCoordinates(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), WATER_HEIGHT_COMPONENT);
+  var waterHeightAt = function(mapX, mapZ) {
+    return componentHeightAt(mapXToNormalizedX(mapX), mapZToNormalizedZ(mapZ), WATER_HEIGHT_COMPONENT);
   };
 
-  var heightAtCoordinates = function(mapX, mapZ) {
+  var heightAt = function(mapX, mapZ) {
     var normalizedX = mapXToNormalizedX(mapX);
     var normalizedZ = mapZToNormalizedZ(mapZ);
 
-    var landHeight = componentHeightAtCoordinates(normalizedX, normalizedZ, LAND_HEIGHT_COMPONENT);
+    var landHeight = componentHeightAt(normalizedX, normalizedZ, LAND_HEIGHT_COMPONENT);
     if (landHeight === undefined) {
       return undefined;
     }
 
-    return landHeight + componentHeightAtCoordinates(normalizedX, normalizedZ, WATER_HEIGHT_COMPONENT);
+    return landHeight + componentHeightAt(normalizedX, normalizedZ, WATER_HEIGHT_COMPONENT);
   };
 
   var isPointInBounds = function(mapX, mapZ) {
@@ -100,9 +100,9 @@ var Terrain = function(coordinates, scale) {
     maxX: function() { return maxX; },
     minZ: function() { return minZ; },
     maxZ: function() { return maxZ; },
-    landHeightAtCoordinates: landHeightAtCoordinates,
-    waterHeightAtCoordinates: waterHeightAtCoordinates,
-    heightAtCoordinates: heightAtCoordinates,
+    landHeightAt: landHeightAt,
+    waterHeightAt: waterHeightAt,
+    heightAt: heightAt,
     isPointInBounds: isPointInBounds,
   };
 };

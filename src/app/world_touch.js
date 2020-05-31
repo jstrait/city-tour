@@ -27,7 +27,7 @@ var WorldTouch = function(camera, normalizedScreenVector, terrain) {
     while (ray.y > Config.SIDEWALL_BOTTOM && worldPosition === undefined && loopCount < MAX_ITERATIONS) {
       ray = ray.add(movementTowardXZPlaneAmount);
 
-      if (terrain.isPointInBounds(ray.x, ray.z) && ray.y <= terrain.heightAtCoordinates(ray.x, ray.z)) {
+      if (terrain.isPointInBounds(ray.x, ray.z) && ray.y <= terrain.heightAt(ray.x, ray.z)) {
         worldPosition = ray;
       }
 

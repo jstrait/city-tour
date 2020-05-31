@@ -65,7 +65,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     var terrainHeight = Number.NEGATIVE_INFINITY;
 
     if (terrain !== undefined) {
-      terrainHeight = terrain.heightAtCoordinates(cameraX, cameraZ);
+      terrainHeight = terrain.heightAt(cameraX, cameraZ);
       if (terrainHeight === undefined) {
         terrainHeight = Number.NEGATIVE_INFINITY;
       }

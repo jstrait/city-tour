@@ -58,13 +58,13 @@ var TerrainMeshBuilder = function() {
       leftX = x;
       rightX = x + triangleWidth;
 
-      leftLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(leftX, z));
-      leftWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(leftX, z));
+      leftLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(leftX, z));
+      leftWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(leftX, z));
       leftTotalHeight = leftLandHeight + leftWaterHeight;
-      rightLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(rightX, z));
-      rightWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(rightX, z));
+      rightLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(rightX, z));
+      rightWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(rightX, z));
       rightTotalHeight = rightLandHeight + rightWaterHeight;
-      neighboringWaterHeight = terrain.waterHeightAtCoordinates(rightX, z - 1);
+      neighboringWaterHeight = terrain.waterHeightAt(rightX, z - 1);
 
       if (leftWaterHeight === 0.0 || rightWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         leftLandHeight = leftTotalHeight;
@@ -110,13 +110,13 @@ var TerrainMeshBuilder = function() {
       leftX = x;
       rightX = x + triangleWidth;
 
-      leftLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(leftX, z));
-      leftWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(leftX, z));
+      leftLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(leftX, z));
+      leftWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(leftX, z));
       leftTotalHeight = leftLandHeight + leftWaterHeight;
-      rightLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(rightX, z));
-      rightWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(rightX, z));
+      rightLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(rightX, z));
+      rightWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(rightX, z));
       rightTotalHeight = rightLandHeight + rightWaterHeight;
-      neighboringWaterHeight = terrain.waterHeightAtCoordinates(leftX, z + 1);
+      neighboringWaterHeight = terrain.waterHeightAt(leftX, z + 1);
 
       if (leftWaterHeight === 0.0 || rightWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         leftLandHeight = leftTotalHeight;
@@ -162,13 +162,13 @@ var TerrainMeshBuilder = function() {
       topZ = z;
       bottomZ = z + triangleDepth;
 
-      topLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(x, topZ));
-      topWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(x, topZ));
+      topLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(x, topZ));
+      topWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(x, topZ));
       topTotalHeight = topLandHeight + topWaterHeight;
-      bottomLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(x, bottomZ));
-      bottomWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(x, bottomZ));
+      bottomLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(x, bottomZ));
+      bottomWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(x, bottomZ));
       bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
-      neighboringWaterHeight = terrain.waterHeightAtCoordinates(x + 1, topZ);
+      neighboringWaterHeight = terrain.waterHeightAt(x + 1, topZ);
 
       if (topWaterHeight === 0.0 || bottomWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         topLandHeight = topTotalHeight;
@@ -214,13 +214,13 @@ var TerrainMeshBuilder = function() {
       topZ = z;
       bottomZ = z + triangleDepth;
 
-      topLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(x, topZ));
-      topWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(x, topZ));
+      topLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(x, topZ));
+      topWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(x, topZ));
       topTotalHeight = topLandHeight + topWaterHeight;
-      bottomLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAtCoordinates(x, bottomZ));
-      bottomWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAtCoordinates(x, bottomZ));
+      bottomLandHeight = Math.max(SIDE_BOTTOM_HEIGHT, terrain.landHeightAt(x, bottomZ));
+      bottomWaterHeight = Math.min(MAX_WATER_HEIGHT, terrain.waterHeightAt(x, bottomZ));
       bottomTotalHeight = bottomLandHeight + bottomWaterHeight;
-      neighboringWaterHeight = terrain.waterHeightAtCoordinates(x - 1, bottomZ);
+      neighboringWaterHeight = terrain.waterHeightAt(x - 1, bottomZ);
 
       if (topWaterHeight === 0.0 || bottomWaterHeight === 0.0 || neighboringWaterHeight === 0.0) {
         topLandHeight = topTotalHeight;
@@ -276,11 +276,11 @@ var TerrainMeshBuilder = function() {
       bottomRoad = (Math.floor(minZ) === minZ) &&
                    roadNetwork.hasEdgeBetween(Math.floor(x), minZ, Math.floor(x) + 1, minZ, RoadNetwork.TERRAIN_SURFACE);
 
-      bottomLeftHeight = terrain.heightAtCoordinates(x, minZ);
-      bottomRightHeight = terrain.heightAtCoordinates(x + triangleWidth, minZ);
+      bottomLeftHeight = terrain.heightAt(x, minZ);
+      bottomRightHeight = terrain.heightAt(x + triangleWidth, minZ);
 
-      bottomLeftMaterial = terrain.waterHeightAtCoordinates(x, minZ) === 0.0 ? LAND : WATER;
-      bottomRightMaterial = terrain.waterHeightAtCoordinates(x + triangleWidth, minZ) === 0.0 ? LAND : WATER;
+      bottomLeftMaterial = terrain.waterHeightAt(x, minZ) === 0.0 ? LAND : WATER;
+      bottomRightMaterial = terrain.waterHeightAt(x + triangleWidth, minZ) === 0.0 ? LAND : WATER;
 
       for (z = minZ; z < maxZ; z += triangleDepth) {
         topLeftRoad     = bottomLeftRoad;
@@ -331,13 +331,13 @@ var TerrainMeshBuilder = function() {
 
         topLeftHeight = bottomLeftHeight;
         topRightHeight = bottomRightHeight;
-        bottomLeftHeight = terrain.heightAtCoordinates(x, z + triangleDepth);
-        bottomRightHeight = terrain.heightAtCoordinates(x + triangleWidth, z + triangleDepth);
+        bottomLeftHeight = terrain.heightAt(x, z + triangleDepth);
+        bottomRightHeight = terrain.heightAt(x + triangleWidth, z + triangleDepth);
 
         topLeftMaterial = bottomLeftMaterial;
         topRightMaterial = bottomRightMaterial;
-        bottomLeftMaterial = terrain.waterHeightAtCoordinates(x, z + triangleDepth) === 0.0 ? LAND : WATER;
-        bottomRightMaterial = terrain.waterHeightAtCoordinates(x + triangleWidth, z + triangleDepth) === 0.0 ? LAND : WATER;
+        bottomLeftMaterial = terrain.waterHeightAt(x, z + triangleDepth) === 0.0 ? LAND : WATER;
+        bottomRightMaterial = terrain.waterHeightAt(x + triangleWidth, z + triangleDepth) === 0.0 ? LAND : WATER;
 
         // Core triangles
         triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ, topLeftMaterial,
