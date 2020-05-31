@@ -165,7 +165,7 @@ var BuildingMeshBuilder = function() {
       this.array = null;
     };
 
-    // Purposing does not include triangles for the floor,
+    // Purposely does not include triangles for the floor,
     // since floors should never be visible.
     let vertices = new Float32Array([
       -0.5, -0.5, 0.5,
