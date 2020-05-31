@@ -102,7 +102,7 @@ var NeighborhoodGenerator = (function() {
     for (x = minX; x < maxX; x++) {
       for (z = minZ; z < maxZ; z++) {
         scoreComponents = scores[x][z];
-        score = scoreComponents.centrality + scoreComponents.flatness * FLATNESS_WEIGHT + scoreComponents.closeNeighborhoodPenalty;
+        score = scoreComponents.centrality + scoreComponents.flatness + scoreComponents.closeNeighborhoodPenalty;
 
         if (score < bestSiteScore) {
           bestSiteScore = score;
