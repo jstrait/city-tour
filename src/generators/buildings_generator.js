@@ -64,6 +64,8 @@ var BuildingsGenerator = (function() {
         }
       }
     }
+
+    return undefined;
   };
 
   var generateUnitBlocks = function(terrain, zonedBlocks) {
