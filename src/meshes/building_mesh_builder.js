@@ -3,6 +3,8 @@
 import { Config } from "./../config";
 
 var BuildingMeshBuilder = function() {
+  const USE_INSTANCING = true;
+
   var generateBuildingGeometries = function(buildings, buildingsGeometry, roadNetwork) {
     var HALF_STREET_WIDTH = Config.STREET_WIDTH / 2;
     var HALF_STREET_DEPTH = Config.STREET_DEPTH / 2;
@@ -83,22 +85,193 @@ var BuildingMeshBuilder = function() {
     }
   };
 
+  let build = function(buildings, roadNetwork) {
+    let buildingsMaterial;
+    let buildingsGeometry;
+    let buildingMeshes;
 
-  var buildingMeshBuilder = {};
+    if (USE_INSTANCING === true) {
+      return [generateInstancedBuildingsMesh(buildings, roadNetwork)];
+    }
+    else {
+      buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
+      buildingsGeometry = new THREE.Geometry();
+      buildingMeshes = [];
 
-  buildingMeshBuilder.build = function(buildings, roadNetwork) {
-    var buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
-    var buildingsGeometry = new THREE.Geometry();
-    var buildingMeshes = [];
+      generateBuildingGeometries(buildings, buildingsGeometry, roadNetwork);
 
-    generateBuildingGeometries(buildings, buildingsGeometry, roadNetwork);
+      buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
 
-    buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
-
-    return buildingMeshes;
+      return buildingMeshes;
+    }
   };
 
-  return buildingMeshBuilder;
+  let generateInstancedBuildingsMesh = function(buildings, roadNetwork) {
+    const INSTANCE_COUNT = buildings.count;
+    const HALF_STREET_WIDTH = Config.STREET_WIDTH / 2;
+    const HALF_STREET_DEPTH = Config.STREET_DEPTH / 2;
+
+    let buildingsGeometry = buildBuildingsBufferGeometry(INSTANCE_COUNT);
+    let buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors});
+    let buildingsMesh = new THREE.InstancedMesh(buildingsGeometry, buildingsMaterial, INSTANCE_COUNT);
+    let buildingPrototype = new THREE.Object3D();
+
+    let minX = roadNetwork.minColumn();
+    let maxX = roadNetwork.maxColumn();
+    let minZ = roadNetwork.minRow();
+    let maxZ = roadNetwork.maxRow();
+
+    let instanceIndex = 0;
+    let x;
+    let z;
+    let l;
+    let leftX;
+    let topZ;
+    let block;
+    let lot;
+
+    for (x = minX; x < maxX; x++) {
+      leftX = x + HALF_STREET_WIDTH;
+
+      for (z = minZ; z < maxZ; z++) {
+        topZ = z + HALF_STREET_DEPTH;
+
+        block = buildings.blockAtCoordinates(x, z);
+        for (l = 0; l < block.length; l++) {
+          lot = block[l];
+
+          buildingPrototype.position.x = leftX + (Config.BLOCK_WIDTH * lot.dimensions.midpointX);
+          buildingPrototype.position.y = (lot.height / 2) + lot.yFloor;
+          buildingPrototype.position.z = topZ + (Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
+
+          buildingPrototype.scale.x = lot.dimensions.width * Config.BLOCK_WIDTH;
+          buildingPrototype.scale.y = lot.height;
+          buildingPrototype.scale.z = lot.dimensions.depth * Config.BLOCK_DEPTH;
+
+          buildingPrototype.updateMatrix();
+          buildingsMesh.setMatrixAt(instanceIndex, buildingPrototype.matrix);
+
+          instanceIndex += 1;
+        }
+      }
+    }
+
+    return buildingsMesh;
+  };
+
+  let buildBuildingsBufferGeometry = function(instanceCount) {
+    let buildingsGeometry = new THREE.BufferGeometry();
+    let disposeArray = function() {
+      this.array = null;
+    };
+
+    // Purposing does not include triangles for the floor,
+    // since floors should never be visible.
+    let vertices = new Float32Array([
+      -0.5, -0.5, 0.5,
+      0.5, -0.5, 0.5,
+      0.5, 0.5, 0.5,
+
+      0.5, 0.5, 0.5,
+      -0.5, 0.5, 0.5,
+      -0.5, -0.5, 0.5,
+
+      0.5, -0.5, -0.5,
+      -0.5, -0.5, -0.5,
+      -0.5, 0.5, -0.5,
+
+      -0.5, 0.5, -0.5,
+      0.5, 0.5, -0.5,
+      0.5, -0.5, -0.5,
+
+      -0.5, -0.5, -0.5,
+      -0.5, 0.5, 0.5,
+      -0.5, 0.5, -0.5,
+
+      -0.5, 0.5, 0.5,
+      -0.5, -0.5, -0.5,
+      -0.5, -0.5, 0.5,
+
+      0.5, 0.5, -0.5,
+      0.5, -0.5, 0.5,
+      0.5, -0.5, -0.5,
+
+      0.5, 0.5, -0.5,
+      0.5, 0.5, 0.5,
+      0.5, -0.5, 0.5,
+
+      0.5, 0.5, -0.5,
+      -0.5, 0.5, -0.5,
+      -0.5, 0.5, 0.5,
+
+      0.5, 0.5, -0.5,
+      -0.5, 0.5,  0.5,
+      0.5, 0.5,  0.5,
+    ]);
+
+    let normals = new Float32Array([
+      0, 0, 1,
+      0, 0, 1,
+      0, 0, 1,
+      0, 0, 1,
+      0, 0, 1,
+      0, 0, 1,
+
+      0, 0, -1,
+      0, 0, -1,
+      0, 0, -1,
+      0, 0, -1,
+      0, 0, -1,
+      0, 0, -1,
+
+      -1, 0, 0,
+      -1, 0, 0,
+      -1, 0, 0,
+      -1, 0, 0,
+      -1, 0, 0,
+      -1, 0, 0,
+
+      1, 0, 0,
+      1, 0, 0,
+      1, 0, 0,
+      1, 0, 0,
+      1, 0, 0,
+      1, 0, 0,
+
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 0,
+    ]);
+
+    buildingsGeometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3).onUpload(disposeArray));
+    buildingsGeometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3).onUpload(disposeArray));
+    buildingsGeometry.setAttribute("color", buildInstancedColorBufferAttributes(instanceCount).onUpload(disposeArray));
+
+    return buildingsGeometry;
+  };
+
+  let buildInstancedColorBufferAttributes = function(instanceCount) {
+    let colorAttributes = new Float32Array(instanceCount * 3);
+    let color = new THREE.Color();
+    let gray;
+    let i;
+
+    for (i = 0;  i < instanceCount; i++) {
+      gray = Math.random();
+      color.setRGB(gray, gray, gray);
+      color.toArray(colorAttributes, i * 3);
+    }
+
+    return new THREE.InstancedBufferAttribute(colorAttributes, 3);
+  };
+
+
+  return {
+    build: build,
+  };
 };
 
 export { BuildingMeshBuilder };

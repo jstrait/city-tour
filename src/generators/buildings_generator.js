@@ -68,6 +68,7 @@ var BuildingsGenerator = (function() {
 
   var generateUnitBlocks = function(terrain, zonedBlocks) {
     var blocks = [];
+    var buildingCount = 0;
 
     zonedBlocks.forEach(function(zonedBlock) {
       var x = zonedBlock.x;
@@ -81,6 +82,7 @@ var BuildingsGenerator = (function() {
         building = generateBuildingOnLot(lots[l], zonedBlock, terrain);
         if (building !== undefined) {
           block.push(building);
+          buildingCount += 1;
         }
       }
 
@@ -92,7 +94,7 @@ var BuildingsGenerator = (function() {
       }
     });
 
-    return blocks;
+    return {count: buildingCount, blocks: blocks};
   };
 
 
@@ -101,10 +103,12 @@ var BuildingsGenerator = (function() {
   var buildingsGenerator = {};
 
   buildingsGenerator.generate = function(terrain, zonedBlocks) {
-    var blocks = generateUnitBlocks(terrain, zonedBlocks);
+    var buildingData = generateUnitBlocks(terrain, zonedBlocks);
+    var blocks = buildingData.blocks;
 
     var buildings = {};
 
+    buildings.count = buildingData.count;
     buildings.blockAtCoordinates = function(x, z) {
       return (blocks[x] === undefined || blocks[x][z] === undefined) ? EMPTY_ARRAY : blocks[x][z];
     };
