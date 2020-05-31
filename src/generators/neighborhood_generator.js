@@ -25,8 +25,10 @@ var NeighborhoodGenerator = (function() {
     var minZ = terrain.minZ() + FLATNESS_WINDOW_DEPTH_MARGIN;
     var maxZ = terrain.maxZ() - FLATNESS_WINDOW_DEPTH_MARGIN;
 
-    // Manhattan distance from the center
-    var maxNeighborhoodDistanceFromCenter = Math.abs((terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN) + (terrain.minZ() + FLATNESS_WINDOW_DEPTH_MARGIN));
+    // Manhattan distance from the center. Assumption is terrain has
+    // center point of {0,0}, and roads only run fully north/south or
+    // west/east.
+    var maxNeighborhoodDistanceFromCenter = (maxX + maxZ);
 
     for (x = minX; x <= maxX; x++) {
       scores[x] = [];
