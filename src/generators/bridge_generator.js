@@ -42,7 +42,7 @@ var BridgeGenerator = (function() {
       bridgeEndZ += zDelta;
       bridgeLength += 1;
 
-      if (!terrain.isPointInBounds(bridgeEndX, bridgeEndZ)) {
+      if (!roadNetwork.isPointInAllowedBounds(bridgeEndX, bridgeEndZ)) {
         return;
       }
     }

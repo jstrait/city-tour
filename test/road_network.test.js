@@ -8,23 +8,47 @@ describe("RoadNetwork", function() {
     [
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
-      {landHeight: 2.0, waterHeight: 0.0},
-      {landHeight: 3.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
     ],
     [
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 2.0, waterHeight: 0.0},
+      {landHeight: 3.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+    ],
+    [
+      {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 4.3, waterHeight: 0.0},
       {landHeight: 5.2, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
     ],
     [
+      {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 6.4, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+    ],
+    [
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
     ],
     [
       {landHeight: 0.0, waterHeight: 0.0},
@@ -32,8 +56,12 @@ describe("RoadNetwork", function() {
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
     ],
     [
+      {landHeight: 0.0, waterHeight: 0.0},
+      {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
       {landHeight: 0.0, waterHeight: 0.0},
@@ -187,6 +215,51 @@ describe("RoadNetwork", function() {
     expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toEqual({ distance: 1.0, surfaceType: RoadNetwork.TERRAIN_SURFACE });
 
     expect(roadNetwork.edgeBetween(1, 0, 2, 0)).toBe(undefined);
+  });
+
+
+  describe(".addEdge", function() {
+    var roadNetwork = new RoadNetwork(terrain);
+
+    it("allows adding an edge in a valid location", function() {
+      expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
+      expect(roadNetwork.getRoadHeight(0, 0)).toBe(undefined);
+      expect(roadNetwork.getRoadHeight(1, 0)).toBe(undefined);
+      expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(false);
+      expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(false);
+
+      roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+
+      expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(true);
+      expect(roadNetwork.getRoadHeight(0, 0)).toBe(6.4);
+      expect(roadNetwork.getRoadHeight(1, 0)).toBe(0.0);
+      expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(RoadNetwork.TERRAIN_SURFACE);
+      expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(RoadNetwork.TERRAIN_SURFACE);
+    });
+
+    it("allows adding an edge up to the valid bounds", function() {
+      roadNetwork.addEdge(-1, 0, -2, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, -1, 0, -2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 1, 0, 2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+
+      expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 0)).toBe(true);
+      expect(roadNetwork.hasEdgeBetween(1, 0, 2, 0)).toBe(true);
+      expect(roadNetwork.hasEdgeBetween(0, -1, 0, -2)).toBe(true);
+      expect(roadNetwork.hasEdgeBetween(0, 1, 0, 2)).toBe(true);
+    });
+
+    it("raises an error if adding an edge outside the allowed bounds", function() {
+      expect(function() { roadNetwork.addEdge(-2, 0, -3, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(2, 0, 3, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(0, -2, 0, -3, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(0, 2, 0, 3, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
+
+      expect(roadNetwork.hasEdgeBetween(-2, 0, -3, 0)).toBe(false);
+      expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
+      expect(roadNetwork.hasEdgeBetween(0, -2, 0, -3)).toBe(false);
+      expect(roadNetwork.hasEdgeBetween(0, 2, 0, 3)).toBe(false);
+    });
   });
 
 

@@ -77,6 +77,13 @@ var RoadNetwork = function(terrain) {
 
 
   var minColumn = Number.POSITIVE_INFINITY, maxColumn = Number.NEGATIVE_INFINITY, minRow = Number.POSITIVE_INFINITY, maxRow = Number.NEGATIVE_INFINITY;
+
+  // Don't allow roads on the terrain edges
+  var minAllowedX = terrain.minX() + 1;
+  var maxAllowedX = terrain.maxX() - 1;
+  var minAllowedZ = terrain.minZ() + 1;
+  var maxAllowedZ = terrain.maxZ() - 1;
+
   var intersections = [];
   for (var x = Math.ceil(terrain.minX()); x <= Math.floor(terrain.maxX()); x++) {
     intersections[x] = [];
@@ -165,6 +172,13 @@ var RoadNetwork = function(terrain) {
     var intersectionHeight, intersectionSurfaceType;
     var edge = { distance: distance, surfaceType: surfaceType };
 
+    if (x1 < minAllowedX || x1 > maxAllowedX || z1 < minAllowedZ || z1 > maxAllowedZ) {
+      throw new Error(`Road coordinates are out of allowed bounds: {${x1}, ${z1}}`);
+    }
+    if (x2 < minAllowedX || x2 > maxAllowedX || z2 < minAllowedZ || z2 > maxAllowedZ) {
+      throw new Error(`Road coordinates are out of allowed bounds: {${x2}, ${z2}}`);
+    }
+
     if (intersection1 === undefined) {
       intersectionHeight = (terrain.waterHeightAt(x1, z1) === 0.0) ? terrain.heightAt(x1, z1) : nonTerrainHeight;
       intersectionSurfaceType = (terrain.waterHeightAt(x1, z1) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
@@ -227,6 +241,10 @@ var RoadNetwork = function(terrain) {
     return (intersection === undefined) ? undefined : intersection.edgesFrom();
   };
 
+  var isPointInAllowedBounds = function(x, z) {
+    return x >= minAllowedX && x <= maxAllowedX && z >= minAllowedZ && z <= maxAllowedZ;
+  };
+
 
   return {
     hasIntersection: hasIntersection,
@@ -241,6 +259,11 @@ var RoadNetwork = function(terrain) {
     maxColumn: function() { return maxColumn; },
     minRow: function() { return minRow; },
     maxRow: function() { return maxRow; },
+    minAllowedX: function() { return minAllowedX; },
+    maxAllowedX: function() { return maxAllowedX; },
+    minAllowedZ: function() { return minAllowedZ; },
+    maxAllowedZ: function() { return maxAllowedZ; },
+    isPointInAllowedBounds: isPointInAllowedBounds,
   };
 };
 
