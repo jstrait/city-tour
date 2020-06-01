@@ -59,10 +59,10 @@ var RoadNetworkSimplifier = (function() {
 
     var pathFinder = new PathFinder(roadNetwork);
 
-    var roadNetworkMinColumn = roadNetwork.minColumn();
-    var roadNetworkMaxColumn = roadNetwork.maxColumn();
-    var roadNetworkMinRow = roadNetwork.minRow();
-    var roadNetworkMaxRow = roadNetwork.maxRow();
+    var roadNetworkMinColumn = roadNetwork.minBoundingX();
+    var roadNetworkMaxColumn = roadNetwork.maxBoundingX();
+    var roadNetworkMinRow = roadNetwork.minBoundingZ();
+    var roadNetworkMaxRow = roadNetwork.maxBoundingZ();
 
     var edgesRemovedCount = 0;
 

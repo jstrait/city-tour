@@ -36,10 +36,10 @@ var AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ) {
       }
 
       if (movementAxis === X_AXIS) {
-        newTargetX = CityTourMath.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
+        newTargetX = CityTourMath.randomInteger(roadNetwork.minBoundingX(), roadNetwork.maxBoundingX());
       }
       else if (movementAxis === Z_AXIS) {
-        newTargetZ = CityTourMath.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
+        newTargetZ = CityTourMath.randomInteger(roadNetwork.minBoundingZ(), roadNetwork.maxBoundingZ());
       }
 
       iterationCount += 1;

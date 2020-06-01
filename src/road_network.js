@@ -76,7 +76,11 @@ var RoadNetwork = function(terrain) {
   };
 
 
-  var minColumn = Number.POSITIVE_INFINITY, maxColumn = Number.NEGATIVE_INFINITY, minRow = Number.POSITIVE_INFINITY, maxRow = Number.NEGATIVE_INFINITY;
+  // Bounding box of existing nodes
+  var minBoundingX = Number.POSITIVE_INFINITY;
+  var maxBoundingX = Number.NEGATIVE_INFINITY;
+  var minBoundingZ = Number.POSITIVE_INFINITY;
+  var maxBoundingZ = Number.NEGATIVE_INFINITY;
 
   // Don't allow roads on the terrain edges
   var minAllowedX = terrain.minX() + 1;
@@ -196,10 +200,10 @@ var RoadNetwork = function(terrain) {
     intersection1.addEdge(x2, z2, edge);
     intersection2.addEdge(x1, z1, edge);
 
-    minColumn = Math.min(minColumn, x1, x2);
-    maxColumn = Math.max(maxColumn, x1, x2);
-    minRow = Math.min(minRow, z1, z2);
-    maxRow = Math.max(maxRow, z1, z2);
+    minBoundingX = Math.min(minBoundingX, x1, x2);
+    maxBoundingX = Math.max(maxBoundingX, x1, x2);
+    minBoundingZ = Math.min(minBoundingZ, z1, z2);
+    maxBoundingZ = Math.max(maxBoundingZ, z1, z2);
   };
 
   var removeEdge = function(x1, z1, x2, z2) {
@@ -255,10 +259,10 @@ var RoadNetwork = function(terrain) {
     hasEdgeBetween: hasEdgeBetween,
     edgeBetween: edgeBetween,
     edgesFrom: edgesFrom,
-    minColumn: function() { return minColumn; },
-    maxColumn: function() { return maxColumn; },
-    minRow: function() { return minRow; },
-    maxRow: function() { return maxRow; },
+    minBoundingX: function() { return minBoundingX; },
+    maxBoundingX: function() { return maxBoundingX; },
+    minBoundingZ: function() { return minBoundingZ; },
+    maxBoundingZ: function() { return maxBoundingZ; },
     minAllowedX: function() { return minAllowedX; },
     maxAllowedX: function() { return maxAllowedX; },
     minAllowedZ: function() { return minAllowedZ; },

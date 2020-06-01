@@ -68,10 +68,10 @@ var BuildingMeshBuilder = function() {
       }
     };
 
-    minX = roadNetwork.minColumn();
-    maxX = roadNetwork.maxColumn();
-    minZ = roadNetwork.minRow();
-    maxZ = roadNetwork.maxRow();
+    minX = roadNetwork.minBoundingX();
+    maxX = roadNetwork.maxBoundingX();
+    minZ = roadNetwork.minBoundingZ();
+    maxZ = roadNetwork.maxBoundingZ();
 
     for (x = minX; x < maxX; x++) {
       leftX = x + HALF_STREET_WIDTH;
@@ -116,10 +116,10 @@ var BuildingMeshBuilder = function() {
     let buildingsMesh = new THREE.InstancedMesh(buildingsGeometry, buildingsMaterial, INSTANCE_COUNT);
     let buildingPrototype = new THREE.Object3D();
 
-    let minX = roadNetwork.minColumn();
-    let maxX = roadNetwork.maxColumn();
-    let minZ = roadNetwork.minRow();
-    let maxZ = roadNetwork.maxRow();
+    let minX = roadNetwork.minBoundingX();
+    let maxX = roadNetwork.maxBoundingX();
+    let minZ = roadNetwork.minBoundingZ();
+    let maxZ = roadNetwork.maxBoundingZ();
 
     let instanceIndex = 0;
     let x;

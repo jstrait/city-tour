@@ -92,7 +92,7 @@ var PathFinder = function(roadNetwork) {
       };
     }
 
-    for (x = roadNetwork.minColumn(); x <= roadNetwork.maxColumn(); x++) {
+    for (x = roadNetwork.minBoundingX(); x <= roadNetwork.maxBoundingX(); x++) {
       nodes[x] = [];
     }
 

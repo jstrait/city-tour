@@ -64,19 +64,19 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
     return edges;
   };
 
-  var minColumn = function() {
+  var minBoundingX = function() {
     return terrain.minX();
   };
 
-  var maxColumn = function() {
+  var maxBoundingX = function() {
     return terrain.maxX();
   };
 
   return {
     hasIntersection: hasIntersection,
     edgesFrom: edgesFrom,
-    minColumn: minColumn,
-    maxColumn: maxColumn,
+    minBoundingX: minBoundingX,
+    maxBoundingX: maxBoundingX,
   };
 };
 

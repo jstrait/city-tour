@@ -23,8 +23,8 @@ var RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTar
     var newTargetZ;
 
     do {
-      newTargetX = CityTourMath.randomInteger(roadNetwork.minColumn(), roadNetwork.maxColumn());
-      newTargetZ = CityTourMath.randomInteger(roadNetwork.minRow(), roadNetwork.maxRow());
+      newTargetX = CityTourMath.randomInteger(roadNetwork.minBoundingX(), roadNetwork.maxBoundingX());
+      newTargetZ = CityTourMath.randomInteger(roadNetwork.minBoundingZ(), roadNetwork.maxBoundingZ());
     } while (!roadNetwork.hasIntersection(newTargetX, newTargetZ));
 
     return [newTargetX, newTargetZ];
