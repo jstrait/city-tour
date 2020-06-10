@@ -209,10 +209,10 @@ var ZonedBlockGenerator = (function() {
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
-        hasTopRoad = roadNetwork.hasEdgeBetween(x, z, x + 1, z, RoadNetwork.TERRAIN_SURFACE);
-        hasRightRoad = roadNetwork.hasEdgeBetween(x + 1, z, x + 1, z + 1, RoadNetwork.TERRAIN_SURFACE);
-        hasBottomRoad = roadNetwork.hasEdgeBetween(x, z + 1, x + 1, z + 1, RoadNetwork.TERRAIN_SURFACE);
-        hasLeftRoad = roadNetwork.hasEdgeBetween(x, z, x, z + 1, RoadNetwork.TERRAIN_SURFACE);
+        hasTopRoad = roadNetwork.hasEdgeBetween(x, z, x + 1, z, RoadNetwork.SURFACE_GRADE);
+        hasRightRoad = roadNetwork.hasEdgeBetween(x + 1, z, x + 1, z + 1, RoadNetwork.SURFACE_GRADE);
+        hasBottomRoad = roadNetwork.hasEdgeBetween(x, z + 1, x + 1, z + 1, RoadNetwork.SURFACE_GRADE);
+        hasLeftRoad = roadNetwork.hasEdgeBetween(x, z, x, z + 1, RoadNetwork.SURFACE_GRADE);
 
         if (hasTopRoad === true || hasRightRoad === true || hasBottomRoad === true || hasLeftRoad === true) {
           distanceToClosestNeighborhoodCenter = nearestNeighborhoodCenterDistance(neighborhoods, x, z);

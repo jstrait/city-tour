@@ -69,7 +69,7 @@ var CircleGrowthRoadGenerator = (function() {
       if (shouldConnectIntersections(terrain, x, z, targetX, targetZ)) {
         targetIntersectionExists = roadNetwork.hasIntersection(targetX, targetZ);
 
-        roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(x, z, targetX, targetZ, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
         if (!targetIntersectionExists) {
           branchFromIntersection(terrain, roadNetwork, targetX, targetZ);
         }

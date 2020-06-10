@@ -79,7 +79,7 @@ describe("RoadNetwork", function() {
     expect(roadNetwork.hasIntersection(1, 2)).toBe(false);
     expect(roadNetwork.hasIntersection(3, 4)).toBe(false);
 
-    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
     expect(roadNetwork.hasIntersection(-1, 0)).toBe(true);
     expect(roadNetwork.hasIntersection(1, 2)).toBe(true);
@@ -94,9 +94,9 @@ describe("RoadNetwork", function() {
   describe(".getRoadHeight", function() {
     var roadNetwork = new RoadNetwork(terrain);
 
-    roadNetwork.addEdge(-1, 0, 0, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(-1, 0, -1, -1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-    roadNetwork.addEdge(-1, -1, -1, -2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, 0, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+    roadNetwork.addEdge(-1, 0, -1, -1, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+    roadNetwork.addEdge(-1, -1, -1, -2, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
     it("returns `undefined` for coordinates not on a road edge", function() {
       expect(roadNetwork.getRoadHeight(1, 0)).toBe(undefined);
@@ -155,34 +155,34 @@ describe("RoadNetwork", function() {
     expect(roadNetwork.hasEdgeBetween(-2, 1, 1, 2)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 2, 1)).toBe(false);
 
-    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, 1, 2, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
     expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.TERRAIN_SURFACE)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.BRIDGE_SURFACE)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.SURFACE_GRADE)).toBe(true);
+    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.BRIDGE_GRADE)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.TERRAIN_SURFACE)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.BRIDGE_SURFACE)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.SURFACE_GRADE)).toBe(true);
+    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.BRIDGE_GRADE)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 1)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-2, 1, -1, 0)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(1, 2, -2, 1)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-2, 1, 1, 2)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 2, 1)).toBe(false);
 
-    roadNetwork.addEdge(-1, 0, -2, 1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+    roadNetwork.addEdge(-1, 0, -2, 1, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
     expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.TERRAIN_SURFACE)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.BRIDGE_SURFACE)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.SURFACE_GRADE)).toBe(true);
+    expect(roadNetwork.hasEdgeBetween(-1, 0, 1, 2, RoadNetwork.BRIDGE_GRADE)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.TERRAIN_SURFACE)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.BRIDGE_SURFACE)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.SURFACE_GRADE)).toBe(true);
+    expect(roadNetwork.hasEdgeBetween(1, 2, -1, 0, RoadNetwork.BRIDGE_GRADE)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 1)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 1, RoadNetwork.TERRAIN_SURFACE)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 1, RoadNetwork.BRIDGE_SURFACE)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 1, RoadNetwork.SURFACE_GRADE)).toBe(true);
+    expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 1, RoadNetwork.BRIDGE_GRADE)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-2, 1, -1, 0)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-2, 1, -1, 0, RoadNetwork.TERRAIN_SURFACE)).toBe(true);
-    expect(roadNetwork.hasEdgeBetween(-2, 1, -1, 0, RoadNetwork.BRIDGE_SURFACE)).toBe(false);
+    expect(roadNetwork.hasEdgeBetween(-2, 1, -1, 0, RoadNetwork.SURFACE_GRADE)).toBe(true);
+    expect(roadNetwork.hasEdgeBetween(-2, 1, -1, 0, RoadNetwork.BRIDGE_GRADE)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(1, 2, -2, 1)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-2, 1, 1, 2)).toBe(false);
     expect(roadNetwork.hasEdgeBetween(-1, 0, 2, 1)).toBe(false);
@@ -211,8 +211,8 @@ describe("RoadNetwork", function() {
     expect(roadNetwork.edgeBetween(-2, 0, -3, 0)).toBe(undefined);
 
     // Edge exists
-    roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-    expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toEqual({ distance: 1.0, surfaceType: RoadNetwork.TERRAIN_SURFACE });
+    roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+    expect(roadNetwork.edgeBetween(0, 0, 1, 0)).toEqual({ distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE });
 
     expect(roadNetwork.edgeBetween(1, 0, 2, 0)).toBe(undefined);
   });
@@ -228,20 +228,20 @@ describe("RoadNetwork", function() {
       expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(false);
       expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(false);
 
-      roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(true);
       expect(roadNetwork.getRoadHeight(0, 0)).toBe(6.4);
       expect(roadNetwork.getRoadHeight(1, 0)).toBe(0.0);
-      expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(RoadNetwork.TERRAIN_SURFACE);
-      expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(RoadNetwork.TERRAIN_SURFACE);
+      expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(RoadNetwork.SURFACE_GRADE);
+      expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(RoadNetwork.SURFACE_GRADE);
     });
 
     it("allows adding an edge up to the valid bounds", function() {
-      roadNetwork.addEdge(-1, 0, -2, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-      roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-      roadNetwork.addEdge(0, -1, 0, -2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-      roadNetwork.addEdge(0, 1, 0, 2, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(-1, 0, -2, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+      roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+      roadNetwork.addEdge(0, -1, 0, -2, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+      roadNetwork.addEdge(0, 1, 0, 2, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
       expect(roadNetwork.hasEdgeBetween(-1, 0, -2, 0)).toBe(true);
       expect(roadNetwork.hasEdgeBetween(1, 0, 2, 0)).toBe(true);
@@ -250,10 +250,10 @@ describe("RoadNetwork", function() {
     });
 
     it("raises an error if adding an edge outside the allowed bounds", function() {
-      expect(function() { roadNetwork.addEdge(-2, 0, -3, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
-      expect(function() { roadNetwork.addEdge(2, 0, 3, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
-      expect(function() { roadNetwork.addEdge(0, -2, 0, -3, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
-      expect(function() { roadNetwork.addEdge(0, 2, 0, 3, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(-2, 0, -3, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(2, 0, 3, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(0, -2, 0, -3, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(0, 2, 0, 3, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
 
       expect(roadNetwork.hasEdgeBetween(-2, 0, -3, 0)).toBe(false);
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
@@ -269,7 +269,7 @@ describe("RoadNetwork", function() {
     it("allows removing an existing edge", function() {
       // Remove an existing edge
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
-      roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(true);
       roadNetwork.removeEdge(0, 0, 1, 0);
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
@@ -295,14 +295,14 @@ describe("RoadNetwork", function() {
 
     it("doesn't blow up when removing a non-existent edge between one intersection that exists, and another that doesn't", function() {
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
-      roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(1, 0, 2, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
       roadNetwork.removeEdge(2, 0, 3, 0);
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
     });
 
     it("removes an intersection if it no longer has any connected edges", function() {
-      roadNetwork.addEdge(0, 0, 0, 1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
-      roadNetwork.addEdge(0, 1, 1, 1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 0, 0, 1, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
+      roadNetwork.addEdge(0, 1, 1, 1, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
       expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(true);
       expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);
@@ -326,7 +326,7 @@ describe("RoadNetwork", function() {
       expect(roadNetwork.hasIntersection(0, 1)).toBe(false);
       expect(roadNetwork.hasIntersection(1, 1)).toBe(false);
 
-      roadNetwork.addEdge(0, 1, 1, 1, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+      roadNetwork.addEdge(0, 1, 1, 1, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
       expect(roadNetwork.hasEdgeBetween(0, 0, 0, 1)).toBe(false);
       expect(roadNetwork.hasEdgeBetween(0, 1, 1, 1)).toBe(true);

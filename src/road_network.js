@@ -4,7 +4,7 @@ import { CityTourMath } from "./math";
 import { Config } from "./config";
 
 var RoadNetwork = function(terrain) {
-  var Intersection = function(x, z, height, surfaceType) {
+  var Intersection = function(x, z, height, gradeType) {
     var edges = [];
 
     var addEdge = function(destinationX, destinationZ, edge) {
@@ -34,13 +34,13 @@ var RoadNetwork = function(terrain) {
       }
     };
 
-    var hasEdgeTo = function(destinationX, destinationZ, surfaceType) {
+    var hasEdgeTo = function(destinationX, destinationZ, gradeType) {
       var i;
 
       for (i = 0; i < edges.length; i++) {
         if (edges[i].destinationX === destinationX && edges[i].destinationZ === destinationZ) {
-          if (surfaceType) {
-            return edges[i].edge.surfaceType === surfaceType;
+          if (gradeType) {
+            return edges[i].edge.gradeType === gradeType;
           }
           else {
             return true;
@@ -65,7 +65,7 @@ var RoadNetwork = function(terrain) {
 
     return {
       getHeight: function() { return height; },
-      getSurfaceType: function() { return surfaceType; },
+      getSurfaceType: function() { return gradeType; },
       addEdge: addEdge,
       removeEdge: removeEdge,
       hasEdgeTo: hasEdgeTo,
@@ -170,11 +170,11 @@ var RoadNetwork = function(terrain) {
     }
   };
 
-  var addEdge = function(x1, z1, x2, z2, nonTerrainHeight, distance, surfaceType) {
+  var addEdge = function(x1, z1, x2, z2, nonTerrainHeight, distance, gradeType) {
     var intersection1 = intersections[x1][z1];
     var intersection2 = intersections[x2][z2];
     var intersectionHeight, intersectionSurfaceType;
-    var edge = { distance: distance, surfaceType: surfaceType };
+    var edge = { distance: distance, gradeType: gradeType };
 
     if (x1 < minAllowedX || x1 > maxAllowedX || z1 < minAllowedZ || z1 > maxAllowedZ) {
       throw new Error(`Road coordinates are out of allowed bounds: {${x1}, ${z1}}`);
@@ -185,14 +185,14 @@ var RoadNetwork = function(terrain) {
 
     if (intersection1 === undefined) {
       intersectionHeight = (terrain.waterHeightAt(x1, z1) === 0.0) ? terrain.heightAt(x1, z1) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAt(x1, z1) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
+      intersectionSurfaceType = (terrain.waterHeightAt(x1, z1) === 0.0) ? RoadNetwork.SURFACE_GRADE : RoadNetwork.BRIDGE_GRADE;
       intersection1 = Intersection(x1, z1, intersectionHeight, intersectionSurfaceType);
       intersections[x1][z1] = intersection1;
     }
 
     if (intersection2 === undefined) {
       intersectionHeight = (terrain.waterHeightAt(x2, z2) === 0.0) ? terrain.heightAt(x2, z2) : nonTerrainHeight;
-      intersectionSurfaceType = (terrain.waterHeightAt(x2, z2) === 0.0) ? RoadNetwork.TERRAIN_SURFACE : RoadNetwork.BRIDGE_SURFACE;
+      intersectionSurfaceType = (terrain.waterHeightAt(x2, z2) === 0.0) ? RoadNetwork.SURFACE_GRADE : RoadNetwork.BRIDGE_GRADE;
       intersection2 = Intersection(x2, z2, intersectionHeight, intersectionSurfaceType);
       intersections[x2][z2] = intersection2;
     }
@@ -224,13 +224,13 @@ var RoadNetwork = function(terrain) {
     }
   };
 
-  var hasEdgeBetween = function(x1, z1, x2, z2, surfaceType) {
+  var hasEdgeBetween = function(x1, z1, x2, z2, gradeType) {
     var intersection1 = (intersections[x1] === undefined) ? undefined : intersections[x1][z1];
     var intersection2 = (intersections[x2] === undefined) ? undefined : intersections[x2][z2];
 
     return intersection1 !== undefined &&
            intersection2 !== undefined &&
-           intersection1.hasEdgeTo(x2, z2, surfaceType) && intersection2.hasEdgeTo(x1, z1, surfaceType);
+           intersection1.hasEdgeTo(x2, z2, gradeType) && intersection2.hasEdgeTo(x1, z1, gradeType);
   };
 
   var edgeBetween = function(x1, z1, x2, z2) {
@@ -271,7 +271,7 @@ var RoadNetwork = function(terrain) {
   };
 };
 
-RoadNetwork.TERRAIN_SURFACE = "terrain";
-RoadNetwork.BRIDGE_SURFACE = "bridge";
+RoadNetwork.SURFACE_GRADE = "terrain";
+RoadNetwork.BRIDGE_GRADE = "bridge";
 
 export { RoadNetwork };

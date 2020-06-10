@@ -76,14 +76,14 @@ var NeighborhoodRoadNetworkGenerator = (function() {
                                 bridgeIntersectionZ + bridgeAttributes.zDelta,
                                 bridgeAttributes.roadDeckHeight,
                                 1.0,
-                                RoadNetwork.BRIDGE_SURFACE);
+                                RoadNetwork.BRIDGE_GRADE);
             bridgeIntersectionX += bridgeAttributes.xDelta;
             bridgeIntersectionZ += bridgeAttributes.zDelta;
           }
         }
       }
       else {
-        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, nextIntersectionX, nextIntersectionZ, 0.0, 1.0, RoadNetwork.TERRAIN_SURFACE);
+        roadNetwork.addEdge(previousIntersectionX, previousIntersectionZ, nextIntersectionX, nextIntersectionZ, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
       }
 
       previousIntersectionX = nextIntersectionX;

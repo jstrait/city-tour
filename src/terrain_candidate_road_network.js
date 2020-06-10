@@ -12,7 +12,7 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
 
     if (bridgeAttributes !== undefined) {
       bridgeLength = CityTourMath.distanceBetweenPoints(x, z, bridgeAttributes.endX, bridgeAttributes.endZ);
-      edges.push({ destinationX: bridgeAttributes.endX, destinationZ: bridgeAttributes.endZ, edge: { distance: bridgeLength, surfaceType: RoadNetwork.BRIDGE_SURFACE }});
+      edges.push({ destinationX: bridgeAttributes.endX, destinationZ: bridgeAttributes.endZ, edge: { distance: bridgeLength, gradeType: RoadNetwork.BRIDGE_GRADE }});
     }
   };
 
@@ -36,14 +36,14 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
       addBridgeEdge(edges, x, z, x, z - 1);
     }
     else if (Math.abs(northAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x, destinationZ: z - 1, edge: { distance: 1.0, surfaceType: RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: x, destinationZ: z - 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
     }
 
     if (terrain.waterHeightAt(x, z + 1) > 0.0) {
       addBridgeEdge(edges, x, z, x, z + 1);
     }
     else if (Math.abs(southAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x, destinationZ: z + 1, edge: { distance: 1.0, surfaceType: RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: x, destinationZ: z + 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
     }
 
 
@@ -51,14 +51,14 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
       addBridgeEdge(edges, x, z, x - 1, z);
     }
     else if (Math.abs(westAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x - 1, destinationZ: z, edge: { distance: 1.0, surfaceType: RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: x - 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
     }
 
     if (terrain.waterHeightAt(x + 1, z) > 0.0) {
       addBridgeEdge(edges, x, z, x + 1, z);
     }
     else if (Math.abs(eastAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x + 1, destinationZ: z, edge: { distance: 1.0, surfaceType: RoadNetwork.TERRAIN_SURFACE }});
+      edges.push({ destinationX: x + 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
     }
 
     return edges;

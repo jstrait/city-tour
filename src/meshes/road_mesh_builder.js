@@ -128,7 +128,7 @@ var RoadMeshBuilder = function() {
           roadSegmentMesh.updateMatrix();
           roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
 
-          if (roadNetwork.getIntersectionSurfaceType(x, z) === RoadNetwork.BRIDGE_SURFACE) {
+          if (roadNetwork.getIntersectionSurfaceType(x, z) === RoadNetwork.BRIDGE_GRADE) {
             reusableBridgeSupportMesh.position.x = x;
             reusableBridgeSupportMesh.position.y = selfSurfaceHeight - HALF_BRIDGE_SUPPORT_HEIGHT - BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK;
             reusableBridgeSupportMesh.position.z = z;
@@ -267,7 +267,7 @@ var RoadMeshBuilder = function() {
             sidewalkSegmentMesh.updateMatrix();
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
-            if (roadNetwork.edgeBetween(x, z, x, z + 1).surfaceType === RoadNetwork.BRIDGE_SURFACE) {
+            if (roadNetwork.edgeBetween(x, z, x, z + 1).gradeType === RoadNetwork.BRIDGE_GRADE) {
               // Guardrail
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.rotation.x = roadSegment.angle;
@@ -322,7 +322,7 @@ var RoadMeshBuilder = function() {
             sidewalkSegmentMesh.updateMatrix();
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
-            if (roadNetwork.edgeBetween(x, z, x + 1, z).surfaceType === RoadNetwork.BRIDGE_SURFACE) {
+            if (roadNetwork.edgeBetween(x, z, x + 1, z).gradeType === RoadNetwork.BRIDGE_GRADE) {
               // Guardrail
               guardrailSegmentMesh = reusableGuardrailMesh;
               guardrailSegmentMesh.position.x = x + HALF_BLOCK_AND_STREET_DEPTH;
