@@ -49,9 +49,9 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
   var animations;
 
-  var VERTICAL_MODE_DURATION_IN_FRAMES = 2000;
-  var framesInCurrentVerticalMode = VERTICAL_MODE_DURATION_IN_FRAMES + 1;
-  var verticalMode = INITIAL_DESCENT;
+  var MODE_DURATION_IN_FRAMES = 2000;
+  var framesInCurrentMode = MODE_DURATION_IN_FRAMES + 1;
+  var mode = INITIAL_DESCENT;
 
   var navigator;
   var aerialNavigator;
@@ -337,7 +337,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
   var buildDrivingAnimations = function(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ) {
     var totalPathLength = CityTourMath.distanceBetweenPoints(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
-    var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * VERTICAL_MODE_DURATION_IN_FRAMES;
+    var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * MODE_DURATION_IN_FRAMES;
     var path = [{x: initialPositionX, z: initialPositionZ}, {x: targetPositionX, z: targetPositionZ}];
     var currentX;
     var currentZ;
@@ -433,16 +433,16 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
                 rotationX: rotationX,
                 rotationY: rotationY };
 
-    if (verticalMode === INITIAL_DESCENT) {
+    if (mode === INITIAL_DESCENT) {
       return buildIntroAnimations(initial, targetPositionX, targetPositionZ);
     }
-    else if (verticalMode === BIRDSEYE_MODE) {
+    else if (mode === BIRDSEYE_MODE) {
       return buildBirdsEyeAnimations(initial, targetPositionX, targetPositionZ);
     }
-    else if (verticalMode === HOVERING_MODE) {
+    else if (mode === HOVERING_MODE) {
       return buildHoveringAnimations(initial, targetPositionX, targetPositionZ);
     }
-    else if (verticalMode === DRIVING_MODE) {
+    else if (mode === DRIVING_MODE) {
       return buildDrivingAnimations(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ);
     }
 
@@ -488,17 +488,17 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
       animations.splice(0, 1);
 
       if (animations.length === 0) {
-        if (framesInCurrentVerticalMode >= VERTICAL_MODE_DURATION_IN_FRAMES) {
-          verticalMode = MODE_TRANSITIONS[verticalMode];
-          framesInCurrentVerticalMode = 0;
+        if (framesInCurrentMode >= MODE_DURATION_IN_FRAMES) {
+          mode = MODE_TRANSITIONS[mode];
+          framesInCurrentMode = 0;
 
-          if (verticalMode === BIRDSEYE_MODE || verticalMode === HOVERING_MODE) {
+          if (mode === BIRDSEYE_MODE || mode === HOVERING_MODE) {
             if (aerialNavigator === undefined) {
               navigator = new AerialNavigator(roadNetwork, positionX, positionZ);
               aerialNavigator = navigator;
             }
           }
-          else if (verticalMode === DRIVING_MODE) {
+          else if (mode === DRIVING_MODE) {
             aerialNavigator = undefined;
             navigator = new RoadNavigator(roadNetwork, pathFinder,positionX, positionZ);
           }
@@ -518,7 +518,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     rotationX = animations[0].rotationX();
     rotationY = animations[0].rotationY();
 
-    framesInCurrentVerticalMode += 1;
+    framesInCurrentMode += 1;
   };
 
 
