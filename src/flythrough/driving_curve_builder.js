@@ -14,6 +14,7 @@ let DrivingCurveBuilder = (function() {
     let curvePositionZ;
     let i;
     let isFinalPathSegment;
+    let isUTurnRequired;
     let isStraightIntersectionSegmentRequired;
     let isCurvedIntersectionSegmentRequired;
     let curve;
@@ -29,6 +30,7 @@ let DrivingCurveBuilder = (function() {
     let segment1DirectionZ;
     let segment2DirectionX;
     let segment2DirectionZ;
+    let curvePaths = [];
     let curvePath = new THREE.CurvePath();
     let distanceFromMiddleIntersectionX;
     let distanceFromMiddleIntersectionZ;
@@ -60,6 +62,8 @@ let DrivingCurveBuilder = (function() {
       segment2DirectionX = Math.sign(endX - middleX);
       segment2DirectionZ = Math.sign(endZ - middleZ);
 
+      isUTurnRequired = (segment1DirectionX !== 0.0 && segment2DirectionX !== 0.0 && segment1DirectionX !== segment2DirectionX) ||
+                        (segment1DirectionZ !== 0.0 && segment2DirectionZ !== 0.0 && segment1DirectionZ !== segment2DirectionZ);
       isCurvedIntersectionSegmentRequired = !((segment1DirectionX === 0.0 && segment2DirectionX === 0.0) ||
                                               (segment1DirectionZ === 0.0 && segment2DirectionZ === 0.0));
 
@@ -95,6 +99,10 @@ let DrivingCurveBuilder = (function() {
         curvePath.curves.push(curve);
       }
 
+      if (isUTurnRequired) {
+        curvePaths.push(curvePath);
+        curvePath = new THREE.CurvePath();
+      }
 
       // Curve to next straight segment
       if (isCurvedIntersectionSegmentRequired === true) {
@@ -122,7 +130,9 @@ let DrivingCurveBuilder = (function() {
       }
     }
 
-    return curvePath;
+    curvePaths.push(curvePath);
+
+    return curvePaths;
   };
 
   return {

@@ -342,6 +342,19 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     var currentX;
     var currentZ;
     var curvePath;
+    var curvePaths;
+    var i;
+    var animations = [];
+    var segment1;
+    var segment2;
+    var angle1;
+    var angle2;
+    var frameCountRotationY;
+    var positionXStationaryGenerator;
+    var positionYStationaryGenerator;
+    var positionZStationaryGenerator;
+    var rotationXStationaryGenerator;
+    var rotationYGenerator;
 
     currentX = initialPositionX;
     currentZ = initialPositionZ;
@@ -356,9 +369,59 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
       currentZ = navigator.targetZ();
     }
 
-    curvePath = DrivingCurveBuilder.build(roadNetwork, path);
+    curvePaths = DrivingCurveBuilder.build(roadNetwork, path);
 
-    return [CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA)];
+    for (i = 0; i < curvePaths.length - 1; i++) {
+      animations.push(CurveAnimation(curvePaths[i], DRIVING_HORIZONTAL_MOTION_DELTA));
+
+      segment1 = curvePaths[i].curves[curvePaths[i].curves.length - 1];
+      segment2 = curvePaths[i + 1].curves[0];
+      angle1 = Math.atan2(-(segment1.v2.z - segment1.v1.z), segment1.v2.x - segment1.v1.x);
+      angle2 = Math.atan2(-(segment2.v2.z - segment2.v1.z), segment2.v2.x - segment2.v1.x);
+
+      if (angle1 === 0.0) {
+        angle1 = -HALF_PI;
+      }
+      else if (angle1 === HALF_PI) {
+        angle1 = 0.0;
+      }
+      else if (angle1 === -Math.PI) {
+        angle1 = HALF_PI;
+      }
+      else if (angle1 === -HALF_PI) {
+        angle1 = Math.PI;
+      }
+
+      if (angle2 === 0.0) {
+        angle2 = -HALF_PI;
+      }
+      else if (angle2 === HALF_PI) {
+        angle2 = 0.0;
+      }
+      else if (angle2 === -Math.PI) {
+        angle2 = HALF_PI;
+      }
+      else if (angle2 === -HALF_PI) {
+        angle2 = Math.PI;
+      }
+
+      frameCountRotationY = frameCount(angle1, angle2, ROTATION_Y_DELTA);
+
+      positionXStationaryGenerator = new StaticMotionGenerator(segment1.v2.x);
+      positionYStationaryGenerator = new StaticMotionGenerator(segment1.v2.y);
+      positionZStationaryGenerator = new StaticMotionGenerator(segment1.v2.z);
+      rotationXStationaryGenerator = new StaticMotionGenerator(0.0);
+      rotationYGenerator = new MotionGenerator(angle1, angle2, new LinearEasing(frameCountRotationY));
+
+      animations.push(new Animation(positionXStationaryGenerator,
+                                    positionYStationaryGenerator,
+                                    positionZStationaryGenerator,
+                                    rotationXStationaryGenerator,
+                                    rotationYGenerator));
+    };
+    animations.push(CurveAnimation(curvePaths[curvePaths.length - 1], DRIVING_HORIZONTAL_MOTION_DELTA));
+
+    return animations;
   };
 
   var buildNextAnimations = function(targetPositionX, targetPositionZ) {
