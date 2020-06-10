@@ -18,7 +18,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
   var MIN_TILT_GESTURE_START_ANGLE = HALF_PI - ALLOWABLE_DELTA_FOR_TILT_GESTURE;
   var MAX_TILT_GESTURE_START_ANGLE = HALF_PI + ALLOWABLE_DELTA_FOR_TILT_GESTURE;
 
-  var SCREEN_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
+  var WINDOW_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
 
   var terrainBoundingBox = new THREE.Box3(new THREE.Vector3(terrain.minX(), Number.NEGATIVE_INFINITY, terrain.minZ()),
                                           new THREE.Vector3(terrain.maxX(), Number.POSITIVE_INFINITY, terrain.maxZ()));
@@ -83,7 +83,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
         currentGesture = TILT;
 
         if (mapCamera.centerOfTilt() === undefined) {
-          centerOfScreenTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
+          centerOfScreenTouch = WorldTouch(sceneView.camera(), WINDOW_CENTER, terrain);
           mapCamera.setCenterOfTilt(centerOfScreenTouch.worldPosition());
         }
 
@@ -135,7 +135,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
 
     if (currentGesture === TILT) {
       if (mapCamera.centerOfTilt() === undefined) {
-        centerOfScreenTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
+        centerOfScreenTouch = WorldTouch(sceneView.camera(), WINDOW_CENTER, terrain);
         mapCamera.setCenterOfTilt(centerOfScreenTouch.worldPosition());
       }
 
@@ -227,7 +227,7 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
     var worldDragEnd;
     var worldDragDistance;
 
-    mapCamera.setCenterOfTilt(WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain).worldPosition());
+    mapCamera.setCenterOfTilt(WorldTouch(sceneView.camera(), WINDOW_CENTER, terrain).worldPosition());
     mapCamera.tiltCamera(tiltAngleDelta);
 
     worldDragStart = new THREE.Vector3(mapCamera.positionX(), 0.0, mapCamera.positionZ());

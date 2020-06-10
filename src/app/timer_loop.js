@@ -27,7 +27,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   var mode = INTERACTIVE;
   var zoomAmount = 0.0;
 
-  var SCREEN_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
+  var WINDOW_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
 
   var syncToCamera = function() {
     if (mode === FLYTHROUGH) {
@@ -66,7 +66,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
 
   var requestStopFlythrough = function() {
     if (camera.rotation.x > mapCamera.maxTiltAngle()) {
-      mapCamera.setCenterOfTilt(WorldTouch(camera, SCREEN_CENTER, worldData.terrain).worldPosition());
+      mapCamera.setCenterOfTilt(WorldTouch(camera, WINDOW_CENTER, worldData.terrain).worldPosition());
       vehicleToInteractiveAnimation = MapCameraTiltAnimation(mapCamera, mapCamera.maxTiltAngle(), (mapCamera.maxTiltAngle() - camera.rotation.x) / END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
     }
     else {

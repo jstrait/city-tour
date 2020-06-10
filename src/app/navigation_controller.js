@@ -10,7 +10,7 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   var STOP_TOUR_MESSAGE = "Stop Tour";
 
   var ZOOM_DELTA_PERCENTAGE = 0.01;
-  var SCREEN_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
+  var WINDOW_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
 
   var containerToggle = document.getElementById("navigation-controls-toggle");
   var container = document.getElementById("navigation-controls-inner-container");
@@ -43,13 +43,13 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   };
 
   var setTargetOfAction = function(e) {
-    var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
+    var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), WINDOW_CENTER, terrain);
 
     mapCamera.setCenterOfAction(centerOfScreenWorldTouch.worldPosition());
   };
 
   var setCenterOfTilt = function(e) {
-    var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), SCREEN_CENTER, terrain);
+    var centerOfScreenWorldTouch = WorldTouch(sceneView.camera(), WINDOW_CENTER, terrain);
 
     mapCamera.setCenterOfTilt(centerOfScreenWorldTouch.worldPosition());
   };
