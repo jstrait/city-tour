@@ -186,14 +186,8 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
                                      new MotionGenerator(targetRotationY, drivingTargetRotationY, new SineEasing(diveFrameCount, 0.0, HALF_PI))));
 
     // Drive to target point
-    drivingAnimations = buildDrivingAnimationsLegacy({ positionX: descentTargetPositionX,
-                                                       positionY: descentTargetPositionY,
-                                                       positionZ: descentTargetPositionZ,
-                                                       rotationX: 0.0,
-                                                       rotationY: drivingTargetRotationY, },
-                                                     drivingTargetPositionX,
-                                                     drivingTargetPositionZ);
-
+    navigator = new RoadNavigator(roadNetwork, pathFinder, drivingTargetPositionX, drivingTargetPositionZ);
+    drivingAnimations = buildDrivingAnimations(descentTargetPositionX, descentTargetPositionZ, drivingTargetPositionX, drivingTargetPositionZ);
 
     return newAnimations.concat(drivingAnimations);
   };
@@ -295,60 +289,14 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     return newAnimations;
   };
 
-  var buildDrivingAnimationsLegacy = function(initial, targetPositionX, targetPositionZ) {
-    var targetPositionY, targetRotationX, targetRotationY;
-    var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
-    var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
-    var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
-    var newAnimations = [];
-
-    frameCountPositionX = Math.ceil(CityTourMath.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / DRIVING_HORIZONTAL_MOTION_DELTA);
-    frameCountPositionZ = frameCountPositionX;
-
-    targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
-    frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
-
-    targetPositionY = initial.positionY - (HOVER_TO_DRIVING_POSITION_Y_DELTA * frameCountPositionX);
-    targetRotationX = 0.0;
-
-    frameCountPositionY = frameCount(initial.positionY, targetPositionY, HOVER_TO_DRIVING_POSITION_Y_DELTA);
-    frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
-
-    positionXStationaryGenerator = new StaticMotionGenerator(initial.positionX);
-    positionYStationaryGenerator = new StaticMotionGenerator(initial.positionY);
-    positionZStationaryGenerator = new StaticMotionGenerator(initial.positionZ);
-    rotationXStationaryGenerator = new StaticMotionGenerator(initial.rotationX);
-    rotationYStationaryGenerator = new StaticMotionGenerator(targetRotationY);
-
-    positionXGenerator = new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX));
-    positionYGenerator = new MotionGenerator(initial.positionY, targetPositionY, new LinearEasing(frameCountPositionY));
-    positionZGenerator = new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new MotionGenerator(initial.rotationX, targetRotationX, new LinearEasing(frameCountRotationX));
-    rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new LinearEasing(frameCountRotationY));
-
-    // Y rotation
-    newAnimations.push(new Animation(positionXStationaryGenerator,
-                                     positionYStationaryGenerator,
-                                     positionZStationaryGenerator,
-                                     rotationXStationaryGenerator,
-                                     rotationYGenerator));
-
-    // Rest of the movement
-    newAnimations.push(new Animation(positionXGenerator,
-                                     positionYGenerator,
-                                     positionZGenerator,
-                                     rotationXGenerator,
-                                     rotationYStationaryGenerator));
-
-    return newAnimations;
-  };
-
   var buildDrivingAnimations = function(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ) {
     var totalPathLength = CityTourMath.distanceBetweenPoints(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
     var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * MODE_DURATION_IN_FRAMES;
-    var path = [{x: initialPositionX, z: initialPositionZ}, {x: targetPositionX, z: targetPositionZ}];
+    var path = [{x: initialPositionX, z: initialPositionZ}];
     var currentX;
     var currentZ;
+    var initialDirectionX;
+    var initialDirectionZ;
     var curvePath;
     var curvePaths;
     var i;
@@ -366,6 +314,15 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
     currentX = initialPositionX;
     currentZ = initialPositionZ;
+    initialDirectionX = Math.sign(targetPositionX - initialPositionX);
+    initialDirectionZ = Math.sign(targetPositionZ - initialPositionZ);
+
+    while (currentX !== targetPositionX || currentZ !== targetPositionZ) {
+      currentX += initialDirectionX;
+      currentZ += initialDirectionZ;
+
+      path.push({x: currentX, z: currentZ});
+    }
 
     while (totalPathLength < minPathLength) {
       navigator.nextTarget();
