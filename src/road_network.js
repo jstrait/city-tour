@@ -271,7 +271,7 @@ var RoadNetwork = function(terrain) {
   };
 };
 
-RoadNetwork.SURFACE_GRADE = "terrain";
-RoadNetwork.BRIDGE_GRADE = "bridge";
+RoadNetwork.SURFACE_GRADE = 1;
+RoadNetwork.BRIDGE_GRADE = 2;
 
 export { RoadNetwork };
