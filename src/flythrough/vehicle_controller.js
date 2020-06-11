@@ -80,6 +80,8 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
+    var directionX;
+    var directionZ;
     var descentTargetX, descentTargetZ;
     var descentTargetPositionX, descentTargetPositionY, descentTargetPositionZ;
     var drivingTargetX, drivingTargetZ;
@@ -87,6 +89,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     var diveFrameCount;
     var newAnimations = [];
     var drivingAnimations;
+    var i;
 
     var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - targetPositionZ), initial.positionX - targetPositionX) + Math.PI;
     var viewAngleToCityCenter = atan2AngleToViewAngle(angleOfPositionToCityCenter);
@@ -105,39 +108,44 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     }
 
     if (positiveViewAngleToCityCenter >= ((7 * Math.PI) / 4) || positiveViewAngleToCityCenter < (Math.PI / 4)) {  // Moving north-ish
-      descentTargetX = 0;
-      descentTargetZ = -3;
-      drivingTargetX = 0;
-      drivingTargetZ = -6;
+      directionX = 0;
+      directionZ = -1;
     }
     else if (positiveViewAngleToCityCenter >= (Math.PI / 4) && positiveViewAngleToCityCenter < ((3 * Math.PI) / 4)) {  // Moving west-ish
-      descentTargetX = -3;
-      descentTargetZ = 0;
-      drivingTargetX = -6;
-      drivingTargetZ = 0;
+      directionX = -1;
+      directionZ = 0;
     }
     else if (positiveViewAngleToCityCenter >= ((3 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((5 * Math.PI) / 4)) { // Moving south-ish
-      descentTargetX = 0;
-      descentTargetZ = 3;
-      drivingTargetX = 0;
-      drivingTargetZ = 6;
+      directionX = 0;
+      directionZ = 1;
     }
     else if (positiveViewAngleToCityCenter >= ((5 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((7 * Math.PI) / 4)) { // Moving east-ish
-      descentTargetX = 3;
-      descentTargetZ = 0;
-      drivingTargetX = 6;
-      drivingTargetZ = 0;
+      directionX = 1;
+      directionZ = 0;
     }
+
+    descentTargetX = targetPositionX + (directionX * 3);
+    descentTargetZ = targetPositionZ + (directionZ * 3);
 
     // Prevent attempting to navigate to non-existent road intersection, which will cause things to blow up
-    if (!roadNetwork.hasIntersection(targetPositionX + descentTargetX, targetPositionZ + descentTargetZ) ||
-        !roadNetwork.hasIntersection(targetPositionX + drivingTargetX, targetPositionZ + drivingTargetZ)) {
-      descentTargetX = 0;
-      descentTargetZ = 0;
-      drivingTargetX = 0;
-      drivingTargetZ = 0;
+    if (!roadNetwork.hasIntersection(descentTargetX, descentTargetZ)) {
+      descentTargetX = targetPositionX;
+      descentTargetZ = targetPositionZ;
+      drivingTargetX = targetPositionX;
+      drivingTargetZ = targetPositionZ;
     }
+    else {
+      drivingTargetX = descentTargetX;
+      drivingTargetZ = descentTargetZ;
 
+      i = 0;
+      while (i < 3 &&
+             roadNetwork.edgeBetween(drivingTargetX, drivingTargetZ, drivingTargetX + directionX, drivingTargetZ + directionZ) !== undefined) {
+        drivingTargetX += directionX;
+        drivingTargetZ += directionZ;
+        i += 1;
+      }
+    }
 
     targetPositionY = BIRDSEYE_Y + roadNetwork.getRoadHeight(targetPositionX, targetPositionZ);
     targetRotationX = -HALF_PI;
@@ -160,12 +168,12 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    descentTargetPositionX = targetPositionX + descentTargetX;
-    descentTargetPositionZ = targetPositionZ + descentTargetZ;
+    descentTargetPositionX = descentTargetX;
+    descentTargetPositionZ = descentTargetZ;
     descentTargetPositionY = roadNetwork.getRoadHeight(descentTargetPositionX, descentTargetPositionZ);
 
-    drivingTargetPositionX = targetPositionX + drivingTargetX;
-    drivingTargetPositionZ = targetPositionZ + drivingTargetZ;
+    drivingTargetPositionX = drivingTargetX;
+    drivingTargetPositionZ = drivingTargetZ;
     drivingTargetRotationY = determineAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     diveFrameCount = 105;
