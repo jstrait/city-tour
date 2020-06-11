@@ -174,7 +174,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
     drivingTargetPositionX = drivingTargetX;
     drivingTargetPositionZ = drivingTargetZ;
-    drivingTargetRotationY = determineAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
+    drivingTargetRotationY = determineTargetAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     diveFrameCount = 105;
 
@@ -202,7 +202,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     frameCountPositionX = Math.ceil(CityTourMath.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
-    targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
+    targetRotationY = determineTargetAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
     targetPositionY = BIRDSEYE_Y;
@@ -251,7 +251,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     frameCountPositionX = Math.ceil(CityTourMath.distanceBetweenPoints(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ) / FLYING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionZ = frameCountPositionX;
 
-    targetRotationY = determineAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
+    targetRotationY = determineTargetAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
     targetPositionY = HOVERING_Y;
@@ -414,11 +414,11 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     return [];
   };
 
-  var determineAzimuthAngle = function(oldTargetPositionX, oldTargetPositionZ, oldRotationY, targetPositionX, targetPositionZ) {
+  var determineTargetAzimuthAngle = function(initialPositionX, initialPositionZ, initialRotationY, targetPositionX, targetPositionZ) {
     var newTargetYRotation;
 
-    var x = targetPositionX - oldTargetPositionX;
-    var z = -(targetPositionZ - oldTargetPositionZ);
+    var x = targetPositionX - initialPositionX;
+    var z = -(targetPositionZ - initialPositionZ);
     var angle = Math.atan2(z, x);
     if (angle < HALF_PI) {
       angle += TWO_PI;
@@ -428,10 +428,10 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     newTargetYRotation = rightHandedAngle;
 
     // Prevent turns wider than 180 degrees
-    if ((oldRotationY - newTargetYRotation) > Math.PI) {
+    if ((initialRotationY - newTargetYRotation) > Math.PI) {
       newTargetYRotation += TWO_PI;
     }
-    else if ((oldRotationY - newTargetYRotation) < -Math.PI) {
+    else if ((initialRotationY - newTargetYRotation) < -Math.PI) {
       newTargetYRotation -= TWO_PI;
     }
 
