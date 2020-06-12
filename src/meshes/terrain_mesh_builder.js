@@ -270,8 +270,8 @@ var TerrainMeshBuilder = function() {
     var halfStreetDepth = Config.STREET_DEPTH / 2;
 
     for (x = minX; x < maxX; x += triangleWidth) {
-      bottomLeftRoad = roadNetwork.getIntersectionSurfaceType(x, minZ) === RoadNetwork.SURFACE_GRADE;
-      bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, minZ) === RoadNetwork.SURFACE_GRADE;
+      bottomLeftRoad = roadNetwork.getIntersectionGradeType(x, minZ) === RoadNetwork.SURFACE_GRADE;
+      bottomRightRoad = roadNetwork.getIntersectionGradeType(x + triangleWidth, minZ) === RoadNetwork.SURFACE_GRADE;
 
       bottomRoad = (Math.floor(minZ) === minZ) &&
                    roadNetwork.hasEdgeBetween(Math.floor(x), minZ, Math.floor(x) + 1, minZ, RoadNetwork.SURFACE_GRADE);
@@ -285,8 +285,8 @@ var TerrainMeshBuilder = function() {
       for (z = minZ; z < maxZ; z += triangleDepth) {
         topLeftRoad     = bottomLeftRoad;
         topRightRoad    = bottomRightRoad;
-        bottomLeftRoad  = roadNetwork.getIntersectionSurfaceType(x, z + triangleDepth) === RoadNetwork.SURFACE_GRADE;
-        bottomRightRoad = roadNetwork.getIntersectionSurfaceType(x + triangleWidth, z + triangleDepth) === RoadNetwork.SURFACE_GRADE;
+        bottomLeftRoad  = roadNetwork.getIntersectionGradeType(x, z + triangleDepth) === RoadNetwork.SURFACE_GRADE;
+        bottomRightRoad = roadNetwork.getIntersectionGradeType(x + triangleWidth, z + triangleDepth) === RoadNetwork.SURFACE_GRADE;
 
         leftRoad = (Math.floor(x) === x) && roadNetwork.hasEdgeBetween(x, Math.floor(z), x, Math.floor(z) + 1, RoadNetwork.SURFACE_GRADE);
         rightRoad = (Math.ceil(x + triangleWidth) === (x + triangleWidth)) && roadNetwork.hasEdgeBetween(x + triangleWidth, Math.floor(z), x + triangleWidth, Math.floor(z) + 1, RoadNetwork.SURFACE_GRADE);

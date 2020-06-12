@@ -225,16 +225,16 @@ describe("RoadNetwork", function() {
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(false);
       expect(roadNetwork.getRoadHeight(0, 0)).toBe(undefined);
       expect(roadNetwork.getRoadHeight(1, 0)).toBe(undefined);
-      expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(false);
-      expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(false);
+      expect(roadNetwork.getIntersectionGradeType(0, 0)).toBe(false);
+      expect(roadNetwork.getIntersectionGradeType(1, 0)).toBe(false);
 
       roadNetwork.addEdge(0, 0, 1, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE);
 
       expect(roadNetwork.hasEdgeBetween(0, 0, 1, 0)).toBe(true);
       expect(roadNetwork.getRoadHeight(0, 0)).toBe(6.4);
       expect(roadNetwork.getRoadHeight(1, 0)).toBe(0.0);
-      expect(roadNetwork.getIntersectionSurfaceType(0, 0)).toBe(RoadNetwork.SURFACE_GRADE);
-      expect(roadNetwork.getIntersectionSurfaceType(1, 0)).toBe(RoadNetwork.SURFACE_GRADE);
+      expect(roadNetwork.getIntersectionGradeType(0, 0)).toBe(RoadNetwork.SURFACE_GRADE);
+      expect(roadNetwork.getIntersectionGradeType(1, 0)).toBe(RoadNetwork.SURFACE_GRADE);
     });
 
     it("allows adding an edge up to the valid bounds", function() {

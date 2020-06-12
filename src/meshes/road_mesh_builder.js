@@ -128,7 +128,7 @@ var RoadMeshBuilder = function() {
           roadSegmentMesh.updateMatrix();
           roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
 
-          if (roadNetwork.getIntersectionSurfaceType(x, z) === RoadNetwork.BRIDGE_GRADE) {
+          if (roadNetwork.getIntersectionGradeType(x, z) === RoadNetwork.BRIDGE_GRADE) {
             reusableBridgeSupportMesh.position.x = x;
             reusableBridgeSupportMesh.position.y = selfSurfaceHeight - HALF_BRIDGE_SUPPORT_HEIGHT - BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK;
             reusableBridgeSupportMesh.position.z = z;
