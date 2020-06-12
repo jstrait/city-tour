@@ -187,7 +187,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
     // Drive to target point
     navigator = new RoadNavigator(roadNetwork, pathFinder, drivingTargetPositionX, drivingTargetPositionZ);
-    drivingAnimations = buildDrivingAnimations(descentTargetPositionX, descentTargetPositionZ, drivingTargetPositionX, drivingTargetPositionZ);
+    drivingAnimations = buildDrivingAnimations(descentTargetPositionX, descentTargetPositionZ, drivingTargetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     return newAnimations.concat(drivingAnimations);
   };
@@ -289,7 +289,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     return newAnimations;
   };
 
-  var buildDrivingAnimations = function(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ) {
+  var buildDrivingAnimations = function(initialPositionX, initialPositionZ, initialRotationY, targetPositionX, targetPositionZ) {
     var totalPathLength = CityTourMath.distanceBetweenPoints(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
     var minPathLength = DRIVING_HORIZONTAL_MOTION_DELTA * MODE_DURATION_IN_FRAMES;
     var path = [{x: initialPositionX, z: initialPositionZ}];
@@ -299,18 +299,16 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     var initialDirectionZ;
     var curvePath;
     var curvePaths;
-    var i;
     var animations = [];
-    var segment1;
-    var segment2;
-    var angle1;
-    var angle2;
+    var initialCurveSegment;
+    var targetAngle;
     var frameCountRotationY;
     var positionXStationaryGenerator;
     var positionYStationaryGenerator;
     var positionZStationaryGenerator;
     var rotationXStationaryGenerator;
     var rotationYGenerator;
+    var rotationY = initialRotationY;
 
     currentX = initialPositionX;
     currentZ = initialPositionZ;
@@ -336,55 +334,30 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
     curvePaths = DrivingCurveBuilder.build(roadNetwork, path);
 
-    for (i = 0; i < curvePaths.length - 1; i++) {
-      animations.push(CurveAnimation(curvePaths[i], DRIVING_HORIZONTAL_MOTION_DELTA));
+    for (curvePath of curvePaths) {
+      initialCurveSegment = curvePath.curves[0];
+      targetAngle = determineTargetAzimuthAngle(initialCurveSegment.v1.x, initialCurveSegment.v1.z, rotationY, initialCurveSegment.v2.x, initialCurveSegment.v2.z);
 
-      segment1 = curvePaths[i].curves[curvePaths[i].curves.length - 1];
-      segment2 = curvePaths[i + 1].curves[0];
-      angle1 = Math.atan2(-(segment1.v2.z - segment1.v1.z), segment1.v2.x - segment1.v1.x);
-      angle2 = Math.atan2(-(segment2.v2.z - segment2.v1.z), segment2.v2.x - segment2.v1.x);
+      frameCountRotationY = frameCount(rotationY, targetAngle, ROTATION_Y_DELTA);
 
-      if (angle1 === 0.0) {
-        angle1 = -HALF_PI;
-      }
-      else if (angle1 === HALF_PI) {
-        angle1 = 0.0;
-      }
-      else if (angle1 === -Math.PI) {
-        angle1 = HALF_PI;
-      }
-      else if (angle1 === -HALF_PI) {
-        angle1 = Math.PI;
-      }
+      if (frameCountRotationY > 0) {
+        positionXStationaryGenerator = new StaticMotionGenerator(initialCurveSegment.v1.x);
+        positionYStationaryGenerator = new StaticMotionGenerator(initialCurveSegment.v1.y);
+        positionZStationaryGenerator = new StaticMotionGenerator(initialCurveSegment.v1.z);
+        rotationXStationaryGenerator = new StaticMotionGenerator(0.0);
+        rotationYGenerator = new MotionGenerator(rotationY, targetAngle, new LinearEasing(frameCountRotationY));
 
-      if (angle2 === 0.0) {
-        angle2 = -HALF_PI;
-      }
-      else if (angle2 === HALF_PI) {
-        angle2 = 0.0;
-      }
-      else if (angle2 === -Math.PI) {
-        angle2 = HALF_PI;
-      }
-      else if (angle2 === -HALF_PI) {
-        angle2 = Math.PI;
+        animations.push(new Animation(positionXStationaryGenerator,
+                                      positionYStationaryGenerator,
+                                      positionZStationaryGenerator,
+                                      rotationXStationaryGenerator,
+                                      rotationYGenerator));
       }
 
-      frameCountRotationY = frameCount(angle1, angle2, ROTATION_Y_DELTA);
+      animations.push(CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA));
 
-      positionXStationaryGenerator = new StaticMotionGenerator(segment1.v2.x);
-      positionYStationaryGenerator = new StaticMotionGenerator(segment1.v2.y);
-      positionZStationaryGenerator = new StaticMotionGenerator(segment1.v2.z);
-      rotationXStationaryGenerator = new StaticMotionGenerator(0.0);
-      rotationYGenerator = new MotionGenerator(angle1, angle2, new LinearEasing(frameCountRotationY));
-
-      animations.push(new Animation(positionXStationaryGenerator,
-                                    positionYStationaryGenerator,
-                                    positionZStationaryGenerator,
-                                    rotationXStationaryGenerator,
-                                    rotationYGenerator));
+      rotationY = targetAngle;
     };
-    animations.push(CurveAnimation(curvePaths[curvePaths.length - 1], DRIVING_HORIZONTAL_MOTION_DELTA));
 
     return animations;
   };
@@ -408,7 +381,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
       return buildHoveringAnimations(initial, targetPositionX, targetPositionZ);
     }
     else if (mode === DRIVING_MODE) {
-      return buildDrivingAnimations(initial.positionX, initial.positionZ, targetPositionX, targetPositionZ);
+      return buildDrivingAnimations(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     }
 
     return [];
