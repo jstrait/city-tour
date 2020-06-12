@@ -20,11 +20,11 @@ var RoadNetwork = function(terrain) {
       edges.push({ destinationX: destinationX, destinationZ: destinationZ, edge: edge});
     };
 
-    var removeEdge = function(x, z) {
+    var removeEdge = function(destinationX, destinationZ) {
       var i, indexToRemove;
 
       for (i = 0; i < edges.length; i++) {
-        if (edges[i].destinationX === x && edges[i].destinationZ == z) {
+        if (edges[i].destinationX === destinationX && edges[i].destinationZ == destinationZ) {
           indexToRemove = i;
         }
       }
