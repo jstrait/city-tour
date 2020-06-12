@@ -140,7 +140,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
 
       i = 0;
       while (i < 3 &&
-             roadNetwork.edgeBetween(drivingTargetX, drivingTargetZ, drivingTargetX + directionX, drivingTargetZ + directionZ) !== undefined) {
+             roadNetwork.hasEdgeBetween(drivingTargetX, drivingTargetZ, drivingTargetX + directionX, drivingTargetZ + directionZ) === true) {
         drivingTargetX += directionX;
         drivingTargetZ += directionZ;
         i += 1;
