@@ -88,8 +88,8 @@ let DrivingCurveBuilder = (function() {
       if (isStraightIntersectionSegmentRequired === true) {
         lineStartVector = lineEndVector;
 
-        distanceFromMiddleIntersectionX = ((isFinalPathSegment === true) ? 0 : Config.HALF_STREET_WIDTH);
-        distanceFromMiddleIntersectionZ = ((isFinalPathSegment === true) ? 0 : Config.HALF_STREET_DEPTH);
+        distanceFromMiddleIntersectionX = ((isFinalPathSegment === true || isUTurnRequired === true) ? 0 : Config.HALF_STREET_WIDTH);
+        distanceFromMiddleIntersectionZ = ((isFinalPathSegment === true || isUTurnRequired === true) ? 0 : Config.HALF_STREET_DEPTH);
         curvePositionX = middleX + (distanceFromMiddleIntersectionX * segment1DirectionX);
         curvePositionZ = middleZ + (distanceFromMiddleIntersectionZ * segment1DirectionZ);
 
