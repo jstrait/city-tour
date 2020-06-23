@@ -78,10 +78,26 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
     mapCamera.setIsVelocityEnabled(false);
   };
 
+  var startZoomInTouch = function(e) {
+    startZoomIn(e);
+
+    // Prevent text in adjacent elements from being selected
+    // due to a long press gesture.
+    e.preventDefault();
+  };
+
   var startZoomOut = function(e) {
     setTargetOfAction(e);
     timerLoop.setZoomAmount(-ZOOM_DELTA_PERCENTAGE);
     mapCamera.setIsVelocityEnabled(false);
+  };
+
+  var startZoomOutTouch = function(e) {
+    startZoomOut(e);
+
+    // Prevent text in adjacent elements from being selected
+    // due to a long press gesture.
+    e.preventDefault();
   };
 
   var stopZoom = function(e) {
@@ -120,12 +136,12 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   zoomInButton.addEventListener("mousedown", startZoomIn, false);
   zoomInButton.addEventListener("mouseup", stopZoom, false);
   zoomInButton.addEventListener("mouseout", stopZoom, false);
-  zoomInButton.addEventListener("touchstart", startZoomIn, false);
+  zoomInButton.addEventListener("touchstart", startZoomInTouch, false);
   zoomInButton.addEventListener("touchend", stopZoom, false);
   zoomOutButton.addEventListener("mousedown", startZoomOut, false);
   zoomOutButton.addEventListener("mouseup", stopZoom, false);
   zoomOutButton.addEventListener("mouseout", stopZoom, false);
-  zoomOutButton.addEventListener("touchstart", startZoomOut, false);
+  zoomOutButton.addEventListener("touchstart", startZoomOutTouch, false);
   zoomOutButton.addEventListener("touchend", stopZoom, false);
   flythroughToggle.addEventListener("click", toggleFlythrough, false);
 
