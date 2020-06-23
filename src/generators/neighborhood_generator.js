@@ -11,7 +11,6 @@ var NeighborhoodGenerator = (function() {
   var NEIGHBORHOOD_CENTER_DEPTH = 9;
   var FLATNESS_WINDOW_WIDTH_MARGIN = (NEIGHBORHOOD_CENTER_WIDTH - 1) / 2;
   var FLATNESS_WINDOW_DEPTH_MARGIN = (NEIGHBORHOOD_CENTER_DEPTH - 1) / 2;
-  var MAX_HILLINESS = 1.0;
   var CENTRALITY_WEIGHT = 0.3;
   var FLATNESS_WEIGHT = 0.7;
 
@@ -48,7 +47,7 @@ var NeighborhoodGenerator = (function() {
             score.flatness = Number.POSITIVE_INFINITY;
           }
           else {
-            score.flatness = CityTourMath.clamp(averageHeightDistance / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
+            score.flatness = CityTourMath.clamp(averageHeightDistance, 0.0, 1.0) * FLATNESS_WEIGHT;
           }
         }
 
