@@ -7,8 +7,8 @@ import { MotionGenerator } from "./motion_generator";
 var VehicleView = function(vehicleController) {
   var MIN_ROTATION_X_OFFSET = -Math.PI / 6;
   var MAX_ROTATION_X_OFFSET = Math.PI / 4;
-  var MIN_ROTATION_Y_OFFSET = -Math.PI / 2;
-  var MAX_ROTATION_Y_OFFSET = Math.PI / 2;
+  var MIN_ROTATION_Y_OFFSET = -Math.PI;
+  var MAX_ROTATION_Y_OFFSET = Math.PI;
   var RESET_TO_CENTER_ANIMATION_FRAME_COUNT = 40;
 
   var resetToCenterRotationXMotionGenerator;
