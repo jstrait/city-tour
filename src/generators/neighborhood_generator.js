@@ -19,6 +19,7 @@ var NeighborhoodGenerator = (function() {
     var scores = [];
     var score;
     var x, z;
+    var averageHeightDistance;
 
     var minX = terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN;
     var maxX = terrain.maxX() - FLATNESS_WINDOW_WIDTH_MARGIN;
@@ -41,7 +42,14 @@ var NeighborhoodGenerator = (function() {
         };
 
         if (terrain.waterHeightAt(x, z) === 0.0) {
-          score.flatness = CityTourMath.clamp(averageHeightDifferenceAroundPoint(terrain, x, z) / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
+          averageHeightDistance = averageHeightDifferenceAroundPoint(terrain, x, z);
+
+          if (averageHeightDistance === Number.POSITIVE_INFINITY) {
+            score.flatness = Number.POSITIVE_INFINITY;
+          }
+          else {
+            score.flatness = CityTourMath.clamp(averageHeightDistance / MAX_HILLINESS, 0.0, 1.0) * FLATNESS_WEIGHT;
+          }
         }
 
         scores[x][z] = score;
@@ -53,7 +61,8 @@ var NeighborhoodGenerator = (function() {
 
   var averageHeightDifferenceAroundPoint = function(terrain, centerX, centerZ) {
     var centerHeight = terrain.landHeightAt(centerX, centerZ);
-    var pointCount = 0;
+    var landPointCount = 0;
+    var waterPointCount = 0;
     var totalHeightDeltas = 0.0;
     var minX = Math.max(terrain.minX(), centerX - FLATNESS_WINDOW_WIDTH_MARGIN);
     var maxX = Math.min(terrain.maxX(), centerX + FLATNESS_WINDOW_WIDTH_MARGIN);
@@ -63,12 +72,17 @@ var NeighborhoodGenerator = (function() {
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
-        totalHeightDeltas += Math.abs(centerHeight - terrain.landHeightAt(x, z));
-        pointCount += 1;
+        if (terrain.waterHeightAt(x, z) > 0.0) {
+          waterPointCount += 1;
+        }
+        else {
+          totalHeightDeltas += Math.abs(centerHeight - terrain.landHeightAt(x, z));
+          landPointCount += 1;
+        }
       }
     }
 
-    return totalHeightDeltas / pointCount;
+    return (waterPointCount >= landPointCount) ? Number.POSITIVE_INFINITY : (totalHeightDeltas / landPointCount);
   };
 
   var setCloseNeighborhoodPenalties = function(neighborhoodCenterX, neighborhoodCenterZ, terrain, scores) {
