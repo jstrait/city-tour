@@ -13,6 +13,10 @@ var BridgeGenerator = (function() {
     var heightAtTerminal1, heightAtTerminal2;
     var waterHeight, roadDeckHeight;
 
+    if (directionX !== 0 && directionZ !== 0) {
+      throw new Error(`Attempt to build a bridge in a diagonal direction. Direction X: ${directionX}, Direction Z: ${directionZ}`);
+    }
+
     bridgeEndX = bridgeStartX + directionX;
     bridgeEndZ = bridgeStartZ + directionZ;
 
