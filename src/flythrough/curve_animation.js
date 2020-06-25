@@ -2,11 +2,10 @@
 
 const HALF_PI = Math.PI / 2;
 
-let CurveAnimation = function(curve, distancePerTick) {
+let CurveAnimation = function(curve, distancePerTick, rotationX) {
   let positionX = 0.0;
   let positionY = 0.0;
   let positionZ = 0.0;
-  let rotationX = 0.0;
   let rotationY = 0.0;
   let isFinished = false;
 

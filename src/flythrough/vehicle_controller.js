@@ -17,7 +17,7 @@ import { RoadNavigator } from "./road_navigator";
 const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2.0;
 
-var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, initialTargetZ) {
+var VehicleController = function(terrain, roadNetwork, neighborhoods, initial) {
   var INITIAL_DESCENT = "initial_descent";
   var DRIVING_MODE = "driving";
   var HOVERING_MODE = "hovering";
@@ -241,6 +241,21 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
     return newAnimations;
   };
 
+  var buildBirdsEyeAnimationsExperimental = function(initial, targetPositionX, targetPositionZ) {
+    var minPathLength = FLYING_HORIZONTAL_MOTION_DELTA * MODE_DURATION_IN_FRAMES;
+    var neighborhood;
+    var points = [new THREE.Vector3(initial.positionX, terrain.heightAt(initial.positionX, initial.positionZ) + BIRDSEYE_Y, initial.positionZ)];
+    var curve = new THREE.CatmullRomCurve3(points, true, "catmullrom", 1.0);
+
+    while (curve.getLength() < minPathLength) {
+      neighborhood = neighborhoods[CityTourMath.randomInteger(0, neighborhoods.length - 1)];
+      points.push(new THREE.Vector3(neighborhood.centerX, terrain.heightAt(neighborhood.centerX, neighborhood.centerZ) + BIRDSEYE_Y, neighborhood.centerZ));
+      curve.updateArcLengths();
+    }
+
+    return [CurveAnimation(curve, FLYING_HORIZONTAL_MOTION_DELTA, BIRDSEYE_X_ROTATION)];
+  };
+
   var buildHoveringAnimations = function(initial, targetPositionX, targetPositionZ) {
     var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
@@ -354,7 +369,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
                                       rotationYGenerator));
       }
 
-      animations.push(CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA));
+      animations.push(CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA, 0.0));
 
       rotationY = targetAngle;
     };
@@ -460,7 +475,7 @@ var VehicleController = function(terrain, roadNetwork, initial, initialTargetX, 
   };
 
 
-  animations = buildNextAnimations(initialTargetX, initialTargetZ);
+  animations = buildNextAnimations(neighborhoods[0].centerX, neighborhoods[0].centerZ);
 
   return {
     positionX: function() { return positionX; },
