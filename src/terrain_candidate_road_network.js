@@ -6,9 +6,9 @@ import { RoadNetwork } from "./road_network";
 import { BridgeGenerator } from "./generators/bridge_generator";
 
 var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
-  var addBridgeEdge = function(edges, x, z, targetX, targetZ) {
+  var addBridgeEdge = function(edges, x, z, directionX, directionZ) {
     var bridgeLength;
-    var bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, x, z, targetX, targetZ);
+    var bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, x, z, directionX, directionZ);
 
     if (bridgeAttributes !== undefined) {
       bridgeLength = CityTourMath.distanceBetweenPoints(x, z, bridgeAttributes.endX, bridgeAttributes.endZ);
@@ -33,14 +33,14 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
     var eastAngle = Math.atan2((heightAtCurrentPoint - eastHeight), Config.BLOCK_WIDTH);
 
     if (terrain.waterHeightAt(x, z - 1) > 0.0) {
-      addBridgeEdge(edges, x, z, x, z - 1);
+      addBridgeEdge(edges, x, z, 0, -1);
     }
     else if (Math.abs(northAngle) <= maxRoadAngle) {
       edges.push({ destinationX: x, destinationZ: z - 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
     }
 
     if (terrain.waterHeightAt(x, z + 1) > 0.0) {
-      addBridgeEdge(edges, x, z, x, z + 1);
+      addBridgeEdge(edges, x, z, 0, 1);
     }
     else if (Math.abs(southAngle) <= maxRoadAngle) {
       edges.push({ destinationX: x, destinationZ: z + 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
@@ -48,14 +48,14 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
 
 
     if (terrain.waterHeightAt(x - 1, z) > 0.0) {
-      addBridgeEdge(edges, x, z, x - 1, z);
+      addBridgeEdge(edges, x, z, -1, 0);
     }
     else if (Math.abs(westAngle) <= maxRoadAngle) {
       edges.push({ destinationX: x - 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
     }
 
     if (terrain.waterHeightAt(x + 1, z) > 0.0) {
-      addBridgeEdge(edges, x, z, x + 1, z);
+      addBridgeEdge(edges, x, z, 1, 0);
     }
     else if (Math.abs(eastAngle) <= maxRoadAngle) {
       edges.push({ destinationX: x + 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});

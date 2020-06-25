@@ -49,22 +49,12 @@ var NeighborhoodRoadNetworkGenerator = (function() {
       isBridge = CityTourMath.distanceBetweenPoints(previousIntersectionX, previousIntersectionZ, nextIntersectionX, nextIntersectionZ) > 1.0;
 
       if (isBridge === true) {
-        if (nextIntersectionZ > previousIntersectionZ) {
-          // North -> South
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ + 1);
-        }
-        else if (nextIntersectionZ < previousIntersectionZ) {
-          // South -> North
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX, previousIntersectionZ - 1);
-        }
-        else if (nextIntersectionX > previousIntersectionX) {
-          // West -> East
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX + 1, previousIntersectionZ);
-        }
-        else if (nextIntersectionX < previousIntersectionX) {
-          // East -> West
-          bridgeAttributes = BridgeGenerator.buildBridge(terrain, roadNetwork, previousIntersectionX, previousIntersectionZ, previousIntersectionX - 1, previousIntersectionZ);
-        }
+        bridgeAttributes = BridgeGenerator.buildBridge(terrain,
+                                                       roadNetwork,
+                                                       previousIntersectionX,
+                                                       previousIntersectionZ,
+                                                       Math.sign(nextIntersectionX - previousIntersectionX),
+                                                       Math.sign(nextIntersectionZ - previousIntersectionZ));
 
         if (bridgeAttributes !== undefined) {
           bridgeIntersectionX = previousIntersectionX;
