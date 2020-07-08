@@ -65,8 +65,13 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   };
 
   var requestStopFlythrough = function() {
+    const centerOfTiltDistance = 3;
+    var rotationY = camera.rotation.y + HALF_PI;
+
     if (camera.rotation.x > mapCamera.maxTiltAngle()) {
-      mapCamera.setCenterOfTilt(WorldTouch(camera, WINDOW_CENTER, worldData.terrain).worldPosition());
+      mapCamera.setCenterOfTilt(new THREE.Vector3(camera.position.x + (centerOfTiltDistance * Math.cos(rotationY)),
+                                                  camera.position.y,
+                                                  camera.position.z + (centerOfTiltDistance * -Math.sin(rotationY))));
       vehicleToInteractiveAnimation = MapCameraTiltAnimation(mapCamera, mapCamera.maxTiltAngle(), (mapCamera.maxTiltAngle() - camera.rotation.x) / END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
     }
     else {
