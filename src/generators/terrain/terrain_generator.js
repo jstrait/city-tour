@@ -28,16 +28,10 @@ var TerrainGenerator = (function() {
     return terrainCoordinates;
   };
 
-
-  var nextPowerOfTwo = function(n) {
-    return Math.pow(2, Math.ceil(Math.log2(n)));
-  };
-
-
   var buildTerrainCoordinates = function(columns, rows, config) {
     var TOTAL_HYDRAULIC_EROSION_ITERATIONS = 10000;
-    var columnsToGenerate = nextPowerOfTwo(columns / SCALE) + 1;
-    var rowsToGenerate = nextPowerOfTwo(rows / SCALE) + 1;
+    var columnsToGenerate = THREE.MathUtils.ceilPowerOfTwo(columns / SCALE) + 1;
+    var rowsToGenerate = THREE.MathUtils.ceilPowerOfTwo(rows / SCALE) + 1;
 
     var terrainCoordinates = emptyTerrain(columnsToGenerate, rowsToGenerate);
 
