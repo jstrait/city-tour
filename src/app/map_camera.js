@@ -20,7 +20,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
   var centerOfAction;
   var centerOfTilt;
-  var zoomProperties;
+  var zoomCameraToCenterOfActionVector;
   var camera = sceneView.camera();
   var terrain = initialTerrain;
 
@@ -39,7 +39,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
     centerOfAction = undefined;
     centerOfTilt = undefined;
-    zoomProperties = undefined;
+    zoomCameraToCenterOfActionVector = undefined;
 
     setIsVelocityEnabled(false);
   };
@@ -47,7 +47,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var setCenterOfAction = function(newCenterOfAction) {
     centerOfAction = newCenterOfAction;
     centerOfTilt = undefined;
-    zoomProperties = undefined;
+    zoomCameraToCenterOfActionVector = undefined;
 
     if (newCenterOfAction === undefined) {
       sceneView.centerOfActionMarkerMesh().position.set(0.0, -100000.0, 0.0);
@@ -86,22 +86,11 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     camera.updateMatrixWorld();
   };
 
-  var calculateZoomProperties = function() {
-    var cameraToCenterOfActionVector;
-
-    // Vector of camera to intersection with terrain
-    cameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
-                                                     (camera.position.y - centerOfAction.y),
-                                                     (camera.position.z - centerOfAction.z));
-
-    zoomProperties = {
-      cameraToCenterOfActionVector: cameraToCenterOfActionVector,
-    };
-  };
-
   var zoomTowardCenterOfAction = function(zoomDistancePercentage) {
-    if (zoomProperties === undefined) {
-      calculateZoomProperties();
+    if (zoomCameraToCenterOfActionVector === undefined) {
+      zoomCameraToCenterOfActionVector = new THREE.Vector3((camera.position.x - centerOfAction.x),
+                                                           (camera.position.y - centerOfAction.y),
+                                                           (camera.position.z - centerOfAction.z));
     }
 
     var distanceToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
@@ -115,14 +104,14 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
       return;
     }
 
-    var clonedCameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone();
+    var clonedCameraToCenterOfActionVector = zoomCameraToCenterOfActionVector.clone();
     clonedCameraToCenterOfActionVector.multiplyScalar(zoomDistancePercentage);
 
     camera.position.x -= clonedCameraToCenterOfActionVector.x;
     camera.position.y -= clonedCameraToCenterOfActionVector.y;
     camera.position.z -= clonedCameraToCenterOfActionVector.z;
     camera.position.y = Math.max(minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z), camera.position.y);
-    zoomProperties.cameraToCenterOfActionVector = zoomProperties.cameraToCenterOfActionVector.clone().multiplyScalar(1.0 - zoomDistancePercentage);
+    zoomCameraToCenterOfActionVector = zoomCameraToCenterOfActionVector.clone().multiplyScalar(1.0 - zoomDistancePercentage);
 
     resetVelocities();
     zoomVelocity = zoomDistancePercentage;
@@ -135,7 +124,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     var originalAngleCameraToCenterOfAction = Math.atan2(-(camera.position.z - centerOfAction.z), camera.position.x - centerOfAction.x);
     var newAngleCameraToCenterOfAction = originalAngleCameraToCenterOfAction + azimuthAngleDelta;
 
-    zoomProperties = undefined;
+    zoomCameraToCenterOfActionVector = undefined;
 
     camera.position.x = (distanceCameraToCenterOfAction * Math.cos(newAngleCameraToCenterOfAction)) + centerOfAction.x;
     camera.position.z = -(distanceCameraToCenterOfAction * Math.sin(newAngleCameraToCenterOfAction)) + centerOfAction.z;
@@ -174,7 +163,7 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
       newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
     }
 
-    zoomProperties = undefined;
+    zoomCameraToCenterOfActionVector = undefined;
 
     camera.position.setFromSphericalCoords(distanceCameraToCenterOfAction, newTiltAngle + HALF_PI, camera.rotation.y);
     camera.position.x += centerOfTilt.x;
