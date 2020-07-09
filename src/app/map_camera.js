@@ -165,10 +165,19 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
 
     zoomCameraToCenterOfActionVector = undefined;
 
-    camera.position.setFromSphericalCoords(distanceCameraToCenterOfAction, newTiltAngle + HALF_PI, camera.rotation.y);
-    camera.position.x += centerOfTilt.x;
-    camera.position.y += centerOfTilt.y;
-    camera.position.z += centerOfTilt.z;
+    if (isTiltAngleClamped === false || tiltAngleDelta < 0.0 || camera.position.y > minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z)) {
+      camera.position.setFromSphericalCoords(distanceCameraToCenterOfAction, newTiltAngle + HALF_PI, camera.rotation.y);
+      camera.position.x += centerOfTilt.x;
+      camera.position.y += centerOfTilt.y;
+      camera.position.z += centerOfTilt.z;
+
+      if (isTiltAngleClamped !== false) {
+        camera.position.y = Math.max(camera.position.y, minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z));
+      }
+    }
+    else {
+      return;
+    }
     camera.rotation.x = newTiltAngle;
 
     resetVelocities();
