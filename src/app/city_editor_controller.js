@@ -18,8 +18,6 @@ var CityEditorController = function(cityConfigService, messageBroker) {
   var hillCount = document.getElementById("terrain-hill-count");
   var maxHillHeight = document.getElementById("terrain-max-hill-height");
   var includeRiver = document.getElementById("terrain-river");
-  var safeFromDecayBlocks = document.getElementById("roads-decay-distance-blocks");
-  var blockDistanceDecayBegins = document.getElementById("buildings-decay-distance-blocks");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
   var neighborhoodCount = document.getElementById("buildings-neighborhood-count");
 
@@ -103,8 +101,6 @@ var CityEditorController = function(cityConfigService, messageBroker) {
   hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
   maxHillHeight.addEventListener("change", function(e) { cityConfigService.setMaxHillHeight(parseInt(e.target.value, 10)); }, false);
   includeRiver.addEventListener("change", function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
-  safeFromDecayBlocks.addEventListener("change", function(e) { cityConfigService.setSafeFromDecayBlocks(parseInt(e.target.value, 10)); }, false);
-  blockDistanceDecayBegins.addEventListener("change", function(e) { cityConfigService.setBlockDistanceDecayBegins(parseInt(e.target.value, 10)); }, false);
   maxBuildingStories.addEventListener("change", function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
   neighborhoodCount.addEventListener("change", function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
 
