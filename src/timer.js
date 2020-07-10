@@ -9,12 +9,11 @@ var Timer = function() {
 
   var animationRequestID;
 
-  var tick = function() {
+  var tick = function(currentTimestamp) {
     if (isPaused) {
       return;
     }
 
-    var currentTimestamp = new Date().getTime();
     var frameCount;
 
     if (previousFrameTimestamp === undefined) {
