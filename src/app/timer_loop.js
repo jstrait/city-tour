@@ -121,6 +121,10 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     var i;
 
     for (i = 0; i < frameCount; i++) {
+      if (mode === INTERACTIVE && zoomAmount !== 0.0) {
+        mapCamera.zoomTowardCenterOfAction(zoomAmount);
+      }
+
       if (vehicleController) {
         vehicleController.tick();
         vehicleView.tick();
@@ -139,9 +143,6 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
 
     if (mapCamera.isVelocityEnabled()) {
       mapCamera.tickVelocity(frameCount);
-    }
-    if (mode === INTERACTIVE && zoomAmount !== 0.0) {
-      mapCamera.zoomTowardCenterOfAction(zoomAmount);
     }
 
     syncToCamera();
