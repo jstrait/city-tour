@@ -147,7 +147,6 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     syncToCamera();
     sceneView.render();
   };
-  timer.onTick(1);
   timer.start();
 
   window.addEventListener("blur", function(e) {
