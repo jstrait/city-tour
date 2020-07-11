@@ -95,7 +95,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     if (mode === INTERACTIVE) {
       startFlythrough();
     }
-    else {
+    else if (mode === FLYTHROUGH) {
       requestStopFlythrough();
     }
   };

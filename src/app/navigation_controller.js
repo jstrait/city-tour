@@ -106,18 +106,18 @@ var NavigationController = function(sceneView, mapCamera, terrain, timerLoop, me
   };
 
   var toggleFlythrough = function(e) {
-    flythroughToggle.innerText = (flythroughToggle.innerText === START_TOUR_MESSAGE) ? STOP_TOUR_MESSAGE : START_TOUR_MESSAGE;
-
     timerLoop.toggleFlythrough();
   };
 
   var onFlythroughStarted = function(e) {
     containerToggle.classList.add("display-none");
     container.classList.add("display-none");
+    flythroughToggle.innerText = STOP_TOUR_MESSAGE;
   };
 
   var onFlythroughStopped = function(e) {
     containerToggle.classList.remove("display-none");
+    flythroughToggle.innerText = START_TOUR_MESSAGE;
     render({});
   };
 
