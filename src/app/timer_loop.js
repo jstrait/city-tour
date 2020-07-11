@@ -92,6 +92,8 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   var stopFlythrough = function() {
     vehicleToInteractiveAnimation = undefined;
     mode = INTERACTIVE;
+
+    messageBroker.publish("flythrough.stopped", {});
   };
 
   var toggleFlythrough = function() {
@@ -114,8 +116,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     }
   };
 
-  var id1 = messageBroker.addSubscriber("flythrough.stopped", stopFlythrough);
-  var id2 = messageBroker.addSubscriber("touch.focus", function(data) { restartTimer(); });
+  var id1 = messageBroker.addSubscriber("touch.focus", function(data) { restartTimer(); });
 
   reset(initialWorldData);
 
@@ -136,7 +137,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
       else if (mode === FLYTHROUGH_STOP) {
         vehicleToInteractiveAnimation.tick();
         if (vehicleToInteractiveAnimation.finished()) {
-          messageBroker.publish("flythrough.stopped", {});
+          stopFlythrough();
         }
       }
     }
