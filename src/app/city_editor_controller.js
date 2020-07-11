@@ -24,27 +24,24 @@ var CityEditorController = function(cityConfigService, messageBroker) {
   var currentMenu;
 
   var toggleEditMenu = function(e) {
-    if (currentMenu === EDITOR_MENU) {
-      currentMenu = undefined;
-    }
-    else {
-      currentMenu = EDITOR_MENU;
-    }
-
-    render();
+    setMenu(EDITOR_MENU);
     e.stopPropagation();
   };
 
   var toggleAboutMenu = function(e) {
-    if (currentMenu === ABOUT_MENU) {
+    setMenu(ABOUT_MENU);
+    e.stopPropagation();
+  };
+
+  var setMenu = function(menuID) {
+    if (currentMenu === menuID) {
       currentMenu = undefined;
     }
     else {
-      currentMenu = ABOUT_MENU;
+      currentMenu = menuID;
     }
 
     render();
-    e.stopPropagation();
   };
 
   var reset = function(e) {
