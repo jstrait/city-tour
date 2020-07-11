@@ -107,7 +107,6 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
 
   var reset = function(newWorldData) {
     worldData = newWorldData;
-    syncToCamera();
   };
 
   var restartTimer = function() {
