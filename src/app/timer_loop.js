@@ -84,10 +84,13 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
       );
     }
 
+    vehicleController = undefined;
+    vehicleView = undefined;
     mode = FLYTHROUGH_STOP;
   };
 
   var stopFlythrough = function() {
+    vehicleToInteractiveAnimation = undefined;
     mode = INTERACTIVE;
   };
 
@@ -121,21 +124,18 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     var i;
 
     for (i = 0; i < frameCount; i++) {
-      if (mode === INTERACTIVE && zoomAmount !== 0.0) {
-        mapCamera.zoomTowardCenterOfAction(zoomAmount);
+      if (mode === INTERACTIVE) {
+        if (zoomAmount !== 0.0) {
+          mapCamera.zoomTowardCenterOfAction(zoomAmount);
+        }
       }
-
-      if (vehicleController) {
+      else if (mode === FLYTHROUGH) {
         vehicleController.tick();
         vehicleView.tick();
       }
-
-      if (vehicleToInteractiveAnimation) {
+      else if (mode === FLYTHROUGH_STOP) {
         vehicleToInteractiveAnimation.tick();
         if (vehicleToInteractiveAnimation.finished()) {
-          vehicleController = undefined;
-          vehicleView = undefined;
-          vehicleToInteractiveAnimation = undefined;
           messageBroker.publish("flythrough.stopped", {});
         }
       }
