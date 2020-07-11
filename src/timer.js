@@ -2,7 +2,7 @@
 
 var Timer = function() {
   var FRAMES_PER_SECOND = 60;
-  var TARGET_FRAME_WINDOW = 1000.0 / FRAMES_PER_SECOND;
+  var FRAME_DURATION_IN_MILLISECONDS = 1000.0 / FRAMES_PER_SECOND;
 
   var isPaused = true;
   var previousFrameTimestamp;
@@ -10,17 +10,17 @@ var Timer = function() {
   var animationRequestID;
 
   var tick = function(currentTimestamp) {
+    var frameCount;
+
     if (isPaused) {
       return;
     }
-
-    var frameCount;
 
     if (previousFrameTimestamp === undefined) {
       frameCount = 1;
     }
     else {
-      frameCount = Math.floor((currentTimestamp - previousFrameTimestamp) / TARGET_FRAME_WINDOW);
+      frameCount = Math.floor((currentTimestamp - previousFrameTimestamp) / FRAME_DURATION_IN_MILLISECONDS);
       if (frameCount < 1) {
         frameCount = 1;
       }
@@ -47,12 +47,12 @@ var Timer = function() {
     window.cancelAnimationFrame(animationRequestID);
   };
 
-  var timer = {};
-
-  timer.onTick = function(frameCount) {};
-  timer.start = start;
-  timer.pause = pause;
-  timer.isPaused = function() { return isPaused; };
+  var timer = {
+    onTick: function(frameCount) {},
+    start: start,
+    pause: pause,
+    isPaused: function() { return isPaused; },
+  };
 
   return timer;
 };
