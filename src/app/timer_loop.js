@@ -85,11 +85,11 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     }
     else {
       vehicleToInteractiveAnimation = new Animation(
-        new MotionGenerator(vehicleController.positionX(), camera.position.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
-        new MotionGenerator(vehicleController.positionY(), camera.position.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
-        new MotionGenerator(vehicleController.positionZ(), camera.position.z, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
-        new MotionGenerator(vehicleController.rotationX(), camera.rotation.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
-        new MotionGenerator(vehicleController.rotationY(), camera.rotation.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI))
+        new StaticMotionGenerator(camera.position.x),
+        new StaticMotionGenerator(camera.position.y),
+        new StaticMotionGenerator(camera.position.z),
+        new StaticMotionGenerator(camera.rotation.x),
+        new StaticMotionGenerator(camera.rotation.y),
       );
     }
 
