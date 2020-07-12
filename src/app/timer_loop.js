@@ -4,8 +4,8 @@ import { Timer } from "./../timer";
 import { WorldTouch } from "./world_touch";
 import { Animation } from "./../flythrough/animation";
 import { SineEasing } from "./../flythrough/easing";
-import { MapCameraTiltAnimation } from "./../flythrough/map_camera_tilt_animation";
 import { MotionGenerator } from "./../flythrough/motion_generator";
+import { StaticMotionGenerator } from "./../flythrough/motion_generator";
 import { VehicleController } from "./../flythrough/vehicle_controller";
 import { VehicleView } from "./../flythrough/vehicle_view";
 
@@ -67,12 +67,21 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   var requestStopFlythrough = function() {
     const centerOfTiltDistance = 3;
     var rotationY = camera.rotation.y + HALF_PI;
+    var targetPosition;
 
     if (camera.rotation.x > mapCamera.maxTiltAngle()) {
-      mapCamera.setCenterOfTilt(new THREE.Vector3(camera.position.x + (centerOfTiltDistance * Math.cos(rotationY)),
-                                                  camera.position.y,
-                                                  camera.position.z + (centerOfTiltDistance * -Math.sin(rotationY))));
-      vehicleToInteractiveAnimation = MapCameraTiltAnimation(mapCamera, mapCamera.maxTiltAngle(), (mapCamera.maxTiltAngle() - camera.rotation.x) / END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT);
+      targetPosition = new THREE.Vector3(0.0, 0.0, 0.0).setFromSphericalCoords(centerOfTiltDistance, mapCamera.maxTiltAngle() + HALF_PI, camera.rotation.y);
+      targetPosition.x += vehicleController.positionX() + (centerOfTiltDistance * Math.cos(rotationY));
+      targetPosition.y += vehicleController.positionY();
+      targetPosition.z += vehicleController.positionZ() + (centerOfTiltDistance * -Math.sin(rotationY));
+
+      vehicleToInteractiveAnimation = new Animation(
+        new MotionGenerator(vehicleController.positionX(), targetPosition.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+        new MotionGenerator(vehicleController.positionY(), targetPosition.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+        new MotionGenerator(vehicleController.positionZ(), targetPosition.z, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+        new MotionGenerator(camera.rotation.x, mapCamera.maxTiltAngle(), new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
+        new StaticMotionGenerator(camera.rotation.y),
+      );
     }
     else {
       vehicleToInteractiveAnimation = new Animation(
