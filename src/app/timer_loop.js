@@ -12,7 +12,7 @@ import { VehicleView } from "./../flythrough/vehicle_view";
 const HALF_PI = Math.PI * 0.5;
 
 var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) {
-  var INTERACTIVE = 1;
+  var MANUAL = 1;
   var FLYTHROUGH = 2;
   var FLYTHROUGH_STOP = 3;
 
@@ -22,9 +22,9 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   var timer;
   var vehicleController;
   var vehicleView;
-  var vehicleToInteractiveAnimation;
+  var flythroughToManualModeAnimation;
   var camera = sceneView.camera();
-  var mode = INTERACTIVE;
+  var mode = MANUAL;
   var zoomAmount = 0.0;
 
   var WINDOW_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
@@ -38,11 +38,11 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
       camera.rotation.y = vehicleView.rotationY();
     }
     else if (mode === FLYTHROUGH_STOP) {
-      camera.position.x = vehicleToInteractiveAnimation.positionX();
-      camera.position.y = vehicleToInteractiveAnimation.positionY();
-      camera.position.z = vehicleToInteractiveAnimation.positionZ();
-      camera.rotation.x = vehicleToInteractiveAnimation.rotationX();
-      camera.rotation.y = vehicleToInteractiveAnimation.rotationY();
+      camera.position.x = flythroughToManualModeAnimation.positionX();
+      camera.position.y = flythroughToManualModeAnimation.positionY();
+      camera.position.z = flythroughToManualModeAnimation.positionZ();
+      camera.rotation.x = flythroughToManualModeAnimation.rotationX();
+      camera.rotation.y = flythroughToManualModeAnimation.rotationY();
     }
   };
 
@@ -75,7 +75,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
       targetPosition.y += vehicleController.positionY();
       targetPosition.z += vehicleController.positionZ() + (centerOfTiltDistance * -Math.sin(rotationY));
 
-      vehicleToInteractiveAnimation = new Animation(
+      flythroughToManualModeAnimation = new Animation(
         new MotionGenerator(vehicleController.positionX(), targetPosition.x, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
         new MotionGenerator(vehicleController.positionY(), targetPosition.y, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
         new MotionGenerator(vehicleController.positionZ(), targetPosition.z, new SineEasing(END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT, 0, HALF_PI)),
@@ -84,7 +84,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
       );
     }
     else {
-      vehicleToInteractiveAnimation = new Animation(
+      flythroughToManualModeAnimation = new Animation(
         new StaticMotionGenerator(camera.position.x),
         new StaticMotionGenerator(camera.position.y),
         new StaticMotionGenerator(camera.position.z),
@@ -99,14 +99,14 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   };
 
   var stopFlythrough = function() {
-    vehicleToInteractiveAnimation = undefined;
-    mode = INTERACTIVE;
+    flythroughToManualModeAnimation = undefined;
+    mode = MANUAL;
 
     messageBroker.publish("flythrough.stopped", {});
   };
 
   var toggleFlythrough = function() {
-    if (mode === INTERACTIVE) {
+    if (mode === MANUAL) {
       startFlythrough();
     }
     else if (mode === FLYTHROUGH) {
@@ -133,7 +133,7 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
     var i;
 
     for (i = 0; i < frameCount; i++) {
-      if (mode === INTERACTIVE) {
+      if (mode === MANUAL) {
         if (zoomAmount !== 0.0) {
           mapCamera.zoomTowardCenterOfAction(zoomAmount);
         }
@@ -143,8 +143,8 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
         vehicleView.tick();
       }
       else if (mode === FLYTHROUGH_STOP) {
-        vehicleToInteractiveAnimation.tick();
-        if (vehicleToInteractiveAnimation.finished()) {
+        flythroughToManualModeAnimation.tick();
+        if (flythroughToManualModeAnimation.finished()) {
           stopFlythrough();
         }
       }
