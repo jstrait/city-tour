@@ -10,7 +10,7 @@ import { TerrainGenerator } from "./terrain/terrain_generator";
 
 var WorldGenerator = (function() {
   var generate = function(config) {
-    var GENERATE_ROAD_NETWORK = (config.roadNetwork.present === true && config.neighborhoods.count > 0);
+    var GENERATE_ROAD_NETWORK = config.roadNetwork.present === true;
     var GENERATE_BUILDINGS = true && GENERATE_ROAD_NETWORK;
 
     var terrain, neighborhoods, roadNetwork, zonedBlocks, buildings;
@@ -48,7 +48,7 @@ var WorldGenerator = (function() {
     neighborhoodsEndTime = new Date();
 
     roadStartTime = new Date();
-    if (!GENERATE_ROAD_NETWORK) {
+    if (!GENERATE_ROAD_NETWORK || neighborhoods.length < 1) {
       roadNetwork = new RoadNetwork(terrain);
     }
     else {

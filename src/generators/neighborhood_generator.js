@@ -104,10 +104,10 @@ var NeighborhoodGenerator = (function() {
   };
 
   var bestNeighborhoodSite = function(terrain, scores) {
-    var bestSiteCoordinates = { x: terrain.minX(), z: terrain.minZ() };
     var bestSiteScore = Number.POSITIVE_INFINITY;
     var score, scoreComponents;
     var x, z;
+    var bestX, bestZ;
 
     var minX = terrain.minX() + FLATNESS_WINDOW_WIDTH_MARGIN;
     var maxX = terrain.maxX() - FLATNESS_WINDOW_WIDTH_MARGIN;
@@ -121,13 +121,18 @@ var NeighborhoodGenerator = (function() {
 
         if (score < bestSiteScore) {
           bestSiteScore = score;
-          bestSiteCoordinates.x = x;
-          bestSiteCoordinates.z = z;
+          bestX = x;
+          bestZ = z;
         }
       }
     }
 
-    return bestSiteCoordinates;
+    if (bestX === undefined || bestZ === undefined) {
+      return undefined;
+    }
+    else {
+      return { x: bestX, z: bestZ };
+    }
   };
 
   var generate = function(terrain, count) {
@@ -138,6 +143,10 @@ var NeighborhoodGenerator = (function() {
 
     for (i = 0; i < count; i++) {
       neighborhoodCenter = bestNeighborhoodSite(terrain, scores);
+      if (neighborhoodCenter === undefined) {
+        return neighborhoods;
+      }
+
       neighborhoods.push({ centerX: neighborhoodCenter.x, centerZ: neighborhoodCenter.z });
 
       setCloseNeighborhoodPenalties(neighborhoodCenter.x, neighborhoodCenter.z, terrain, scores);
