@@ -42,11 +42,13 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new CopyWebpackPlugin([
-      { from: "city_tour.html" },
-      { from: "lib/*.js" },
-      { from: "textures/*.png" },
-    ], { copyUnmodified: true }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "city_tour.html" },
+        { from: "lib/*.js" },
+        { from: "textures/*.png" },
+      ],
+    }),
     new MiniCssExtractPlugin({
       filename: "city_tour.css",
     }),
