@@ -39,12 +39,7 @@ var WorldGenerator = (function() {
     terrainEndTime = new Date();
 
     neighborhoodsStartTime = new Date();
-    if (config.neighborhoods.count <= 0) {
-      neighborhoods = [];
-    }
-    else {
-      neighborhoods = NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
-    }
+    neighborhoods = NeighborhoodGenerator.generate(terrain, config.neighborhoods.count);
     neighborhoodsEndTime = new Date();
 
     roadStartTime = new Date();
