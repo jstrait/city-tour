@@ -42,6 +42,8 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     zoomCameraToCenterOfActionVector = undefined;
 
     setIsVelocityEnabled(false);
+
+    messageBroker.publish("camera.updated", {});
   };
 
   var setCenterOfAction = function(newCenterOfAction) {
