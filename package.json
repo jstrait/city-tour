@@ -12,6 +12,9 @@
     "build-prod": "webpack --config webpack.config.js --mode production",
     "test": "jest"
   },
+  "browserslist": [
+    "supports es6"
+  ],
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.4",
