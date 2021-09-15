@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { Timer } from "./../timer";
 import { WorldTouch } from "./world_touch";
 import { Animation } from "./../flythrough/animation";

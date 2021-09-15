@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { CityTourMath } from "./../../math";
 import { Terrain } from "./../../terrain";
 import { BlurEroder } from "./blur_eroder";

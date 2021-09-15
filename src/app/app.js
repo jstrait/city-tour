@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { MessageBroker } from "./../message_broker";
 import { RoadNetwork } from "./../road_network";
 import { Terrain } from "./../terrain";

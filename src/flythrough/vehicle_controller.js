@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { CityTourMath } from "./../math";
 import { PathFinder } from "./../path_finder";
 import { AerialNavigator } from "./aerial_navigator";

@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { CityTourMath } from "./../math";
 
 const HALF_PI = Math.PI * 0.5;

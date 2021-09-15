@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { RenderView } from "./render_view";
 import { Builder } from "./../meshes/builder";
 

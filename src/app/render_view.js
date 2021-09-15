@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 var RenderView = function(container, scene) {
   var VIEW_ANGLE = 45, DEFAULT_ASPECT = 1.0, NEAR = 0.005, FAR = 1000;
 

@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 const HALF_PI = Math.PI / 2;
 
 let CurveAnimation = function(curve, distancePerTick, rotationX) {

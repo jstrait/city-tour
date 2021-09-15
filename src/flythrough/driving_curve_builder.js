@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { Config } from "./../config";
 
 const MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;

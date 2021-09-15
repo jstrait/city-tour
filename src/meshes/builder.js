@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { Config } from "./../config";
 import { BuildingMeshBuilder } from "./building_mesh_builder";
 import { RoadMeshBuilder } from "./road_mesh_builder";

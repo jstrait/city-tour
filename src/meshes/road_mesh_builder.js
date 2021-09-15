@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { Config } from "./../config";
 import { CityTourMath } from "./../math";
 import { RoadNetwork } from "./../road_network";

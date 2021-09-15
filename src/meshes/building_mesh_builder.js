@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { Config } from "./../config";
 
 var BuildingMeshBuilder = function() {

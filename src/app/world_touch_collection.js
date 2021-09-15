@@ -1,5 +1,7 @@
 "use strict";
 
+import * as THREE from "three";
+
 import { CityTourMath } from "./../math";
 import { WorldTouch } from "./world_touch";
 
