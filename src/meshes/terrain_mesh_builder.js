@@ -268,9 +268,6 @@ var TerrainMeshBuilder = function() {
     var minZ = terrain.minZ();
     var maxZ = terrain.maxZ();
 
-    var halfStreetWidth = Config.STREET_WIDTH / 2;
-    var halfStreetDepth = Config.STREET_DEPTH / 2;
-
     for (x = minX; x < maxX; x += triangleWidth) {
       bottomLeftRoad = roadNetwork.getIntersectionGradeType(x, minZ) === RoadNetwork.SURFACE_GRADE;
       bottomRightRoad = roadNetwork.getIntersectionGradeType(x + triangleWidth, minZ) === RoadNetwork.SURFACE_GRADE;
@@ -298,37 +295,37 @@ var TerrainMeshBuilder = function() {
         topLeftX = x;
         topLeftZ = z;
         if (topLeftRoad || leftRoad) {
-          topLeftX += halfStreetWidth;
+          topLeftX += Config.HALF_STREET_WIDTH;
         }
         if (topLeftRoad || topRoad) {
-          topLeftZ += halfStreetDepth;
+          topLeftZ += Config.HALF_STREET_DEPTH;
         }
 
         topRightX = x + triangleWidth;
         topRightZ = z;
         if (topRightRoad || rightRoad) {
-          topRightX -= halfStreetWidth;
+          topRightX -= Config.HALF_STREET_WIDTH;
         }
         if (topRightRoad || topRoad) {
-          topRightZ += halfStreetDepth;
+          topRightZ += Config.HALF_STREET_DEPTH;
         }
 
         bottomLeftX = x;
         bottomLeftZ = z + triangleDepth;
         if (bottomLeftRoad || leftRoad) {
-          bottomLeftX += halfStreetWidth;
+          bottomLeftX += Config.HALF_STREET_WIDTH;
         }
         if (bottomLeftRoad || bottomRoad) {
-          bottomLeftZ -= halfStreetDepth;
+          bottomLeftZ -= Config.HALF_STREET_DEPTH;
         }
 
         bottomRightX = x + triangleWidth;
         bottomRightZ = z + triangleDepth;
         if (bottomRightRoad || rightRoad) {
-          bottomRightX -= halfStreetWidth;
+          bottomRightX -= Config.HALF_STREET_WIDTH;
         }
         if (bottomRightRoad || bottomRoad) {
-          bottomRightZ -= halfStreetDepth;
+          bottomRightZ -= Config.HALF_STREET_DEPTH;
         }
 
         topLeftHeight = bottomLeftHeight;

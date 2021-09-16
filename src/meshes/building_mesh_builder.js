@@ -8,9 +8,6 @@ var BuildingMeshBuilder = function() {
   const USE_INSTANCING = true;
 
   var generateBuildingGeometries = function(buildings, buildingsGeometry, roadNetwork) {
-    var HALF_STREET_WIDTH = Config.STREET_WIDTH / 2;
-    var HALF_STREET_DEPTH = Config.STREET_DEPTH / 2;
-
     var x, z, leftX, topZ;
     var minX, maxX, minZ, maxZ;
     var block;
@@ -76,10 +73,10 @@ var BuildingMeshBuilder = function() {
     maxZ = roadNetwork.maxBoundingZ();
 
     for (x = minX; x < maxX; x++) {
-      leftX = x + HALF_STREET_WIDTH;
+      leftX = x + Config.HALF_STREET_WIDTH;
 
       for (z = minZ; z < maxZ; z++) {
-        topZ = z + HALF_STREET_DEPTH;
+        topZ = z + Config.HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(x, z);
         block.forEach(generateLotBuilding);
@@ -110,8 +107,6 @@ var BuildingMeshBuilder = function() {
 
   let generateInstancedBuildingsMesh = function(buildings, roadNetwork) {
     const INSTANCE_COUNT = buildings.count;
-    const HALF_STREET_WIDTH = Config.STREET_WIDTH / 2;
-    const HALF_STREET_DEPTH = Config.STREET_DEPTH / 2;
 
     let buildingsGeometry = buildBuildingsBufferGeometry(INSTANCE_COUNT);
     let buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors});
@@ -133,10 +128,10 @@ var BuildingMeshBuilder = function() {
     let lot;
 
     for (x = minX; x < maxX; x++) {
-      leftX = x + HALF_STREET_WIDTH;
+      leftX = x + Config.HALF_STREET_WIDTH;
 
       for (z = minZ; z < maxZ; z++) {
-        topZ = z + HALF_STREET_DEPTH;
+        topZ = z + Config.HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(x, z);
         for (l = 0; l < block.length; l++) {

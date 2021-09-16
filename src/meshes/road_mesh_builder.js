@@ -9,8 +9,8 @@ import { RoadNetwork } from "./../road_network";
 const HALF_PI = Math.PI * 0.5;
 
 var RoadMeshBuilder = function() {
-  var SIDEWALK_X_CENTER = (Config.STREET_WIDTH / 2) - (Config.SIDEWALK_WIDTH / 2);
-  var SIDEWALK_Z_CENTER = (Config.STREET_DEPTH / 2) - (Config.SIDEWALK_DEPTH / 2);
+  var SIDEWALK_X_CENTER = Config.HALF_STREET_WIDTH - (Config.SIDEWALK_WIDTH / 2);
+  var SIDEWALK_Z_CENTER = Config.HALF_STREET_DEPTH - (Config.SIDEWALK_DEPTH / 2);
 
   var COLOR_ROAD = 0xaaaaaa;
   var COLOR_SIDEWALK = 0xcccccc;
@@ -148,12 +148,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.position.z = z;
 
               // Left guardrail
-              guardrailSegmentMesh.position.x = x - (Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x - Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // Right guardrail
-              guardrailSegmentMesh.position.x = x + (Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x + Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -167,12 +167,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.rotation.z = HALF_PI;
 
               // North guardrail
-              guardrailSegmentMesh.position.z = z - (Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z - Config.HALF_STREET_DEPTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // South guardrail
-              guardrailSegmentMesh.position.z = z + (Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z + Config.HALF_STREET_DEPTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -280,12 +280,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
 
               // Left guardrail
-              guardrailSegmentMesh.position.x = x - (Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x - Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // Right guardrail
-              guardrailSegmentMesh.position.x = x + (Config.STREET_WIDTH / 2);
+              guardrailSegmentMesh.position.x = x + Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
@@ -335,12 +335,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.rotation.z = -roadSegment.angle - HALF_PI;
 
               // Left guardrail
-              guardrailSegmentMesh.position.z = z - (Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z - Config.HALF_STREET_DEPTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
               // Right guardrail
-              guardrailSegmentMesh.position.z = z + (Config.STREET_DEPTH / 2);
+              guardrailSegmentMesh.position.z = z + Config.HALF_STREET_DEPTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
             }
