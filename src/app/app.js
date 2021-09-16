@@ -21,7 +21,10 @@ var App = (function() {
   var EMPTY_WORLD_DATA = {
     terrain: EMPTY_TERRAIN,
     roadNetwork: RoadNetwork(EMPTY_TERRAIN),
-    buildings: [],
+    buildings: {
+      count: 0,
+      blockAtCoordinates: function(x, z) { return []; },
+    },
     neighborhoods: [],
   };
 
