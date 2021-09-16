@@ -202,9 +202,9 @@ var ZonedBlockGenerator = (function() {
     var blockLayout, terrainAttributes, blockSteepness, maxBlockSteepness;
     var distanceToClosestNeighborhoodCenter;
 
-    var minX = roadNetwork.minBoundingX();
+    var minX = roadNetwork.minBoundingX() - 1;
     var maxX = roadNetwork.maxBoundingX();
-    var minZ = roadNetwork.minBoundingZ();
+    var minZ = roadNetwork.minBoundingZ() - 1;
     var maxZ = roadNetwork.maxBoundingZ();
 
     for (x = minX; x <= maxX; x++) {
