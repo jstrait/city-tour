@@ -67,15 +67,15 @@ var BuildingMeshBuilder = function() {
       }
     };
 
-    minX = roadNetwork.minBoundingX();
+    minX = roadNetwork.minBoundingX() - 1;
     maxX = roadNetwork.maxBoundingX();
-    minZ = roadNetwork.minBoundingZ();
+    minZ = roadNetwork.minBoundingZ() - 1;
     maxZ = roadNetwork.maxBoundingZ();
 
-    for (x = minX; x < maxX; x++) {
+    for (x = minX; x <= maxX; x++) {
       leftX = x + Config.HALF_STREET_WIDTH;
 
-      for (z = minZ; z < maxZ; z++) {
+      for (z = minZ; z <= maxZ; z++) {
         topZ = z + Config.HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(x, z);
@@ -113,9 +113,9 @@ var BuildingMeshBuilder = function() {
     let buildingsMesh = new THREE.InstancedMesh(buildingsGeometry, buildingsMaterial, INSTANCE_COUNT);
     let buildingPrototype = new THREE.Object3D();
 
-    let minX = roadNetwork.minBoundingX();
+    let minX = roadNetwork.minBoundingX() - 1;
     let maxX = roadNetwork.maxBoundingX();
-    let minZ = roadNetwork.minBoundingZ();
+    let minZ = roadNetwork.minBoundingZ() - 1;
     let maxZ = roadNetwork.maxBoundingZ();
 
     let instanceIndex = 0;
@@ -127,10 +127,10 @@ var BuildingMeshBuilder = function() {
     let block;
     let lot;
 
-    for (x = minX; x < maxX; x++) {
+    for (x = minX; x <= maxX; x++) {
       leftX = x + Config.HALF_STREET_WIDTH;
 
-      for (z = minZ; z < maxZ; z++) {
+      for (z = minZ; z <= maxZ; z++) {
         topZ = z + Config.HALF_STREET_DEPTH;
 
         block = buildings.blockAtCoordinates(x, z);
