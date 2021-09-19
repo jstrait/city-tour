@@ -72,7 +72,7 @@ var BuildingsGenerator = (function() {
     var blocks = [];
     var buildingCount = 0;
 
-    zonedBlocks.forEach(function(zonedBlock) {
+    zonedBlocks.blocks.forEach(function(zonedBlock) {
       var x = zonedBlock.x;
       var z = zonedBlock.z;
       var lots = zonedBlock.layout.lots;
@@ -96,7 +96,16 @@ var BuildingsGenerator = (function() {
       }
     });
 
-    return {count: buildingCount, blocks: blocks};
+    return {
+      count: buildingCount,
+      blocks: blocks,
+      boundingBox: {
+        minX: zonedBlocks.boundingBox.minX,
+        maxX: zonedBlocks.boundingBox.maxX,
+        minZ: zonedBlocks.boundingBox.minZ,
+        maxZ: zonedBlocks.boundingBox.maxZ,
+      },
+    };
   };
 
 
@@ -114,6 +123,7 @@ var BuildingsGenerator = (function() {
     buildings.blockAtCoordinates = function(x, z) {
       return (blocks[x] === undefined || blocks[x][z] === undefined) ? EMPTY_ARRAY : blocks[x][z];
     };
+    buildings.boundingBox = buildingData.boundingBox;
 
     return buildings;
   };

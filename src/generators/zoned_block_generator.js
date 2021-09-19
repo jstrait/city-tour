@@ -245,7 +245,15 @@ var ZonedBlockGenerator = (function() {
       }
     }
 
-    return blocks;
+    return {
+      blocks: blocks,
+      boundingBox: {
+        minX: minX,
+        maxX: maxX,
+        minZ: minZ,
+        maxZ: maxZ,
+      },
+    };
   };
 
 

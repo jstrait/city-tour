@@ -24,6 +24,12 @@ var App = (function() {
     buildings: {
       count: 0,
       blockAtCoordinates: function(x, z) { return []; },
+      boundingBox: {
+        minX: Number.POSITIVE_INFINITY,
+        maxX: Number.NEGATIVE_INFINITY,
+        minZ: Number.POSITIVE_INFINITY,
+        maxZ: Number.NEGATIVE_INFINITY,
+      },
     },
     neighborhoods: [],
   };

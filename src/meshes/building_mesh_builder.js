@@ -7,7 +7,7 @@ import { Config } from "./../config";
 var BuildingMeshBuilder = function() {
   const USE_INSTANCING = true;
 
-  var generateBuildingGeometries = function(buildings, buildingsGeometry, roadNetwork) {
+  var generateBuildingGeometries = function(buildings, buildingsGeometry) {
     var x, z, leftX, topZ;
     var minX, maxX, minZ, maxZ;
     var block;
@@ -67,10 +67,10 @@ var BuildingMeshBuilder = function() {
       }
     };
 
-    minX = roadNetwork.minBoundingX() - 1;
-    maxX = roadNetwork.maxBoundingX();
-    minZ = roadNetwork.minBoundingZ() - 1;
-    maxZ = roadNetwork.maxBoundingZ();
+    minX = buildings.boundingBox.minX;
+    maxX = buildings.boundingBox.maxX;
+    minZ = buildings.boundingBox.minZ;
+    maxZ = buildings.boundingBox.maxZ;
 
     for (x = minX; x <= maxX; x++) {
       leftX = x + Config.HALF_STREET_WIDTH;
@@ -84,20 +84,20 @@ var BuildingMeshBuilder = function() {
     }
   };
 
-  let build = function(buildings, roadNetwork) {
+  let build = function(buildings) {
     let buildingsMaterial;
     let buildingsGeometry;
     let buildingMeshes;
 
     if (USE_INSTANCING === true) {
-      return [generateInstancedBuildingsMesh(buildings, roadNetwork)];
+      return [generateInstancedBuildingsMesh(buildings)];
     }
     else {
       buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
       buildingsGeometry = new THREE.Geometry();
       buildingMeshes = [];
 
-      generateBuildingGeometries(buildings, buildingsGeometry, roadNetwork);
+      generateBuildingGeometries(buildings, buildingsGeometry);
 
       buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
 
@@ -105,7 +105,7 @@ var BuildingMeshBuilder = function() {
     }
   };
 
-  let generateInstancedBuildingsMesh = function(buildings, roadNetwork) {
+  let generateInstancedBuildingsMesh = function(buildings) {
     const INSTANCE_COUNT = buildings.count;
 
     let buildingsGeometry = buildBuildingsBufferGeometry(INSTANCE_COUNT);
@@ -113,10 +113,10 @@ var BuildingMeshBuilder = function() {
     let buildingsMesh = new THREE.InstancedMesh(buildingsGeometry, buildingsMaterial, INSTANCE_COUNT);
     let buildingPrototype = new THREE.Object3D();
 
-    let minX = roadNetwork.minBoundingX() - 1;
-    let maxX = roadNetwork.maxBoundingX();
-    let minZ = roadNetwork.minBoundingZ() - 1;
-    let maxZ = roadNetwork.maxBoundingZ();
+    let minX = buildings.boundingBox.minX;
+    let maxX = buildings.boundingBox.maxX;
+    let minZ = buildings.boundingBox.minZ;
+    let maxZ = buildings.boundingBox.maxZ;
 
     let instanceIndex = 0;
     let x;
