@@ -71,6 +71,7 @@ var BuildingsGenerator = (function() {
   var generateUnitBlocks = function(terrain, zonedBlocks) {
     var blocks = [];
     var buildingCount = 0;
+    var antennaCount = 0;
 
     zonedBlocks.blocks.forEach(function(zonedBlock) {
       var x = zonedBlock.x;
@@ -85,6 +86,10 @@ var BuildingsGenerator = (function() {
         if (building !== undefined) {
           block.push(building);
           buildingCount += 1;
+
+          if (building.roofStyle === "antenna") {
+            antennaCount += 1;
+          }
         }
       }
 
@@ -97,7 +102,8 @@ var BuildingsGenerator = (function() {
     });
 
     return {
-      count: buildingCount,
+      buildingCount: buildingCount,
+      antennaCount: antennaCount,
       blocks: blocks,
       boundingBox: {
         minX: zonedBlocks.boundingBox.minX,
@@ -119,7 +125,8 @@ var BuildingsGenerator = (function() {
 
     var buildings = {};
 
-    buildings.count = buildingData.count;
+    buildings.buildingCount = buildingData.buildingCount;
+    buildings.antennaCount = buildingData.antennaCount,
     buildings.blockAtCoordinates = function(x, z) {
       return (blocks[x] === undefined || blocks[x][z] === undefined) ? EMPTY_ARRAY : blocks[x][z];
     };

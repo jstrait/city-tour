@@ -22,7 +22,8 @@ var App = (function() {
     terrain: EMPTY_TERRAIN,
     roadNetwork: RoadNetwork(EMPTY_TERRAIN),
     buildings: {
-      count: 0,
+      buildingCount: 0,
+      antennaCount: 0,
       blockAtCoordinates: function(x, z) { return []; },
       boundingBox: {
         minX: Number.POSITIVE_INFINITY,
