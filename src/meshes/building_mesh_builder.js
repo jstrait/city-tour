@@ -4,6 +4,10 @@ import * as THREE from "three";
 
 import { Config } from "./../config";
 
+const ANTENNA_RADIUS = 0.016666666666667;
+const ANTENNA_HEIGHT = 0.833333333333333;
+const ANTENNA_Y_CENTER_OFFSET = 0.416666666666667;
+
 var BuildingMeshBuilder = function() {
   const USE_INSTANCING = true;
 
@@ -51,11 +55,11 @@ var BuildingMeshBuilder = function() {
       buildingsGeometry.merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
 
       if (lot.roofStyle === "antenna") {
-        cylinderGeometry = new THREE.CylinderGeometry(0.016666666666667, 0.016666666666667, 0.833333333333333, 4);
+        cylinderGeometry = new THREE.CylinderGeometry(ANTENNA_RADIUS, ANTENNA_RADIUS, ANTENNA_HEIGHT, 4);
         cylinderMesh = new THREE.Mesh(cylinderGeometry);
 
         cylinderMesh.position.x = leftX + (Config.BLOCK_WIDTH * lot.dimensions.midpointX);
-        cylinderMesh.position.y = lot.yFloor + lot.height + 0.416666666666667;
+        cylinderMesh.position.y = lot.yFloor + lot.height + ANTENNA_Y_CENTER_OFFSET;
         cylinderMesh.position.z = topZ + (Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
         cylinderMesh.updateMatrix();
 
