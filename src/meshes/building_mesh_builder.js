@@ -153,6 +153,10 @@ var BuildingMeshBuilder = function() {
       }
     }
 
+    if (instanceIndex !== INSTANCE_COUNT) {
+      throw new Error(`Expected ${INSTANCE_COUNT} building instances to be created, but ${instanceIndex} were.`);
+    }
+
     return buildingsMesh;
   };
 
