@@ -12,10 +12,6 @@ var TerrainMeshBuilder = function() {
   var LAND = 1;
   var WATER = 2;
 
-  var SOLID_SHADING_MODE = 1;
-  var GRADIENT_SHADING_MODE = 2;
-  var SHADING_MODE = SOLID_SHADING_MODE;
-
   var WATER_VERTEX_COLORS = [WATER_COLOR, WATER_COLOR, WATER_COLOR];
   var LAND_VERTEX_COLORS = [LAND_COLOR, LAND_COLOR, LAND_COLOR];
 
@@ -28,18 +24,11 @@ var TerrainMeshBuilder = function() {
   var buildTriangleGeometry = function(x1, y1, z1, material1, x2, y2, z2, material2, x3, y3, z3, material3) {
     reusableTriangle.vertices = [ new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2), new THREE.Vector3(x3, y3, z3) ];
 
-    if (SHADING_MODE === SOLID_SHADING_MODE) {
-      if (material1 === WATER && material2 === WATER && material3 == WATER) {
-        reusableTriangle.faces[0].vertexColors = WATER_VERTEX_COLORS;
-      }
-      else {
-        reusableTriangle.faces[0].vertexColors = LAND_VERTEX_COLORS;
-      }
+    if (material1 === WATER && material2 === WATER && material3 == WATER) {
+      reusableTriangle.faces[0].vertexColors = WATER_VERTEX_COLORS;
     }
     else {
-      reusableTriangle.faces[0].vertexColors = [(material1 === WATER) ? WATER_COLOR : LAND_COLOR,
-                                                (material2 === WATER) ? WATER_COLOR : LAND_COLOR,
-                                                (material3 === WATER) ? WATER_COLOR : LAND_COLOR,];
+      reusableTriangle.faces[0].vertexColors = LAND_VERTEX_COLORS;
     }
 
     reusableTriangle.computeFaceNormals();
