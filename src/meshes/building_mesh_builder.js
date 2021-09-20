@@ -4,114 +4,13 @@ import * as THREE from "three";
 
 import { Config } from "./../config";
 
-const ANTENNA_RADIUS = 0.016666666666667;
 const ANTENNA_WIDTH = 0.023570226039552;
 const ANTENNA_DEPTH = 0.023570226039552;
 const ANTENNA_HEIGHT = 0.833333333333333;
 const ANTENNA_Y_CENTER_OFFSET = 0.416666666666667;
 
 var BuildingMeshBuilder = function() {
-  const USE_INSTANCING = true;
-
-  var generateBuildingGeometries = function(buildings, buildingsGeometry) {
-    var x, z, leftX, topZ;
-    var minX, maxX, minZ, maxZ;
-    var block;
-    var color = new THREE.Color();
-
-    var reusableBuildingGeometry = new THREE.BoxGeometry(1, 1, 1);
-    reusableBuildingGeometry.faces.splice(6, 2);   // Remove bottom faces, since they are underground and invisible
-
-    var reusableBuildingMesh = new THREE.Mesh(reusableBuildingGeometry);
-
-    var generateLotBuilding = function(lot) {
-      var cylinderGeometry;
-      var cylinderMesh;
-      var random;
-      var i;
-
-      reusableBuildingMesh.scale.x = lot.dimensions.width * Config.BLOCK_WIDTH;
-      reusableBuildingMesh.position.x = leftX + (Config.BLOCK_WIDTH * lot.dimensions.midpointX);
-
-      reusableBuildingMesh.scale.y = lot.height;
-      reusableBuildingMesh.position.y = (lot.height / 2) + lot.yFloor;
-
-      reusableBuildingMesh.scale.z = lot.dimensions.depth * Config.BLOCK_DEPTH;
-      reusableBuildingMesh.position.z = topZ + (Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
-
-      reusableBuildingMesh.updateMatrix();
-
-      random = Math.random();
-      color.setRGB(random, random, random);
-      reusableBuildingGeometry.faces[0].color = color;
-      reusableBuildingGeometry.faces[1].color = color;
-      reusableBuildingGeometry.faces[2].color = color;
-      reusableBuildingGeometry.faces[3].color = color;
-      reusableBuildingGeometry.faces[4].color = color;
-      reusableBuildingGeometry.faces[5].color = color;
-      reusableBuildingGeometry.faces[6].color = color;
-      reusableBuildingGeometry.faces[7].color = color;
-      reusableBuildingGeometry.faces[8].color = color;
-      reusableBuildingGeometry.faces[9].color = color;
-
-      buildingsGeometry.merge(reusableBuildingMesh.geometry, reusableBuildingMesh.matrix);
-
-      if (lot.roofStyle === "antenna") {
-        cylinderGeometry = new THREE.CylinderGeometry(ANTENNA_RADIUS, ANTENNA_RADIUS, ANTENNA_HEIGHT, 4);
-        cylinderMesh = new THREE.Mesh(cylinderGeometry);
-
-        cylinderMesh.position.x = leftX + (Config.BLOCK_WIDTH * lot.dimensions.midpointX);
-        cylinderMesh.position.y = lot.yFloor + lot.height + ANTENNA_Y_CENTER_OFFSET;
-        cylinderMesh.position.z = topZ + (Config.BLOCK_DEPTH * lot.dimensions.midpointZ);
-        cylinderMesh.updateMatrix();
-
-        for (i = 0; i < cylinderGeometry.faces.length; i++) {
-          cylinderGeometry.faces[i].color = color;
-        }
-
-        buildingsGeometry.merge(cylinderMesh.geometry, cylinderMesh.matrix);
-      }
-    };
-
-    minX = buildings.boundingBox.minX;
-    maxX = buildings.boundingBox.maxX;
-    minZ = buildings.boundingBox.minZ;
-    maxZ = buildings.boundingBox.maxZ;
-
-    for (x = minX; x <= maxX; x++) {
-      leftX = x + Config.HALF_STREET_WIDTH;
-
-      for (z = minZ; z <= maxZ; z++) {
-        topZ = z + Config.HALF_STREET_DEPTH;
-
-        block = buildings.blockAtCoordinates(x, z);
-        block.forEach(generateLotBuilding);
-      }
-    }
-  };
-
   let build = function(buildings) {
-    let buildingsMaterial;
-    let buildingsGeometry;
-    let buildingMeshes;
-
-    if (USE_INSTANCING === true) {
-      return [generateInstancedBuildingsMesh(buildings)];
-    }
-    else {
-      buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors});
-      buildingsGeometry = new THREE.Geometry();
-      buildingMeshes = [];
-
-      generateBuildingGeometries(buildings, buildingsGeometry);
-
-      buildingMeshes.push(new THREE.Mesh(buildingsGeometry, buildingsMaterial));
-
-      return buildingMeshes;
-    }
-  };
-
-  let generateInstancedBuildingsMesh = function(buildings) {
     const INSTANCE_COUNT = buildings.buildingCount + buildings.antennaCount;
 
     let buildingsGeometry = buildBuildingsBufferGeometry(INSTANCE_COUNT);
@@ -189,7 +88,7 @@ var BuildingMeshBuilder = function() {
 
     buildingsGeometry.setAttribute("color", new THREE.InstancedBufferAttribute(colorAttributes, 3).onUpload(disposeArray));
 
-    return buildingsMesh;
+    return [buildingsMesh];
   };
 
   let buildBuildingsBufferGeometry = function(instanceCount) {
