@@ -18,11 +18,18 @@ var TerrainMeshBuilder = function() {
   var SIDE_BOTTOM_HEIGHT = Config.SIDEWALL_BOTTOM;
   var MAX_WATER_HEIGHT = -SIDE_BOTTOM_HEIGHT;
 
+  var reusableTriangleVertex1 = new THREE.Vector3();
+  var reusableTriangleVertex2 = new THREE.Vector3();
+  var reusableTriangleVertex3 = new THREE.Vector3();
+
   var reusableTriangle = new THREE.Geometry();
   reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];
+  reusableTriangle.vertices = [reusableTriangleVertex1, reusableTriangleVertex2, reusableTriangleVertex3];
 
   var buildTriangleGeometry = function(x1, y1, z1, material1, x2, y2, z2, material2, x3, y3, z3, material3) {
-    reusableTriangle.vertices = [ new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2), new THREE.Vector3(x3, y3, z3) ];
+    reusableTriangleVertex1.set(x1, y1, z1);
+    reusableTriangleVertex2.set(x2, y2, z2);
+    reusableTriangleVertex3.set(x3, y3, z3);
 
     if (material1 === WATER && material2 === WATER && material3 == WATER) {
       reusableTriangle.faces[0].vertexColors = WATER_VERTEX_COLORS;
