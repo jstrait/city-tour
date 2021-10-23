@@ -26,6 +26,25 @@ var TerrainMeshBuilder = function() {
   reusableTriangle.faces = [new THREE.Face3(0, 1, 2)];
   reusableTriangle.vertices = [reusableTriangleVertex1, reusableTriangleVertex2, reusableTriangleVertex3];
 
+  let build = function(terrain, roadNetwork) {
+    var triangleWidth = terrain.scale();
+    var triangleDepth = terrain.scale();
+
+    var terrainGeometry = new THREE.Geometry();
+    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
+
+    // Vertical sides along the edges of the terrain
+    addNorthVerticalFace(terrain, terrainGeometry, triangleWidth);
+    addSouthVerticalFace(terrain, terrainGeometry, triangleWidth);
+    addWestVerticalFace(terrain, terrainGeometry, triangleDepth);
+    addEastVerticalFace(terrain, terrainGeometry, triangleDepth);
+
+    // Main terrain
+    addMainTerrain(terrain, roadNetwork, terrainGeometry, triangleWidth, triangleDepth);
+
+    return [new THREE.Mesh(terrainGeometry, terrainMaterial)];
+  };
+
   var buildTriangleGeometry = function(x1, y1, z1, material1, x2, y2, z2, material2, x3, y3, z3, material3) {
     reusableTriangleVertex1.set(x1, y1, z1);
     reusableTriangleVertex2.set(x2, y2, z2);
@@ -444,28 +463,9 @@ var TerrainMeshBuilder = function() {
   };
 
 
-  var terrainMeshBuilder = {};
-
-  terrainMeshBuilder.build = function(terrain, roadNetwork) {
-    var triangleWidth = terrain.scale();
-    var triangleDepth = terrain.scale();
-
-    var terrainGeometry = new THREE.Geometry();
-    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
-
-    // Vertical sides along the edges of the terrain
-    addNorthVerticalFace(terrain, terrainGeometry, triangleWidth);
-    addSouthVerticalFace(terrain, terrainGeometry, triangleWidth);
-    addWestVerticalFace(terrain, terrainGeometry, triangleDepth);
-    addEastVerticalFace(terrain, terrainGeometry, triangleDepth);
-
-    // Main terrain
-    addMainTerrain(terrain, roadNetwork, terrainGeometry, triangleWidth, triangleDepth);
-
-    return [new THREE.Mesh(terrainGeometry, terrainMaterial)];
+  return {
+    build: build,
   };
-
-  return terrainMeshBuilder;
 };
 
 export { TerrainMeshBuilder };
