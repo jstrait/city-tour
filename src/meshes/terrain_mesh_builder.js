@@ -354,14 +354,14 @@ var TerrainMeshBuilder = function() {
         bottomRightMaterial = terrain.waterHeightAt(x + triangleWidth, z + triangleDepth) === 0.0 ? LAND : WATER;
 
         // Core triangles
-        triangle = buildTriangleGeometry(topLeftX,    topLeftHeight,    topLeftZ, topLeftMaterial,
+        triangle = buildTriangleGeometry(topLeftX, topLeftHeight, topLeftZ, topLeftMaterial,
                                          bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                         topRightX,   topRightHeight,   topRightZ, topRightMaterial);
+                                         topRightX, topRightHeight, topRightZ, topRightMaterial);
         terrainGeometry.merge(triangle);
 
-        triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
+        triangle = buildTriangleGeometry(bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
                                          bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
-                                         topRightX,    topRightHeight, topRightZ, topRightMaterial);
+                                         topRightX, topRightHeight, topRightZ, topRightMaterial);
         terrainGeometry.merge(triangle);
 
 
@@ -404,7 +404,7 @@ var TerrainMeshBuilder = function() {
             terrainGeometry.merge(triangle);
           }
           else if (topRightRoad && bottomRightRoad) {
-            triangle = buildTriangleGeometry(topRightX,    topRightHeight, topRightZ, topRightMaterial,
+            triangle = buildTriangleGeometry(topRightX, topRightHeight, topRightZ, topRightMaterial,
                                              bottomRightX, bottomRightHeight, bottomRightZ, bottomRightMaterial,
                                              topRightX + Config.STREET_WIDTH, topRightHeight, topRightZ, topRightMaterial);
             terrainGeometry.merge(triangle);
@@ -414,8 +414,8 @@ var TerrainMeshBuilder = function() {
         // Extra top-side triangles
         if (!topRoad) {
           if (topLeftRoad && !topRightRoad) {
-            triangle = buildTriangleGeometry(topLeftX,  topLeftHeight, z, topLeftMaterial,
-                                             topLeftX,  topLeftHeight, topLeftZ, topLeftMaterial,
+            triangle = buildTriangleGeometry(topLeftX, topLeftHeight, z, topLeftMaterial,
+                                             topLeftX, topLeftHeight, topLeftZ, topLeftMaterial,
                                              x + triangleWidth, topRightHeight, z, topRightMaterial);
             terrainGeometry.merge(triangle);
           }
@@ -438,8 +438,8 @@ var TerrainMeshBuilder = function() {
         // Extra bottom-side triangles
         if (!bottomRoad) {
           if (bottomLeftRoad && !bottomRightRoad) {
-            triangle = buildTriangleGeometry(bottomLeftX,  bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
-                                             bottomLeftX,  bottomLeftHeight, z + triangleDepth, bottomLeftMaterial,
+            triangle = buildTriangleGeometry(bottomLeftX, bottomLeftHeight, bottomLeftZ, bottomLeftMaterial,
+                                             bottomLeftX, bottomLeftHeight, z + triangleDepth, bottomLeftMaterial,
                                              bottomRightX, bottomRightHeight, z + triangleDepth, bottomRightMaterial);
             terrainGeometry.merge(triangle);
           }
