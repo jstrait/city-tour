@@ -64,7 +64,6 @@ var RoadMeshBuilder = function() {
     var HALF_BLOCK_AND_STREET_DEPTH = Config.BLOCK_AND_STREET_DEPTH / 2;
     var BRIDGE_SUPPORT_HEIGHT = 8.333333333333333;
     var HALF_BRIDGE_SUPPORT_HEIGHT = BRIDGE_SUPPORT_HEIGHT / 2;
-    var BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK = 0.020833333333333;
 
     var x, z;
 
@@ -102,6 +101,9 @@ var RoadMeshBuilder = function() {
     var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh();
 
     var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(0.075, BRIDGE_SUPPORT_HEIGHT, 0.075));
+    reusableBridgeSupportMesh.geometry.faces.splice(6, 2);  // Remove bottom face
+    reusableBridgeSupportMesh.geometry.faces.splice(4, 2);  // Remove top face
+
     var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 1.0));
 
     var northRoad, eastRoad, southRoad, westRoad;
@@ -132,7 +134,7 @@ var RoadMeshBuilder = function() {
 
           if (roadNetwork.getIntersectionGradeType(x, z) === RoadNetwork.BRIDGE_GRADE) {
             reusableBridgeSupportMesh.position.x = x;
-            reusableBridgeSupportMesh.position.y = selfSurfaceHeight - HALF_BRIDGE_SUPPORT_HEIGHT - BRIDGE_SUPPORT_SEPARATION_FROM_ROAD_DECK;
+            reusableBridgeSupportMesh.position.y = selfSurfaceHeight - HALF_BRIDGE_SUPPORT_HEIGHT;
             reusableBridgeSupportMesh.position.z = z;
             reusableBridgeSupportMesh.updateMatrix();
             sidewalkGeometry.merge(reusableBridgeSupportMesh.geometry, reusableBridgeSupportMesh.matrix);
