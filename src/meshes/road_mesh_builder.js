@@ -236,7 +236,7 @@ var RoadMeshBuilder = function() {
           }
 
 
-          // North/South road segment
+          // Road segment going south from the intersection
           if (southRoad === true) {
             southSurfaceHeight = roadNetwork.getRoadHeight(x, z + 1);
 
@@ -291,7 +291,7 @@ var RoadMeshBuilder = function() {
             }
           }
 
-          // East/West road segment
+          // Road segment going east from the intersection
           if (eastRoad === true) {
             eastSurfaceHeight = roadNetwork.getRoadHeight(x + 1, z);
 
