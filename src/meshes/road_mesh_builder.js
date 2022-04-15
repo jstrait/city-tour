@@ -334,12 +334,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.rotation.y = 0.0;
               guardrailSegmentMesh.rotation.z = -roadSegment.angle - HALF_PI;
 
-              // Left guardrail
+              // North guardrail
               guardrailSegmentMesh.position.z = z - Config.HALF_STREET_DEPTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
-              // Right guardrail
+              // South guardrail
               guardrailSegmentMesh.position.z = z + Config.HALF_STREET_DEPTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
