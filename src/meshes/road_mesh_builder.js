@@ -147,12 +147,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.rotation.z = HALF_PI;
               guardrailSegmentMesh.position.z = z;
 
-              // Left guardrail
+              // West guardrail
               guardrailSegmentMesh.position.x = x - Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
-              // Right guardrail
+              // East guardrail
               guardrailSegmentMesh.position.x = x + Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
@@ -188,7 +188,7 @@ var RoadMeshBuilder = function() {
           sidewalkSegmentMesh = reusableIntersectionFillerEastWestMesh;
           sidewalkSegmentMesh.position.y = selfSurfaceHeight;
 
-          // Top sidewalk "filler"
+          // North sidewalk "filler"
           sidewalkSegmentMesh.position.x = x;
           sidewalkSegmentMesh.position.z = z - SIDEWALK_Z_CENTER;
           sidewalkSegmentMesh.updateMatrix();
@@ -199,7 +199,7 @@ var RoadMeshBuilder = function() {
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
 
-          // Bottom sidewalk "filler"
+          // South sidewalk "filler"
           sidewalkSegmentMesh.position.x = x;
           sidewalkSegmentMesh.position.z = z + SIDEWALK_Z_CENTER;
           sidewalkSegmentMesh.updateMatrix();
@@ -213,7 +213,7 @@ var RoadMeshBuilder = function() {
           sidewalkSegmentMesh = reusableIntersectionFillerNorthSouthMesh;
           sidewalkSegmentMesh.position.y = selfSurfaceHeight;
 
-          // Left sidewalk "filler"
+          // West sidewalk "filler"
           sidewalkSegmentMesh.position.x = x - SIDEWALK_X_CENTER;
           sidewalkSegmentMesh.position.z = z;
           sidewalkSegmentMesh.updateMatrix();
@@ -224,7 +224,7 @@ var RoadMeshBuilder = function() {
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
           }
 
-          // Right sidewalk "filler"
+          // East sidewalk "filler"
           sidewalkSegmentMesh.position.x = x + SIDEWALK_X_CENTER;
           sidewalkSegmentMesh.position.z = z;
           sidewalkSegmentMesh.updateMatrix();
@@ -259,12 +259,12 @@ var RoadMeshBuilder = function() {
             sidewalkSegmentMesh.position.y = roadSegment.midpointHeight;
             sidewalkSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
 
-            // Left sidewalk
+            // West sidewalk
             sidewalkSegmentMesh.position.x = x - SIDEWALK_X_CENTER;
             sidewalkSegmentMesh.updateMatrix();
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
 
-            // Right sidewalk
+            // East sidewalk
             sidewalkSegmentMesh.position.x = x + SIDEWALK_X_CENTER;
             sidewalkSegmentMesh.updateMatrix();
             sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
@@ -279,12 +279,12 @@ var RoadMeshBuilder = function() {
               guardrailSegmentMesh.rotation.z = HALF_PI;
               guardrailSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
 
-              // Left guardrail
+              // West guardrail
               guardrailSegmentMesh.position.x = x - Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
 
-              // Right guardrail
+              // East guardrail
               guardrailSegmentMesh.position.x = x + Config.HALF_STREET_WIDTH;
               guardrailSegmentMesh.updateMatrix();
               guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
