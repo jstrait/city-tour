@@ -57,9 +57,7 @@ var RoadMeshBuilder = function() {
     return new THREE.Mesh(intersectionSidewalkCornerGeometry);
   };
 
-  var roadMeshBuilder = {};
-
-  roadMeshBuilder.build = function(terrain, roadNetwork) {
+  let build = function(terrain, roadNetwork) {
     var HALF_BLOCK_AND_STREET_WIDTH = Config.BLOCK_AND_STREET_WIDTH / 2;
     var HALF_BLOCK_AND_STREET_DEPTH = Config.BLOCK_AND_STREET_DEPTH / 2;
     var BRIDGE_SUPPORT_HEIGHT = 8.333333333333333;
@@ -356,7 +354,10 @@ var RoadMeshBuilder = function() {
             new THREE.Mesh(guardrailGeometry, guardrailMaterial)];
   };
 
-  return roadMeshBuilder;
+
+  return {
+    build: build,
+  };
 };
 
 export { RoadMeshBuilder };
