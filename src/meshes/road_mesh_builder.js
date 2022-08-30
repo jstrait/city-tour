@@ -12,10 +12,6 @@ var RoadMeshBuilder = function() {
   var SIDEWALK_X_CENTER = Config.HALF_STREET_WIDTH - (Config.SIDEWALK_WIDTH / 2);
   var SIDEWALK_Z_CENTER = Config.HALF_STREET_DEPTH - (Config.SIDEWALK_DEPTH / 2);
 
-  var COLOR_ROAD = 0xaaaaaa;
-  var COLOR_SIDEWALK = 0xcccccc;
-  var COLOR_GUARDRAIL = 0xbbbbbb;
-
   var calculateRoadSegment = function(heightAtPoint1, heightAtPoint2, mapLength) {
     var midpointHeight = (heightAtPoint1 + heightAtPoint2) / 2;
     var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), mapLength);
@@ -67,15 +63,15 @@ var RoadMeshBuilder = function() {
 
     var roadSegment;
 
-    var roadMaterial = new THREE.MeshBasicMaterial({ color: COLOR_ROAD, side: THREE.DoubleSide });
+    var roadMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide });
     var roadGeometry = new THREE.Geometry();
     var roadSegmentMesh;
 
-    var sidewalkMaterial = new THREE.MeshBasicMaterial({ color: COLOR_SIDEWALK, side: THREE.DoubleSide });
+    var sidewalkMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide });
     var sidewalkGeometry = new THREE.Geometry();
     var sidewalkSegmentMesh;
 
-    var guardrailMaterial = new THREE.MeshBasicMaterial({ color: COLOR_GUARDRAIL, side: THREE.DoubleSide });
+    var guardrailMaterial = new THREE.MeshBasicMaterial({ color: 0xbbbbbb, side: THREE.DoubleSide });
     var guardrailGeometry = new THREE.Geometry();
     var guardrailSegmentMesh;
 
