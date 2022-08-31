@@ -9,12 +9,6 @@ var Config = (function() {
   config.STREET_DEPTH = config.BLOCK_DEPTH * 0.5;
   config.HALF_STREET_WIDTH = config.STREET_WIDTH * 0.5;
   config.HALF_STREET_DEPTH = config.STREET_DEPTH * 0.5;
-  config.SIDEWALK_WIDTH = config.STREET_WIDTH * 0.24;
-  config.SIDEWALK_DEPTH = config.STREET_DEPTH * 0.24;
-  config.ROAD_WIDTH = config.STREET_WIDTH - (config.SIDEWALK_WIDTH * 2);
-  config.ROAD_DEPTH = config.STREET_DEPTH - (config.SIDEWALK_DEPTH * 2);
-  config.BLOCK_AND_STREET_WIDTH = config.BLOCK_WIDTH + config.STREET_WIDTH;
-  config.BLOCK_AND_STREET_DEPTH = config.BLOCK_DEPTH + config.STREET_DEPTH;
   config.SIDEWALL_BOTTOM = -8.333333333333333;
 
   return config;

@@ -3,102 +3,39 @@
 import * as THREE from "three";
 
 import { Config } from "./../config";
-import { CityTourMath } from "./../math";
 import { RoadNetwork } from "./../road_network";
 
-const HALF_PI = Math.PI * 0.5;
+const SIDEWALK_WIDTH = Config.STREET_WIDTH * 0.24;
+const SIDEWALK_DEPTH = Config.STREET_DEPTH * 0.24;
+
+const HALF_ROADBED_WIDTH = Config.HALF_STREET_WIDTH - SIDEWALK_WIDTH;
+const HALF_ROADBED_DEPTH = Config.HALF_STREET_DEPTH - SIDEWALK_DEPTH;
+
+const HALF_BRIDGE_COLUMN_SUPPORT_WIDTH = 0.0375;
+const HALF_BRIDGE_COLUMN_SUPPORT_DEPTH = 0.0375;
+
+const HALF_GUARDRAIL_HEIGHT = 0.025;
+
+const WATER_SURFACE_Y = 0.0;
 
 var RoadMeshBuilder = function() {
-  var SIDEWALK_X_CENTER = Config.HALF_STREET_WIDTH - (Config.SIDEWALK_WIDTH / 2);
-  var SIDEWALK_Z_CENTER = Config.HALF_STREET_DEPTH - (Config.SIDEWALK_DEPTH / 2);
-
-  var calculateRoadSegment = function(heightAtPoint1, heightAtPoint2, mapLength) {
-    var midpointHeight = (heightAtPoint1 + heightAtPoint2) / 2;
-    var angle = Math.atan2((heightAtPoint1 - heightAtPoint2), mapLength);
-    var length = CityTourMath.distanceBetweenPoints(heightAtPoint1, 0, heightAtPoint2, mapLength);
-
-    return {
-      angle: angle,
-      midpointHeight: midpointHeight,
-      length: length,
-    };
-  };
-
-  var buildReusableIntersectionCornerMesh = function() {
-    var reusableIntersectionSidewalkCornerMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, Config.SIDEWALK_DEPTH));
-    reusableIntersectionSidewalkCornerMesh.rotation.x = -HALF_PI;
-
-    var intersectionSidewalkCornerGeometry = new THREE.Geometry();
-
-    reusableIntersectionSidewalkCornerMesh.position.x = -SIDEWALK_X_CENTER;
-    reusableIntersectionSidewalkCornerMesh.position.z = -SIDEWALK_Z_CENTER;
-    reusableIntersectionSidewalkCornerMesh.updateMatrix();
-    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
-
-    reusableIntersectionSidewalkCornerMesh.position.x = SIDEWALK_X_CENTER;
-    reusableIntersectionSidewalkCornerMesh.position.z = -SIDEWALK_Z_CENTER;
-    reusableIntersectionSidewalkCornerMesh.updateMatrix();
-    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
-
-    reusableIntersectionSidewalkCornerMesh.position.x = -SIDEWALK_X_CENTER;
-    reusableIntersectionSidewalkCornerMesh.position.z = SIDEWALK_Z_CENTER;
-    reusableIntersectionSidewalkCornerMesh.updateMatrix();
-    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
-
-    reusableIntersectionSidewalkCornerMesh.position.x = SIDEWALK_X_CENTER;
-    reusableIntersectionSidewalkCornerMesh.position.z = SIDEWALK_Z_CENTER;
-    reusableIntersectionSidewalkCornerMesh.updateMatrix();
-    intersectionSidewalkCornerGeometry.merge(reusableIntersectionSidewalkCornerMesh.geometry, reusableIntersectionSidewalkCornerMesh.matrix);
-
-    return new THREE.Mesh(intersectionSidewalkCornerGeometry);
-  };
+  let roadPositionAttributes = null;
+  let sidewalkPositionAttributes = null;
+  let guardrailPositionAttributes = null;
 
   let build = function(terrain, roadNetwork) {
-    var HALF_BLOCK_AND_STREET_WIDTH = Config.BLOCK_AND_STREET_WIDTH / 2;
-    var HALF_BLOCK_AND_STREET_DEPTH = Config.BLOCK_AND_STREET_DEPTH / 2;
-    var BRIDGE_SUPPORT_HEIGHT = 8.333333333333333;
-    var HALF_BRIDGE_SUPPORT_HEIGHT = BRIDGE_SUPPORT_HEIGHT / 2;
-
     var x, z;
 
-    var roadSegment;
-
+    var roadGeometry = new THREE.BufferGeometry();
     var roadMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide });
-    var roadGeometry = new THREE.Geometry();
-    var roadSegmentMesh;
 
+    var sidewalkGeometry = new THREE.BufferGeometry();
     var sidewalkMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide });
-    var sidewalkGeometry = new THREE.Geometry();
-    var sidewalkSegmentMesh;
 
+    var guardrailGeometry = new THREE.BufferGeometry();
     var guardrailMaterial = new THREE.MeshBasicMaterial({ color: 0xbbbbbb, side: THREE.DoubleSide });
-    var guardrailGeometry = new THREE.Geometry();
-    var guardrailSegmentMesh;
 
-    var reusableIntersectionMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.ROAD_WIDTH, Config.ROAD_DEPTH));
-    reusableIntersectionMesh.rotation.x = -HALF_PI;
-
-    var reusableIntersectionFillerNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, Config.ROAD_DEPTH));
-    reusableIntersectionFillerNorthSouthMesh.rotation.x = -HALF_PI;
-
-    var reusableIntersectionFillerEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.ROAD_WIDTH, Config.SIDEWALK_DEPTH));
-    reusableIntersectionFillerEastWestMesh.rotation.x = -HALF_PI;
-
-    var reusableNorthSouthMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.ROAD_WIDTH, 1.0));
-    var reusableEastWestMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, Config.ROAD_DEPTH));
-    reusableEastWestMesh.rotation.x = -HALF_PI;
-
-    var reusableNorthSouthSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(Config.SIDEWALK_WIDTH, 1.0));
-    var reusableEastWestSidewalkMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.0, Config.SIDEWALK_DEPTH));
-    reusableEastWestSidewalkMesh.rotation.x = -HALF_PI;
-
-    var intersectionSidewalkCornerMesh = buildReusableIntersectionCornerMesh();
-
-    var reusableBridgeSupportMesh = new THREE.Mesh(new THREE.BoxGeometry(0.075, BRIDGE_SUPPORT_HEIGHT, 0.075));
-    reusableBridgeSupportMesh.geometry.faces.splice(6, 2);  // Remove bottom face
-    reusableBridgeSupportMesh.geometry.faces.splice(4, 2);  // Remove top face
-
-    var reusableGuardrailMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 1.0));
+    let positionAttributes;
 
     var northRoad, eastRoad, southRoad, westRoad;
     var selfSurfaceHeight, southSurfaceHeight, eastSurfaceHeight;
@@ -107,6 +44,10 @@ var RoadMeshBuilder = function() {
     var maxX = roadNetwork.maxBoundingX();
     var minZ = roadNetwork.minBoundingZ();
     var maxZ = roadNetwork.maxBoundingZ();
+
+    roadPositionAttributes = [];
+    sidewalkPositionAttributes = [];
+    guardrailPositionAttributes = [];
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
@@ -119,171 +60,217 @@ var RoadMeshBuilder = function() {
           westRoad = roadNetwork.hasEdgeBetween(x, z, x - 1, z);
 
           // Road intersection
-          roadSegmentMesh = reusableIntersectionMesh;
-          roadSegmentMesh.position.x = x;
-          roadSegmentMesh.position.y = selfSurfaceHeight;
-          roadSegmentMesh.position.z = z;
-          roadSegmentMesh.updateMatrix();
-          roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
+          addQuad(
+            roadPositionAttributes,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+          );
+
+          // Northwest sidewalk corner
+          addQuad(
+            sidewalkPositionAttributes,
+            x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+            x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+          );
+
+          // Northeast sidewalk corner
+          addQuad(
+            sidewalkPositionAttributes,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+            x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+          );
+
+          // Southwest sidewalk corner
+          addQuad(
+            sidewalkPositionAttributes,
+            x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+          );
+
+          // Southeast sidewalk corner
+          addQuad(
+            sidewalkPositionAttributes,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+            x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+          );
 
           if (roadNetwork.getIntersectionGradeType(x, z) === RoadNetwork.BRIDGE_GRADE) {
-            reusableBridgeSupportMesh.position.x = x;
-            reusableBridgeSupportMesh.position.y = selfSurfaceHeight - HALF_BRIDGE_SUPPORT_HEIGHT;
-            reusableBridgeSupportMesh.position.z = z;
-            reusableBridgeSupportMesh.updateMatrix();
-            sidewalkGeometry.merge(reusableBridgeSupportMesh.geometry, reusableBridgeSupportMesh.matrix);
+            // North bridge support column wall
+            addQuad(
+              sidewalkPositionAttributes,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+            );
+
+            // South bridge support column wall
+            addQuad(
+              sidewalkPositionAttributes,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+            );
+
+            // West bridge support column wall
+            addQuad(
+              sidewalkPositionAttributes,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x - HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+            );
+
+            // East bridge support column wall
+            addQuad(
+              sidewalkPositionAttributes,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, selfSurfaceHeight, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z - HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+              x + HALF_BRIDGE_COLUMN_SUPPORT_WIDTH, WATER_SURFACE_Y, z + HALF_BRIDGE_COLUMN_SUPPORT_DEPTH,
+            );
 
             // Guardrail
             if (northRoad === true && southRoad === true) {
-              guardrailSegmentMesh = reusableGuardrailMesh;
-              guardrailSegmentMesh.scale.y = Config.STREET_WIDTH;
-              guardrailSegmentMesh.position.y = selfSurfaceHeight;
-              guardrailSegmentMesh.rotation.x = 0.0;
-              guardrailSegmentMesh.rotation.y = HALF_PI;
-              guardrailSegmentMesh.rotation.z = HALF_PI;
-              guardrailSegmentMesh.position.z = z;
-
               // West guardrail
-              guardrailSegmentMesh.position.x = x - Config.HALF_STREET_WIDTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+              );
 
               // East guardrail
-              guardrailSegmentMesh.position.x = x + Config.HALF_STREET_WIDTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+              );
             }
             else if (eastRoad === true && westRoad === true) {
-              guardrailSegmentMesh = reusableGuardrailMesh;
-              guardrailSegmentMesh.position.x = x;
-              guardrailSegmentMesh.rotation.x = 0.0;
-              guardrailSegmentMesh.scale.y = Config.STREET_DEPTH;
-              guardrailSegmentMesh.position.y = selfSurfaceHeight;
-              guardrailSegmentMesh.rotation.y = 0.0;
-              guardrailSegmentMesh.rotation.z = HALF_PI;
-
               // North guardrail
-              guardrailSegmentMesh.position.z = z - Config.HALF_STREET_DEPTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+              );
 
               // South guardrail
-              guardrailSegmentMesh.position.z = z + Config.HALF_STREET_DEPTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+              );
             }
           }
 
-          sidewalkSegmentMesh = intersectionSidewalkCornerMesh;
-          sidewalkSegmentMesh.position.x = x;
-          sidewalkSegmentMesh.position.y = selfSurfaceHeight;
-          sidewalkSegmentMesh.position.z = z;
-          sidewalkSegmentMesh.updateMatrix();
-          sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-
-          sidewalkSegmentMesh = reusableIntersectionFillerEastWestMesh;
-          sidewalkSegmentMesh.position.y = selfSurfaceHeight;
-
           // North sidewalk "filler"
-          sidewalkSegmentMesh.position.x = x;
-          sidewalkSegmentMesh.position.z = z - SIDEWALK_Z_CENTER;
-          sidewalkSegmentMesh.updateMatrix();
-          if (northRoad === true) {
-            roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
-          else {
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
+          positionAttributes = (northRoad === true) ? roadPositionAttributes : sidewalkPositionAttributes;
+          addQuad(
+            positionAttributes,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+          );
 
           // South sidewalk "filler"
-          sidewalkSegmentMesh.position.x = x;
-          sidewalkSegmentMesh.position.z = z + SIDEWALK_Z_CENTER;
-          sidewalkSegmentMesh.updateMatrix();
-          if (southRoad === true) {
-            roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
-          else {
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
-
-          sidewalkSegmentMesh = reusableIntersectionFillerNorthSouthMesh;
-          sidewalkSegmentMesh.position.y = selfSurfaceHeight;
+          positionAttributes = (southRoad === true) ? roadPositionAttributes : sidewalkPositionAttributes;
+          addQuad(
+            positionAttributes,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+          );
 
           // West sidewalk "filler"
-          sidewalkSegmentMesh.position.x = x - SIDEWALK_X_CENTER;
-          sidewalkSegmentMesh.position.z = z;
-          sidewalkSegmentMesh.updateMatrix();
-          if (westRoad === true) {
-            roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
-          else {
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
+          positionAttributes = (westRoad === true) ? roadPositionAttributes : sidewalkPositionAttributes;
+          addQuad(
+            positionAttributes,
+            x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+          );
 
           // East sidewalk "filler"
-          sidewalkSegmentMesh.position.x = x + SIDEWALK_X_CENTER;
-          sidewalkSegmentMesh.position.z = z;
-          sidewalkSegmentMesh.updateMatrix();
-          if (eastRoad === true) {
-            roadGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
-          else {
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
-          }
-
+          positionAttributes = (eastRoad === true) ? roadPositionAttributes : sidewalkPositionAttributes;
+          addQuad(
+            positionAttributes,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+          );
 
           // Road segment going south from the intersection
           if (southRoad === true) {
             southSurfaceHeight = roadNetwork.getRoadHeight(x, z + 1);
 
-            roadSegment = calculateRoadSegment(selfSurfaceHeight,
-                                               southSurfaceHeight,
-                                               Config.BLOCK_DEPTH);
-
-            roadSegmentMesh = reusableNorthSouthMesh;
-            roadSegmentMesh.position.x = x;
-            roadSegmentMesh.rotation.x = roadSegment.angle - HALF_PI;
-            roadSegmentMesh.scale.y = roadSegment.length;
-            roadSegmentMesh.position.y = roadSegment.midpointHeight;
-            roadSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
-            roadSegmentMesh.updateMatrix();
-            roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
-
-            sidewalkSegmentMesh = reusableNorthSouthSidewalkMesh;
-            sidewalkSegmentMesh.rotation.x = roadSegment.angle - HALF_PI;
-            sidewalkSegmentMesh.scale.y = roadSegment.length;
-            sidewalkSegmentMesh.position.y = roadSegment.midpointHeight;
-            sidewalkSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
+            // Main road surface
+            addQuad(
+              roadPositionAttributes,
+              x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x - HALF_ROADBED_WIDTH, southSurfaceHeight, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+              x + HALF_ROADBED_WIDTH, southSurfaceHeight, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+            );
 
             // West sidewalk
-            sidewalkSegmentMesh.position.x = x - SIDEWALK_X_CENTER;
-            sidewalkSegmentMesh.updateMatrix();
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
+            addQuad(
+              sidewalkPositionAttributes,
+              x - Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x - HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x - Config.HALF_STREET_WIDTH, southSurfaceHeight, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+              x - HALF_ROADBED_WIDTH, southSurfaceHeight, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+            );
 
             // East sidewalk
-            sidewalkSegmentMesh.position.x = x + SIDEWALK_X_CENTER;
-            sidewalkSegmentMesh.updateMatrix();
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
+            addQuad(
+              sidewalkPositionAttributes,
+              x + HALF_ROADBED_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x + HALF_ROADBED_WIDTH, southSurfaceHeight, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+              x + Config.HALF_STREET_WIDTH, southSurfaceHeight, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+            );
 
             if (roadNetwork.edgeBetween(x, z, x, z + 1).gradeType === RoadNetwork.BRIDGE_GRADE) {
-              // Guardrail
-              guardrailSegmentMesh = reusableGuardrailMesh;
-              guardrailSegmentMesh.rotation.x = roadSegment.angle;
-              guardrailSegmentMesh.scale.y = roadSegment.length;
-              guardrailSegmentMesh.position.y = roadSegment.midpointHeight;
-              guardrailSegmentMesh.rotation.y = HALF_PI;
-              guardrailSegmentMesh.rotation.z = HALF_PI;
-              guardrailSegmentMesh.position.z = z + HALF_BLOCK_AND_STREET_DEPTH;
-
               // West guardrail
-              guardrailSegmentMesh.position.x = x - Config.HALF_STREET_WIDTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, southSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+                x - Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x - Config.HALF_STREET_WIDTH, southSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+              );
 
               // East guardrail
-              guardrailSegmentMesh.position.x = x + Config.HALF_STREET_WIDTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, southSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, southSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH + Config.BLOCK_DEPTH,
+              );
             }
           }
 
@@ -291,63 +278,79 @@ var RoadMeshBuilder = function() {
           if (eastRoad === true) {
             eastSurfaceHeight = roadNetwork.getRoadHeight(x + 1, z);
 
-            roadSegment = calculateRoadSegment(selfSurfaceHeight,
-                                               eastSurfaceHeight,
-                                               Config.BLOCK_WIDTH);
-
-            roadSegmentMesh = reusableEastWestMesh;
-            roadSegmentMesh.scale.x = roadSegment.length;
-            roadSegmentMesh.position.x = x + HALF_BLOCK_AND_STREET_WIDTH;
-            roadSegmentMesh.position.y = roadSegment.midpointHeight;
-            roadSegmentMesh.rotation.y = roadSegment.angle;
-            roadSegmentMesh.position.z = z;
-            roadSegmentMesh.updateMatrix();
-            roadGeometry.merge(roadSegmentMesh.geometry, roadSegmentMesh.matrix);
-
-            sidewalkSegmentMesh = reusableEastWestSidewalkMesh;
-            sidewalkSegmentMesh.scale.x = roadSegment.length;
-            sidewalkSegmentMesh.position.x = x + HALF_BLOCK_AND_STREET_WIDTH;
-            sidewalkSegmentMesh.position.y = roadSegment.midpointHeight;
-            sidewalkSegmentMesh.rotation.y = roadSegment.angle;
+            // Main road surface
+            addQuad(
+              roadPositionAttributes,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+              x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight, z - HALF_ROADBED_DEPTH,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+              x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight, z + HALF_ROADBED_DEPTH,
+            );
 
             // North sidewalk
-            sidewalkSegmentMesh.position.z = z - SIDEWALK_Z_CENTER;
-            sidewalkSegmentMesh.updateMatrix();
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
+            addQuad(
+              sidewalkPositionAttributes,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+              x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight, z - Config.HALF_STREET_DEPTH,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z - HALF_ROADBED_DEPTH,
+              x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight, z - HALF_ROADBED_DEPTH,
+            );
 
             // South sidewalk
-            sidewalkSegmentMesh.position.z = z + SIDEWALK_Z_CENTER;
-            sidewalkSegmentMesh.updateMatrix();
-            sidewalkGeometry.merge(sidewalkSegmentMesh.geometry, sidewalkSegmentMesh.matrix);
+            addQuad(
+              sidewalkPositionAttributes,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + HALF_ROADBED_DEPTH,
+              x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight, z + HALF_ROADBED_DEPTH,
+              x + Config.HALF_STREET_WIDTH, selfSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+              x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight, z + Config.HALF_STREET_DEPTH,
+            );
 
             if (roadNetwork.edgeBetween(x, z, x + 1, z).gradeType === RoadNetwork.BRIDGE_GRADE) {
-              // Guardrail
-              guardrailSegmentMesh = reusableGuardrailMesh;
-              guardrailSegmentMesh.position.x = x + HALF_BLOCK_AND_STREET_DEPTH;
-              guardrailSegmentMesh.rotation.x = 0.0;
-              guardrailSegmentMesh.scale.y = roadSegment.length;
-              guardrailSegmentMesh.position.y = roadSegment.midpointHeight;
-              guardrailSegmentMesh.rotation.y = 0.0;
-              guardrailSegmentMesh.rotation.z = -roadSegment.angle - HALF_PI;
-
               // North guardrail
-              guardrailSegmentMesh.position.z = z - Config.HALF_STREET_DEPTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z - Config.HALF_STREET_DEPTH,
+              );
 
               // South guardrail
-              guardrailSegmentMesh.position.z = z + Config.HALF_STREET_DEPTH;
-              guardrailSegmentMesh.updateMatrix();
-              guardrailGeometry.merge(guardrailSegmentMesh.geometry, guardrailSegmentMesh.matrix);
+              addQuad(
+                guardrailPositionAttributes,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight + HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH, selfSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+                x + Config.HALF_STREET_WIDTH + Config.BLOCK_WIDTH, eastSurfaceHeight - HALF_GUARDRAIL_HEIGHT, z + Config.HALF_STREET_DEPTH,
+              );
             }
           }
         }
       }
     }
 
+    roadGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(roadPositionAttributes), 3).onUpload(disposeArray));
+    sidewalkGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(sidewalkPositionAttributes), 3).onUpload(disposeArray));
+    guardrailGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(guardrailPositionAttributes), 3).onUpload(disposeArray));
+
+    roadPositionAttributes = null;
+    sidewalkPositionAttributes = null;
+    guardrailPositionAttributes = null;
+
     return [new THREE.Mesh(roadGeometry, roadMaterial),
             new THREE.Mesh(sidewalkGeometry, sidewalkMaterial),
             new THREE.Mesh(guardrailGeometry, guardrailMaterial)];
+  };
+
+  let addQuad = function(positionAttributes, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+    positionAttributes.push(
+      x1, y1, z1, x2, y2, z2, x3, y3, z3,  // Triangle 1
+      x3, y3, z3, x2, y2, z2, x4, y4, z4,  // Triangle 2
+    );
+  };
+
+  let disposeArray = function() {
+    this.array = null;
   };
 
 
