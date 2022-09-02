@@ -7,6 +7,9 @@ import { BuildingMeshBuilder } from "./building_mesh_builder";
 import { RoadMeshBuilder } from "./road_mesh_builder";
 import { TerrainMeshBuilder } from "./terrain_mesh_builder";
 
+const DEBUG_CITY_CENTER_NEIGHBORHOOD_MARKER_COLOR = Object.freeze([1.0, 1.0, 0.0]);
+const DEBUG_GENERIC_NEIGHBORHOOD_MARKER_COLOR = Object.freeze([1.0, 0.0, 1.0]);
+
 var Builder = function(gridTexture) {
   var buildEmptyScene = function() {
     var scene, light, directionalLight;
@@ -48,37 +51,32 @@ var Builder = function(gridTexture) {
   };
 
   var buildDebugNeighborhoodCentersMeshes = function(terrain, neighborhoods) {
-    var neighborhoodCenterGeometry = new THREE.Geometry();
-    var reusableNeighborhoodCenterMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 15, 0.5));
-    var neighborhoodCenterX;
-    var neighborhoodCenterY;
-    var neighborhoodCenterZ;
-    var color = new THREE.Color(0xffff00);
-    var face;
-    var i;
+    let neighborhoodCentersGeometry = new THREE.BoxBufferGeometry(0.5, 15, 0.5);
+    let neighborhoodCentersMaterial = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
+    let neighborhoodCentersMesh = new THREE.InstancedMesh(neighborhoodCentersGeometry, neighborhoodCentersMaterial, neighborhoods.length);
+    let neighborhoodCenterPrototype = new THREE.Object3D();
+    let colorAttributes = new Float32Array(neighborhoods.length * 3);
 
-    for (face of reusableNeighborhoodCenterMesh.geometry.faces) {
-      face.color = color;
+    for (let i = 0; i < neighborhoods.length; i++) {
+      neighborhoodCenterPrototype.position.x = neighborhoods[i].centerX;
+      neighborhoodCenterPrototype.position.y = terrain.landHeightAt(neighborhoods[i].centerX, neighborhoods[i].centerZ);
+      neighborhoodCenterPrototype.position.z = neighborhoods[i].centerZ;
+
+      neighborhoodCenterPrototype.updateMatrix();
+      neighborhoodCentersMesh.setMatrixAt(i, neighborhoodCenterPrototype.matrix);
     }
 
-    for (i = 0; i < neighborhoods.length; i++) {
-      neighborhoodCenterX = neighborhoods[i].centerX;
-      neighborhoodCenterZ = neighborhoods[i].centerZ;
-      neighborhoodCenterY = terrain.landHeightAt(neighborhoodCenterX, neighborhoodCenterZ);
+    if (neighborhoods.length > 0) {
+      colorAttributes.set(DEBUG_CITY_CENTER_NEIGHBORHOOD_MARKER_COLOR, 0);
 
-      reusableNeighborhoodCenterMesh.position.set(neighborhoodCenterX, neighborhoodCenterY, neighborhoodCenterZ);
-      reusableNeighborhoodCenterMesh.updateMatrix();
-      neighborhoodCenterGeometry.merge(reusableNeighborhoodCenterMesh.geometry, reusableNeighborhoodCenterMesh.matrix);
-
-      if (i === 0) {
-        color.set(0xff00ff);
-        for (face of reusableNeighborhoodCenterMesh.geometry.faces) {
-          face.color = color;
-        }
+      for (let i = 3; i < colorAttributes.length; i += 3) {
+        colorAttributes.set(DEBUG_GENERIC_NEIGHBORHOOD_MARKER_COLOR, i);
       }
     }
 
-    return [new THREE.Mesh(neighborhoodCenterGeometry, new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors}))];
+    neighborhoodCentersGeometry.setAttribute("color", new THREE.InstancedBufferAttribute(colorAttributes, 3).onUpload(disposeArray));
+
+    return [neighborhoodCentersMesh];
   };
 
   var buildDebugCurveMeshes = function(curves) {
@@ -92,6 +90,10 @@ var Builder = function(gridTexture) {
       meshes.push(new THREE.Mesh(tubeGeometry, tubeMaterial));
     }
     return meshes;
+  };
+
+  let disposeArray = function() {
+    this.array = null;
   };
 
   return {
