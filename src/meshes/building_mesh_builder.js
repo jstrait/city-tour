@@ -14,7 +14,7 @@ var BuildingMeshBuilder = function() {
     const INSTANCE_COUNT = buildings.buildingCount + buildings.antennaCount;
 
     let buildingsGeometry = buildBuildingsBufferGeometry(INSTANCE_COUNT);
-    let buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors});
+    let buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: true});
     let buildingsMesh = new THREE.InstancedMesh(buildingsGeometry, buildingsMaterial, INSTANCE_COUNT);
     let buildingPrototype = new THREE.Object3D();
     let colorAttributes = new Float32Array(INSTANCE_COUNT * 3);

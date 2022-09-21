@@ -35,7 +35,7 @@ var TerrainMeshBuilder = function() {
     var triangleDepth = terrain.scale();
 
     var terrainGeometry = new THREE.BufferGeometry();
-    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: THREE.VertexColors });
+    var terrainMaterial = new THREE.MeshLambertMaterial({ vertexColors: true });
 
     let disposeArray = function() {
       this.array = null;

@@ -58,7 +58,7 @@ var Builder = function(gridTexture) {
 
   var buildDebugNeighborhoodCentersMeshes = function(terrain, neighborhoods) {
     let neighborhoodCentersGeometry = new THREE.BoxBufferGeometry(0.5, 15, 0.5);
-    let neighborhoodCentersMaterial = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
+    let neighborhoodCentersMaterial = new THREE.MeshBasicMaterial({vertexColors: true});
     let neighborhoodCentersMesh = new THREE.InstancedMesh(neighborhoodCentersGeometry, neighborhoodCentersMaterial, neighborhoods.length);
     let neighborhoodCenterPrototype = new THREE.Object3D();
     let colorAttributes = new Float32Array(neighborhoods.length * 3);
