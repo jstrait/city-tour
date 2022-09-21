@@ -29,7 +29,13 @@ var Builder = function(gridTexture) {
 
   var buildGridPlaneMeshes = function() {
     var gridPlaneGeometry = new THREE.PlaneGeometry(320, 320, 1, 1);
-    var gridPlaneMaterial = new THREE.MeshBasicMaterial({map: gridTexture});
+    var gridPlaneMaterial = new THREE.MeshBasicMaterial({
+      map: gridTexture,
+      transparent: true,
+      blending: THREE.CustomBlending,
+      blendSrc: THREE.OneFactor,
+      blendDst: THREE.OneMinusSrcAlphaFactor,
+    });
     var gridPlaneMesh = new THREE.Mesh(gridPlaneGeometry, gridPlaneMaterial);
 
     gridPlaneMesh.position.y = Config.SIDEWALL_BOTTOM;
