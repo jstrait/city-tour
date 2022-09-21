@@ -36,7 +36,13 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      new TerserPlugin({terserOptions: { compress: true, mangle: true }, exclude: "lib/"}),
+      new TerserPlugin({
+        terserOptions: {
+          compress: true,
+          mangle: true,
+        },
+        exclude: "lib/",
+      }),
       new CssMinimizerPlugin(),
     ],
   },
