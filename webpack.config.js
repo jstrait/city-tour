@@ -42,6 +42,7 @@ module.exports = {
           mangle: true,
         },
         exclude: "lib/",
+        extractComments: false,
       }),
       new CssMinimizerPlugin(),
     ],
