@@ -13,7 +13,7 @@ var BuildingMeshBuilder = function() {
   let build = function(buildings) {
     const INSTANCE_COUNT = buildings.buildingCount + buildings.antennaCount;
 
-    let buildingsGeometry = buildBuildingsBufferGeometry(INSTANCE_COUNT);
+    let buildingsGeometry = buildBuildingsBufferGeometry();
     let buildingsMaterial = new THREE.MeshLambertMaterial({vertexColors: true});
     let buildingsMesh = new THREE.InstancedMesh(buildingsGeometry, buildingsMaterial, INSTANCE_COUNT);
     let buildingPrototype = new THREE.Object3D();
@@ -91,7 +91,7 @@ var BuildingMeshBuilder = function() {
     return [buildingsMesh];
   };
 
-  let buildBuildingsBufferGeometry = function(instanceCount) {
+  let buildBuildingsBufferGeometry = function() {
     let buildingsGeometry = new THREE.BufferGeometry();
 
     // Purposely does not include triangles for the floor,
