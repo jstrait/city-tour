@@ -19,10 +19,6 @@ const HALF_GUARDRAIL_HEIGHT = 0.025;
 const WATER_SURFACE_Y = 0.0;
 
 var RoadMeshBuilder = function() {
-  let roadPositionAttributes = null;
-  let sidewalkPositionAttributes = null;
-  let guardrailPositionAttributes = null;
-
   let build = function(terrain, roadNetwork) {
     var x, z;
 
@@ -45,9 +41,9 @@ var RoadMeshBuilder = function() {
     var minZ = roadNetwork.minBoundingZ();
     var maxZ = roadNetwork.maxBoundingZ();
 
-    roadPositionAttributes = [];
-    sidewalkPositionAttributes = [];
-    guardrailPositionAttributes = [];
+    let roadPositionAttributes = [];
+    let sidewalkPositionAttributes = [];
+    let guardrailPositionAttributes = [];
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
@@ -332,10 +328,6 @@ var RoadMeshBuilder = function() {
     roadGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(roadPositionAttributes), 3).onUpload(disposeArray));
     sidewalkGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(sidewalkPositionAttributes), 3).onUpload(disposeArray));
     guardrailGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(guardrailPositionAttributes), 3).onUpload(disposeArray));
-
-    roadPositionAttributes = null;
-    sidewalkPositionAttributes = null;
-    guardrailPositionAttributes = null;
 
     return [new THREE.Mesh(roadGeometry, roadMaterial),
             new THREE.Mesh(sidewalkGeometry, sidewalkMaterial),
