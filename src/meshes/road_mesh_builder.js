@@ -23,12 +23,15 @@ var RoadMeshBuilder = function() {
     var x, z;
 
     var roadGeometry = new THREE.BufferGeometry();
+    let roadPositionAttributes = [];
     var roadMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide });
 
     var sidewalkGeometry = new THREE.BufferGeometry();
+    let sidewalkPositionAttributes = [];
     var sidewalkMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide });
 
     var guardrailGeometry = new THREE.BufferGeometry();
+    let guardrailPositionAttributes = [];
     var guardrailMaterial = new THREE.MeshBasicMaterial({ color: 0xbbbbbb, side: THREE.DoubleSide });
 
     let positionAttributes;
@@ -40,10 +43,6 @@ var RoadMeshBuilder = function() {
     var maxX = roadNetwork.maxBoundingX();
     var minZ = roadNetwork.minBoundingZ();
     var maxZ = roadNetwork.maxBoundingZ();
-
-    let roadPositionAttributes = [];
-    let sidewalkPositionAttributes = [];
-    let guardrailPositionAttributes = [];
 
     for (x = minX; x <= maxX; x++) {
       for (z = minZ; z <= maxZ; z++) {
