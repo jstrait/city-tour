@@ -155,29 +155,20 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
     messageBroker.publish("camera.updated", {});
   };
 
-  var tiltCamera = function(tiltAngleDelta, isTiltAngleClamped) {
+  var tiltCamera = function(tiltAngleDelta) {
     var distanceCameraToCenterOfAction = CityTourMath.distanceBetweenPoints3D(camera.position.x, camera.position.y, camera.position.z,
                                                                               centerOfTilt.x, centerOfTilt.y, centerOfTilt.z);
-    var newTiltAngle;
-
-    if (isTiltAngleClamped === false) {
-      newTiltAngle = camera.rotation.x + tiltAngleDelta;
-    }
-    else {
-      newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
-    }
+    var newTiltAngle = CityTourMath.clamp(camera.rotation.x + tiltAngleDelta, MIN_TILT_ANGLE, MAX_TILT_ANGLE);
 
     zoomCameraToCenterOfActionVector = undefined;
 
-    if (isTiltAngleClamped === false || tiltAngleDelta < 0.0 || camera.position.y > minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z)) {
+    if (tiltAngleDelta < 0.0 || camera.position.y > minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z)) {
       camera.position.setFromSphericalCoords(distanceCameraToCenterOfAction, newTiltAngle + HALF_PI, camera.rotation.y);
       camera.position.x += centerOfTilt.x;
       camera.position.y += centerOfTilt.y;
       camera.position.z += centerOfTilt.z;
 
-      if (isTiltAngleClamped !== false) {
-        camera.position.y = Math.max(camera.position.y, minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z));
-      }
+      camera.position.y = Math.max(camera.position.y, minimumCameraHeightAtCoordinates(terrain, camera.position.x, camera.position.z));
     }
     else {
       return;
