@@ -192,6 +192,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 0.625rem;
   background: #666;
   border: 0;
+  box-shadow: none;  /* Remove shadows added in iOS/iPadOS 15 */
 }
 
 input[type="range"]::-moz-range-thumb {
