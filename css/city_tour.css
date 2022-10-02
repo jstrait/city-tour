@@ -128,15 +128,15 @@ input[type="range"] {
 .absolute { position: absolute; }
 .block { display: block; }
 .inline-block { display: inline-block; }
-.flex { display: -webkit-flex; display: flex; }
+.flex { display: flex; }
 .display-none { display: none; }
 .center { text-align: center; }
 .no-underline { text-decoration: none; }
 
-.flex-column { -webkit-flex-direction: column; flex-direction: column; }
-.flex-justify-center { -webkit-justify-content: center; justify-content: center; }
-.flex-align-center { -webkit-align-items: center; align-items: center; }
-.flex-align-end { -webkit-align-items: flex-end; align-items: flex-end; }
+.flex-column { flex-direction: column; }
+.flex-justify-center { justify-content: center; }
+.flex-align-center { align-items: center; }
+.flex-align-end { align-items: flex-end; }
 
 .top-0 { top: 0; }
 .bottom-0 { bottom: 0; }
