@@ -7,7 +7,7 @@ import { CityTourMath } from "./../math";
 const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2;
 
-var MapCamera = function(sceneView, initialTerrain, messageBroker) {
+var MapCamera = function(sceneView, terrain, messageBroker) {
   var PAN_VELOCITY_DECAY = 0.875;
   var ZOOM_VELOCITY_DECAY = 0.85;
   var TILT_ROTATION_VELOCITY_DECAY = 0.85;
@@ -24,7 +24,6 @@ var MapCamera = function(sceneView, initialTerrain, messageBroker) {
   var centerOfTilt;
   var zoomCameraToCenterOfActionVector;
   var camera = sceneView.camera();
-  var terrain = initialTerrain;
 
   var isVelocityEnabled;
   var panVelocityX;

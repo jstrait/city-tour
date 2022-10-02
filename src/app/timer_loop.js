@@ -13,7 +13,7 @@ import { VehicleView } from "./../flythrough/vehicle_view";
 
 const HALF_PI = Math.PI * 0.5;
 
-var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) {
+var TimerLoop = function(worldData, sceneView, mapCamera, messageBroker) {
   var MANUAL = 1;
   var FLYTHROUGH = 2;
   var FLYTHROUGH_STOP = 3;
@@ -127,8 +127,6 @@ var TimerLoop = function(initialWorldData, sceneView, mapCamera, messageBroker) 
   };
 
   var id1 = messageBroker.addSubscriber("touch.focus", function(data) { restartTimer(); });
-
-  reset(initialWorldData);
 
   timer = new Timer();
   timer.onTick = function(frameCount) {

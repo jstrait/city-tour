@@ -4,13 +4,12 @@ import { FlythroughGestureProcessor } from "./flythrough_gesture_processor";
 import { GestureProcessor } from "./gesture_processor";
 import { WorldTouchCollection } from "./world_touch_collection";
 
-var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, messageBroker) {
+var NavigationTouchController = function(sceneView, mapCamera, terrain, messageBroker) {
   var el = sceneView.domElement();
   var camera = sceneView.camera();
-  var mapGestureProcessor = GestureProcessor(sceneView, mapCamera, initialTerrain);
+  var mapGestureProcessor = GestureProcessor(sceneView, mapCamera, terrain);
   var flythroughGestureProcessor = FlythroughGestureProcessor();
   var currentGestureProcessor = mapGestureProcessor;
-  var terrain = initialTerrain;
 
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
