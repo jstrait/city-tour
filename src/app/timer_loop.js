@@ -29,8 +29,6 @@ var TimerLoop = function(worldData, sceneView, mapCamera, messageBroker) {
   var mode = MANUAL;
   var zoomAmount = 0.0;
 
-  var WINDOW_CENTER = new THREE.Vector3(0.0, 0.0, 0.0);
-
   var syncToCamera = function() {
     if (mode === FLYTHROUGH) {
       camera.position.x = vehicleView.positionX();
