@@ -44,10 +44,6 @@ var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, m
     e.preventDefault();
   };
 
-  var onTouchStartStub = function(e) {
-    e.preventDefault();
-  };
-
   var onMouseMove = function(e) {
     if (currentGestureProcessor.previousTouches() === undefined || currentGestureProcessor.previousTouches().count() < 1) {
       return;
@@ -111,8 +107,6 @@ var NavigationTouchController = function(sceneView, mapCamera, initialTerrain, m
     el.addEventListener("touchend", onTouchEnd, false);
     el.addEventListener("mouseover", onMouseOver, false);
     el.addEventListener("mouseout", onMouseOut, false);
-
-    el.removeEventListener("touchstart", onTouchStartStub, false);
   };
 
   var onFlythroughStarted = function(data) {
