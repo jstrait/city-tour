@@ -10,7 +10,7 @@ import { TerrainGenerator } from "./terrain/terrain_generator";
 
 var WorldGenerator = (function() {
   var generate = function(config) {
-    var GENERATE_ROAD_NETWORK = config.roadNetwork.present === true;
+    var GENERATE_ROAD_NETWORK = config.roadNetwork.isPresent === true;
     var GENERATE_BUILDINGS = true;
 
     var terrain, neighborhoods, roadNetwork, zonedBlocks, buildings;

@@ -33,7 +33,7 @@ var CityConfigService = function() {
         rowCount: NEIGHBORHOOD_MAX_ROWS,
       },
       roadNetwork: {
-        present: true,
+        isPresent: true,
         maxRoadAngle: Math.PI / 9,
         safeFromDecayBlocks: safeFromDecayBlocks,
       },
