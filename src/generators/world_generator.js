@@ -68,7 +68,8 @@ var WorldGenerator = (function() {
     zonedBlocksStartTime = new Date();
     zonedBlocks;
     if (!GENERATE_BUILDINGS) {
-      zonedBlocks = [];
+      // An empty road network should result in there being no zoned blocks, and therefore no buildings
+      zonedBlocks = ZonedBlockGenerator.generate(terrain, neighborhoods, RoadNetwork(terrain), zonedBlockConfig);
     }
     else {
       zonedBlocks = ZonedBlockGenerator.generate(terrain, neighborhoods, roadNetwork, zonedBlockConfig);
