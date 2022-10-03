@@ -38,6 +38,7 @@ var CityConfigService = function() {
         safeFromDecayBlocks: safeFromDecayBlocks,
       },
       zonedBlocks: {
+        isPresent: true,
         blockDistanceDecayBegins: blockDistanceDecayBegins,
         maxBuildingStories: maxBuildingStories,
       },
