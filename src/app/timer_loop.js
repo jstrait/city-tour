@@ -20,7 +20,6 @@ var TimerLoop = function(worldData, sceneView, mapCamera, messageBroker) {
 
   var END_OF_FLYTHROUGH_ANIMATION_FRAME_COUNT = 10;
 
-  var worldData;
   var timer;
   var vehicleController;
   var vehicleView;
