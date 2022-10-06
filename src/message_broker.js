@@ -1,10 +1,10 @@
 "use strict";
 
-var MessageBroker = function() {
-  var uniqueID = -1;
-  var subscribers = {};
+let MessageBroker = function() {
+  let uniqueID = -1;
+  let subscribers = {};
 
-  var addSubscriber = function(topic, func) {
+  let addSubscriber = function(topic, func) {
     if (subscribers[topic] === undefined) {
       subscribers[topic] = [];
     }
@@ -15,7 +15,7 @@ var MessageBroker = function() {
     return uniqueID;
   };
 
-  var removeSubscriber = function(topic, id) {
+  let removeSubscriber = function(topic, id) {
     let subscribersForTopic = subscribers[topic];
 
     if (subscribersForTopic !== undefined) {
@@ -31,7 +31,7 @@ var MessageBroker = function() {
     return false;
   };
 
-  var publish = function(topic, data) {
+  let publish = function(topic, data) {
     if (subscribers[topic] === undefined || subscribers[topic] === []) {
       console.log("Warning: No listeners for topic " + topic);
     }
