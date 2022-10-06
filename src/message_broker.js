@@ -5,7 +5,7 @@ var MessageBroker = function() {
   var subscribers = {};
 
   var addSubscriber = function(topic, func) {
-    if (!subscribers[topic]) {
+    if (subscribers[topic] === undefined) {
       subscribers[topic] = [];
     }
 
@@ -18,7 +18,7 @@ var MessageBroker = function() {
   var removeSubscriber = function(topic, id) {
     let subscribersForTopic = subscribers[topic];
 
-    if (subscribersForTopic) {
+    if (subscribersForTopic !== undefined) {
       for (let i = 0; i < subscribersForTopic.length; i++) {
         if (subscribersForTopic[i].id === id) {
           subscribersForTopic.splice(i, 1);
@@ -32,7 +32,7 @@ var MessageBroker = function() {
   };
 
   var publish = function(topic, data) {
-    if (!subscribers[topic] || subscribers[topic] === []) {
+    if (subscribers[topic] === undefined || subscribers[topic] === []) {
       console.log("Warning: No listeners for topic " + topic);
     }
     else {
