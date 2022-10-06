@@ -7,7 +7,7 @@ import { RoadNetwork } from "./../road_network";
 import { Terrain } from "./../terrain";
 
 import { CityConfigService } from "./city_config_service";
-import { CityEditorController } from "./city_editor_controller";
+import { MenusController } from "./menus_controller";
 import { MapCamera } from "./map_camera";
 import { NavigationController } from "./navigation_controller";
 import { NavigationTouchController } from "./navigation_touch_controller";
@@ -70,7 +70,7 @@ var App = (function() {
     var sceneView = new SceneView(document.documentElement, gridTexture);
     var mapCamera = new MapCamera(sceneView, EMPTY_WORLD_DATA.terrain, messageBroker);
     var timerLoop = new TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
-    var cityEditorController = new CityEditorController(cityConfigService, messageBroker);
+    var menusController = new MenusController(cityConfigService, messageBroker);
     var navigationController = new NavigationController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, timerLoop, messageBroker);
     var navigationTouchController = new NavigationTouchController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
 

@@ -1,6 +1,6 @@
 "use strict";
 
-var CityEditorController = function(cityConfigService, messageBroker) {
+var MenusController = function(cityConfigService, messageBroker) {
   var EDITOR_MENU = 1;
   var ABOUT_MENU = 2;
 
@@ -118,4 +118,4 @@ var CityEditorController = function(cityConfigService, messageBroker) {
   return {};
 };
 
-export { CityEditorController };
+export { MenusController };
