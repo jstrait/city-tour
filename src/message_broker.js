@@ -16,13 +16,16 @@ var MessageBroker = function() {
   };
 
   var removeSubscriber = function(topic, id) {
-    if (subscribers[topic]) {
-      subscribers[topic].forEach(function(item, index) {
-        if (item.id === id) {
-          subscribers[topic].splice(index, 1);
+    let subscribersForTopic = subscribers[topic];
+
+    if (subscribersForTopic) {
+      for (let i = 0; i < subscribersForTopic.length; i++) {
+        if (subscribersForTopic[i].id === id) {
+          subscribersForTopic.splice(i, 1);
+
           return true;
         }
-      });
+      };
     }
 
     return false;

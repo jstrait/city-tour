@@ -72,8 +72,7 @@ describe("MessageBroker", function() {
     expect(obj.func2).toHaveBeenCalledTimes(0);
 
     result = messageBroker.removeSubscriber("some.topic", subscriberID);
-    expect(result).toBe(false);  // This should actually be `true`, but due to a bug
-                                 // `removeSubscriber()` always returns `false`.
+    expect(result).toBe(true);
 
     messageBroker.publish("some.topic", {});
     messageBroker.publish("some.topic", {key: "value"});
