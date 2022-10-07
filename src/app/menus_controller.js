@@ -21,7 +21,7 @@ var MenusController = function(cityConfigService, messageBroker) {
   var maxBuildingStories = document.getElementById("buildings-max-stories");
   var neighborhoodCount = document.getElementById("buildings-neighborhood-count");
 
-  var currentMenu;
+  var currentMenu = null;
 
   var toggleEditMenu = function(e) {
     setMenu(EDITOR_MENU);
@@ -35,7 +35,7 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   var setMenu = function(menuID) {
     if (currentMenu === menuID) {
-      currentMenu = undefined;
+      currentMenu = null;
     }
     else {
       currentMenu = menuID;
@@ -45,7 +45,7 @@ var MenusController = function(cityConfigService, messageBroker) {
   };
 
   var reset = function(e) {
-    currentMenu = undefined;
+    currentMenu = null;
     loadingMessage.classList.add("flex");
     loadingMessage.classList.remove("display-none");
     render();
@@ -61,7 +61,7 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   var onFlythroughStarted = function(e) {
     container.classList.add("display-none");
-    currentMenu = undefined;
+    currentMenu = null;
     render();
   };
 
@@ -74,15 +74,15 @@ var MenusController = function(cityConfigService, messageBroker) {
   };
 
   var hideMenus = function(e) {
-    currentMenu = undefined;
+    currentMenu = null;
     render();
   };
 
   var render = function() {
-    container.classList.toggle("full-width", currentMenu !== undefined);
-    container.classList.toggle("full-height", currentMenu !== undefined);
+    container.classList.toggle("full-width", currentMenu !== null);
+    container.classList.toggle("full-height", currentMenu !== null);
 
-    navigationControlsContainer.classList.toggle("display-none", currentMenu !== undefined);
+    navigationControlsContainer.classList.toggle("display-none", currentMenu !== null);
 
     editorMenuTitle.classList.toggle("menu-title-active", currentMenu === EDITOR_MENU);
     editorMenu.classList.toggle("display-none", currentMenu !== EDITOR_MENU);
