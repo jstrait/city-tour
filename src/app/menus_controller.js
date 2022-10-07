@@ -1,9 +1,9 @@
 "use strict";
 
-var MenusController = function(cityConfigService, messageBroker) {
-  var EDITOR_MENU = 1;
-  var ABOUT_MENU = 2;
+const EDITOR_MENU = 1;
+const ABOUT_MENU = 2;
 
+var MenusController = function(cityConfigService, messageBroker) {
   var loadingMessage = document.getElementById("loading-message");
   var navigationControlsContainer = document.getElementById("navigation-controls-container");
   var container = document.getElementById("city-editor-container");
