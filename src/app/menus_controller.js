@@ -4,15 +4,11 @@ const EDITOR_MENU = 1;
 const ABOUT_MENU = 2;
 
 var MenusController = function(cityConfigService, messageBroker) {
-  var loadingMessage = document.getElementById("loading-message");
-  var navigationControlsContainer = document.getElementById("navigation-controls-container");
   var container = document.getElementById("city-editor-container");
-  var editorMenuTitle = document.getElementById("menu-editor-title");
-  var aboutMenuTitle = document.getElementById("menu-about-title");
-  var editorMenu = document.getElementById("menu-editor");
-  var aboutMenu = document.getElementById("menu-about");
-  var resetButton = document.getElementById("reset");
 
+  // "New City" menu
+  var editorMenuTitle = document.getElementById("menu-editor-title");
+  var editorMenu = document.getElementById("menu-editor");
   var terrainJitter = document.getElementById("terrain-jitter");
   var heightJitterDecay = document.getElementById("terrain-decay");
   var hillCount = document.getElementById("terrain-hill-count");
@@ -20,6 +16,15 @@ var MenusController = function(cityConfigService, messageBroker) {
   var includeRiver = document.getElementById("terrain-river");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
   var neighborhoodCount = document.getElementById("buildings-neighborhood-count");
+  var resetButton = document.getElementById("reset");
+
+  // "About" menu
+  var aboutMenuTitle = document.getElementById("menu-about-title");
+  var aboutMenu = document.getElementById("menu-about");
+
+  // Non menu bar elements
+  var loadingMessage = document.getElementById("loading-message");
+  var navigationControlsContainer = document.getElementById("navigation-controls-container");
 
   var currentMenu = null;
 
@@ -93,6 +98,11 @@ var MenusController = function(cityConfigService, messageBroker) {
     aboutMenu.classList.toggle("inline-block", currentMenu === ABOUT_MENU);
   };
 
+  container.addEventListener("click", hideMenus, false);
+
+  // "New City" menu event handlers
+  editorMenuTitle.addEventListener("click", toggleEditMenu, false);
+  editorMenu.addEventListener("click", preventClickThru, false);
   terrainJitter.addEventListener("change", function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
   heightJitterDecay.addEventListener("change", function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
   hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
@@ -100,13 +110,11 @@ var MenusController = function(cityConfigService, messageBroker) {
   includeRiver.addEventListener("change", function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
   maxBuildingStories.addEventListener("change", function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
   neighborhoodCount.addEventListener("change", function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
-
-  container.addEventListener("click", hideMenus, false);
-  editorMenuTitle.addEventListener("click", toggleEditMenu, false);
-  aboutMenuTitle.addEventListener("click", toggleAboutMenu, false);
-  editorMenu.addEventListener("click", preventClickThru, false);
-  aboutMenu.addEventListener("click", preventClickThru, false);
   resetButton.addEventListener("click", reset, false);
+
+  // "About" menu event handlers
+  aboutMenuTitle.addEventListener("click", toggleAboutMenu, false);
+  aboutMenu.addEventListener("click", preventClickThru, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
