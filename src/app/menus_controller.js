@@ -4,7 +4,7 @@ const EDITOR_MENU = 1;
 const ABOUT_MENU = 2;
 
 var MenusController = function(cityConfigService, messageBroker) {
-  var container = document.getElementById("city-editor-container");
+  var menusContainer = document.getElementById("menus-container");
 
   // "New City" menu
   var editorMenuTitle = document.getElementById("menu-editor-title");
@@ -65,13 +65,13 @@ var MenusController = function(cityConfigService, messageBroker) {
   };
 
   var onFlythroughStarted = function(e) {
-    container.classList.add("display-none");
+    menusContainer.classList.add("display-none");
     currentMenu = null;
     render();
   };
 
   var onFlythroughStopped = function(e) {
-    container.classList.remove("display-none");
+    menusContainer.classList.remove("display-none");
   };
 
   var preventClickThru = function(e) {
@@ -84,8 +84,8 @@ var MenusController = function(cityConfigService, messageBroker) {
   };
 
   var render = function() {
-    container.classList.toggle("full-width", currentMenu !== null);
-    container.classList.toggle("full-height", currentMenu !== null);
+    menusContainer.classList.toggle("full-width", currentMenu !== null);
+    menusContainer.classList.toggle("full-height", currentMenu !== null);
 
     navigationControlsContainer.classList.toggle("display-none", currentMenu !== null);
 
@@ -98,7 +98,7 @@ var MenusController = function(cityConfigService, messageBroker) {
     aboutMenu.classList.toggle("inline-block", currentMenu === ABOUT_MENU);
   };
 
-  container.addEventListener("click", hideMenus, false);
+  menusContainer.addEventListener("click", hideMenus, false);
 
   // "New City" menu event handlers
   editorMenuTitle.addEventListener("click", toggleEditMenu, false);
