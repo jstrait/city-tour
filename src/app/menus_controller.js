@@ -1,14 +1,14 @@
 "use strict";
 
-const EDITOR_MENU = 1;
+const NEW_CITY_MENU = 1;
 const ABOUT_MENU = 2;
 
 var MenusController = function(cityConfigService, messageBroker) {
   var menusContainer = document.getElementById("menus-container");
 
   // "New City" menu
-  var editorMenuTitle = document.getElementById("menu-editor-title");
-  var editorMenu = document.getElementById("menu-editor");
+  var newCityMenuTitle = document.getElementById("menu-newcity-title");
+  var newCityMenu = document.getElementById("menu-newcity");
   var terrainJitter = document.getElementById("terrain-jitter");
   var heightJitterDecay = document.getElementById("terrain-decay");
   var hillCount = document.getElementById("terrain-hill-count");
@@ -28,8 +28,8 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   var currentMenu = null;
 
-  var toggleEditMenu = function(e) {
-    setMenu(EDITOR_MENU);
+  var toggleNewCityMenu = function(e) {
+    setMenu(NEW_CITY_MENU);
     e.stopPropagation();
   };
 
@@ -89,9 +89,9 @@ var MenusController = function(cityConfigService, messageBroker) {
 
     navigationControlsContainer.classList.toggle("display-none", currentMenu !== null);
 
-    editorMenuTitle.classList.toggle("menu-title-active", currentMenu === EDITOR_MENU);
-    editorMenu.classList.toggle("display-none", currentMenu !== EDITOR_MENU);
-    editorMenu.classList.toggle("inline-block", currentMenu === EDITOR_MENU);
+    newCityMenuTitle.classList.toggle("menu-title-active", currentMenu === NEW_CITY_MENU);
+    newCityMenu.classList.toggle("display-none", currentMenu !== NEW_CITY_MENU);
+    newCityMenu.classList.toggle("inline-block", currentMenu === NEW_CITY_MENU);
 
     aboutMenuTitle.classList.toggle("menu-title-active", currentMenu === ABOUT_MENU);
     aboutMenu.classList.toggle("display-none", currentMenu !== ABOUT_MENU);
@@ -101,8 +101,8 @@ var MenusController = function(cityConfigService, messageBroker) {
   menusContainer.addEventListener("click", hideMenus, false);
 
   // "New City" menu event handlers
-  editorMenuTitle.addEventListener("click", toggleEditMenu, false);
-  editorMenu.addEventListener("click", preventClickThru, false);
+  newCityMenuTitle.addEventListener("click", toggleNewCityMenu, false);
+  newCityMenu.addEventListener("click", preventClickThru, false);
   terrainJitter.addEventListener("change", function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
   heightJitterDecay.addEventListener("change", function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
   hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
