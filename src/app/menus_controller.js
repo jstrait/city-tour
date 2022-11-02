@@ -91,11 +91,9 @@ var MenusController = function(cityConfigService, messageBroker) {
 
     newCityMenuTitle.classList.toggle("menu-title-active", currentMenu === NEW_CITY_MENU);
     newCityMenu.classList.toggle("display-none", currentMenu !== NEW_CITY_MENU);
-    newCityMenu.classList.toggle("inline-block", currentMenu === NEW_CITY_MENU);
 
     aboutMenuTitle.classList.toggle("menu-title-active", currentMenu === ABOUT_MENU);
     aboutMenu.classList.toggle("display-none", currentMenu !== ABOUT_MENU);
-    aboutMenu.classList.toggle("inline-block", currentMenu === ABOUT_MENU);
   };
 
   menusContainer.addEventListener("click", hideMenus, false);
