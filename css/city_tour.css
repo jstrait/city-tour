@@ -127,7 +127,6 @@ input[type="range"] {
 .relative { position: relative; }
 .absolute { position: absolute; }
 .block { display: block; }
-.inline-block { display: inline-block; }
 .flex { display: flex; }
 .display-none { display: none; }
 .center { text-align: center; }
