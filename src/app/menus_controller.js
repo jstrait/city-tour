@@ -31,11 +31,17 @@ var MenusController = function(cityConfigService, messageBroker) {
   var toggleNewCityMenu = function(e) {
     setMenu(NEW_CITY_MENU);
     e.stopPropagation();
+
+    // Prevent page zoom from double tap on mobile
+    e.preventDefault();
   };
 
   var toggleAboutMenu = function(e) {
     setMenu(ABOUT_MENU);
     e.stopPropagation();
+
+    // Prevent page zoom from double tap on mobile
+    e.preventDefault();
   };
 
   var setMenu = function(menuID) {
