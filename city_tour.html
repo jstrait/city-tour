@@ -8,12 +8,12 @@
 </head>
 <body>
   <div id="container" class="relative full-width full-height">
-    <div id="menus-container" class="absolute top-0 right-0 flex flex-column flex-align-end">
-      <div class="flex">
+    <div id="menus-container" class="absolute top-0 right-0 flex flex-column flex-align-end pointer-events-none">
+      <div class="flex pointer-events-auto">
         <button id="menu-newcity-title" class="menu-title">New City</button>
         <button id="menu-about-title" class="menu-title">About</button>
       </div>
-      <div id="menu-newcity" class="display-none menu bg-white bt-thin bt-gray">
+      <div id="menu-newcity" class="display-none menu bg-white bt-thin bt-gray pointer-events-auto">
         <div class="section">
           <h3>Terrain</h3>
           <span class="display-none">
@@ -67,7 +67,7 @@
         </span>
       </div>
 
-      <div id="menu-about" class="display-none menu bg-white bt-thin bt-gray center">
+      <div id="menu-about" class="display-none menu bg-white bt-thin bt-gray center pointer-events-auto">
         <h1 class="mt0">City Tour</h1>
         <p class="mb0">Code available <a href="https://github.com/jstrait/city-tour/">at GitHub</a></p>
         <p class="mt0 mb0">Made using <a href="https://threejs.org">three.js</a> and WebGL</p>

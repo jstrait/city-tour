@@ -14,6 +14,8 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   var onMouseDown = function(e) {
     el.classList.add("cursor-grabbing");
     currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
+
+    messageBroker.publish("touch.focus", {});
   };
 
   var onTouchStart = function(e) {

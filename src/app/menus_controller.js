@@ -30,7 +30,6 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   var toggleNewCityMenu = function(e) {
     setMenu(NEW_CITY_MENU);
-    e.stopPropagation();
 
     // Prevent page zoom from double tap on mobile
     e.preventDefault();
@@ -38,7 +37,6 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   var toggleAboutMenu = function(e) {
     setMenu(ABOUT_MENU);
-    e.stopPropagation();
 
     // Prevent page zoom from double tap on mobile
     e.preventDefault();
@@ -80,19 +78,12 @@ var MenusController = function(cityConfigService, messageBroker) {
     menusContainer.classList.remove("display-none");
   };
 
-  var preventClickThru = function(e) {
-    e.stopPropagation();
-  };
-
   var hideMenus = function(e) {
     currentMenu = null;
     render();
   };
 
   var render = function() {
-    menusContainer.classList.toggle("full-width", currentMenu !== null);
-    menusContainer.classList.toggle("full-height", currentMenu !== null);
-
     navigationControlsContainer.classList.toggle("display-none", currentMenu !== null);
 
     newCityMenuTitle.classList.toggle("menu-title-active", currentMenu === NEW_CITY_MENU);
@@ -102,11 +93,8 @@ var MenusController = function(cityConfigService, messageBroker) {
     aboutMenu.classList.toggle("display-none", currentMenu !== ABOUT_MENU);
   };
 
-  menusContainer.addEventListener("click", hideMenus, false);
-
   // "New City" menu event handlers
   newCityMenuTitle.addEventListener("click", toggleNewCityMenu, false);
-  newCityMenu.addEventListener("click", preventClickThru, false);
   terrainJitter.addEventListener("change", function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
   heightJitterDecay.addEventListener("change", function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
   hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
@@ -118,11 +106,11 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   // "About" menu event handlers
   aboutMenuTitle.addEventListener("click", toggleAboutMenu, false);
-  aboutMenu.addEventListener("click", preventClickThru, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
   var id3 = messageBroker.addSubscriber("generation.complete", resetPart2);
+  var id4 = messageBroker.addSubscriber("touch.focus", hideMenus);
 
   render();
 

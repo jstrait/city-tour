@@ -168,6 +168,9 @@ input[type="range"] {
   user-select: none;
 }
 
+.pointer-events-none { pointer-events: none; }
+.pointer-events-auto { pointer-events: auto; }
+
 input[type="range"] {
   -webkit-appearance: none;
   height: 1.25rem;
