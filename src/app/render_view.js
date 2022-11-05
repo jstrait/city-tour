@@ -13,7 +13,7 @@ var RenderView = function(container, scene) {
   var previousCameraPositionZ;
   var previousCameraRotationX;
   var previousCameraRotationY;
-  var dirtyFromResize = false;
+  let isDirty = false;
 
   var resize = function() {
     var width = window.innerWidth;
@@ -26,7 +26,7 @@ var RenderView = function(container, scene) {
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
 
-    dirtyFromResize = true;
+    isDirty = true;
     render();
   };
 
@@ -37,7 +37,7 @@ var RenderView = function(container, scene) {
                          previousCameraRotationX !== camera.rotation.x ||
                          previousCameraRotationY !== camera.rotation.y;
 
-    if (cameraHasMoved || dirtyFromResize) {
+    if (cameraHasMoved || isDirty) {
       renderer.render(scene, camera);
 
       previousCameraPositionX = camera.position.x;
@@ -45,7 +45,7 @@ var RenderView = function(container, scene) {
       previousCameraPositionZ = camera.position.z;
       previousCameraRotationX = camera.rotation.x;
       previousCameraRotationY = camera.rotation.y;
-      dirtyFromResize = false;
+      isDirty = false;
     }
   };
 
@@ -64,6 +64,7 @@ var RenderView = function(container, scene) {
     domElement: function() { return renderer.domElement; },
     renderer: function() { return renderer; },
     camera: function() { return camera; },
+    makeDirty: function() { isDirty = true; },
   };
 };
 

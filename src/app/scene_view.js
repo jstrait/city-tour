@@ -15,7 +15,6 @@ const DEBUG_CURVE_MESH_GROUP_NAME = "debugCurveMeshes";
 
 var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
-  var SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS = false;
 
   var centerOfActionMarkerMesh;
   var targetOfActionMarkerMesh;
@@ -27,12 +26,15 @@ var SceneView = function(containerEl, gridTexture) {
   var renderView = new RenderView(containerEl, scene);
   var camera = renderView.camera();
 
+  let isNeighborhoodCentersVisible = false;
+
   var reset = function(newWorldData) {
     var masterStartTime, masterEndTime;
     var terrainStartTime, terrainEndTime;
     var roadStartTime, roadEndTime;
     var buildingsStartTime, buildingsEndTime;
     var meshes;
+    let debugNeighborhoodCentersGroup;
 
     destroyPreviousMeshes();
 
@@ -53,10 +55,10 @@ var SceneView = function(containerEl, gridTexture) {
     scene.add(buildMeshGroup(BUILDINGS_MESH_GROUP_NAME, meshes));
     buildingsEndTime = new Date();
 
-    if (SHOW_DEBUG_NEIGHBORHOOD_CENTER_MARKERS === true) {
-      meshes = sceneBuilder.buildDebugNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods);
-      scene.add(buildMeshGroup(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME, meshes));
-    }
+    meshes = sceneBuilder.buildDebugNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods);
+    debugNeighborhoodCentersGroup = buildMeshGroup(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME, meshes);
+    debugNeighborhoodCentersGroup.visible = isNeighborhoodCentersVisible;
+    scene.add(debugNeighborhoodCentersGroup);
 
     masterEndTime = new Date();
 
@@ -170,6 +172,13 @@ var SceneView = function(containerEl, gridTexture) {
     }
   };
 
+  let setIsNeighborhoodCentersVisible = function(newIsNeighborhoodCentersVisible) {
+    isNeighborhoodCentersVisible = newIsNeighborhoodCentersVisible;
+
+    scene.getObjectByName(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME).visible = newIsNeighborhoodCentersVisible;
+    renderView.makeDirty();
+  };
+
   var resize = function() {
     renderView.resize();
   };
@@ -200,6 +209,8 @@ var SceneView = function(containerEl, gridTexture) {
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
     setDebugCurves: setDebugCurves,
+    isNeighborhoodCentersVisible: function() { return isNeighborhoodCentersVisible; },
+    setIsNeighborhoodCentersVisible: setIsNeighborhoodCentersVisible,
   };
 };
 

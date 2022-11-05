@@ -70,7 +70,7 @@ var App = (function() {
     var sceneView = new SceneView(document.documentElement, gridTexture);
     var mapCamera = new MapCamera(sceneView, EMPTY_WORLD_DATA.terrain, messageBroker);
     var timerLoop = new TimerLoop(EMPTY_WORLD_DATA, sceneView, mapCamera, messageBroker);
-    var menusController = new MenusController(cityConfigService, messageBroker);
+    var menusController = new MenusController(cityConfigService, sceneView, messageBroker);
     var navigationController = new NavigationController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, timerLoop, messageBroker);
     var navigationTouchController = new NavigationTouchController(sceneView, mapCamera, EMPTY_WORLD_DATA.terrain, messageBroker);
 

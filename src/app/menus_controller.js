@@ -4,7 +4,7 @@ const NEW_CITY_MENU = 1;
 const DEV_MENU = 2;
 const ABOUT_MENU = 3;
 
-var MenusController = function(cityConfigService, messageBroker) {
+var MenusController = function(cityConfigService, sceneView, messageBroker) {
   var menusContainer = document.getElementById("menus-container");
 
   // "New City" menu
@@ -22,6 +22,7 @@ var MenusController = function(cityConfigService, messageBroker) {
   // "Dev" menu
   let devMenuTitle = null;
   let devMenu = null;
+  let showNeighborhoodCentersToggle = null;
 
   // "About" menu
   var aboutMenuTitle = document.getElementById("menu-about-title");
@@ -105,8 +106,16 @@ var MenusController = function(cityConfigService, messageBroker) {
     devMenu = document.createElement("div");
     devMenu.id = "menu-dev";
     devMenu.className = "display-none menu bg-white bt-thin bt-gray pointer-events-auto";
-    devMenu.innerHTML = `Placeholder content`;
+    // The reason for `style="width: auto;"` is to work around all `<label>` tags being given
+    // a hard-coded width in `city_tour.css`, causing any label with wider text to wrap.
+    devMenu.innerHTML = `<span class="block">
+  <label for="dev-show-neighborhood-centers" style="width: auto;">Show Neighborhood Centers</label>
+  <input id="dev-show-neighborhood-centers" type="checkbox"${(sceneView.isNeighborhoodCentersVisible() === true) ? " checked" : ""} />
+</span>`;
     newCityMenu.insertAdjacentElement("afterend", devMenu);
+
+    showNeighborhoodCentersToggle = document.getElementById("dev-show-neighborhood-centers");
+    showNeighborhoodCentersToggle.addEventListener("change", function(e) { sceneView.setIsNeighborhoodCentersVisible(e.target.checked); }, false);
 
     setMenu(DEV_MENU);
   };
