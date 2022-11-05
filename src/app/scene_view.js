@@ -9,12 +9,12 @@ const GRID_PLANE_MESH_GROUP_NAME = "gridPlaneMeshes";
 const TERRAIN_MESH_GROUP_NAME = "terrainMeshes";
 const ROAD_NETWORK_MESH_GROUP_NAME = "roadNetworkMeshes";
 const BUILDINGS_MESH_GROUP_NAME = "buildingMeshes";
-const DEBUG_MARKERS_MESH_GROUP_NAME = "markerMeshes";
+const DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME = "markerMeshes";
 const DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "debugNeighborhoodCentersMeshes";
 const DEBUG_CURVE_MESH_GROUP_NAME = "debugCurveMeshes";
 
 var SceneView = function(containerEl, gridTexture) {
-  var SHOW_MARKERS = false;
+  const SHOW_GESTURE_MARKERS = false;
 
   var centerOfActionMarkerMesh;
   var touchPoint1MarkerMesh;
@@ -80,37 +80,38 @@ var SceneView = function(containerEl, gridTexture) {
     return group;
   };
 
-  var buildMarkerMeshes = function() {
-    var MARKER_WIDTH = 0.2;
-    var MARKER_DEPTH = 0.2;
-    var MARKER_HEIGHT = 16;
+  let buildGestureMarkerMeshes = function() {
+    const GESTURE_MARKER_WIDTH = 0.2;
+    const GESTURE_MARKER_DEPTH = 0.2;
+    const GESTURE_MARKER_HEIGHT = 16;
 
-    var markersStartTime, markersEndTime;
+    let gestureMarkersStartTime;
+    let gestureMarkersEndTime;
     var group;
 
-    markersStartTime = new Date();
+    gestureMarkersStartTime = new Date();
 
     group = new THREE.Group();
-    group.name = DEBUG_MARKERS_MESH_GROUP_NAME;
+    group.name = DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME;
 
-    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(MARKER_WIDTH, 25, 25),
+    centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(GESTURE_MARKER_WIDTH, 25, 25),
                                               new THREE.MeshBasicMaterial({ color: 0xff0000 }));
     group.add(centerOfActionMarkerMesh);
 
-    touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
+    touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(GESTURE_MARKER_WIDTH, GESTURE_MARKER_HEIGHT, GESTURE_MARKER_DEPTH),
                                            new THREE.MeshBasicMaterial({ color: 0xff0055 }));
     group.add(touchPoint1MarkerMesh);
 
-    touchPoint2MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
+    touchPoint2MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(GESTURE_MARKER_WIDTH, GESTURE_MARKER_HEIGHT, GESTURE_MARKER_DEPTH),
                                            new THREE.MeshBasicMaterial({ color: 0x0000ff }));
     group.add(touchPoint2MarkerMesh);
 
-    if (SHOW_MARKERS) {
+    if (SHOW_GESTURE_MARKERS) {
       scene.add(group);
     }
 
-    markersEndTime = new Date();
-    console.log("Time to generate touch debug markers:   " + (markersEndTime - markersStartTime) + "ms");
+    gestureMarkersEndTime = new Date();
+    console.log("Time to generate touch debug markers:   " + (gestureMarkersEndTime - gestureMarkersStartTime) + "ms");
 
     return group;
   };
@@ -189,7 +190,7 @@ var SceneView = function(containerEl, gridTexture) {
 
   window.addEventListener("resize", renderView.resize, false);
 
-  buildMarkerMeshes();
+  buildGestureMarkerMeshes();
   scene.add(sceneBuilder.buildGridPlaneMeshes()[0]);
 
   return {
