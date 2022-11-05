@@ -66,7 +66,7 @@ h3 {
   box-sizing: border-box;
 }
 
-#menu-newcity {
+#menu-newcity, #menu-dev {
   padding: 1.5rem;
 }
 
@@ -118,7 +118,7 @@ input[type="range"] {
     padding-right: max(1.0rem, env(safe-area-inset-right));
   }
 
-  #menu-newcity {
+  #menu-newcity, #menu-dev {
     padding-right: max(1.5rem, env(safe-area-inset-right));
   }
 

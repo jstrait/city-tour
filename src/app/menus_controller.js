@@ -1,7 +1,8 @@
 "use strict";
 
 const NEW_CITY_MENU = 1;
-const ABOUT_MENU = 2;
+const DEV_MENU = 2;
+const ABOUT_MENU = 3;
 
 var MenusController = function(cityConfigService, messageBroker) {
   var menusContainer = document.getElementById("menus-container");
@@ -18,9 +19,14 @@ var MenusController = function(cityConfigService, messageBroker) {
   var neighborhoodCount = document.getElementById("buildings-neighborhood-count");
   var resetButton = document.getElementById("reset");
 
+  // "Dev" menu
+  let devMenuTitle = null;
+  let devMenu = null;
+
   // "About" menu
   var aboutMenuTitle = document.getElementById("menu-about-title");
   var aboutMenu = document.getElementById("menu-about");
+  let appName = document.getElementById("app-name");
 
   // Non menu bar elements
   var loadingMessage = document.getElementById("loading-message");
@@ -30,6 +36,13 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   var toggleNewCityMenu = function(e) {
     setMenu(NEW_CITY_MENU);
+
+    // Prevent page zoom from double tap on mobile
+    e.preventDefault();
+  };
+
+  let toggleDevMenu = function(e) {
+    setMenu(DEV_MENU);
 
     // Prevent page zoom from double tap on mobile
     e.preventDefault();
@@ -78,6 +91,26 @@ var MenusController = function(cityConfigService, messageBroker) {
     menusContainer.classList.remove("display-none");
   };
 
+  let addDevMenu = function(e) {
+    if (devMenuTitle !== null) {
+      return;
+    }
+
+    devMenuTitle = document.createElement("button");
+    devMenuTitle.className = "menu-title";
+    devMenuTitle.innerText = "Dev";
+    devMenuTitle.addEventListener("click", toggleDevMenu, false);
+    newCityMenuTitle.insertAdjacentElement("afterend", devMenuTitle);
+
+    devMenu = document.createElement("div");
+    devMenu.id = "menu-dev";
+    devMenu.className = "display-none menu bg-white bt-thin bt-gray pointer-events-auto";
+    devMenu.innerHTML = `Placeholder content`;
+    newCityMenu.insertAdjacentElement("afterend", devMenu);
+
+    setMenu(DEV_MENU);
+  };
+
   var hideMenus = function(e) {
     currentMenu = null;
     render();
@@ -88,6 +121,11 @@ var MenusController = function(cityConfigService, messageBroker) {
 
     newCityMenuTitle.classList.toggle("menu-title-active", currentMenu === NEW_CITY_MENU);
     newCityMenu.classList.toggle("display-none", currentMenu !== NEW_CITY_MENU);
+
+    if (devMenuTitle !== null) {
+      devMenuTitle.classList.toggle("menu-title-active", currentMenu === DEV_MENU);
+      devMenu.classList.toggle("display-none", currentMenu !== DEV_MENU);
+    }
 
     aboutMenuTitle.classList.toggle("menu-title-active", currentMenu === ABOUT_MENU);
     aboutMenu.classList.toggle("display-none", currentMenu !== ABOUT_MENU);
@@ -106,6 +144,7 @@ var MenusController = function(cityConfigService, messageBroker) {
 
   // "About" menu event handlers
   aboutMenuTitle.addEventListener("click", toggleAboutMenu, false);
+  appName.addEventListener("dblclick", addDevMenu, false);
 
   var id1 = messageBroker.addSubscriber("flythrough.started", onFlythroughStarted);
   var id2 = messageBroker.addSubscriber("flythrough.stopped", onFlythroughStopped);
