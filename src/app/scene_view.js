@@ -17,7 +17,6 @@ var SceneView = function(containerEl, gridTexture) {
   var SHOW_MARKERS = false;
 
   var centerOfActionMarkerMesh;
-  var targetOfActionMarkerMesh;
   var touchPoint1MarkerMesh;
   var touchPoint2MarkerMesh;
 
@@ -97,10 +96,6 @@ var SceneView = function(containerEl, gridTexture) {
     centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(MARKER_WIDTH, 25, 25),
                                               new THREE.MeshBasicMaterial({ color: 0xff0000 }));
     group.add(centerOfActionMarkerMesh);
-
-    targetOfActionMarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
-                                              new THREE.MeshBasicMaterial({ color: 0xff5a00 }));
-    group.add(targetOfActionMarkerMesh);
 
     touchPoint1MarkerMesh = new THREE.Mesh(new THREE.BoxGeometry(MARKER_WIDTH, MARKER_HEIGHT, MARKER_DEPTH),
                                            new THREE.MeshBasicMaterial({ color: 0xff0055 }));
@@ -205,7 +200,6 @@ var SceneView = function(containerEl, gridTexture) {
     domElement: function() { return renderView.domElement(); },
     scene: function() { return scene; },
     centerOfActionMarkerMesh: function() { return centerOfActionMarkerMesh; },
-    targetOfActionMarkerMesh: function() { return targetOfActionMarkerMesh; },
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
     setDebugCurves: setDebugCurves,
