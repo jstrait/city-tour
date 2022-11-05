@@ -22,6 +22,7 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
   // "Dev" menu
   let devMenuTitle = null;
   let devMenu = null;
+  let showGestureMarkersToggle = null;
   let showNeighborhoodCentersToggle = null;
 
   // "About" menu
@@ -109,10 +110,17 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
     // The reason for `style="width: auto;"` is to work around all `<label>` tags being given
     // a hard-coded width in `city_tour.css`, causing any label with wider text to wrap.
     devMenu.innerHTML = `<span class="block">
+  <label for="dev-show-gesture-markers" style="width: auto;">Show Gesture Markers</label>
+  <input id="dev-show-gesture-markers" type="checkbox"${(sceneView.isGestureMarkersVisible() === true) ? " checked" : ""} />
+</span>
+<span class="block">
   <label for="dev-show-neighborhood-centers" style="width: auto;">Show Neighborhood Centers</label>
   <input id="dev-show-neighborhood-centers" type="checkbox"${(sceneView.isNeighborhoodCentersVisible() === true) ? " checked" : ""} />
 </span>`;
     newCityMenu.insertAdjacentElement("afterend", devMenu);
+
+    showGestureMarkersToggle = document.getElementById("dev-show-gesture-markers");
+    showGestureMarkersToggle.addEventListener("change", function(e) { sceneView.setIsGestureMarkersVisible(e.target.checked); }, false);
 
     showNeighborhoodCentersToggle = document.getElementById("dev-show-neighborhood-centers");
     showNeighborhoodCentersToggle.addEventListener("change", function(e) { sceneView.setIsNeighborhoodCentersVisible(e.target.checked); }, false);

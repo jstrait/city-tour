@@ -14,8 +14,6 @@ const DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "debugNeighborhoodCentersMesh
 const DEBUG_CURVE_MESH_GROUP_NAME = "debugCurveMeshes";
 
 var SceneView = function(containerEl, gridTexture) {
-  const SHOW_GESTURE_MARKERS = false;
-
   var centerOfActionMarkerMesh;
   var touchPoint1MarkerMesh;
   var touchPoint2MarkerMesh;
@@ -25,6 +23,7 @@ var SceneView = function(containerEl, gridTexture) {
   var renderView = new RenderView(containerEl, scene);
   var camera = renderView.camera();
 
+  let isGestureMarkersVisible = false;
   let isNeighborhoodCentersVisible = false;
 
   var reset = function(newWorldData) {
@@ -93,6 +92,7 @@ var SceneView = function(containerEl, gridTexture) {
 
     group = new THREE.Group();
     group.name = DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME;
+    group.visible = isGestureMarkersVisible;
 
     centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(GESTURE_MARKER_WIDTH, 25, 25),
                                               new THREE.MeshBasicMaterial({ color: 0xff0000 }));
@@ -106,9 +106,7 @@ var SceneView = function(containerEl, gridTexture) {
                                            new THREE.MeshBasicMaterial({ color: 0x0000ff }));
     group.add(touchPoint2MarkerMesh);
 
-    if (SHOW_GESTURE_MARKERS) {
-      scene.add(group);
-    }
+    scene.add(group);
 
     gestureMarkersEndTime = new Date();
     console.log("Time to generate touch debug markers:   " + (gestureMarkersEndTime - gestureMarkersStartTime) + "ms");
@@ -168,6 +166,13 @@ var SceneView = function(containerEl, gridTexture) {
     }
   };
 
+  let setIsGestureMarkersVisible = function(newIsGestureMarkersVisible) {
+    isGestureMarkersVisible = newIsGestureMarkersVisible;
+
+    scene.getObjectByName(DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME).visible = newIsGestureMarkersVisible;
+    renderView.makeDirty();
+  };
+
   let setIsNeighborhoodCentersVisible = function(newIsNeighborhoodCentersVisible) {
     isNeighborhoodCentersVisible = newIsNeighborhoodCentersVisible;
 
@@ -204,6 +209,8 @@ var SceneView = function(containerEl, gridTexture) {
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
     setDebugCurves: setDebugCurves,
+    isGestureMarkersVisible: function() { return isGestureMarkersVisible; },
+    setIsGestureMarkersVisible: setIsGestureMarkersVisible,
     isNeighborhoodCentersVisible: function() { return isNeighborhoodCentersVisible; },
     setIsNeighborhoodCentersVisible: setIsNeighborhoodCentersVisible,
   };
