@@ -11,7 +11,7 @@ const ROAD_NETWORK_MESH_GROUP_NAME = "roadNetworkMeshes";
 const BUILDINGS_MESH_GROUP_NAME = "buildingMeshes";
 const GESTURE_MARKERS_MESH_GROUP_NAME = "gestureMarkerMeshes";
 const NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "neighborhoodCentersMeshes";
-const CURVE_MESH_GROUP_NAME = "curveMeshes";
+const ROUTE_CURVES_MESH_GROUP_NAME = "routeCurveMeshes";
 
 var SceneView = function(containerEl, gridTexture) {
   var centerOfActionMarkerMesh;
@@ -120,7 +120,7 @@ var SceneView = function(containerEl, gridTexture) {
       ROAD_NETWORK_MESH_GROUP_NAME,
       BUILDINGS_MESH_GROUP_NAME,
       NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME,
-      CURVE_MESH_GROUP_NAME,
+      ROUTE_CURVES_MESH_GROUP_NAME,
     ];
 
     var meshGroupName;
@@ -152,17 +152,17 @@ var SceneView = function(containerEl, gridTexture) {
     obj = null;
   };
 
-  var setCurves = function(newCurves) {
-    var previousMeshGroup = scene.getObjectByName(CURVE_MESH_GROUP_NAME);
-    var newCurveMeshes;
+  var setRouteCurves = function(newRouteCurves) {
+    var previousMeshGroup = scene.getObjectByName(ROUTE_CURVES_MESH_GROUP_NAME);
+    var newRouteCurveMeshes;
 
     if (previousMeshGroup !== undefined) {
       removeChildFromScene(previousMeshGroup);
     }
 
-    if (newCurves.length > 0) {
-      newCurveMeshes = sceneBuilder.buildCurveMeshes(newCurves);
-      scene.add(buildMeshGroup(CURVE_MESH_GROUP_NAME, newCurveMeshes));
+    if (newRouteCurves.length > 0) {
+      newRouteCurveMeshes = sceneBuilder.buildRouteCurveMeshes(newRouteCurves);
+      scene.add(buildMeshGroup(ROUTE_CURVES_MESH_GROUP_NAME, newRouteCurveMeshes));
     }
   };
 
@@ -208,7 +208,7 @@ var SceneView = function(containerEl, gridTexture) {
     centerOfActionMarkerMesh: function() { return centerOfActionMarkerMesh; },
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
-    setCurves: setCurves,
+    setRouteCurves: setRouteCurves,
     isGestureMarkersVisible: function() { return isGestureMarkersVisible; },
     setIsGestureMarkersVisible: setIsGestureMarkersVisible,
     isNeighborhoodCentersVisible: function() { return isNeighborhoodCentersVisible; },
