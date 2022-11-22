@@ -9,9 +9,9 @@ const GRID_PLANE_MESH_GROUP_NAME = "gridPlaneMeshes";
 const TERRAIN_MESH_GROUP_NAME = "terrainMeshes";
 const ROAD_NETWORK_MESH_GROUP_NAME = "roadNetworkMeshes";
 const BUILDINGS_MESH_GROUP_NAME = "buildingMeshes";
-const DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME = "debugGestureMarkerMeshes";
-const DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "debugNeighborhoodCentersMeshes";
-const DEBUG_CURVE_MESH_GROUP_NAME = "debugCurveMeshes";
+const GESTURE_MARKERS_MESH_GROUP_NAME = "gestureMarkerMeshes";
+const NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "neighborhoodCentersMeshes";
+const CURVE_MESH_GROUP_NAME = "curveMeshes";
 
 var SceneView = function(containerEl, gridTexture) {
   var centerOfActionMarkerMesh;
@@ -32,7 +32,7 @@ var SceneView = function(containerEl, gridTexture) {
     var roadStartTime, roadEndTime;
     var buildingsStartTime, buildingsEndTime;
     var meshes;
-    let debugNeighborhoodCentersGroup;
+    let neighborhoodCentersGroup;
 
     destroyPreviousMeshes();
 
@@ -53,10 +53,10 @@ var SceneView = function(containerEl, gridTexture) {
     scene.add(buildMeshGroup(BUILDINGS_MESH_GROUP_NAME, meshes));
     buildingsEndTime = new Date();
 
-    meshes = sceneBuilder.buildDebugNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods);
-    debugNeighborhoodCentersGroup = buildMeshGroup(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME, meshes);
-    debugNeighborhoodCentersGroup.visible = isNeighborhoodCentersVisible;
-    scene.add(debugNeighborhoodCentersGroup);
+    meshes = sceneBuilder.buildNeighborhoodCentersMeshes(newWorldData.terrain, newWorldData.neighborhoods);
+    neighborhoodCentersGroup = buildMeshGroup(NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME, meshes);
+    neighborhoodCentersGroup.visible = isNeighborhoodCentersVisible;
+    scene.add(neighborhoodCentersGroup);
 
     masterEndTime = new Date();
 
@@ -91,7 +91,7 @@ var SceneView = function(containerEl, gridTexture) {
     gestureMarkersStartTime = new Date();
 
     group = new THREE.Group();
-    group.name = DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME;
+    group.name = GESTURE_MARKERS_MESH_GROUP_NAME;
     group.visible = isGestureMarkersVisible;
 
     centerOfActionMarkerMesh = new THREE.Mesh(new THREE.SphereGeometry(GESTURE_MARKER_WIDTH, 25, 25),
@@ -119,8 +119,8 @@ var SceneView = function(containerEl, gridTexture) {
       TERRAIN_MESH_GROUP_NAME,
       ROAD_NETWORK_MESH_GROUP_NAME,
       BUILDINGS_MESH_GROUP_NAME,
-      DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME,
-      DEBUG_CURVE_MESH_GROUP_NAME,
+      NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME,
+      CURVE_MESH_GROUP_NAME,
     ];
 
     var meshGroupName;
@@ -152,8 +152,8 @@ var SceneView = function(containerEl, gridTexture) {
     obj = null;
   };
 
-  var setDebugCurves = function(newCurves) {
-    var previousMeshGroup = scene.getObjectByName(DEBUG_CURVE_MESH_GROUP_NAME);
+  var setCurves = function(newCurves) {
+    var previousMeshGroup = scene.getObjectByName(CURVE_MESH_GROUP_NAME);
     var newCurveMeshes;
 
     if (previousMeshGroup !== undefined) {
@@ -161,22 +161,22 @@ var SceneView = function(containerEl, gridTexture) {
     }
 
     if (newCurves.length > 0) {
-      newCurveMeshes = sceneBuilder.buildDebugCurveMeshes(newCurves);
-      scene.add(buildMeshGroup(DEBUG_CURVE_MESH_GROUP_NAME, newCurveMeshes));
+      newCurveMeshes = sceneBuilder.buildCurveMeshes(newCurves);
+      scene.add(buildMeshGroup(CURVE_MESH_GROUP_NAME, newCurveMeshes));
     }
   };
 
   let setIsGestureMarkersVisible = function(newIsGestureMarkersVisible) {
     isGestureMarkersVisible = newIsGestureMarkersVisible;
 
-    scene.getObjectByName(DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME).visible = newIsGestureMarkersVisible;
+    scene.getObjectByName(GESTURE_MARKERS_MESH_GROUP_NAME).visible = newIsGestureMarkersVisible;
     renderView.makeDirty();
   };
 
   let setIsNeighborhoodCentersVisible = function(newIsNeighborhoodCentersVisible) {
     isNeighborhoodCentersVisible = newIsNeighborhoodCentersVisible;
 
-    scene.getObjectByName(DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME).visible = newIsNeighborhoodCentersVisible;
+    scene.getObjectByName(NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME).visible = newIsNeighborhoodCentersVisible;
     renderView.makeDirty();
   };
 
@@ -208,7 +208,7 @@ var SceneView = function(containerEl, gridTexture) {
     centerOfActionMarkerMesh: function() { return centerOfActionMarkerMesh; },
     touchPoint1MarkerMesh: function() { return touchPoint1MarkerMesh; },
     touchPoint2MarkerMesh: function() { return touchPoint2MarkerMesh; },
-    setDebugCurves: setDebugCurves,
+    setCurves: setCurves,
     isGestureMarkersVisible: function() { return isGestureMarkersVisible; },
     setIsGestureMarkersVisible: setIsGestureMarkersVisible,
     isNeighborhoodCentersVisible: function() { return isNeighborhoodCentersVisible; },

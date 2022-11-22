@@ -7,8 +7,8 @@ import { BuildingMeshBuilder } from "./building_mesh_builder";
 import { RoadMeshBuilder } from "./road_mesh_builder";
 import { TerrainMeshBuilder } from "./terrain_mesh_builder";
 
-const DEBUG_CITY_CENTER_NEIGHBORHOOD_MARKER_COLOR = Object.freeze([1.0, 1.0, 0.0]);
-const DEBUG_GENERIC_NEIGHBORHOOD_MARKER_COLOR = Object.freeze([1.0, 0.0, 1.0]);
+const CITY_CENTER_NEIGHBORHOOD_MARKER_COLOR = Object.freeze([1.0, 1.0, 0.0]);
+const GENERIC_NEIGHBORHOOD_MARKER_COLOR = Object.freeze([1.0, 0.0, 1.0]);
 
 var Builder = function(gridTexture) {
   var buildEmptyScene = function() {
@@ -56,7 +56,7 @@ var Builder = function(gridTexture) {
     return BuildingMeshBuilder().build(buildings);
   };
 
-  var buildDebugNeighborhoodCentersMeshes = function(terrain, neighborhoods) {
+  var buildNeighborhoodCentersMeshes = function(terrain, neighborhoods) {
     let neighborhoodCentersGeometry = new THREE.BoxGeometry(0.5, 15, 0.5);
     let neighborhoodCentersMaterial = new THREE.MeshBasicMaterial({vertexColors: true});
     let neighborhoodCentersMesh = new THREE.InstancedMesh(neighborhoodCentersGeometry, neighborhoodCentersMaterial, neighborhoods.length);
@@ -73,10 +73,10 @@ var Builder = function(gridTexture) {
     }
 
     if (neighborhoods.length > 0) {
-      colorAttributes.set(DEBUG_CITY_CENTER_NEIGHBORHOOD_MARKER_COLOR, 0);
+      colorAttributes.set(CITY_CENTER_NEIGHBORHOOD_MARKER_COLOR, 0);
 
       for (let i = 3; i < colorAttributes.length; i += 3) {
-        colorAttributes.set(DEBUG_GENERIC_NEIGHBORHOOD_MARKER_COLOR, i);
+        colorAttributes.set(GENERIC_NEIGHBORHOOD_MARKER_COLOR, i);
       }
     }
 
@@ -85,7 +85,7 @@ var Builder = function(gridTexture) {
     return [neighborhoodCentersMesh];
   };
 
-  var buildDebugCurveMeshes = function(curves) {
+  var buildCurveMeshes = function(curves) {
     var tubeGeometry;
     var tubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
     var meshes = [];
@@ -108,8 +108,8 @@ var Builder = function(gridTexture) {
     buildTerrainMeshes: buildTerrainMeshes,
     buildRoadNetworkMeshes: buildRoadNetworkMeshes,
     buildBuildingMeshes: buildBuildingMeshes,
-    buildDebugNeighborhoodCentersMeshes: buildDebugNeighborhoodCentersMeshes,
-    buildDebugCurveMeshes: buildDebugCurveMeshes,
+    buildNeighborhoodCentersMeshes: buildNeighborhoodCentersMeshes,
+    buildCurveMeshes: buildCurveMeshes,
   };
 };
 
