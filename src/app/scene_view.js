@@ -9,7 +9,7 @@ const GRID_PLANE_MESH_GROUP_NAME = "gridPlaneMeshes";
 const TERRAIN_MESH_GROUP_NAME = "terrainMeshes";
 const ROAD_NETWORK_MESH_GROUP_NAME = "roadNetworkMeshes";
 const BUILDINGS_MESH_GROUP_NAME = "buildingMeshes";
-const DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME = "markerMeshes";
+const DEBUG_GESTURE_MARKERS_MESH_GROUP_NAME = "debugGestureMarkerMeshes";
 const DEBUG_NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME = "debugNeighborhoodCentersMeshes";
 const DEBUG_CURVE_MESH_GROUP_NAME = "debugCurveMeshes";
 
