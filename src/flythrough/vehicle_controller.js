@@ -19,7 +19,7 @@ import { RoadNavigator } from "./road_navigator";
 const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2.0;
 
-var VehicleController = function(terrain, roadNetwork, neighborhoods, initial) {
+var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView, initial) {
   var INITIAL_DESCENT = "initial_descent";
   var DRIVING_MODE = "driving";
   var HOVERING_MODE = "hovering";
@@ -375,6 +375,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, initial) {
 
       rotationY = targetAngle;
     };
+
+    sceneView.setRouteCurves(curvePaths);
 
     return animations;
   };

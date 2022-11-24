@@ -23,8 +23,11 @@ var SceneView = function(containerEl, gridTexture) {
   var renderView = new RenderView(containerEl, scene);
   var camera = renderView.camera();
 
+  let routeCurves = [];
+
   let isGestureMarkersVisible = false;
   let isNeighborhoodCentersVisible = false;
+  let isRouteCurvesVisible = false;
 
   var reset = function(newWorldData) {
     var masterStartTime, masterEndTime;
@@ -35,6 +38,7 @@ var SceneView = function(containerEl, gridTexture) {
     let neighborhoodCentersGroup;
 
     destroyPreviousMeshes();
+    routeCurves = [];
 
     masterStartTime = new Date();
 
@@ -153,6 +157,11 @@ var SceneView = function(containerEl, gridTexture) {
   };
 
   var setRouteCurves = function(newRouteCurves) {
+    routeCurves = newRouteCurves;
+    syncRouteCurves();
+  };
+
+  let syncRouteCurves = function() {
     var previousMeshGroup = scene.getObjectByName(ROUTE_CURVES_MESH_GROUP_NAME);
     var newRouteCurveMeshes;
 
@@ -160,8 +169,8 @@ var SceneView = function(containerEl, gridTexture) {
       removeChildFromScene(previousMeshGroup);
     }
 
-    if (newRouteCurves.length > 0) {
-      newRouteCurveMeshes = sceneBuilder.buildRouteCurveMeshes(newRouteCurves);
+    if (isRouteCurvesVisible === true && routeCurves.length > 0) {
+      newRouteCurveMeshes = sceneBuilder.buildRouteCurveMeshes(routeCurves);
       scene.add(buildMeshGroup(ROUTE_CURVES_MESH_GROUP_NAME, newRouteCurveMeshes));
     }
   };
@@ -177,6 +186,13 @@ var SceneView = function(containerEl, gridTexture) {
     isNeighborhoodCentersVisible = newIsNeighborhoodCentersVisible;
 
     scene.getObjectByName(NEIGHBORHOOD_CENTERS_MESH_GROUP_NAME).visible = newIsNeighborhoodCentersVisible;
+    renderView.makeDirty();
+  };
+
+  let setIsRouteCurvesVisible = function(newIsRouteCurvesVisible) {
+    isRouteCurvesVisible = newIsRouteCurvesVisible;
+
+    syncRouteCurves();
     renderView.makeDirty();
   };
 
@@ -213,6 +229,8 @@ var SceneView = function(containerEl, gridTexture) {
     setIsGestureMarkersVisible: setIsGestureMarkersVisible,
     isNeighborhoodCentersVisible: function() { return isNeighborhoodCentersVisible; },
     setIsNeighborhoodCentersVisible: setIsNeighborhoodCentersVisible,
+    isRouteCurvesVisible: function() { return isRouteCurvesVisible; },
+    setIsRouteCurvesVisible: setIsRouteCurvesVisible,
   };
 };
 

@@ -57,7 +57,7 @@ var TimerLoop = function(worldData, sceneView, mapCamera, messageBroker) {
     zoomAmount = 0.0;
     mapCamera.setIsVelocityEnabled(false);
 
-    vehicleController = new VehicleController(worldData.terrain, worldData.roadNetwork, worldData.neighborhoods, initialCoordinates);
+    vehicleController = new VehicleController(worldData.terrain, worldData.roadNetwork, worldData.neighborhoods, sceneView, initialCoordinates);
     vehicleView = new VehicleView(vehicleController);
     mode = FLYTHROUGH;
     messageBroker.publish("flythrough.started", { vehicleView: vehicleView });

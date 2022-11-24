@@ -24,6 +24,7 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
   let devMenu = null;
   let showGestureMarkersToggle = null;
   let showNeighborhoodCentersToggle = null;
+  let showRouteCurvesToggle = null;
 
   // "About" menu
   var aboutMenuTitle = document.getElementById("menu-about-title");
@@ -116,6 +117,10 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
 <span class="block">
   <label for="dev-show-neighborhood-centers" style="width: auto;">Show Neighborhood Centers</label>
   <input id="dev-show-neighborhood-centers" type="checkbox"${(sceneView.isNeighborhoodCentersVisible() === true) ? " checked" : ""} />
+</span>
+<span class="block">
+  <label for="dev-show-route-curves" style="width: auto;">Show Driving Path</label>
+  <input id="dev-show-route-curves" type="checkbox"${(sceneView.isRouteCurvesVisible() === true) ? " checked" : ""} />
 </span>`;
     newCityMenu.insertAdjacentElement("afterend", devMenu);
 
@@ -124,6 +129,9 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
 
     showNeighborhoodCentersToggle = document.getElementById("dev-show-neighborhood-centers");
     showNeighborhoodCentersToggle.addEventListener("change", function(e) { sceneView.setIsNeighborhoodCentersVisible(e.target.checked); }, false);
+
+    showRouteCurvesToggle = document.getElementById("dev-show-route-curves");
+    showRouteCurvesToggle.addEventListener("change", function(e) { sceneView.setIsRouteCurvesVisible(e.target.checked); }, false);
 
     setMenu(DEV_MENU);
   };
