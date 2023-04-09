@@ -21,26 +21,26 @@ const TWO_PI = Math.PI * 2.0;
 
 const INITIAL_DESCENT = "initial_descent";
 const DRIVING_MODE = "driving";
-const BIRDSEYE_MODE = "birdseye";
-const HOVERING_MODE = "hovering";
+const AIRPLANE_MODE = "airplane";
+const HELICOPTER_MODE = "helicopter";
 
 const MODE_TRANSITIONS = {};
 MODE_TRANSITIONS[INITIAL_DESCENT] = DRIVING_MODE;
-MODE_TRANSITIONS[DRIVING_MODE] = BIRDSEYE_MODE;
-MODE_TRANSITIONS[BIRDSEYE_MODE] = HOVERING_MODE;
-MODE_TRANSITIONS[HOVERING_MODE] = DRIVING_MODE;
+MODE_TRANSITIONS[DRIVING_MODE] = AIRPLANE_MODE;
+MODE_TRANSITIONS[AIRPLANE_MODE] = HELICOPTER_MODE;
+MODE_TRANSITIONS[HELICOPTER_MODE] = DRIVING_MODE;
 Object.freeze(MODE_TRANSITIONS);
 
 const MODE_DURATION_IN_FRAMES = 2000;
 
 const DRIVING_HORIZONTAL_MOTION_DELTA = 0.016666666666667;
 const FLYING_HORIZONTAL_MOTION_DELTA = 0.025;
-const BIRDSEYE_Y = 12.5;
-const HOVERING_Y = 1.25;
+const AIRPLANE_Y = 12.5;
+const HELICOPTER_Y = 1.25;
 const POSITION_Y_DELTA = 0.166666666666667;
-const HOVER_TO_DRIVING_POSITION_Y_DELTA = 0.004166666666667;
-const BIRDSEYE_X_ROTATION = -(Math.PI / 3);
-const BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
+const HELICOPTER_TO_DRIVING_POSITION_Y_DELTA = 0.004166666666667;
+const AIRPLANE_X_ROTATION = -(Math.PI / 3);
+const AIRPLANE_X_ROTATION_DELTA = 0.0155140377955;
 const ROTATION_Y_DELTA = 0.03;
 
 const MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;
@@ -151,7 +151,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
       }
     }
 
-    targetPositionY = BIRDSEYE_Y + roadNetwork.getRoadHeight(targetPositionX, targetPositionZ);
+    targetPositionY = AIRPLANE_Y + roadNetwork.getRoadHeight(targetPositionX, targetPositionZ);
     targetRotationX = -HALF_PI;
     targetRotationY = viewAngleToCityCenter;
 
@@ -196,7 +196,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     return newAnimations.concat(drivingAnimations);
   };
 
-  var buildBirdsEyeAnimations = function(initial, targetPositionX, targetPositionZ) {
+  var buildAirplaneAnimations = function(initial, targetPositionX, targetPositionZ) {
     var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
@@ -209,11 +209,11 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     targetRotationY = determineTargetAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
-    targetPositionY = BIRDSEYE_Y;
-    targetRotationX = BIRDSEYE_X_ROTATION;
+    targetPositionY = AIRPLANE_Y;
+    targetRotationX = AIRPLANE_X_ROTATION;
 
     frameCountPositionY = frameCount(initial.positionY, targetPositionY, POSITION_Y_DELTA);
-    frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
+    frameCountRotationX = frameCount(initial.rotationX, targetRotationX, AIRPLANE_X_ROTATION_DELTA);
 
     positionXStationaryGenerator = new StaticMotionGenerator(initial.positionX);
     positionYStationaryGenerator = new StaticMotionGenerator(initial.positionY);
@@ -245,22 +245,22 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     return newAnimations;
   };
 
-  var buildBirdsEyeAnimationsExperimental = function(initial, targetPositionX, targetPositionZ) {
+  var buildAirplaneAnimationsExperimental = function(initial, targetPositionX, targetPositionZ) {
     var minPathLength = FLYING_HORIZONTAL_MOTION_DELTA * MODE_DURATION_IN_FRAMES;
     var neighborhood;
-    var points = [new THREE.Vector3(initial.positionX, terrain.heightAt(initial.positionX, initial.positionZ) + BIRDSEYE_Y, initial.positionZ)];
+    var points = [new THREE.Vector3(initial.positionX, terrain.heightAt(initial.positionX, initial.positionZ) + AIRPLANE_Y, initial.positionZ)];
     var curve = new THREE.CatmullRomCurve3(points, true, "catmullrom", 1.0);
 
     while (curve.getLength() < minPathLength) {
       neighborhood = neighborhoods[CityTourMath.randomInteger(0, neighborhoods.length - 1)];
-      points.push(new THREE.Vector3(neighborhood.centerX, terrain.heightAt(neighborhood.centerX, neighborhood.centerZ) + BIRDSEYE_Y, neighborhood.centerZ));
+      points.push(new THREE.Vector3(neighborhood.centerX, terrain.heightAt(neighborhood.centerX, neighborhood.centerZ) + AIRPLANE_Y, neighborhood.centerZ));
       curve.updateArcLengths();
     }
 
-    return [CurveAnimation(curve, FLYING_HORIZONTAL_MOTION_DELTA, BIRDSEYE_X_ROTATION)];
+    return [CurveAnimation(curve, FLYING_HORIZONTAL_MOTION_DELTA, AIRPLANE_X_ROTATION)];
   };
 
-  var buildHoveringAnimations = function(initial, targetPositionX, targetPositionZ) {
+  var buildHelicopterAnimations = function(initial, targetPositionX, targetPositionZ) {
     var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     var positionXStationaryGenerator, positionYStationaryGenerator, positionZStationaryGenerator, rotationXStationaryGenerator, rotationYStationaryGenerator;
@@ -273,11 +273,11 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     targetRotationY = determineTargetAzimuthAngle(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
     frameCountRotationY = frameCount(initial.rotationY, targetRotationY, ROTATION_Y_DELTA);
 
-    targetPositionY = HOVERING_Y;
+    targetPositionY = HELICOPTER_Y;
     targetRotationX = 0.0;
 
     frameCountPositionY = frameCount(initial.positionY, targetPositionY, POSITION_Y_DELTA);
-    frameCountRotationX = frameCount(initial.rotationX, targetRotationX, BIRDSEYE_X_ROTATION_DELTA);
+    frameCountRotationX = frameCount(initial.rotationX, targetRotationX, AIRPLANE_X_ROTATION_DELTA);
 
     positionXStationaryGenerator = new StaticMotionGenerator(initial.positionX);
     positionYStationaryGenerator = new StaticMotionGenerator(initial.positionY);
@@ -395,11 +395,11 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     if (mode === INITIAL_DESCENT) {
       return buildIntroAnimations(initial, targetPositionX, targetPositionZ);
     }
-    else if (mode === BIRDSEYE_MODE) {
-      return buildBirdsEyeAnimations(initial, targetPositionX, targetPositionZ);
+    else if (mode === AIRPLANE_MODE) {
+      return buildAirplaneAnimations(initial, targetPositionX, targetPositionZ);
     }
-    else if (mode === HOVERING_MODE) {
-      return buildHoveringAnimations(initial, targetPositionX, targetPositionZ);
+    else if (mode === HELICOPTER_MODE) {
+      return buildHelicopterAnimations(initial, targetPositionX, targetPositionZ);
     }
     else if (mode === DRIVING_MODE) {
       return buildDrivingAnimations(initial.positionX, initial.positionZ, initial.rotationY, targetPositionX, targetPositionZ);
@@ -451,7 +451,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
           mode = MODE_TRANSITIONS[mode];
           framesInCurrentMode = 0;
 
-          if (mode === BIRDSEYE_MODE || mode === HOVERING_MODE) {
+          if (mode === AIRPLANE_MODE || mode === HELICOPTER_MODE) {
             if (aerialNavigator === undefined) {
               navigator = new AerialNavigator(roadNetwork, positionX, positionZ);
               aerialNavigator = navigator;
