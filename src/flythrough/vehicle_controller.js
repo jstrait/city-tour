@@ -19,31 +19,33 @@ import { RoadNavigator } from "./road_navigator";
 const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2.0;
 
+const INITIAL_DESCENT = "initial_descent";
+const DRIVING_MODE = "driving";
+const BIRDSEYE_MODE = "birdseye";
+const HOVERING_MODE = "hovering";
+
+const MODE_TRANSITIONS = {};
+MODE_TRANSITIONS[INITIAL_DESCENT] = DRIVING_MODE;
+MODE_TRANSITIONS[DRIVING_MODE] = BIRDSEYE_MODE;
+MODE_TRANSITIONS[BIRDSEYE_MODE] = HOVERING_MODE;
+MODE_TRANSITIONS[HOVERING_MODE] = DRIVING_MODE;
+Object.freeze(MODE_TRANSITIONS);
+
+const MODE_DURATION_IN_FRAMES = 2000;
+
+const DRIVING_HORIZONTAL_MOTION_DELTA = 0.016666666666667;
+const FLYING_HORIZONTAL_MOTION_DELTA = 0.025;
+const BIRDSEYE_Y = 12.5;
+const HOVERING_Y = 1.25;
+const POSITION_Y_DELTA = 0.166666666666667;
+const HOVER_TO_DRIVING_POSITION_Y_DELTA = 0.004166666666667;
+const BIRDSEYE_X_ROTATION = -(Math.PI / 3);
+const BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
+const ROTATION_Y_DELTA = 0.03;
+
+const MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;
+
 var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView, initial) {
-  var INITIAL_DESCENT = "initial_descent";
-  var DRIVING_MODE = "driving";
-  var HOVERING_MODE = "hovering";
-  var BIRDSEYE_MODE = "birdseye";
-
-  var DRIVING_HORIZONTAL_MOTION_DELTA = 0.016666666666667;
-  var FLYING_HORIZONTAL_MOTION_DELTA = 0.025;
-  var BIRDSEYE_Y = 12.5;
-  var HOVERING_Y = 1.25;
-  var POSITION_Y_DELTA = 0.166666666666667;
-  var HOVER_TO_DRIVING_POSITION_Y_DELTA = 0.004166666666667;
-  var BIRDSEYE_X_ROTATION = -(Math.PI / 3);
-  var BIRDSEYE_X_ROTATION_DELTA = 0.0155140377955;
-  var ROTATION_Y_DELTA = 0.03;
-
-  var MODE_TRANSITIONS = {};
-  MODE_TRANSITIONS[INITIAL_DESCENT] = DRIVING_MODE;
-  MODE_TRANSITIONS[DRIVING_MODE] = BIRDSEYE_MODE;
-  MODE_TRANSITIONS[BIRDSEYE_MODE] = HOVERING_MODE;
-  MODE_TRANSITIONS[HOVERING_MODE] = DRIVING_MODE;
-  Object.freeze(MODE_TRANSITIONS);
-
-  var MINIMUM_HEIGHT_OFF_GROUND = 0.041666666666667;
-
   var positionX = initial.positionX;
   var positionY = initial.positionY;
   var positionZ = initial.positionZ;
@@ -52,7 +54,6 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
 
   var animations;
 
-  var MODE_DURATION_IN_FRAMES = 2000;
   var framesInCurrentMode = MODE_DURATION_IN_FRAMES + 1;
   var mode = INITIAL_DESCENT;
 
