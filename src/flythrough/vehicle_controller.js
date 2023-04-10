@@ -472,8 +472,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
 
     animations[0].tick();
     positionX = animations[0].positionX();
-    positionY = Math.max(animations[0].positionY(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
     positionZ = animations[0].positionZ();
+    positionY = Math.max(animations[0].positionY(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
     rotationX = animations[0].rotationX();
     rotationY = animations[0].rotationY();
 
