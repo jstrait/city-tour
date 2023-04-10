@@ -19,13 +19,13 @@ import { RoadNavigator } from "./road_navigator";
 const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2.0;
 
-const INITIAL_DESCENT = "initial_descent";
+const INTRO_MODE = "intro";
 const DRIVING_MODE = "driving";
 const AIRPLANE_MODE = "airplane";
 const HELICOPTER_MODE = "helicopter";
 
 const MODE_TRANSITIONS = {};
-MODE_TRANSITIONS[INITIAL_DESCENT] = AIRPLANE_MODE;
+MODE_TRANSITIONS[INTRO_MODE] = AIRPLANE_MODE;
 MODE_TRANSITIONS[DRIVING_MODE] = AIRPLANE_MODE;
 MODE_TRANSITIONS[AIRPLANE_MODE] = HELICOPTER_MODE;
 MODE_TRANSITIONS[HELICOPTER_MODE] = DRIVING_MODE;
@@ -55,7 +55,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   var animations;
 
   var framesInCurrentMode = MODE_DURATION_IN_FRAMES + 1;
-  var mode = INITIAL_DESCENT;
+  var mode = INTRO_MODE;
 
   var navigator;
   var aerialNavigator;
@@ -392,7 +392,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
                 rotationX: rotationX,
                 rotationY: rotationY };
 
-    if (mode === INITIAL_DESCENT) {
+    if (mode === INTRO_MODE) {
       return buildIntroAnimations(initial, targetPositionX, targetPositionZ);
     }
     else if (mode === AIRPLANE_MODE) {
