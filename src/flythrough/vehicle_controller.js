@@ -61,6 +61,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   var aerialNavigator;
   var pathFinder = new PathFinder(roadNetwork);
 
+  let isDrivingModeLanded = null;
 
   var frameCount = function(start, target, delta) {
     if (delta < 0) {
@@ -455,11 +456,13 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
             if (aerialNavigator === undefined) {
               navigator = new AerialNavigator(roadNetwork, positionX, positionZ);
               aerialNavigator = navigator;
+              isDrivingModeLanded = null;
             }
           }
           else if (mode === DRIVING_MODE) {
             aerialNavigator = undefined;
             navigator = new RoadNavigator(roadNetwork, pathFinder,positionX, positionZ);
+            isDrivingModeLanded = false;
           }
         }
 
@@ -473,11 +476,25 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     animations[0].tick();
     positionX = animations[0].positionX();
     positionZ = animations[0].positionZ();
-    positionY = Math.max(animations[0].positionY(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
+    tickPositionY();
     rotationX = animations[0].rotationX();
     rotationY = animations[0].rotationY();
 
     framesInCurrentMode += 1;
+  };
+
+  let tickPositionY = function() {
+    if (mode === DRIVING_MODE && isDrivingModeLanded === false) {
+      positionY -= HELICOPTER_TO_DRIVING_POSITION_Y_DELTA;
+
+      if (positionY > animations[0].positionY()) {
+        return;
+      }
+
+      isDrivingModeLanded = true;
+    }
+
+    positionY = Math.max(animations[0].positionY(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
   };
 
 
