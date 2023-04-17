@@ -418,9 +418,9 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     if (angle < HALF_PI) {
       angle += TWO_PI;
     }
-    var rightHandedAngle = angle - HALF_PI;
+    angle -= HALF_PI;
 
-    newTargetYRotation = rightHandedAngle;
+    newTargetYRotation = angle;
 
     // Prevent turns wider than 180 degrees
     if ((initialRotationY - newTargetYRotation) > Math.PI) {
