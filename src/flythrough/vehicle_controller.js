@@ -492,13 +492,22 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   // the negative X-axis (west), π is toward the positive Z-axis (south), and
   // 3π/2 is toward the positive X-axis (east).
   let azimuthAngleToPoint = function(x1, z1, x2, z2) {
-    let angle = Math.atan2(-(z2 - z1), x2 - x1);
+    // Get an angle where 0 points toward the negative Z-axis (i.e. north), π/2
+    // points toward the negative X-axis (i.e. west), -π/2 points toward the
+    // positive X-axis (i.e. east), and π points toward the positive Z-axis
+    // (i.e. south). The swapped order of the X and Z arguments, and negation
+    // of both arguments is intentional. (The negations happen by swapping the
+    // order of the subtractions).
+    let angle = Math.atan2(x1 - x2, z1 - z2);
 
-    if (angle < HALF_PI) {
+    // Change the range from -π to π (with 0 pointing north and π pointing
+    // south) to 0 to 2π, with 0 pointing north, π/2 pointing west, π pointing
+    // south, and 3π/2 pointing east.
+    if (angle < 0.0) {
       angle += TWO_PI;
     }
 
-    return angle - HALF_PI;
+    return angle;
   };
 
 
