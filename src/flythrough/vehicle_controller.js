@@ -410,17 +410,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   };
 
   var determineTargetAzimuthAngle = function(initialPositionX, initialPositionZ, initialRotationY, targetPositionX, targetPositionZ) {
-    var newTargetYRotation;
-
-    var x = targetPositionX - initialPositionX;
-    var z = -(targetPositionZ - initialPositionZ);
-    var angle = Math.atan2(z, x);
-    if (angle < HALF_PI) {
-      angle += TWO_PI;
-    }
-    angle -= HALF_PI;
-
-    newTargetYRotation = angle;
+    let newTargetYRotation = azimuthAngleToPoint(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
 
     // Prevent turns wider than 180 degrees
     if ((initialRotationY - newTargetYRotation) > Math.PI) {
@@ -495,6 +485,20 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     }
 
     positionY = Math.max(animations[0].positionY(), roadHeightAtCurrentPosition() + MINIMUM_HEIGHT_OFF_GROUND);
+  };
+
+  // Returns the azimuth angle when at {x1, z1} pointing toward {x2, z2}, with a
+  // range of 0 to 2π. 0 is toward the negative Z-axis (north), π/2 is toward
+  // the negative X-axis (west), π is toward the positive Z-axis (south), and
+  // 3π/2 is toward the positive X-axis (east).
+  let azimuthAngleToPoint = function(x1, z1, x2, z2) {
+    let angle = Math.atan2(-(z2 - z1), x2 - x1);
+
+    if (angle < HALF_PI) {
+      angle += TWO_PI;
+    }
+
+    return angle - HALF_PI;
   };
 
 
