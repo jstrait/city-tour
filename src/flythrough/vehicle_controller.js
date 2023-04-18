@@ -105,6 +105,11 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
       viewAngleToCityCenter -= TWO_PI;
     }
 
+    targetPositionY = AIRPLANE_Y + roadNetwork.getRoadHeight(targetPositionX, targetPositionZ);
+    targetRotationX = -HALF_PI;
+    targetRotationY = viewAngleToCityCenter;
+    distanceToTarget = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
+
     var positiveViewAngleToCityCenter = viewAngleToCityCenter;
     if (positiveViewAngleToCityCenter < 0) {
       positiveViewAngleToCityCenter += TWO_PI;
@@ -150,11 +155,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
       }
     }
 
-    targetPositionY = AIRPLANE_Y + roadNetwork.getRoadHeight(targetPositionX, targetPositionZ);
-    targetRotationX = -HALF_PI;
-    targetRotationY = viewAngleToCityCenter;
-
-    distanceToTarget = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, targetPositionX, targetPositionY, targetPositionZ);
+    descentTargetPositionY = roadNetwork.getRoadHeight(descentTargetPositionX, descentTargetPositionZ);
+    drivingTargetRotationY = determineTargetAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     frameCountPositionX = Math.ceil(distanceToTarget / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionX = CityTourMath.clamp(frameCountPositionX, 60, 3 * 60);
@@ -170,10 +172,6 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     rotationXGenerator = new MotionGenerator(initial.rotationX, targetRotationX, new SmoothStepEasing(frameCountRotationX, -1.0, 0.0));
     rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
-
-    descentTargetPositionY = roadNetwork.getRoadHeight(descentTargetPositionX, descentTargetPositionZ);
-
-    drivingTargetRotationY = determineTargetAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     // Dive to ground level, and rotate to initial driving X/Y rotation
     newAnimations.push(new Animation(new MotionGenerator(targetPositionX, descentTargetPositionX, new LinearEasing(INTRO_DIVE_FRAME_COUNT)),
