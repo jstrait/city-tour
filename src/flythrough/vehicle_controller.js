@@ -321,6 +321,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var curvePaths;
     var animations = [];
     var initialCurveSegment;
+    let finalCurveSegment;
     var targetAngle;
     var frameCountRotationY;
     var positionXStationaryGenerator;
@@ -356,6 +357,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
 
     for (curvePath of curvePaths) {
       initialCurveSegment = curvePath.curves[0];
+      finalCurveSegment = curvePath.curves[curvePath.curves.length - 1];
       targetAngle = determineTargetAzimuthAngle(initialCurveSegment.v1.x, initialCurveSegment.v1.z, rotationY, initialCurveSegment.v2.x, initialCurveSegment.v2.z);
 
       frameCountRotationY = frameCount(rotationY, targetAngle, ROTATION_Y_DELTA);
@@ -376,7 +378,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
 
       animations.push(CurveAnimation(curvePath, DRIVING_HORIZONTAL_MOTION_DELTA, 0.0));
 
-      rotationY = targetAngle;
+      rotationY = azimuthAngleToPoint(finalCurveSegment.v1.x, finalCurveSegment.v1.z, finalCurveSegment.v2.x, finalCurveSegment.v2.z);
     };
 
     sceneView.setRouteCurves(curvePaths);
