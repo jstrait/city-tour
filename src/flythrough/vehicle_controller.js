@@ -33,6 +33,7 @@ Object.freeze(MODE_TRANSITIONS);
 
 const MODE_DURATION_IN_FRAMES = 2000;
 
+const INTRO_DIVE_FRAME_COUNT = 105;
 const DRIVING_HORIZONTAL_MOTION_DELTA = 0.016666666666667;
 const FLYING_HORIZONTAL_MOTION_DELTA = 0.025;
 const AIRPLANE_Y = 12.5;
@@ -91,7 +92,6 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var descentTargetPositionX, descentTargetPositionY, descentTargetPositionZ;
     var drivingTargetX, drivingTargetZ;
     var drivingTargetPositionX, drivingTargetPositionZ, drivingTargetRotationY;
-    var diveFrameCount;
     var newAnimations = [];
     var drivingAnimations;
     var i;
@@ -181,14 +181,12 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     drivingTargetPositionZ = drivingTargetZ;
     drivingTargetRotationY = determineTargetAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
-    diveFrameCount = 105;
-
     // Dive to ground level, and rotate to initial driving X/Y rotation
-    newAnimations.push(new Animation(new MotionGenerator(targetPositionX, descentTargetPositionX, new LinearEasing(diveFrameCount)),
-                                     new MotionGenerator(descentTargetPositionY, targetPositionY, new SteepEasing(diveFrameCount, 0.0, 1.0)),
-                                     new MotionGenerator(targetPositionZ, descentTargetPositionZ, new LinearEasing(diveFrameCount)),
-                                     new MotionGenerator(targetRotationX, 0.0, new SineEasing(diveFrameCount, 0.0, HALF_PI)),
-                                     new MotionGenerator(targetRotationY, drivingTargetRotationY, new SineEasing(diveFrameCount, 0.0, HALF_PI))));
+    newAnimations.push(new Animation(new MotionGenerator(targetPositionX, descentTargetPositionX, new LinearEasing(INTRO_DIVE_FRAME_COUNT)),
+                                     new MotionGenerator(descentTargetPositionY, targetPositionY, new SteepEasing(INTRO_DIVE_FRAME_COUNT, 0.0, 1.0)),
+                                     new MotionGenerator(targetPositionZ, descentTargetPositionZ, new LinearEasing(INTRO_DIVE_FRAME_COUNT)),
+                                     new MotionGenerator(targetRotationX, 0.0, new SineEasing(INTRO_DIVE_FRAME_COUNT, 0.0, HALF_PI)),
+                                     new MotionGenerator(targetRotationY, drivingTargetRotationY, new SineEasing(INTRO_DIVE_FRAME_COUNT, 0.0, HALF_PI))));
 
     // Drive to target point
     navigator = new RoadNavigator(roadNetwork, pathFinder, drivingTargetPositionX, drivingTargetPositionZ);
