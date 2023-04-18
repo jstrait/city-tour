@@ -88,9 +88,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var distanceToTarget;
     var directionX;
     var directionZ;
-    var descentTargetX, descentTargetZ;
     var descentTargetPositionX, descentTargetPositionY, descentTargetPositionZ;
-    var drivingTargetX, drivingTargetZ;
     var drivingTargetPositionX, drivingTargetPositionZ, drivingTargetRotationY;
     var newAnimations = [];
     var drivingAnimations;
@@ -129,25 +127,25 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
       directionZ = 0;
     }
 
-    descentTargetX = targetPositionX + (directionX * 3);
-    descentTargetZ = targetPositionZ + (directionZ * 3);
+    descentTargetPositionX = targetPositionX + (directionX * 3);
+    descentTargetPositionZ = targetPositionZ + (directionZ * 3);
 
     // Prevent attempting to navigate to non-existent road intersection, which will cause things to blow up
-    if (!roadNetwork.hasIntersection(descentTargetX, descentTargetZ)) {
-      descentTargetX = targetPositionX;
-      descentTargetZ = targetPositionZ;
-      drivingTargetX = targetPositionX;
-      drivingTargetZ = targetPositionZ;
+    if (!roadNetwork.hasIntersection(descentTargetPositionX, descentTargetPositionZ)) {
+      descentTargetPositionX = targetPositionX;
+      descentTargetPositionZ = targetPositionZ;
+      drivingTargetPositionX = targetPositionX;
+      drivingTargetPositionZ = targetPositionZ;
     }
     else {
-      drivingTargetX = descentTargetX;
-      drivingTargetZ = descentTargetZ;
+      drivingTargetPositionX = descentTargetPositionX;
+      drivingTargetPositionZ = descentTargetPositionZ;
 
       i = 0;
       while (i < 3 &&
-             roadNetwork.hasEdgeBetween(drivingTargetX, drivingTargetZ, drivingTargetX + directionX, drivingTargetZ + directionZ) === true) {
-        drivingTargetX += directionX;
-        drivingTargetZ += directionZ;
+             roadNetwork.hasEdgeBetween(drivingTargetPositionX, drivingTargetPositionZ, drivingTargetPositionX + directionX, drivingTargetPositionZ + directionZ) === true) {
+        drivingTargetPositionX += directionX;
+        drivingTargetPositionZ += directionZ;
         i += 1;
       }
     }
@@ -173,12 +171,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new SineEasing(frameCountRotationY, 0, HALF_PI));
     newAnimations.push(new Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
 
-    descentTargetPositionX = descentTargetX;
-    descentTargetPositionZ = descentTargetZ;
     descentTargetPositionY = roadNetwork.getRoadHeight(descentTargetPositionX, descentTargetPositionZ);
 
-    drivingTargetPositionX = drivingTargetX;
-    drivingTargetPositionZ = drivingTargetZ;
     drivingTargetRotationY = determineTargetAzimuthAngle(targetPositionX, targetPositionZ, targetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     // Dive to ground level, and rotate to initial driving X/Y rotation
