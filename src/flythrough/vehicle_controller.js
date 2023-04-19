@@ -84,7 +84,6 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   var buildIntroAnimations = function(initial, targetPositionX, targetPositionZ) {
     var targetPositionY, targetRotationX, targetRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
-    var positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator;
     var distanceToTarget;
     var directionX;
     var directionZ;
@@ -166,12 +165,11 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     frameCountRotationY = CityTourMath.clamp(frameCount(initial.rotationY, targetRotationY, 0.008), 60, frameCountPositionX);
 
     // Move to point above center of the city, looking straight down
-    positionXGenerator = new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX));
-    positionYGenerator = new MotionGenerator(initial.positionY, targetPositionY, new SmoothStepEasing(frameCountPositionY));
-    positionZGenerator = new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ));
-    rotationXGenerator = new MotionGenerator(initial.rotationX, targetRotationX, new SmoothStepEasing(frameCountRotationX, -1.0, 0.0));
-    rotationYGenerator = new MotionGenerator(initial.rotationY, targetRotationY, new SineEasing(frameCountRotationY, 0, HALF_PI));
-    newAnimations.push(new Animation(positionXGenerator, positionYGenerator, positionZGenerator, rotationXGenerator, rotationYGenerator));
+    newAnimations.push(new Animation(new MotionGenerator(initial.positionX, targetPositionX, new LinearEasing(frameCountPositionX)),
+                                     new MotionGenerator(initial.positionY, targetPositionY, new SmoothStepEasing(frameCountPositionY)),
+                                     new MotionGenerator(initial.positionZ, targetPositionZ, new LinearEasing(frameCountPositionZ)),
+                                     new MotionGenerator(initial.rotationX, targetRotationX, new SmoothStepEasing(frameCountRotationX, -1.0, 0.0)),
+                                     new MotionGenerator(initial.rotationY, targetRotationY, new SineEasing(frameCountRotationY, 0, HALF_PI))));
 
     // Dive to ground level, and rotate to initial driving X/Y rotation
     newAnimations.push(new Animation(new MotionGenerator(targetPositionX, descentTargetPositionX, new LinearEasing(INTRO_DIVE_FRAME_COUNT)),
