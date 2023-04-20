@@ -94,22 +94,21 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var i;
 
     var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - topOfDivePositionZ), initial.positionX - topOfDivePositionX) + Math.PI;
-    var viewAngleToCityCenter = atan2AngleToViewAngle(angleOfPositionToCityCenter);
+    topOfDiveRotationY = atan2AngleToViewAngle(angleOfPositionToCityCenter);
 
     // Prevent turns wider than 180 degrees
-    if ((initial.rotationY - viewAngleToCityCenter) > Math.PI) {
-      viewAngleToCityCenter += TWO_PI;
+    if ((initial.rotationY - topOfDiveRotationY) > Math.PI) {
+      topOfDiveRotationY += TWO_PI;
     }
-    else if ((initial.rotationY - viewAngleToCityCenter) < -Math.PI) {
-      viewAngleToCityCenter -= TWO_PI;
+    else if ((initial.rotationY - topOfDiveRotationY) < -Math.PI) {
+      topOfDiveRotationY -= TWO_PI;
     }
 
     topOfDivePositionY = AIRPLANE_Y + roadNetwork.getRoadHeight(topOfDivePositionX, topOfDivePositionZ);
     topOfDiveRotationX = -HALF_PI;
-    topOfDiveRotationY = viewAngleToCityCenter;
     distanceToTopOfDive = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, topOfDivePositionX, topOfDivePositionY, topOfDivePositionZ);
 
-    var positiveViewAngleToCityCenter = viewAngleToCityCenter;
+    var positiveViewAngleToCityCenter = topOfDiveRotationY;
     if (positiveViewAngleToCityCenter < 0) {
       positiveViewAngleToCityCenter += TWO_PI;
     }
