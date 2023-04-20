@@ -93,8 +93,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var drivingAnimations;
     var i;
 
-    var angleOfPositionToCityCenter = Math.atan2(-(initial.positionZ - topOfDivePositionZ), initial.positionX - topOfDivePositionX) + Math.PI;
-    topOfDiveRotationY = atan2AngleToViewAngle(angleOfPositionToCityCenter);
+    let angleOfPositionToTopOfDive = Math.atan2(-(initial.positionZ - topOfDivePositionZ), initial.positionX - topOfDivePositionX) + Math.PI;
+    topOfDiveRotationY = atan2AngleToViewAngle(angleOfPositionToTopOfDive);
 
     // Prevent turns wider than 180 degrees
     if ((initial.rotationY - topOfDiveRotationY) > Math.PI) {
@@ -108,24 +108,24 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     topOfDiveRotationX = -HALF_PI;
     distanceToTopOfDive = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, topOfDivePositionX, topOfDivePositionY, topOfDivePositionZ);
 
-    var positiveViewAngleToCityCenter = topOfDiveRotationY;
-    if (positiveViewAngleToCityCenter < 0) {
-      positiveViewAngleToCityCenter += TWO_PI;
+    let positiveViewAngleToTopOfDive = topOfDiveRotationY;
+    if (positiveViewAngleToTopOfDive < 0) {
+      positiveViewAngleToTopOfDive += TWO_PI;
     }
 
-    if (positiveViewAngleToCityCenter >= ((7 * Math.PI) / 4) || positiveViewAngleToCityCenter < (Math.PI / 4)) {  // Moving north-ish
+    if (positiveViewAngleToTopOfDive >= ((7 * Math.PI) / 4) || positiveViewAngleToTopOfDive < (Math.PI / 4)) {  // Moving north-ish
       diveDirectionX = 0;
       diveDirectionZ = -1;
     }
-    else if (positiveViewAngleToCityCenter >= (Math.PI / 4) && positiveViewAngleToCityCenter < ((3 * Math.PI) / 4)) {  // Moving west-ish
+    else if (positiveViewAngleToTopOfDive >= (Math.PI / 4) && positiveViewAngleToTopOfDive < ((3 * Math.PI) / 4)) {  // Moving west-ish
       diveDirectionX = -1;
       diveDirectionZ = 0;
     }
-    else if (positiveViewAngleToCityCenter >= ((3 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((5 * Math.PI) / 4)) { // Moving south-ish
+    else if (positiveViewAngleToTopOfDive >= ((3 * Math.PI) / 4) && positiveViewAngleToTopOfDive < ((5 * Math.PI) / 4)) { // Moving south-ish
       diveDirectionX = 0;
       diveDirectionZ = 1;
     }
-    else if (positiveViewAngleToCityCenter >= ((5 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((7 * Math.PI) / 4)) { // Moving east-ish
+    else if (positiveViewAngleToTopOfDive >= ((5 * Math.PI) / 4) && positiveViewAngleToTopOfDive < ((7 * Math.PI) / 4)) { // Moving east-ish
       diveDirectionX = 1;
       diveDirectionZ = 0;
     }
@@ -163,7 +163,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     frameCountRotationX = frameCountPositionX;
     frameCountRotationY = CityTourMath.clamp(frameCount(initial.rotationY, topOfDiveRotationY, 0.008), 60, frameCountPositionX);
 
-    // Move to point above center of the city, looking straight down
+    // Move to point above the city, looking straight down
     newAnimations.push(new Animation(new MotionGenerator(initial.positionX, topOfDivePositionX, new LinearEasing(frameCountPositionX)),
                                      new MotionGenerator(initial.positionY, topOfDivePositionY, new SmoothStepEasing(frameCountPositionY)),
                                      new MotionGenerator(initial.positionZ, topOfDivePositionZ, new LinearEasing(frameCountPositionZ)),
