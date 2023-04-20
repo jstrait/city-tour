@@ -72,15 +72,6 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     return Math.ceil(Math.abs(target - start) / delta);
   };
 
-  var atan2AngleToViewAngle = function(atan2Angle) {
-    if (atan2Angle >= 0) {
-      return atan2Angle - HALF_PI;
-    }
-    else if (atan2Angle < 0) {
-      return atan2Angle + TWO_PI;
-    }
-  };
-
   var buildIntroAnimations = function(initial, topOfDivePositionX, topOfDivePositionZ) {
     let topOfDivePositionY, topOfDiveRotationX, topOfDiveRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
@@ -94,7 +85,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var i;
 
     let angleOfPositionToTopOfDive = Math.atan2(-(initial.positionZ - topOfDivePositionZ), initial.positionX - topOfDivePositionX) + Math.PI;
-    topOfDiveRotationY = atan2AngleToViewAngle(angleOfPositionToTopOfDive);
+    topOfDiveRotationY = angleOfPositionToTopOfDive - HALF_PI;
 
     // Prevent turns wider than 180 degrees
     if ((initial.rotationY - topOfDiveRotationY) > Math.PI) {
