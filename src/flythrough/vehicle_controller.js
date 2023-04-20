@@ -85,8 +85,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     let topOfDivePositionY, topOfDiveRotationX, topOfDiveRotationY;
     var frameCountPositionX, frameCountPositionY, frameCountPositionZ, frameCountRotationX, frameCountRotationY;
     let distanceToTopOfDive;
-    var directionX;
-    var directionZ;
+    let diveDirectionX;
+    let diveDirectionZ;
     let bottomOfDivePositionX, bottomOfDivePositionY, bottomOfDivePositionZ;
     var drivingTargetPositionX, drivingTargetPositionZ, drivingTargetRotationY;
     var newAnimations = [];
@@ -115,24 +115,24 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     }
 
     if (positiveViewAngleToCityCenter >= ((7 * Math.PI) / 4) || positiveViewAngleToCityCenter < (Math.PI / 4)) {  // Moving north-ish
-      directionX = 0;
-      directionZ = -1;
+      diveDirectionX = 0;
+      diveDirectionZ = -1;
     }
     else if (positiveViewAngleToCityCenter >= (Math.PI / 4) && positiveViewAngleToCityCenter < ((3 * Math.PI) / 4)) {  // Moving west-ish
-      directionX = -1;
-      directionZ = 0;
+      diveDirectionX = -1;
+      diveDirectionZ = 0;
     }
     else if (positiveViewAngleToCityCenter >= ((3 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((5 * Math.PI) / 4)) { // Moving south-ish
-      directionX = 0;
-      directionZ = 1;
+      diveDirectionX = 0;
+      diveDirectionZ = 1;
     }
     else if (positiveViewAngleToCityCenter >= ((5 * Math.PI) / 4) && positiveViewAngleToCityCenter < ((7 * Math.PI) / 4)) { // Moving east-ish
-      directionX = 1;
-      directionZ = 0;
+      diveDirectionX = 1;
+      diveDirectionZ = 0;
     }
 
-    bottomOfDivePositionX = topOfDivePositionX + (directionX * 3);
-    bottomOfDivePositionZ = topOfDivePositionZ + (directionZ * 3);
+    bottomOfDivePositionX = topOfDivePositionX + (diveDirectionX * 3);
+    bottomOfDivePositionZ = topOfDivePositionZ + (diveDirectionZ * 3);
 
     // Prevent attempting to navigate to non-existent road intersection, which will cause things to blow up
     if (!roadNetwork.hasIntersection(bottomOfDivePositionX, bottomOfDivePositionZ)) {
@@ -147,9 +147,9 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
 
       i = 0;
       while (i < 3 &&
-             roadNetwork.hasEdgeBetween(drivingTargetPositionX, drivingTargetPositionZ, drivingTargetPositionX + directionX, drivingTargetPositionZ + directionZ) === true) {
-        drivingTargetPositionX += directionX;
-        drivingTargetPositionZ += directionZ;
+             roadNetwork.hasEdgeBetween(drivingTargetPositionX, drivingTargetPositionZ, drivingTargetPositionX + diveDirectionX, drivingTargetPositionZ + diveDirectionZ) === true) {
+        drivingTargetPositionX += diveDirectionX;
+        drivingTargetPositionZ += diveDirectionZ;
         i += 1;
       }
     }
