@@ -84,8 +84,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var drivingAnimations;
     var i;
 
-    let angleOfPositionToTopOfDive = Math.atan2(-(initial.positionZ - topOfDivePositionZ), initial.positionX - topOfDivePositionX) + Math.PI;
-    topOfDiveRotationY = angleOfPositionToTopOfDive - HALF_PI;
+    let azimuthAngleToTopOfDive = azimuthAngleToPoint(initial.positionX, initial.positionZ, topOfDivePositionX, topOfDivePositionZ);
+    topOfDiveRotationY = azimuthAngleToTopOfDive;
 
     // Prevent turns wider than 180 degrees
     if ((initial.rotationY - topOfDiveRotationY) > Math.PI) {
@@ -99,24 +99,19 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     topOfDiveRotationX = -HALF_PI;
     distanceToTopOfDive = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, topOfDivePositionX, topOfDivePositionY, topOfDivePositionZ);
 
-    let positiveViewAngleToTopOfDive = topOfDiveRotationY;
-    if (positiveViewAngleToTopOfDive < 0) {
-      positiveViewAngleToTopOfDive += TWO_PI;
-    }
-
-    if (positiveViewAngleToTopOfDive >= ((7 * Math.PI) / 4) || positiveViewAngleToTopOfDive < (Math.PI / 4)) {  // Moving north-ish
+    if (azimuthAngleToTopOfDive >= ((7 * Math.PI) / 4) || azimuthAngleToTopOfDive < (Math.PI / 4)) {  // Moving north-ish
       diveDirectionX = 0;
       diveDirectionZ = -1;
     }
-    else if (positiveViewAngleToTopOfDive >= (Math.PI / 4) && positiveViewAngleToTopOfDive < ((3 * Math.PI) / 4)) {  // Moving west-ish
+    else if (azimuthAngleToTopOfDive >= (Math.PI / 4) && azimuthAngleToTopOfDive < ((3 * Math.PI) / 4)) {  // Moving west-ish
       diveDirectionX = -1;
       diveDirectionZ = 0;
     }
-    else if (positiveViewAngleToTopOfDive >= ((3 * Math.PI) / 4) && positiveViewAngleToTopOfDive < ((5 * Math.PI) / 4)) { // Moving south-ish
+    else if (azimuthAngleToTopOfDive >= ((3 * Math.PI) / 4) && azimuthAngleToTopOfDive < ((5 * Math.PI) / 4)) { // Moving south-ish
       diveDirectionX = 0;
       diveDirectionZ = 1;
     }
-    else if (positiveViewAngleToTopOfDive >= ((5 * Math.PI) / 4) && positiveViewAngleToTopOfDive < ((7 * Math.PI) / 4)) { // Moving east-ish
+    else if (azimuthAngleToTopOfDive >= ((5 * Math.PI) / 4) && azimuthAngleToTopOfDive < ((7 * Math.PI) / 4)) { // Moving east-ish
       diveDirectionX = 1;
       diveDirectionZ = 0;
     }
