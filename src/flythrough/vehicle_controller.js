@@ -16,6 +16,7 @@ import { MotionGenerator } from "./motion_generator";
 import { StaticMotionGenerator } from "./motion_generator";
 import { RoadNavigator } from "./road_navigator";
 
+const QUARTER_PI = Math.PI * 0.25;
 const HALF_PI = Math.PI * 0.5;
 const TWO_PI = Math.PI * 2.0;
 
@@ -99,19 +100,19 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     topOfDiveRotationX = -HALF_PI;
     distanceToTopOfDive = CityTourMath.distanceBetweenPoints3D(initial.positionX, initial.positionY, initial.positionZ, topOfDivePositionX, topOfDivePositionY, topOfDivePositionZ);
 
-    if (azimuthAngleToTopOfDive >= ((7 * Math.PI) / 4) || azimuthAngleToTopOfDive < (Math.PI / 4)) {  // Moving north-ish
+    if (azimuthAngleToTopOfDive >= (7 * QUARTER_PI) || azimuthAngleToTopOfDive < QUARTER_PI) {  // Moving north-ish
       diveDirectionX = 0;
       diveDirectionZ = -1;
     }
-    else if (azimuthAngleToTopOfDive >= (Math.PI / 4) && azimuthAngleToTopOfDive < ((3 * Math.PI) / 4)) {  // Moving west-ish
+    else if (azimuthAngleToTopOfDive >= QUARTER_PI && azimuthAngleToTopOfDive < (3 * QUARTER_PI)) {  // Moving west-ish
       diveDirectionX = -1;
       diveDirectionZ = 0;
     }
-    else if (azimuthAngleToTopOfDive >= ((3 * Math.PI) / 4) && azimuthAngleToTopOfDive < ((5 * Math.PI) / 4)) { // Moving south-ish
+    else if (azimuthAngleToTopOfDive >= (3 * QUARTER_PI) && azimuthAngleToTopOfDive < (5 * QUARTER_PI)) { // Moving south-ish
       diveDirectionX = 0;
       diveDirectionZ = 1;
     }
-    else if (azimuthAngleToTopOfDive >= ((5 * Math.PI) / 4) && azimuthAngleToTopOfDive < ((7 * Math.PI) / 4)) { // Moving east-ish
+    else if (azimuthAngleToTopOfDive >= (5 * QUARTER_PI) && azimuthAngleToTopOfDive < (7 * QUARTER_PI)) { // Moving east-ish
       diveDirectionX = 1;
       diveDirectionZ = 0;
     }
