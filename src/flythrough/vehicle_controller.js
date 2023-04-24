@@ -79,8 +79,8 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     let distanceToTopOfDive;
     let diveDirectionX;
     let diveDirectionZ;
-    let bottomOfDivePositionX, bottomOfDivePositionY, bottomOfDivePositionZ;
-    var drivingTargetPositionX, drivingTargetPositionZ, drivingTargetRotationY;
+    let bottomOfDivePositionX, bottomOfDivePositionY, bottomOfDivePositionZ, bottomOfDiveRotationY;
+    var drivingTargetPositionX, drivingTargetPositionZ;
     var newAnimations = [];
     var drivingAnimations;
     var i;
@@ -141,7 +141,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     }
 
     bottomOfDivePositionY = roadNetwork.getRoadHeight(bottomOfDivePositionX, bottomOfDivePositionZ);
-    drivingTargetRotationY = determineTargetAzimuthAngle(topOfDivePositionX, topOfDivePositionZ, topOfDiveRotationY, drivingTargetPositionX, drivingTargetPositionZ);
+    bottomOfDiveRotationY = determineTargetAzimuthAngle(topOfDivePositionX, topOfDivePositionZ, topOfDiveRotationY, bottomOfDivePositionX, bottomOfDivePositionZ);
 
     frameCountPositionX = Math.ceil(distanceToTopOfDive / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionX = CityTourMath.clamp(frameCountPositionX, 60, 3 * 60);
@@ -162,11 +162,11 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
                                      new MotionGenerator(bottomOfDivePositionY, topOfDivePositionY, new SteepEasing(INTRO_DIVE_FRAME_COUNT, 0.0, 1.0)),
                                      new MotionGenerator(topOfDivePositionZ, bottomOfDivePositionZ, new LinearEasing(INTRO_DIVE_FRAME_COUNT)),
                                      new MotionGenerator(topOfDiveRotationX, 0.0, new SineEasing(INTRO_DIVE_FRAME_COUNT, 0.0, HALF_PI)),
-                                     new MotionGenerator(topOfDiveRotationY, drivingTargetRotationY, new SineEasing(INTRO_DIVE_FRAME_COUNT, 0.0, HALF_PI))));
+                                     new MotionGenerator(topOfDiveRotationY, bottomOfDiveRotationY, new SineEasing(INTRO_DIVE_FRAME_COUNT, 0.0, HALF_PI))));
 
     // Drive to target point
     navigator = new RoadNavigator(roadNetwork, pathFinder, drivingTargetPositionX, drivingTargetPositionZ);
-    drivingAnimations = buildDrivingAnimations(bottomOfDivePositionX, bottomOfDivePositionZ, drivingTargetRotationY, drivingTargetPositionX, drivingTargetPositionZ);
+    drivingAnimations = buildDrivingAnimations(bottomOfDivePositionX, bottomOfDivePositionZ, bottomOfDiveRotationY, drivingTargetPositionX, drivingTargetPositionZ);
 
     return newAnimations.concat(drivingAnimations);
   };
