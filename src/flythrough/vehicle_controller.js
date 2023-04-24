@@ -141,7 +141,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     }
 
     bottomOfDivePositionY = roadNetwork.getRoadHeight(bottomOfDivePositionX, bottomOfDivePositionZ);
-    bottomOfDiveRotationY = determineTargetAzimuthAngle(topOfDivePositionX, topOfDivePositionZ, topOfDiveRotationY, bottomOfDivePositionX, bottomOfDivePositionZ);
+    bottomOfDiveRotationY = determineTargetAzimuthAngle(0, 0, topOfDiveRotationY, diveDirectionX, diveDirectionZ);
 
     frameCountPositionX = Math.ceil(distanceToTopOfDive / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionX = CityTourMath.clamp(frameCountPositionX, 60, 3 * 60);
