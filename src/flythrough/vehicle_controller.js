@@ -124,24 +124,21 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     if (!roadNetwork.hasIntersection(bottomOfDivePositionX, bottomOfDivePositionZ)) {
       bottomOfDivePositionX = topOfDivePositionX;
       bottomOfDivePositionZ = topOfDivePositionZ;
-      drivingTargetPositionX = topOfDivePositionX;
-      drivingTargetPositionZ = topOfDivePositionZ;
-    }
-    else {
-      drivingTargetPositionX = bottomOfDivePositionX;
-      drivingTargetPositionZ = bottomOfDivePositionZ;
-
-      i = 0;
-      while (i < 3 &&
-             roadNetwork.hasEdgeBetween(drivingTargetPositionX, drivingTargetPositionZ, drivingTargetPositionX + diveDirectionX, drivingTargetPositionZ + diveDirectionZ) === true) {
-        drivingTargetPositionX += diveDirectionX;
-        drivingTargetPositionZ += diveDirectionZ;
-        i += 1;
-      }
     }
 
     bottomOfDivePositionY = roadNetwork.getRoadHeight(bottomOfDivePositionX, bottomOfDivePositionZ);
     bottomOfDiveRotationY = determineTargetAzimuthAngle(0, 0, topOfDiveRotationY, diveDirectionX, diveDirectionZ);
+
+    drivingTargetPositionX = bottomOfDivePositionX;
+    drivingTargetPositionZ = bottomOfDivePositionZ;
+
+    i = 0;
+    while (i < 3 &&
+           roadNetwork.hasEdgeBetween(drivingTargetPositionX, drivingTargetPositionZ, drivingTargetPositionX + diveDirectionX, drivingTargetPositionZ + diveDirectionZ) === true) {
+      drivingTargetPositionX += diveDirectionX;
+      drivingTargetPositionZ += diveDirectionZ;
+      i += 1;
+    }
 
     frameCountPositionX = Math.ceil(distanceToTopOfDive / DRIVING_HORIZONTAL_MOTION_DELTA);
     frameCountPositionX = CityTourMath.clamp(frameCountPositionX, 60, 3 * 60);
