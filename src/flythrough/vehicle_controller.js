@@ -470,10 +470,10 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   };
 
   let minimizeAngleDifference = function(candidateAngle, referenceAngle) {
-    if ((referenceAngle - candidateAngle) > Math.PI) {
+    while ((referenceAngle - candidateAngle) > Math.PI) {
       candidateAngle += TWO_PI;
     }
-    else if ((referenceAngle - candidateAngle) < -Math.PI) {
+    while ((referenceAngle - candidateAngle) < -Math.PI) {
       candidateAngle -= TWO_PI;
     }
 
