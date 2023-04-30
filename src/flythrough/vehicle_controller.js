@@ -86,15 +86,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     var i;
 
     let azimuthAngleToTopOfDive = azimuthAngleToPoint(initial.positionX, initial.positionZ, topOfDivePositionX, topOfDivePositionZ);
-    topOfDiveRotationY = azimuthAngleToTopOfDive;
-
-    // Prevent turns wider than 180 degrees
-    if ((initial.rotationY - topOfDiveRotationY) > Math.PI) {
-      topOfDiveRotationY += TWO_PI;
-    }
-    else if ((initial.rotationY - topOfDiveRotationY) < -Math.PI) {
-      topOfDiveRotationY -= TWO_PI;
-    }
+    topOfDiveRotationY = minimizeAngleDifference(azimuthAngleToTopOfDive, initial.rotationY);
 
     topOfDivePositionY = AIRPLANE_Y + roadNetwork.getRoadHeight(topOfDivePositionX, topOfDivePositionZ);
     topOfDiveRotationX = -HALF_PI;
@@ -385,13 +377,7 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
   var determineTargetAzimuthAngle = function(initialPositionX, initialPositionZ, initialRotationY, targetPositionX, targetPositionZ) {
     let newTargetYRotation = azimuthAngleToPoint(initialPositionX, initialPositionZ, targetPositionX, targetPositionZ);
 
-    // Prevent turns wider than 180 degrees
-    if ((initialRotationY - newTargetYRotation) > Math.PI) {
-      newTargetYRotation += TWO_PI;
-    }
-    else if ((initialRotationY - newTargetYRotation) < -Math.PI) {
-      newTargetYRotation -= TWO_PI;
-    }
+    newTargetYRotation = minimizeAngleDifference(newTargetYRotation, initialRotationY);
 
     return newTargetYRotation;
   };
@@ -481,6 +467,17 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     }
 
     return angle;
+  };
+
+  let minimizeAngleDifference = function(candidateAngle, referenceAngle) {
+    if ((referenceAngle - candidateAngle) > Math.PI) {
+      candidateAngle += TWO_PI;
+    }
+    else if ((referenceAngle - candidateAngle) < -Math.PI) {
+      candidateAngle -= TWO_PI;
+    }
+
+    return candidateAngle;
   };
 
 
