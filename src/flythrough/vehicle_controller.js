@@ -469,6 +469,9 @@ var VehicleController = function(terrain, roadNetwork, neighborhoods, sceneView,
     return angle;
   };
 
+  // Returns either `candidateAngle` or a 2π multiple of it,
+  // such that difference between that angle and `referenceAngle`
+  // is between 0 and π.
   let minimizeAngleDifference = function(candidateAngle, referenceAngle) {
     while ((referenceAngle - candidateAngle) > Math.PI) {
       candidateAngle += TWO_PI;
