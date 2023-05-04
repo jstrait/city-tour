@@ -10,10 +10,7 @@ import { CityTourMath } from "./../math";
    then finds a path to that intersection. A path is a sequence of intersections
    to travel to that will ultimately end up at the target intersection.
 */
-var RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTargetZ) {
-  var targetX = initialTargetX;
-  var targetZ = initialTargetZ;
-
+var RoadNavigator = function(roadNetwork, pathFinder, targetX, targetZ) {
   var path = [];
 
   var chooseNewTarget = function() {

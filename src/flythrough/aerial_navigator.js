@@ -15,14 +15,12 @@ import { CityTourMath } from "./../math";
    Target points are chosen to alternate between either a point north or south of
    the previous target, or east or west of the previous target.
 */
-var AerialNavigator = function(roadNetwork, initialTargetX, initialTargetZ) {
+var AerialNavigator = function(roadNetwork, targetX, targetZ) {
   var MAX_ITERATIONS = 100;
 
   var X_AXIS = 1;
   var Z_AXIS = 2;
 
-  var targetX = initialTargetX;
-  var targetZ = initialTargetZ;
   var movementAxis = X_AXIS;
 
   var searchForTargetOnAxis = function() {
