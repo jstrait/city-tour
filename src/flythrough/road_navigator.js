@@ -13,8 +13,6 @@ import { CityTourMath } from "./../math";
 var RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTargetZ) {
   var targetX = initialTargetX;
   var targetZ = initialTargetZ;
-  var subTargetX = initialTargetX;
-  var subTargetZ = initialTargetZ;
 
   var path = [];
 
@@ -34,20 +32,17 @@ var RoadNavigator = function(roadNetwork, pathFinder, initialTargetX, initialTar
     if (path.length === 0) {
       var newTargetCoordinates = chooseNewTarget();
       path = pathFinder.shortestPath(targetX, targetZ, newTargetCoordinates[0], newTargetCoordinates[1]);
-
-      targetX = newTargetCoordinates[0];
-      targetZ = newTargetCoordinates[1];
     }
 
     var nextTargetPoint = path.splice(0, 1);
-    subTargetX = nextTargetPoint[0].x;
-    subTargetZ = nextTargetPoint[0].z;
+    targetX = nextTargetPoint[0].x;
+    targetZ = nextTargetPoint[0].z;
   };
 
 
   return {
-    targetX: function() { return subTargetX; },
-    targetZ: function() { return subTargetZ; },
+    targetX: function() { return targetX; },
+    targetZ: function() { return targetZ; },
     nextTarget: nextTarget,
   };
 };
