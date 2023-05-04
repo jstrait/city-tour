@@ -28,7 +28,7 @@ var AerialNavigator = function(roadNetwork, targetX, targetZ) {
     var newTargetX = targetX;
     var newTargetZ = targetZ;
 
-    while ((targetX === newTargetX && targetZ === newTargetZ) || !roadNetwork.hasIntersection(newTargetX, newTargetZ)) {
+    while ((targetX === newTargetX && targetZ === newTargetZ) || roadNetwork.hasIntersection(newTargetX, newTargetZ) !== true) {
       if (iterationCount >= MAX_ITERATIONS) {
         return;
       }
