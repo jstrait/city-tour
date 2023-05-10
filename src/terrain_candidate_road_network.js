@@ -32,33 +32,40 @@ var TerrainCandidateRoadNetwork = function(terrain, roadNetwork, maxRoadAngle) {
     var eastHeight = terrain.heightAt(x + 1, z);
     var eastAngle = Math.atan2((heightAtCurrentPoint - eastHeight), Config.BLOCK_WIDTH);
 
-    if (terrain.waterHeightAt(x, z - 1) > 0.0) {
-      addBridgeEdge(edges, x, z, 0, -1);
-    }
-    else if (Math.abs(northAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x, destinationZ: z - 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
-    }
-
-    if (terrain.waterHeightAt(x, z + 1) > 0.0) {
-      addBridgeEdge(edges, x, z, 0, 1);
-    }
-    else if (Math.abs(southAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x, destinationZ: z + 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+    if (hasIntersection(x, z - 1) === true) {
+      if (terrain.waterHeightAt(x, z - 1) > 0.0) {
+        addBridgeEdge(edges, x, z, 0, -1);
+      }
+      else if (Math.abs(northAngle) <= maxRoadAngle) {
+        edges.push({ destinationX: x, destinationZ: z - 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+      }
     }
 
+    if (hasIntersection(x, z + 1) === true) {
+      if (terrain.waterHeightAt(x, z + 1) > 0.0) {
+        addBridgeEdge(edges, x, z, 0, 1);
+      }
+      else if (Math.abs(southAngle) <= maxRoadAngle) {
+        edges.push({ destinationX: x, destinationZ: z + 1, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+      }
+    }
 
-    if (terrain.waterHeightAt(x - 1, z) > 0.0) {
-      addBridgeEdge(edges, x, z, -1, 0);
-    }
-    else if (Math.abs(westAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x - 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+    if (hasIntersection(x - 1, z) === true) {
+      if (terrain.waterHeightAt(x - 1, z) > 0.0) {
+        addBridgeEdge(edges, x, z, -1, 0);
+      }
+      else if (Math.abs(westAngle) <= maxRoadAngle) {
+        edges.push({ destinationX: x - 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+      }
     }
 
-    if (terrain.waterHeightAt(x + 1, z) > 0.0) {
-      addBridgeEdge(edges, x, z, 1, 0);
-    }
-    else if (Math.abs(eastAngle) <= maxRoadAngle) {
-      edges.push({ destinationX: x + 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+    if (hasIntersection(x + 1, z) === true) {
+      if (terrain.waterHeightAt(x + 1, z) > 0.0) {
+        addBridgeEdge(edges, x, z, 1, 0);
+      }
+      else if (Math.abs(eastAngle) <= maxRoadAngle) {
+        edges.push({ destinationX: x + 1, destinationZ: z, edge: { distance: 1.0, gradeType: RoadNetwork.SURFACE_GRADE }});
+      }
     }
 
     return edges;
