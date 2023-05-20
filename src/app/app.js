@@ -16,6 +16,8 @@ import { TimerLoop } from "./timer_loop";
 
 import { WorldGenerator } from "./../generators/world_generator";
 
+THREE.ColorManagement.enabled = false;
+
 var App = (function() {
   var EMPTY_TERRAIN = Terrain([[]], 1);
   var EMPTY_WORLD_DATA = {

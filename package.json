@@ -16,7 +16,7 @@
     "supports es6"
   ],
   "dependencies": {
-    "three": "0.151.3"
+    "three": "0.152.2"
   },
   "devDependencies": {
     "@babel/core": "7.21.8",
