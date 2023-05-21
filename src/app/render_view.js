@@ -52,7 +52,7 @@ var RenderView = function(container, scene) {
 
   renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+  renderer.setPixelRatio(window.devicePixelRatio);
 
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, DEFAULT_ASPECT, NEAR, FAR);
   camera.lookAt(scene.position);
