@@ -16,10 +16,10 @@ var Builder = function(gridTexture) {
 
     scene = new THREE.Scene();
 
-    light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+    light = new THREE.HemisphereLight(0xffffff, 0xffffff, Math.PI);
     scene.add(light);
 
-    directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    directionalLight = new THREE.DirectionalLight(0xffffff, Math.PI);
     directionalLight.position.set(-1, 0.9, 0.9);
     scene.add(directionalLight);
 
