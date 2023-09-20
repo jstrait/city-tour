@@ -28,7 +28,7 @@ Once this is all created, you can move around the city using touch gestures (mob
 
 * If first time building, run `yarn install`
 * Run `yarn build-dev`, which will build the app in the `dist/` folder
-* Open `dist/city_tour.html` in your browser (make sure running a local server such as MAMP)
+* Open `dist/index.html` in your browser (make sure running a local server such as MAMP)
 * To automatically rebuild when source files change, run `yarn build-dev --watch` instead
 
 ## Building for Production

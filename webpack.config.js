@@ -51,7 +51,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "city_tour.html" },
+        { from: "html/index.html" },
         { from: "lib/*.js" },
         { from: "textures/*.png" },
       ],
