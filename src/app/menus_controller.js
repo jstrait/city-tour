@@ -10,10 +10,6 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
   // "New City" menu
   var newCityMenuTitle = document.getElementById("menu-newcity-title");
   var newCityMenu = document.getElementById("menu-newcity");
-  var terrainJitter = document.getElementById("terrain-jitter");
-  var heightJitterDecay = document.getElementById("terrain-decay");
-  var hillCount = document.getElementById("terrain-hill-count");
-  var maxHillHeight = document.getElementById("terrain-max-hill-height");
   var includeRiver = document.getElementById("terrain-river");
   var maxBuildingStories = document.getElementById("buildings-max-stories");
   var neighborhoodCount = document.getElementById("buildings-neighborhood-count");
@@ -22,6 +18,10 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
   // "Dev" menu
   let devMenuTitle = null;
   let devMenu = null;
+  let terrainJitter = null;
+  let heightJitterDecay = null;
+  let hillCount = null;
+  let maxHillHeight = null;
   let showGestureMarkersToggle = null;
   let showNeighborhoodCentersToggle = null;
   let showRouteCurvesToggle = null;
@@ -111,6 +111,30 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
     // The reason for `style="width: auto;"` is to work around all `<label>` tags being given
     // a hard-coded width in `city_tour.css`, causing any label with wider text to wrap.
     devMenu.innerHTML = `<span class="block">
+  <label>Jitter</label>
+  <span class="control-legend">&minus;</span>
+  <input id="terrain-jitter" type="range" value="${cityConfigService.heightJitter()}" min="0" max="16" step="0.05" />
+  <span class="control-legend">+</span>
+</span>
+<span class="block">
+  <label>Ruggedness</label>
+  <span class="control-legend">&minus;</span>
+  <input id="terrain-decay" type="range" value="${cityConfigService.heightJitterDecay()}" min="0.0" max="1.0" step="0.01" />
+  <span class="control-legend">+</span>
+</span>
+<span class="block">
+  <label>Hill Count</label>
+  <span class="control-legend">&minus;</span>
+  <input id="terrain-hill-count" type="range" value="${cityConfigService.hillCount()}" min="0" max="50" step="1" />
+  <span class="control-legend">+</span>
+</span>
+<span class="block">
+  <label>Hill Size</label>
+  <span class="control-legend">&minus;</span>
+  <input id="terrain-max-hill-height" type="range" value="${cityConfigService.maxHillHeight()}" min="4" max="33" step="1" />
+  <span class="control-legend">+</span>
+</span>
+<span class="block">
   <label for="dev-show-gesture-markers" style="width: auto;">Show Gesture Markers</label>
   <input id="dev-show-gesture-markers" type="checkbox"${(sceneView.isGestureMarkersVisible() === true) ? " checked" : ""} />
 </span>
@@ -123,6 +147,18 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
   <input id="dev-show-route-curves" type="checkbox"${(sceneView.isRouteCurvesVisible() === true) ? " checked" : ""} />
 </span>`;
     newCityMenu.insertAdjacentElement("afterend", devMenu);
+
+    terrainJitter = document.getElementById("terrain-jitter");
+    terrainJitter.addEventListener("change", function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
+
+    heightJitterDecay = document.getElementById("terrain-decay");
+    heightJitterDecay.addEventListener("change", function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
+
+    hillCount = document.getElementById("terrain-hill-count");
+    hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
+
+    maxHillHeight = document.getElementById("terrain-max-hill-height");
+    maxHillHeight.addEventListener("change", function(e) { cityConfigService.setMaxHillHeight(parseInt(e.target.value, 10)); }, false);
 
     showGestureMarkersToggle = document.getElementById("dev-show-gesture-markers");
     showGestureMarkersToggle.addEventListener("change", function(e) { sceneView.setIsGestureMarkersVisible(e.target.checked); }, false);
@@ -158,10 +194,6 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
 
   // "New City" menu event handlers
   newCityMenuTitle.addEventListener("click", toggleNewCityMenu, false);
-  terrainJitter.addEventListener("change", function(e) { cityConfigService.setHeightJitter(parseInt(e.target.value)); }, false);
-  heightJitterDecay.addEventListener("change", function(e) { cityConfigService.setHeightJitterDecay(parseFloat(e.target.value)); }, false);
-  hillCount.addEventListener("change", function(e) { cityConfigService.setHillCount(parseInt(e.target.value)); }, false);
-  maxHillHeight.addEventListener("change", function(e) { cityConfigService.setMaxHillHeight(parseInt(e.target.value, 10)); }, false);
   includeRiver.addEventListener("change", function(e) { cityConfigService.setIncludeRiver(e.target.checked); }, false);
   maxBuildingStories.addEventListener("change", function(e) { cityConfigService.setMaxBuildingStories(parseInt(e.target.value)); }, false);
   neighborhoodCount.addEventListener("change", function(e) { cityConfigService.setNeighborhoodCount(parseInt(e.target.value)); }, false);
