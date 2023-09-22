@@ -5,81 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
     <title>City Tour</title>
     <link rel="stylesheet" type="text/css" media="all" href="city_tour.css" />
-</head>
-<body>
-  <div id="container" class="relative full-width full-height">
-    <div id="menus-container" class="absolute top-0 right-0 flex flex-column flex-align-end pointer-events-none">
-      <div class="flex pointer-events-auto">
-        <button id="menu-newcity-title" class="menu-title">New City</button>
-        <button id="menu-about-title" class="menu-title">About</button>
-      </div>
-      <div id="menu-newcity" class="display-none menu bg-white bt-thin bt-gray pointer-events-auto">
-        <div class="section">
-          <h3>Terrain</h3>
-          <span class="block">
-            <label for="terrain-river">River</label>
-            <input id="terrain-river" type="checkbox" checked />
+  </head>
+  <body>
+    <div id="container" class="relative full-width full-height">
+      <div id="menus-container" class="absolute top-0 right-0 flex flex-column flex-align-end pointer-events-none">
+        <div class="flex pointer-events-auto">
+          <button id="menu-newcity-title" class="menu-title">New City</button>
+          <button id="menu-about-title" class="menu-title">About</button>
+        </div>
+        <div id="menu-newcity" class="display-none menu bg-white bt-thin bt-gray pointer-events-auto">
+          <div class="section">
+            <h3>Terrain</h3>
+            <span class="block">
+              <label for="terrain-river">River</label>
+              <input id="terrain-river" type="checkbox" checked />
+            </span>
+          </div>
+          <div class="section">
+            <h3>Buildings</h3>
+            <span class="flex flex-align-center">
+              <label>City Size</label>
+              <span class="control-legend">&minus;</span>
+              <input id="buildings-neighborhood-count" type="range" value="15" min="1" max="50" step="1" />
+              <span class="control-legend">+</span>
+            </span>
+            <span class="flex flex-align-center">
+              <label>Max Stories</label>
+              <span class="control-legend">&minus;</span>
+              <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
+              <span class="control-legend">+</span>
+            </span>
+          </div>
+          <span class="block center">
+            <button id="reset">Create New City</button>
           </span>
         </div>
-
-        <div class="section">
-          <h3>Buildings</h3>
+        <div id="menu-about" class="display-none menu bg-white bt-thin bt-gray center pointer-events-auto">
+          <h1 id="app-name" class="mt0">City Tour</h1>
+          <p class="mb0">Code available <a href="https://github.com/jstrait/city-tour/">at GitHub</a></p>
+          <p class="mt0 mb0">Made using <a href="https://threejs.org">three.js</a> and WebGL</p>
+          <p class="mb0">Copyright &copy; 2012-22 <a href="https://www.joelstrait.com/">Joel Strait</a></p>
+        </div>
+      </div>
+      <div id="navigation-controls-container" class="absolute bottom-0 right-0 bg-white">
+        <a id="navigation-controls-toggle" href="javascript:void(0);" class="block full-width center no-underline">&#9650;</a>
+        <div id="navigation-controls-inner-container" class="display-none navigation-controls-container">
           <span class="flex flex-align-center">
-            <label>City Size</label>
-            <span class="control-legend">&minus;</span>
-            <input id="buildings-neighborhood-count" type="range" value="15" min="1" max="50" step="1" />
-            <span class="control-legend">+</span>
+            <label>Rotation</label>
+            <span class="control-legend">&orarr;</span>
+            <input id="azimuth-angle" type="range" value="-30" min="-180" max="180" step="1" />
+            <span class="control-legend">&olarr;</span>
           </span>
           <span class="flex flex-align-center">
-            <label>Max Stories</label>
-            <span class="control-legend">&minus;</span>
-            <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
-            <span class="control-legend">+</span>
+            <label>Tilt</label>
+            <span class="control-legend">&rarr;</span>
+            <input id="tilt-angle-percentage" type="range" value="0.2" min="0.0" max="1.0" step="0.001" />
+            <span class="control-legend">&darr;</span>
+          </span>
+          <span class="flex flex-justify-center" style="padding-top: 0.5rem;">
+            <button id="zoom-in" class="user-select-none">Zoom In</button>
+            <button id="zoom-out" class="user-select-none">Zoom Out</button>
           </span>
         </div>
-
-        <span class="block center">
-          <button id="reset">Create New City</button>
-        </span>
-      </div>
-
-      <div id="menu-about" class="display-none menu bg-white bt-thin bt-gray center pointer-events-auto">
-        <h1 id="app-name" class="mt0">City Tour</h1>
-        <p class="mb0">Code available <a href="https://github.com/jstrait/city-tour/">at GitHub</a></p>
-        <p class="mt0 mb0">Made using <a href="https://threejs.org">three.js</a> and WebGL</p>
-        <p class="mb0">Copyright &copy; 2012-22 <a href="https://www.joelstrait.com/">Joel Strait</a></p>
+        <div class="center navigation-controls-container">
+          <button id="flythrough-toggle">Take a Tour</button>
+        </div>
       </div>
     </div>
-
-
-    <div id="navigation-controls-container" class="absolute bottom-0 right-0 bg-white">
-      <a id="navigation-controls-toggle" href="javascript:void(0);" class="block full-width center no-underline">&#9650;</a>
-      <div id="navigation-controls-inner-container" class="display-none navigation-controls-container">
-        <span class="flex flex-align-center">
-          <label>Rotation</label>
-          <span class="control-legend">&orarr;</span>
-          <input id="azimuth-angle" type="range" value="-30" min="-180" max="180" step="1" />
-          <span class="control-legend">&olarr;</span>
-        </span>
-        <span class="flex flex-align-center">
-          <label>Tilt</label>
-          <span class="control-legend">&rarr;</span>
-          <input id="tilt-angle-percentage" type="range" value="0.2" min="0.0" max="1.0" step="0.001" />
-          <span class="control-legend">&darr;</span>
-        </span>
-        <span class="flex flex-justify-center" style="padding-top: 0.5rem;">
-          <button id="zoom-in" class="user-select-none">Zoom In</button>
-          <button id="zoom-out" class="user-select-none">Zoom Out</button>
-        </span>
-      </div>
-      <div class="center navigation-controls-container">
-        <button id="flythrough-toggle">Take a Tour</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="loading-message" class="flex absolute top-0 bottom-0 left-0 right-0">Building new city...</div>
-</body>
-<script src="lib/analytics.js" type="text/javascript"></script>
-<script src="city_tour.js" type="text/javascript"></script>
+    <div id="loading-message" class="flex absolute top-0 bottom-0 left-0 right-0">Building new city...</div>
+  </body>
+  <script src="lib/analytics.js" type="text/javascript"></script>
+  <script src="city_tour.js" type="text/javascript"></script>
 </html>
