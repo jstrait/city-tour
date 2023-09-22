@@ -6,11 +6,11 @@ var CityConfigService = function() {
   var NEIGHBORHOOD_MAX_COLUMNS = 20;
   var NEIGHBORHOOD_MAX_ROWS = 20;
 
-  var heightJitter = 1.65;
-  var heightJitterDecay = 0.65;
+  var heightJitter = 2.2;
+  var heightJitterDecay = 0.7;
   var includeRiver = true;
-  var hillCount = 40;
-  var maxHillHeight = 16.0;
+  var hillCount = 0;
+  var maxHillHeight = 0.0;
   var safeFromDecayBlocks = 6;
   var blockDistanceDecayBegins = 6;
   var maxBuildingStories = 40;
