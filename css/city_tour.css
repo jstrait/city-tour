@@ -127,8 +127,8 @@ input[type="range"] {
   }
 }
 
-.full-width { width: 100%; }
-.full-height { height: 100%; }
+.width-full { width: 100%; }
+.height-full { height: 100%; }
 .relative { position: relative; }
 .absolute { position: absolute; }
 .block { display: block; }
@@ -152,8 +152,8 @@ input[type="range"] {
   cursor: grabbing;
 }
 
-.mt0 { margin-top: 0; }
-.mb0 { margin-bottom: 0; }
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
 
 .black { color: #2a2b2b; }
 .bg-white { background: #fff; }
