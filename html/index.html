@@ -14,29 +14,25 @@
           <button id="menu-about-title" class="menu-title">About</button>
         </div>
         <div id="menu-newcity" class="display-none menu bg-white bt-thin bt-gray pointer-events-auto">
-          <div class="section">
-            <h3>Terrain</h3>
-            <span class="block">
-              <label for="terrain-river">River</label>
-              <input id="terrain-river" type="checkbox" checked />
-            </span>
-          </div>
-          <div class="section">
-            <h3>Buildings</h3>
-            <span class="flex flex-align-center">
-              <label>City Size</label>
-              <span class="control-legend">&minus;</span>
-              <input id="buildings-neighborhood-count" type="range" value="15" min="1" max="50" step="1" />
-              <span class="control-legend">+</span>
-            </span>
-            <span class="flex flex-align-center">
-              <label>Max Stories</label>
-              <span class="control-legend">&minus;</span>
-              <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
-              <span class="control-legend">+</span>
-            </span>
-          </div>
-          <span class="block center">
+          <h3>Terrain</h3>
+          <span class="block">
+            <label for="terrain-river">River</label>
+            <input id="terrain-river" type="checkbox" checked />
+          </span>
+          <h3 class="mt-1">Buildings</h3>
+          <span class="flex flex-align-center">
+            <label>City Size</label>
+            <span class="control-legend">&minus;</span>
+            <input id="buildings-neighborhood-count" type="range" value="15" min="1" max="50" step="1" />
+            <span class="control-legend">+</span>
+          </span>
+          <span class="flex flex-align-center">
+            <label>Max Stories</label>
+            <span class="control-legend">&minus;</span>
+            <input id="buildings-max-stories" type="range" value="40" min="1" max="80" step="1" />
+            <span class="control-legend">+</span>
+          </span>
+          <span class="block mt-1 center">
             <button id="reset">Create New City</button>
           </span>
         </div>
