@@ -110,7 +110,8 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
     devMenu.className = "display-none menu bg-white bt-thin bt-gray pointer-events-auto";
     // The reason for `style="width: auto;"` is to work around all `<label>` tags being given
     // a hard-coded width in `city_tour.css`, causing any label with wider text to wrap.
-    devMenu.innerHTML = `<span class="block">
+    devMenu.innerHTML = `<h3>Terrain</h3>
+<span class="block">
   <label>Jitter</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-jitter" type="range" value="${cityConfigService.heightJitter()}" min="0" max="16" step="0.05" />
@@ -134,6 +135,7 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
   <input id="terrain-max-hill-height" type="range" value="${cityConfigService.maxHillHeight()}" min="4" max="33" step="1" />
   <span class="control-legend">+</span>
 </span>
+<h3 class="mt-1">Debug</h3>
 <span class="block">
   <label for="dev-show-gesture-markers" style="width: auto;">Show Gesture Markers</label>
   <input id="dev-show-gesture-markers" type="checkbox"${(sceneView.isGestureMarkersVisible() === true) ? " checked" : ""} />
