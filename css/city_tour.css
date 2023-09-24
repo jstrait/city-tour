@@ -125,6 +125,7 @@ input[type="range"] {
 
 .width-full { width: 100%; }
 .height-full { height: 100%; }
+.max-height-full { max-height: 100%; }
 .relative { position: relative; }
 .absolute { position: absolute; }
 .block { display: block; }
