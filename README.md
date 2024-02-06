@@ -24,17 +24,18 @@ Next, this abstract definition is turned into a 3D model that can be rendered wi
 
 Once this is all created, you can move around the city using touch gestures (mobile) or the mouse (desktop). Navigation works similar to Google/Apple Maps. You can also click the "Take a Tour" button to go on an automatic flight/drive through the city.
 
-## Building / Running Locally
+## Running Locally
 
-* If first time building, run `yarn install`
-* Run `yarn build-dev`, which will build the app in the `dist/` folder
-* Open `dist/index.html` in your browser (make sure running a local server such as MAMP)
-* To automatically rebuild when source files change, run `yarn build-dev --watch` instead
+* If running the app locally for the first time, run `yarn install`
+* Run `yarn serve`, which will build the app and start a local development server
+* Open the `localhost` URL listed in the command-line output in your browser
+* If a source file is changed while the server is running the app will automatically be rebuilt. However, you'll need to manually refresh the page in your browser to see the changes.
 
-## Building for Production
+## Building For Production
 
-* Run `yarn build-prod`
-* `dist/` folder will contain the files that should be deployed to production
+* If building the app for the first time, run `yarn install`
+* Run `yarn build`
+* The `dist/` folder will contain the files that should be deployed to production
 
 ## Running Tests
 
