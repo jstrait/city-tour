@@ -1,5 +1,4 @@
 const path = require("path");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -48,7 +47,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         { from: "html/index.html" },
@@ -63,5 +61,6 @@ module.exports = {
   output: {
     filename: "city_tour.js",
     path: path.resolve(__dirname, "./dist"),
+    clean: true,
   }
 };
