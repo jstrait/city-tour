@@ -9,7 +9,7 @@
   "homepage": "https://joelstrait.com/citytour/",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
-    "serve": "webpack serve --config webpack.config.js --mode production --compress --no-hot --no-live-reload --no-magic-html --no-web-socket-server",
+    "serve": "webpack serve --config webpack.config.js --mode production --compress --no-bonjour --no-hot --no-live-reload --no-magic-html --no-static --no-web-socket-server",
     "test": "jest"
   },
   "browserslist": [
