@@ -137,16 +137,16 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
 </span>
 <h3 class="mt-1">Debug</h3>
 <span class="block">
-  <label for="dev-show-gesture-markers" style="width: auto;">Show Gesture Markers</label>
   <input id="dev-show-gesture-markers" type="checkbox"${(sceneView.isGestureMarkersVisible() === true) ? " checked" : ""} />
+  <label for="dev-show-gesture-markers" style="width: auto;">Show Gesture Markers</label>
 </span>
 <span class="block">
-  <label for="dev-show-neighborhood-centers" style="width: auto;">Show Neighborhood Centers</label>
   <input id="dev-show-neighborhood-centers" type="checkbox"${(sceneView.isNeighborhoodCentersVisible() === true) ? " checked" : ""} />
+  <label for="dev-show-neighborhood-centers" style="width: auto;">Show Neighborhood Centers</label>
 </span>
 <span class="block">
-  <label for="dev-show-route-curves" style="width: auto;">Show Driving Path</label>
   <input id="dev-show-route-curves" type="checkbox"${(sceneView.isRouteCurvesVisible() === true) ? " checked" : ""} />
+  <label for="dev-show-route-curves" style="width: auto;">Show Driving Path</label>
 </span>`;
     newCityMenu.insertAdjacentElement("afterend", devMenu);
 
