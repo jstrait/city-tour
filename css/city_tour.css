@@ -14,7 +14,6 @@ body {
 }
 
 label {
-  width: 6.0rem;
   display: inline-block;
 }
 
@@ -124,6 +123,7 @@ input[type="range"] {
 }
 
 .width-full { width: 100%; }
+.width-4 { width: 6.0rem; }
 .height-full { height: 100%; }
 .max-height-full { max-height: 100%; }
 .relative { position: relative; }

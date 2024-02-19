@@ -108,29 +108,27 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
     devMenu = document.createElement("div");
     devMenu.id = "menu-dev";
     devMenu.className = "display-none menu bg-white bt-thin bt-gray pointer-events-auto";
-    // The reason for `style="width: auto;"` is to work around all `<label>` tags being given
-    // a hard-coded width in `city_tour.css`, causing any label with wider text to wrap.
     devMenu.innerHTML = `<h3>Terrain</h3>
 <span class="block">
-  <label>Jitter</label>
+  <label class="width-4">Jitter</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-jitter" type="range" value="${cityConfigService.heightJitter()}" min="0" max="16" step="0.05" />
   <span class="control-legend">+</span>
 </span>
 <span class="block">
-  <label>Ruggedness</label>
+  <label class="width-4">Ruggedness</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-decay" type="range" value="${cityConfigService.heightJitterDecay()}" min="0.0" max="1.0" step="0.01" />
   <span class="control-legend">+</span>
 </span>
 <span class="block">
-  <label>Hill Count</label>
+  <label class="width-4">Hill Count</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-hill-count" type="range" value="${cityConfigService.hillCount()}" min="0" max="50" step="1" />
   <span class="control-legend">+</span>
 </span>
 <span class="block">
-  <label>Hill Size</label>
+  <label class="width-4">Hill Size</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-max-hill-height" type="range" value="${cityConfigService.maxHillHeight()}" min="4" max="33" step="1" />
   <span class="control-legend">+</span>
@@ -138,15 +136,15 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
 <h3 class="mt-1">Debug</h3>
 <span class="block">
   <input id="dev-show-gesture-markers" type="checkbox"${(sceneView.isGestureMarkersVisible() === true) ? " checked" : ""} />
-  <label for="dev-show-gesture-markers" style="width: auto;">Show Gesture Markers</label>
+  <label for="dev-show-gesture-markers">Show Gesture Markers</label>
 </span>
 <span class="block">
   <input id="dev-show-neighborhood-centers" type="checkbox"${(sceneView.isNeighborhoodCentersVisible() === true) ? " checked" : ""} />
-  <label for="dev-show-neighborhood-centers" style="width: auto;">Show Neighborhood Centers</label>
+  <label for="dev-show-neighborhood-centers">Show Neighborhood Centers</label>
 </span>
 <span class="block">
   <input id="dev-show-route-curves" type="checkbox"${(sceneView.isRouteCurvesVisible() === true) ? " checked" : ""} />
-  <label for="dev-show-route-curves" style="width: auto;">Show Driving Path</label>
+  <label for="dev-show-route-curves">Show Driving Path</label>
 </span>`;
     newCityMenu.insertAdjacentElement("afterend", devMenu);
 
