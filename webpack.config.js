@@ -40,7 +40,6 @@ module.exports = {
           compress: true,
           mangle: true,
         },
-        exclude: "lib/",
         extractComments: false,
       }),
       new CssMinimizerPlugin(),
@@ -50,7 +49,6 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: "html/index.html" },
-        { from: "lib/*.js" },
         { from: "textures/*.png" },
       ],
     }),
