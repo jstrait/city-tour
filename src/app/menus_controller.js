@@ -109,25 +109,25 @@ var MenusController = function(cityConfigService, sceneView, messageBroker) {
     devMenu.id = "menu-dev";
     devMenu.className = "display-none menu bg-white bt-thin bt-gray pointer-events-auto";
     devMenu.innerHTML = `<h3>Terrain</h3>
-<span class="block">
+<span class="flex flex-align-center">
   <label class="width-4">Jitter</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-jitter" type="range" value="${cityConfigService.heightJitter()}" min="0" max="16" step="0.05" />
   <span class="control-legend">+</span>
 </span>
-<span class="block">
+<span class="flex flex-align-center">
   <label class="width-4">Ruggedness</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-decay" type="range" value="${cityConfigService.heightJitterDecay()}" min="0.0" max="1.0" step="0.01" />
   <span class="control-legend">+</span>
 </span>
-<span class="block">
+<span class="flex flex-align-center">
   <label class="width-4">Hill Count</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-hill-count" type="range" value="${cityConfigService.hillCount()}" min="0" max="50" step="1" />
   <span class="control-legend">+</span>
 </span>
-<span class="block">
+<span class="flex flex-align-center">
   <label class="width-4">Hill Size</label>
   <span class="control-legend">&minus;</span>
   <input id="terrain-max-hill-height" type="range" value="${cityConfigService.maxHillHeight()}" min="4" max="33" step="1" />

@@ -13,10 +13,6 @@ body {
   background: linear-gradient(#66ccff, #fff);
 }
 
-label {
-  display: inline-block;
-}
-
 h3 {
   font-size: 1.25rem;
   margin: 0;
@@ -71,10 +67,6 @@ h3 {
 
 #menu-about {
   padding: 3.0rem;
-}
-
-input[type="range"] {
-  vertical-align: sub;
 }
 
 .control-legend {
