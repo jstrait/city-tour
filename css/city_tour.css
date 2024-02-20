@@ -163,6 +163,7 @@ h3 {
 
 input[type="range"] {
   -webkit-appearance: none;
+  width: 8.0rem;
   height: 1.25rem;
   margin: 0;
   padding: 0;
