@@ -115,6 +115,7 @@ h3 {
 }
 
 .width-full { width: 100%; }
+.width-3 { width: 4.5rem; }
 .width-4 { width: 6.0rem; }
 .height-full { height: 100%; }
 .max-height-full { max-height: 100%; }
