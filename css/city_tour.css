@@ -18,6 +18,10 @@ h3 {
   margin: 0;
 }
 
+button {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Helvetica", arial, sans-serif;
+}
+
 #loading-message {
   margin: 0;
   align-items: center;
@@ -33,7 +37,6 @@ h3 {
   margin: 0;
   padding: 0.5rem 1.0rem;
   border: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Helvetica", arial, sans-serif;
   font-size: 1.0rem;
   line-height: 1.5rem;
   background: #fff;
