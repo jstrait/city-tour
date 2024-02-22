@@ -78,6 +78,11 @@ button {
 }
 
 #navigation-controls-toggle {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  font-size: 1.0rem;
+  line-height: 1.5rem;
   background: #ebebeb;
   color: #2a2b2b;
 }
@@ -127,7 +132,6 @@ button {
 .flex { display: flex; }
 .display-none { display: none; }
 .center { text-align: center; }
-.no-underline { text-decoration: none; }
 
 .flex-column { flex-direction: column; }
 .flex-justify-center { justify-content: center; }
