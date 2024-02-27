@@ -93,7 +93,7 @@ button {
   }
 }
 
-.navigation-controls-container {
+.navigation-controls-section {
   padding: 0.5rem 1.0rem;
 }
 
@@ -104,7 +104,7 @@ button {
 }
 
 @supports(padding: max(0px)) {
-  .navigation-controls-container {
+  .navigation-controls-section {
     padding-right: max(1.0rem, env(safe-area-inset-right));
   }
 
