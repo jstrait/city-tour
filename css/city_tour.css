@@ -97,6 +97,15 @@ button {
   padding: 0.5rem 1.0rem;
 }
 
+#zoom-out {
+  width: 5.0rem;
+  margin-right: 0.25rem;
+}
+
+#zoom-in {
+  width: 5.0rem;
+}
+
 @media (max-width: 768px) {
   #loading-message {
     font-size: 2.0rem;
