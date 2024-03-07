@@ -229,34 +229,28 @@ input[type="range"]::-ms-thumb {
   border: 0;
 }
 
-input[type="range"]::-webkit-slider-thumb:active
-{
+input[type="range"]::-webkit-slider-thumb:active {
   background: #444;
 }
 
-input[type="range"]::-moz-range-thumb:active
-{
+input[type="range"]::-moz-range-thumb:active {
   background: #444;
 }
 
-input[type="range"]::-ms-thumb:active
-{
+input[type="range"]::-ms-thumb:active {
   background: #444;
 }
 
 @media (hover) {
-  input[type="range"]::-webkit-slider-thumb:hover
-  {
+  input[type="range"]::-webkit-slider-thumb:hover {
     background: #444;
   }
 
-  input[type="range"]::-moz-range-thumb:hover
-  {
+  input[type="range"]::-moz-range-thumb:hover {
     background: #444;
   }
 
-  input[type="range"]::-ms-thumb:hover
-  {
+  input[type="range"]::-ms-thumb:hover {
     background: #444;
   }
 }
