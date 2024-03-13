@@ -18,6 +18,36 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     messageBroker.publish("touch.focus", {});
   };
 
+  var onMouseMove = function(e) {
+    if (currentGestureProcessor.previousTouches() === undefined || currentGestureProcessor.previousTouches().count() < 1) {
+      return;
+    }
+
+    currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
+  };
+
+  var onMouseUp = function(e) {
+    el.classList.remove("cursor-grabbing");
+    currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
+  };
+
+  var onMouseOver = function(e) {
+    window.removeEventListener("mouseup", onMouseUp, false);
+    window.removeEventListener("mousemove", onMouseMove, false);
+  };
+
+  var onMouseOut = function(e) {
+    // Safari, as of v11, doesn't support buttons, but it does support the non-standard `which`
+    if ((e.buttons !== undefined && e.buttons === 1) ||
+        (e.which !== undefined && e.which === 1)) {
+      // Allow mouse events to continue to occur while the mouse is outside the main canvas
+      // element. This is not enabled while the mouse is over the main canvas element to avoid
+      // duplicate events.
+      window.addEventListener("mouseup", onMouseUp, false);
+      window.addEventListener("mousemove", onMouseMove, false);
+    }
+  };
+
   var onTouchStart = function(e) {
     currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.shiftKey, e.altKey);
 
@@ -45,42 +75,12 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     e.preventDefault();
   };
 
-  var onMouseMove = function(e) {
-    if (currentGestureProcessor.previousTouches() === undefined || currentGestureProcessor.previousTouches().count() < 1) {
-      return;
-    }
-
-    currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
-  };
-
   var onTouchMove = function(e) {
     currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.shiftKey, e.altKey);
   };
 
-  var onMouseUp = function(e) {
-    el.classList.remove("cursor-grabbing");
-    currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
-  };
-
   var onTouchEnd = function(e) {
     currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.shiftKey, e.altKey);
-  };
-
-  var onMouseOver = function(e) {
-    window.removeEventListener("mouseup", onMouseUp, false);
-    window.removeEventListener("mousemove", onMouseMove, false);
-  };
-
-  var onMouseOut = function(e) {
-    // Safari, as of v11, doesn't support buttons, but it does support the non-standard `which`
-    if ((e.buttons !== undefined && e.buttons === 1) ||
-        (e.which !== undefined && e.which === 1)) {
-      // Allow mouse events to continue to occur while the mouse is outside the main canvas
-      // element. This is not enabled while the mouse is over the main canvas element to avoid
-      // duplicate events.
-      window.addEventListener("mouseup", onMouseUp, false);
-      window.addEventListener("mousemove", onMouseMove, false);
-    }
   };
 
   var extractWorldTouchCollection = function(touches) {
@@ -101,13 +101,13 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
 
   var enableEventHandlers = function() {
     el.addEventListener("mousedown", onMouseDown, false);
-    el.addEventListener("touchstart", onTouchStart, false);
     el.addEventListener("mousemove", onMouseMove, false);
-    el.addEventListener("touchmove", onTouchMove, false);
     el.addEventListener("mouseup", onMouseUp, false);
-    el.addEventListener("touchend", onTouchEnd, false);
     el.addEventListener("mouseover", onMouseOver, false);
     el.addEventListener("mouseout", onMouseOut, false);
+    el.addEventListener("touchstart", onTouchStart, false);
+    el.addEventListener("touchmove", onTouchMove, false);
+    el.addEventListener("touchend", onTouchEnd, false);
   };
 
   var onFlythroughStarted = function(data) {
