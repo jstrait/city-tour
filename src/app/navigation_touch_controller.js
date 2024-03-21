@@ -11,6 +11,8 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   var flythroughGestureProcessor = FlythroughGestureProcessor();
   var currentGestureProcessor = mapGestureProcessor;
 
+  let isMainMouseButtonPressed = false;
+
   var onMouseDown = function(e) {
     if (e.button !== 0) {
       return;
@@ -18,6 +20,7 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
 
     el.classList.add("cursor-grabbing");
     currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
+    isMainMouseButtonPressed = true;
 
     messageBroker.publish("touch.focus", {});
   };
@@ -31,12 +34,13 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   };
 
   var onMouseUp = function(e) {
-    if (e.button !== 0) {
+    if (isMainMouseButtonPressed !== true || e.button !== 0) {
       return;
     }
 
     el.classList.remove("cursor-grabbing");
     currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
+    isMainMouseButtonPressed = false;
   };
 
   var onMouseOver = function(e) {
