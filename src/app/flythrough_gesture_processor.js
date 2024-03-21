@@ -30,7 +30,6 @@ var FlythroughGestureProcessor = function() {
 
   return {
     processGesture: processGesture,
-    previousTouches: function() { return previousTouches; },
     setVehicleView: function(newVehicleView) { vehicleView = newVehicleView; },
   };
 };

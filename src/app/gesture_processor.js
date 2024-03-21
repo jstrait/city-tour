@@ -252,7 +252,6 @@ var GestureProcessor = function(sceneView, mapCamera, terrain) {
 
   return {
     processGesture: processGesture,
-    previousTouches: function() { return previousTouches; },
     setTerrain: setTerrain,
   };
 };

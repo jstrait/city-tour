@@ -26,7 +26,7 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   };
 
   var onMouseMove = function(e) {
-    if (currentGestureProcessor.previousTouches() === undefined || currentGestureProcessor.previousTouches().count() < 1) {
+    if (isMainMouseButtonPressed !== true) {
       return;
     }
 
@@ -49,8 +49,7 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   };
 
   var onMouseOut = function(e) {
-    // Safari, as of v11, doesn't support buttons, but it does support the non-standard `which`
-    if (e.buttons === 1 || e.which === 1) {
+    if (isMainMouseButtonPressed === true) {
       // Allow mouse events to continue to occur while the mouse is outside the main canvas
       // element. This is not enabled while the mouse is over the main canvas element to avoid
       // duplicate events.
