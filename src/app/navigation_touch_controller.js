@@ -11,8 +11,6 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   var flythroughGestureProcessor = FlythroughGestureProcessor();
   var currentGestureProcessor = mapGestureProcessor;
 
-  let isMainMouseButtonPressed = false;
-
   var onMouseDown = function(e) {
     if (e.button !== 0) {
       return;
@@ -20,20 +18,16 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
 
     el.classList.add("cursor-grabbing");
     currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
-    isMainMouseButtonPressed = true;
 
-    // Adding this event listener on `window` allows detecting this event
+    // Adding these event listeners on `window` allows detecting these events
     // even if the mouse is not on `el`, or not even inside the window at all.
+    window.addEventListener("mousemove", onMouseMove, false);
     window.addEventListener("mouseup", onMouseUp, false);
 
     messageBroker.publish("touch.focus", {});
   };
 
   var onMouseMove = function(e) {
-    if (isMainMouseButtonPressed !== true) {
-      return;
-    }
-
     currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
   };
 
@@ -44,22 +38,9 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
 
     el.classList.remove("cursor-grabbing");
     currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
-    isMainMouseButtonPressed = false;
 
-    window.removeEventListener("mouseup", onMouseUp, false);
-  };
-
-  var onMouseOver = function(e) {
     window.removeEventListener("mousemove", onMouseMove, false);
-  };
-
-  var onMouseOut = function(e) {
-    if (isMainMouseButtonPressed === true) {
-      // Allow mouse events to continue to occur while the mouse is outside the main canvas
-      // element. This is not enabled while the mouse is over the main canvas element to avoid
-      // duplicate events.
-      window.addEventListener("mousemove", onMouseMove, false);
-    }
+    window.removeEventListener("mouseup", onMouseUp, false);
   };
 
   var onTouchStart = function(e) {
@@ -115,9 +96,6 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
 
   var enableEventHandlers = function() {
     el.addEventListener("mousedown", onMouseDown, false);
-    el.addEventListener("mousemove", onMouseMove, false);
-    el.addEventListener("mouseover", onMouseOver, false);
-    el.addEventListener("mouseout", onMouseOut, false);
     el.addEventListener("touchstart", onTouchStart, false);
     el.addEventListener("touchmove", onTouchMove, false);
     el.addEventListener("touchend", onTouchEnd, false);
