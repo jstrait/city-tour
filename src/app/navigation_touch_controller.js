@@ -22,6 +22,10 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
     isMainMouseButtonPressed = true;
 
+    // Adding this event listener on `window` allows detecting this event
+    // even if the mouse is not on `el`, or not even inside the window at all.
+    window.addEventListener("mouseup", onMouseUp, false);
+
     messageBroker.publish("touch.focus", {});
   };
 
@@ -34,17 +38,18 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   };
 
   var onMouseUp = function(e) {
-    if (isMainMouseButtonPressed !== true || e.button !== 0) {
+    if (e.button !== 0) {
       return;
     }
 
     el.classList.remove("cursor-grabbing");
     currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
     isMainMouseButtonPressed = false;
+
+    window.removeEventListener("mouseup", onMouseUp, false);
   };
 
   var onMouseOver = function(e) {
-    window.removeEventListener("mouseup", onMouseUp, false);
     window.removeEventListener("mousemove", onMouseMove, false);
   };
 
@@ -53,7 +58,6 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
       // Allow mouse events to continue to occur while the mouse is outside the main canvas
       // element. This is not enabled while the mouse is over the main canvas element to avoid
       // duplicate events.
-      window.addEventListener("mouseup", onMouseUp, false);
       window.addEventListener("mousemove", onMouseMove, false);
     }
   };
@@ -112,7 +116,6 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
   var enableEventHandlers = function() {
     el.addEventListener("mousedown", onMouseDown, false);
     el.addEventListener("mousemove", onMouseMove, false);
-    el.addEventListener("mouseup", onMouseUp, false);
     el.addEventListener("mouseover", onMouseOver, false);
     el.addEventListener("mouseout", onMouseOut, false);
     el.addEventListener("touchstart", onTouchStart, false);
