@@ -22,7 +22,8 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     // Adding these event listeners on `window` allows detecting these events
     // even if the mouse is not on `el`, or not even inside the window at all.
     window.addEventListener("mousemove", onMouseMove, false);
-    window.addEventListener("mouseup", onMouseUp, false);
+    window.addEventListener("mouseup", onMouseUpOrContextMenu, false);
+    window.addEventListener("contextmenu", onMouseUpOrContextMenu, false);
 
     messageBroker.publish("touch.focus", {});
   };
@@ -31,8 +32,12 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     currentGestureProcessor.processGesture(WorldTouchCollection(el, camera, [{x: e.clientX, y: e.clientY}], terrain), e.shiftKey, e.altKey);
   };
 
-  var onMouseUp = function(e) {
-    if (e.button !== 0) {
+  var onMouseUpOrContextMenu = function(e) {
+    // Since gestures should only be triggered by the main mouse button,
+    // `mouseup` events for other buttons are ignored. However, `contextmenu`
+    // events should be handled regardless of how they are triggered, so the
+    // `button` property is not checked for those events.
+    if (e.type === "mouseup" && e.button !== 0) {
       return;
     }
 
@@ -40,7 +45,8 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     currentGestureProcessor.processGesture(undefined, e.shiftKey, e.altKey);
 
     window.removeEventListener("mousemove", onMouseMove, false);
-    window.removeEventListener("mouseup", onMouseUp, false);
+    window.removeEventListener("mouseup", onMouseUpOrContextMenu, false);
+    window.removeEventListener("contextmenu", onMouseUpOrContextMenu, false);
   };
 
   var onTouchStart = function(e) {
