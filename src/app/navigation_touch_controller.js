@@ -80,7 +80,7 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.shiftKey, e.altKey);
   };
 
-  var onTouchEnd = function(e) {
+  var onTouchEndOrCancel = function(e) {
     currentGestureProcessor.processGesture(extractWorldTouchCollection(e.touches), e.shiftKey, e.altKey);
   };
 
@@ -104,7 +104,8 @@ var NavigationTouchController = function(sceneView, mapCamera, terrain, messageB
     el.addEventListener("mousedown", onMouseDown, false);
     el.addEventListener("touchstart", onTouchStart, false);
     el.addEventListener("touchmove", onTouchMove, false);
-    el.addEventListener("touchend", onTouchEnd, false);
+    el.addEventListener("touchend", onTouchEndOrCancel, false);
+    el.addEventListener("touchcancel", onTouchEndOrCancel, false);
   };
 
   var onFlythroughStarted = function(data) {
