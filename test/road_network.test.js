@@ -250,10 +250,10 @@ describe("RoadNetwork", function() {
     });
 
     it("raises an error if adding an edge outside the allowed bounds", function() {
-      expect(function() { roadNetwork.addEdge(-2, 0, -3, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
-      expect(function() { roadNetwork.addEdge(2, 0, 3, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
-      expect(function() { roadNetwork.addEdge(0, -2, 0, -3, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
-      expect(function() { roadNetwork.addEdge(0, 2, 0, 3, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrowError(Error);
+      expect(function() { roadNetwork.addEdge(-2, 0, -3, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrow(Error);
+      expect(function() { roadNetwork.addEdge(2, 0, 3, 0, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrow(Error);
+      expect(function() { roadNetwork.addEdge(0, -2, 0, -3, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrow(Error);
+      expect(function() { roadNetwork.addEdge(0, 2, 0, 3, 0.0, 1.0, RoadNetwork.SURFACE_GRADE) }).toThrow(Error);
 
       expect(roadNetwork.hasEdgeBetween(-2, 0, -3, 0)).toBe(false);
       expect(roadNetwork.hasEdgeBetween(2, 0, 3, 0)).toBe(false);
